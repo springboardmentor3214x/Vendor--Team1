@@ -51,3 +51,4 @@ Finance Officer and Auditor, each with its own permission set.
 ## Recent updates
 
 - 05 Jun - Add the application config with database bootstrap
+- 06 Jun - Extend the application config with router registration
