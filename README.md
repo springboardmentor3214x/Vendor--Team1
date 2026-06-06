@@ -49,3 +49,4 @@ src/app/
 ## Recent updates
 
 - 05 Jun - Add the Angular project with TypeScript config
+- 06 Jun - Add the Angular project with build config
