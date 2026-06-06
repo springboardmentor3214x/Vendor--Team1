@@ -45,3 +45,4 @@ the permission checks enforced on every endpoint.
 ## Recent updates
 
 - 05 Jun - Build the shared models with request and response interfaces
+- 06 Jun - Expand the application config with router registration
