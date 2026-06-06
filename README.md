@@ -49,3 +49,4 @@ src/app/
 ## Recent updates
 
 - 05 Jun - Create the shared models with request and response interfaces
+- 06 Jun - Introduce the route guards with redirect handling
