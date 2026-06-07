@@ -46,3 +46,4 @@ the permission checks enforced on every endpoint.
 
 - 05 Jun - Build the shared models with request and response interfaces
 - 06 Jun - Expand the application config with router registration
+- 07 Jun - Add the shared dependencies with router registration
