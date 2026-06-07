@@ -50,3 +50,4 @@ src/app/
 
 - 05 Jun - Create the shared models with request and response interfaces
 - 06 Jun - Introduce the route guards with redirect handling
+- 07 Jun - Set up the route guards with redirect handling
