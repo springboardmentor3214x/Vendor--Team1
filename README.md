@@ -53,3 +53,4 @@ Finance Officer and Auditor, each with its own permission set.
 - 05 Jun - Add the application config with database bootstrap
 - 06 Jun - Extend the application config with router registration
 - 07 Jun - Add the shared dependencies with application startup
+- 08 Jun - Extend the shared dependencies with CORS configuration
