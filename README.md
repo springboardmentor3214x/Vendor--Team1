@@ -53,3 +53,4 @@ Finance Officer and Auditor, each with its own permission set.
 - 05 Jun - Add the application setup with CORS configuration
 - 06 Jun - Ongoing backend work
 - 07 Jun - Add the application setup with database bootstrap
+- 08 Jun - Extend the application setup with router registration
