@@ -54,3 +54,4 @@ Finance Officer and Auditor, each with its own permission set.
 - 06 Jun - Ongoing backend work
 - 07 Jun - Add the application setup with database bootstrap
 - 08 Jun - Extend the application setup with router registration
+- 09 Jun - Add user model with account activation
