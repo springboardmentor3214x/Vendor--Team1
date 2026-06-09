@@ -48,3 +48,4 @@ the permission checks enforced on every endpoint.
 - 06 Jun - Expand the application config with router registration
 - 07 Jun - Add the shared dependencies with router registration
 - 08 Jun - Wire the shared dependencies into the integrated build
+- 09 Jun - Reconcile the shared constants with the Angular services
