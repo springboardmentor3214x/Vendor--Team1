@@ -49,3 +49,4 @@ the permission checks enforced on every endpoint.
 - 07 Jun - Add the shared dependencies with router registration
 - 08 Jun - Wire the shared dependencies into the integrated build
 - 09 Jun - Reconcile the shared constants with the Angular services
+- 10 Jun - Introduce the navbar with profile menu
