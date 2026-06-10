@@ -53,3 +53,4 @@ src/app/
 - 07 Jun - Add the Angular project with proxy configuration
 - 08 Jun - Add the core API services with error propagation
 - 09 Jun - Add the core API services with typed responses
+- 10 Jun - Create the core API services with typed responses
