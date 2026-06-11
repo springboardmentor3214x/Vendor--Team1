@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 05 Jun - Add the application config with database bootstrap
 - 06 Jun - Extend the application config with router registration
 - 07 Jun - Add the shared dependencies with application startup
 - 08 Jun - Extend the shared dependencies with CORS configuration
 - 09 Jun - Refine CORS configuration in the shared dependencies
 - 10 Jun - Flesh out the application config with database bootstrap
+- 11 Jun - Extend the JWT handler with database bootstrap
