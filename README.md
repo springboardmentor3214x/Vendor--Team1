@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 05 Jun - Create the shared models with request and response interfaces
 - 06 Jun - Introduce the route guards with redirect handling
 - 07 Jun - Set up the route guards with redirect handling
 - 08 Jun - Implement the route guards with redirect handling
 - 09 Jun - Create the auth interceptor with 401 handling
 - 10 Jun - Create the navbar with logout handling
+- 11 Jun - Build the navbar with logout handling
