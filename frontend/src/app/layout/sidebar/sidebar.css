@@ -1,0 +1,67 @@
+.sidebar {
+  width: var(--v-sidebar-w);
+  background: var(--v-bg-sidebar);
+  border-right: 1px solid var(--v-border);
+  position: fixed;
+  inset: 0 auto 0 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.logo {
+  padding: var(--v-6) var(--v-5);
+  display: flex;
+  align-items: center;
+  gap: var(--v-3);
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--v-radius-md);
+  background: linear-gradient(135deg, var(--v-brand) 0%, #818CF8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-icon .material-symbols-outlined {
+  font-size: 20px;
+  color: white;
+  font-variation-settings: 'wght' 500;
+}
+
+.logo-text h2 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--v-text-primary);
+  letter-spacing: var(--v-tracking-tight);
+  margin: 0;
+  line-height: 1;
+}
+
+.logo-text p {
+  font-size: 0.6875rem;
+  color: var(--v-text-tertiary);
+  margin: 2px 0 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.placeholder-panel {
+  padding: 10px;
+  border: 1px dashed #c9c9c9;
+  border-radius: 4px;
+  color: #7a7a7a;
+}
+
+.placeholder-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
