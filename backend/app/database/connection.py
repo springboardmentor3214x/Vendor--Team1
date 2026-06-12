@@ -12,15 +12,21 @@ engine = create_engine(
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 def _pending_connection_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -30,4 +36,8 @@ def _pending_connection_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
