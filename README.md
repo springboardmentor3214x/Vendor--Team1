@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 06 Jun - Expand the application config with router registration
 - 07 Jun - Add the shared dependencies with router registration
 - 08 Jun - Wire the shared dependencies into the integrated build
 - 09 Jun - Reconcile the shared constants with the Angular services
 - 10 Jun - Introduce the navbar with profile menu
 - 11 Jun - Add user schemas with profile fields
+- 12 Jun - Fix the shared core helpers after merging the frontend and backend branches
