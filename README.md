@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 07 Jun - Add the shared dependencies with application startup
 - 08 Jun - Extend the shared dependencies with CORS configuration
 - 09 Jun - Refine CORS configuration in the shared dependencies
 - 10 Jun - Flesh out the application config with database bootstrap
 - 11 Jun - Extend the JWT handler with database bootstrap
 - 12 Jun - Create the role definitions with application startup
+- 13 Jun - Refine CORS configuration in the JWT handler
