@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 08 Jun - Implement the route guards with redirect handling
 - 09 Jun - Create the auth interceptor with 401 handling
 - 10 Jun - Create the navbar with logout handling
 - 11 Jun - Build the navbar with logout handling
 - 12 Jun - Build the navbar with profile menu
 - 13 Jun - Expand the navbar with profile menu
+- 14 Jun - Build the sidebar with collapse behaviour
