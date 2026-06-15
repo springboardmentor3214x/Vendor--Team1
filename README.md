@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 09 Jun - Reconcile the shared constants with the Angular services
 - 10 Jun - Introduce the navbar with profile menu
 - 11 Jun - Add user schemas with profile fields
 - 12 Jun - Fix the shared core helpers after merging the frontend and backend branches
 - 13 Jun - Build the application shell with root routing
 - 14 Jun - Smooth out the Angular project loading states found during testing
+- 15 Jun - Build the application setup with router registration
