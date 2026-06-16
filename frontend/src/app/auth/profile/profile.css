@@ -1,0 +1,45 @@
+.profile-page {
+  padding: var(--vrip-space-8);
+  font-family: var(--vrip-font-family);
+  display: flex;
+  justify-content: center;
+}
+
+.profile-container {
+  width: 100%;
+  max-width: 800px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--vrip-space-6);
+  padding-bottom: var(--vrip-space-6);
+  border-bottom: 1px solid var(--vrip-neutral-200);
+  margin-bottom: var(--vrip-space-6);
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--vrip-primary-500), var(--vrip-primary-700));
+  border-radius: var(--vrip-radius-full);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  box-shadow: var(--vrip-shadow-md);
+}
+
+.placeholder-panel {
+  padding: 10px;
+  border: 1px dashed #c9c9c9;
+  border-radius: 4px;
+  color: #7a7a7a;
+}
+
+.placeholder-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
