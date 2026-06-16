@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 10 Jun - Create the navbar with logout handling
 - 11 Jun - Build the navbar with logout handling
 - 12 Jun - Build the navbar with profile menu
 - 13 Jun - Expand the navbar with profile menu
 - 14 Jun - Build the sidebar with collapse behaviour
 - 15 Jun - Expand the sidebar with role based menu items
+- 16 Jun - Build the forgot password screen with email lookup
