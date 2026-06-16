@@ -1,0 +1,129 @@
+<div class="profile-page">
+    <div class="profile-container">
+        <app-card>
+            <div class="profile-vrip-page-header">
+                <div class="profile-avatar">
+                    <span class="material-symbols-outlined">person</span>
+                </div>
+                <div class="profile-info">
+                    <h2>{{ user.fullName }}</h2>
+                    <p>{{ user.role }}</p>
+                </div>
+                <div class="profile-actions-top">
+                    <app-button
+                        *ngIf="!isEditing"
+                        variant="outline"
+                        iconLeft="edit"
+                        (click)="editProfile()">
+                        Edit Profile
+                    </app-button>
+                </div>
+            </div>
+
+            <div class="profile-content">
+                <div class="profile-form-grid">
+                    <app-input
+                        label="Full Name"
+                        type="text"
+                        [(ngModel)]="user.fullName"
+                        [disabled]="!isEditing"
+                        iconLeft="badge"
+                    ></app-input>
+
+                    <app-input
+                        label="Email Address"
+                        type="email"
+                        [(ngModel)]="user.email"
+                        [disabled]="!isEditing"
+                        iconLeft="mail"
+                    ></app-input>
+
+                    <app-input
+                        label="Mobile Number"
+                        type="text"
+                        [(ngModel)]="user.mobile"
+                        [disabled]="!isEditing"
+                        iconLeft="phone_iphone"
+                    ></app-input>
+
+                    <app-input
+                        label="Role"
+                        type="text"
+                        [value]="user.role"
+                        [disabled]="true"
+                        iconLeft="admin_panel_settings"
+                    ></app-input>
+
+                    <app-input
+                        *ngIf="user.employeeId"
+                        label="Employee ID"
+                        type="text"
+                        [value]="user.employeeId"
+                        [disabled]="true"
+                        iconLeft="badge"
+                    ></app-input>
+                </div>
+            </div>
+
+            <div class="profile-footer" *ngIf="isEditing">
+                <app-button
+                    variant="outline"
+                    (click)="isEditing = false">
+                    Cancel
+                </app-button>
+                <app-button
+                    variant="primary"
+                    (click)="saveProfile()">
+                    Save Changes
+                </app-button>
+            </div>
+
+            <div class="profile-footer" *ngIf="!isEditing" style="display: flex; gap: 12px; justify-content: flex-end;">
+                 <app-button
+                    variant="secondary"
+                    iconLeft="lock"
+                    routerLink="/settings">
+                    Change Password
+                </app-button>
+                <app-button
+                    variant="danger"
+                    iconLeft="logout"
+                    (click)="logout()">
+                    Logout
+                </app-button>
+            </div>
+        </app-card>
+    </div>
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+  </div>
+</div>
