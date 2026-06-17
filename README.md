@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 11 Jun - Add user schemas with profile fields
 - 12 Jun - Fix the shared core helpers after merging the frontend and backend branches
 - 13 Jun - Build the application shell with root routing
 - 14 Jun - Smooth out the Angular project loading states found during testing
 - 15 Jun - Build the application setup with router registration
 - 16 Jun - Add role assignment to user
+- 17 Jun - Introduce the application setup with router registration
