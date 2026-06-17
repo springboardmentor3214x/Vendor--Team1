@@ -31,15 +31,35 @@
   box-shadow: var(--vrip-shadow-md);
 }
 
+.profile-avatar .material-symbols-outlined {
+  font-size: 2.5rem;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-info h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--vrip-neutral-900);
+}
+
 .placeholder-panel {
-  padding: 10px;
-  border: 1px dashed #c9c9c9;
-  border-radius: 4px;
+  padding: 12px;
+  border: 1px dashed #d2d2d2;
+  border-radius: 5px;
   color: #7a7a7a;
 }
 
 .placeholder-row {
   display: flex;
   justify-content: space-between;
-  padding: 4px 0;
+  padding: 5px 0;
+}
+
+.placeholder-row span {
+  font-size: 13px;
+  letter-spacing: 0.2px;
 }
