@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 12 Jun - Add the shared core helpers with session storage handling
 - 13 Jun - Create the application shell with root routing
 - 14 Jun - Extend the core API services with query parameter handling
 - 15 Jun - Refine build config in the Angular project
 - 16 Jun - Create the core API services with error propagation
 - 17 Jun - Extend the profile screen with avatar initials
+- 18 Jun - Refine query parameter handling in the core API services
