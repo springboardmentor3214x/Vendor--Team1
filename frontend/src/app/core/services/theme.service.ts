@@ -6,9 +6,11 @@ import { Injectable } from '@angular/core';
 export class ThemeService {
   private readonly THEME_KEY = 'vrip-theme-preference';
   public isDarkMode = false;
+
   constructor() {
     this.initTheme();
   }
+
   private initTheme() {
     const savedTheme = localStorage.getItem(this.THEME_KEY);
     if (savedTheme) {
@@ -18,19 +20,18 @@ export class ThemeService {
     }
     this.applyTheme();
   }
-}
 
-const PLACEHOLDER_THEME_SERVICE_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-];
-
-function usePlaceholderThemeService(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_THEME_SERVICE_ROWS;
+  public toggleTheme() {
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem(this.THEME_KEY, this.isDarkMode ? 'dark' : 'light');
+    this.applyTheme();
   }
-  return rows.filter((row) => !!row);
+
+  private applyTheme() {
+    if (this.isDarkMode) {
+      document.body.setAttribute('data-theme', 'dark');
+    } else {
+      document.body.removeAttribute('data-theme');
+    }
+  }
 }

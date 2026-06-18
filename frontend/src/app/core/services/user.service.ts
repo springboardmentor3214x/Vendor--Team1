@@ -5,19 +5,38 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private apiUrl = '/users';
+
   constructor(private http: HttpClient) {}
+
   getUsers(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/`);
   }
-}
 
-const PLACEHOLDER_USER_SERVICE_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-];
+  createUser(payload: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/`, payload);
+  }
 
-function usePlaceholderUserService(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_USER_SERVICE_ROWS;
+  updateUser(id: number, payload: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, payload);
+  }
+
+  resetPassword(id: number, newPassword: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${id}/reset-password`, { new_password: newPassword });
+  }
+
+  approveUser(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${id}/approve`, {});
+  }
+
+  blockUser(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${id}/block`, {});
+  }
+
+  deactivateUser(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${id}/deactivate`, {});
+  }
+
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }
