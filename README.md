@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 13 Jun - Add user endpoints with account activation
 - 14 Jun - Refine CORS configuration in the application setup
 - 15 Jun - Create the application setup with CORS configuration
 - 16 Jun - Extend user with role assignment
 - 17 Jun - Create the application setup with database bootstrap
 - 18 Jun - Ongoing backend work
+- 19 Jun - Add the application setup with router registration
