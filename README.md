@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 13 Jun - Refine CORS configuration in the JWT handler
 - 14 Jun - Add password security with router registration
 - 15 Jun - Round out password security with CORS configuration
 - 16 Jun - Add auth schemas with account status checks
 - 17 Jun - Ongoing backend work
 - 18 Jun - Expand auth with account status checks
+- 19 Jun - Add auth service with password reset flow
