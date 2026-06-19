@@ -27,19 +27,48 @@ export class ForgotPassword {
   loading = false;
   emailSent = false;
   errorMessage = '';
-}
 
-const PLACEHOLDER_FORGOT_PASSWORD_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 5, name: 'Harborline Equipment', status: 'Active' },
-  { id: 6, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 7, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 8, name: 'Copperfield Freight', status: 'Inactive' },
-];
+  emailDelivered = false;
+  resetToken = '';
+  expiresInMinutes = 0;
 
-function usePlaceholderForgotPassword(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_FORGOT_PASSWORD_ROWS;
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
+
+  goToReset(): void {
+    this.router.navigate(['/reset-password'], {
+      queryParams: { token: this.resetToken }
+    });
+  }
+
+  sendResetLink() {
+    this.errorMessage = '';
+    if (!this.email.trim()) {
+      alert('Email is required');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.email)) {
+      alert('Enter a valid email address');
+      return;
+    }
+
+    this.loading = true;
+    this.authService.forgotPassword(this.email.trim()).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        this.emailSent = true;
+        this.emailDelivered = !!res?.email_delivered;
+        this.resetToken = res?.reset_token || '';
+        this.expiresInMinutes = res?.expires_in_minutes || 15;
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = err.error?.detail || err.message || 'Failed to send reset link';
+      }
+    });
+  }
 }
