@@ -18,15 +18,12 @@ const AUTH_ROUTES = ['/login', '/register', '/forgot-password', '/reset-password
   styleUrl: './app.css'
 })
 export class App {
+
   constructor(public router: Router) {}
-}
 
-const PLACEHOLDER_APP_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-];
+  get showShell(): boolean {
+    const path = this.router.url.split(/[?#]/)[0];
+    return !AUTH_ROUTES.includes(path);
+  }
 
-function usePlaceholderApp(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_APP_ROWS;
 }
