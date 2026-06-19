@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 13 Jun - Expand the navbar with profile menu
 - 14 Jun - Build the sidebar with collapse behaviour
 - 15 Jun - Expand the sidebar with role based menu items
 - 16 Jun - Build the forgot password screen with email lookup
 - 17 Jun - Build the login screen with disabled state while submitting
 - 18 Jun - Introduce the login screen with disabled state while submitting
+- 19 Jun - Refine request feedback in the forgot password screen
