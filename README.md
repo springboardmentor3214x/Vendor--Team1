@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 13 Jun - Build the application shell with root routing
 - 14 Jun - Smooth out the Angular project loading states found during testing
 - 15 Jun - Build the application setup with router registration
 - 16 Jun - Add role assignment to user
 - 17 Jun - Introduce the application setup with router registration
 - 18 Jun - Refine HTTP service methods in the core API services
+- 19 Jun - Smooth out auth loading states found during testing
