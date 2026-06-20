@@ -1,0 +1,42 @@
+<div class="page-container">
+    <div class="vrip-page-header" style="margin-bottom: var(--v-6, 24px);">
+        <h1 class="vrip-page-title">Account Settings</h1>
+        <p class="vrip-page-subtitle">Manage your account preferences, security credentials, notification channels, and visual appearance.</p>
+    </div>
+
+    <div *ngIf="successMessage" style="background: rgba(16, 185, 129, 0.1); color: #065f46; border: 1px solid #a7f3d0; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 0.875rem; font-weight: 500;">
+        ✓ {{ successMessage }}
+    </div>
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+  </div>
+</div>
