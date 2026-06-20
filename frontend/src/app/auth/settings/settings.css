@@ -1,0 +1,29 @@
+.settings-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: var(--v-6, 24px);
+  align-items: start;
+}
+
+.settings-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--v-bg-card);
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-lg, 12px);
+  padding: 8px;
+}
+
+.placeholder-panel {
+  padding: 10px;
+  border: 1px dashed #c9c9c9;
+  border-radius: 4px;
+  color: #7a7a7a;
+}
+
+.placeholder-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
