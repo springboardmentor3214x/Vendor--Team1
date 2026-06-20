@@ -60,14 +60,30 @@ def create_user(
     from app.services.auth_service import create_user_as_admin
     return create_user_as_admin(db, data)
 
+@router.get("/recipients", response_model=List[UserResponse])
+def list_recipients(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return db.query(User).filter(User.account_status == "Active").order_by(User.name.asc()).all()
+
+def sync_vendor_status_by_email(db: Session, email: str, status: str, approval_status: str = None):
+    from app.models.vendor import Vendor
+    vendor = db.query(Vendor).filter(Vendor.email == email).first()
+    if vendor:
+        vendor.status = status
+        if approval_status:
+            vendor.approval_status = approval_status
+
 
 def _pending_user_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -77,6 +93,8 @@ def _pending_user_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -85,8 +103,9 @@ def _pending_user_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -96,6 +115,8 @@ def _pending_user_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -104,8 +125,9 @@ def _pending_user_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -115,6 +137,8 @@ def _pending_user_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -123,8 +147,9 @@ def _pending_user_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -134,6 +159,8 @@ def _pending_user_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -142,8 +169,9 @@ def _pending_user_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -153,15 +181,6 @@ def _pending_user_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
-
-
-def _pending_user_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
