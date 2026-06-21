@@ -405,20 +405,93 @@ h1, h2, h3, h4, h5, h6 {
 
 .vrip-stat-card.border-orange::before { background: #F59E0B; }
 
+.vrip-stat-card.border-danger::before  { background: var(--v-danger); }
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-header h3 {
+  color: var(--v-text-secondary);
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.vrip-stat-card h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--v-text-primary);
+  letter-spacing: var(--v-tracking-tight);
+  line-height: 1;
+}
+
+.text-primary-600 { color: var(--v-brand); }
+
+.text-success-600 { color: var(--v-success); }
+
+.text-warning-600 { color: var(--v-warning); }
+
+.text-orange-600 { color: #F59E0B; }
+
+.text-danger-600  { color: var(--v-danger); }
+
+.vrip-table-wrapper {
+  background: var(--v-bg-card);
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-lg);
+  box-shadow: var(--v-shadow-card);
+  overflow-x: auto;
+}
+
+.vrip-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.vrip-table th {
+  padding: 12px 14px;
+  color: var(--v-text-secondary);
+  background: var(--v-bg-inset);
+  border-bottom: 1px solid var(--v-border);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.vrip-table td {
+  padding: 12px 14px;
+  color: var(--v-text-primary);
+  border-bottom: 1px solid var(--v-border);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  vertical-align: middle;
+}
+
+.vrip-table-row { transition: background-color var(--v-duration) var(--v-ease); }
+
 .placeholder-panel {
-  padding: 12px;
-  border: 1px dashed #d2d2d2;
-  border-radius: 5px;
+  padding: 14px;
+  border: 1px dashed #bdbdbd;
+  border-radius: 6px;
   color: #7a7a7a;
 }
 
 .placeholder-row {
   display: flex;
   justify-content: space-between;
-  padding: 5px 0;
+  padding: 6px 0;
 }
 
-.placeholder-row span {
-  font-size: 13px;
-  letter-spacing: 0.2px;
+.placeholder-tag {
+  text-transform: uppercase;
+  font-size: 11px;
 }
