@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 15 Jun - Refine build config in the Angular project
 - 16 Jun - Create the core API services with error propagation
 - 17 Jun - Extend the profile screen with avatar initials
 - 18 Jun - Refine query parameter handling in the core API services
 - 19 Jun - Add the register screen with pending approval notice
 - 20 Jun - Expand the profile screen with avatar initials
+- 21 Jun - Expand the Angular project with build config
