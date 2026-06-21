@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 15 Jun - Build the application setup with router registration
 - 16 Jun - Add role assignment to user
 - 17 Jun - Introduce the application setup with router registration
 - 18 Jun - Refine HTTP service methods in the core API services
 - 19 Jun - Smooth out auth loading states found during testing
 - 20 Jun - Align auth payload fields between the API and the client
+- 21 Jun - Reconcile the Angular project with the Angular services
