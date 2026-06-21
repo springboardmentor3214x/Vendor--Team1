@@ -116,14 +116,64 @@ def create_user_as_admin(db: Session, data: AdminUserCreate):
         db.rollback()
         raise HTTPException(status_code=400, detail="User creation failed")
 
+def login_user(db: Session, email: str, password: str):
+    user = db.query(User).filter(User.email == email).first()
+    if not user or not verify_password(password, user.password):
+        return None
+
+    if user.account_status == "Pending Approval":
+        raise HTTPException(status_code=403, detail="Account waiting for admin approval")
+
+    if user.account_status == "Rejected":
+        raise HTTPException(status_code=403, detail="Your account application has been rejected")
+
+    if user.account_status in ("Blocked", "Deactivated", "Inactive"):
+        raise HTTPException(status_code=403, detail="Your account is disabled or inactive")
+
+    if user.role == Roles.VENDOR:
+        from app.models.vendor import Vendor
+        vendor = db.query(Vendor).filter(Vendor.email == user.email).first()
+        if vendor:
+            if vendor.approval_status == "Rejected" or vendor.status == "Rejected":
+                raise HTTPException(status_code=403, detail="Your vendor account application has been rejected")
+            if vendor.status in ("Blocked", "Inactive", "Deactivated"):
+                raise HTTPException(status_code=403, detail="Your vendor account is disabled or inactive")
+
+    return user
+
+def forgot_password(db: Session, email: str):
+    user = db.query(User).filter(func.lower(User.email) == email.lower()).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="No account is registered with this email address")
+
+    token = create_reset_token(user.email)
+    reset_link = f"{FRONTEND_BASE_URL.rstrip('/')}/reset-password?token={token}"
+
+    from app.services.notification_service import send_email_notification
+    send_email_notification(
+        user.email,
+        "Reset your VRIP password",
+        f"Hello {user.name},\n\nUse the link below to set a new password. "
+        f"It expires in {RESET_TOKEN_EXPIRE_MINUTES} minutes.\n\n{reset_link}\n",
+    )
+
+    return {
+        "message": "Password reset link generated",
+        "reset_token": token,
+        "reset_link": reset_link,
+        "expires_in_minutes": RESET_TOKEN_EXPIRE_MINUTES,
+        "email_delivered": SMTP_CONFIGURED,
+    }
+
 
 def _pending_auth_service_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -133,6 +183,8 @@ def _pending_auth_service_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -141,8 +193,9 @@ def _pending_auth_service_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -152,6 +205,8 @@ def _pending_auth_service_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -160,8 +215,9 @@ def _pending_auth_service_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -171,6 +227,8 @@ def _pending_auth_service_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -179,8 +237,9 @@ def _pending_auth_service_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -190,15 +249,6 @@ def _pending_auth_service_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
-
-
-def _pending_auth_service_rows_5(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
