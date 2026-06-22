@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 16 Jun - Build the forgot password screen with email lookup
 - 17 Jun - Build the login screen with disabled state while submitting
 - 18 Jun - Introduce the login screen with disabled state while submitting
 - 19 Jun - Refine request feedback in the forgot password screen
 - 20 Jun - Add the settings screen with notification preferences
 - 21 Jun - Refine collapse behaviour in the sidebar
+- 22 Jun - Extend the settings screen with preference persistence
