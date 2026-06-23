@@ -15,15 +15,41 @@
   padding: 8px;
 }
 
+.settings-nav-item {
+  padding: 10px 14px;
+  border-radius: var(--v-radius-md, 6px);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--v-text-secondary);
+  cursor: pointer;
+  transition: all var(--v-duration) var(--v-ease);
+}
+
+.settings-nav-item:hover {
+  background: var(--v-bg-hover);
+  color: var(--v-text-primary);
+}
+
+.settings-nav-item.active {
+  background: var(--v-brand-light, #ebe9fe);
+  color: var(--v-brand, #635bff);
+  font-weight: 600;
+}
+
 .placeholder-panel {
-  padding: 10px;
-  border: 1px dashed #c9c9c9;
-  border-radius: 4px;
+  padding: 12px;
+  border: 1px dashed #d2d2d2;
+  border-radius: 5px;
   color: #7a7a7a;
 }
 
 .placeholder-row {
   display: flex;
   justify-content: space-between;
-  padding: 4px 0;
+  padding: 5px 0;
+}
+
+.placeholder-row span {
+  font-size: 13px;
+  letter-spacing: 0.2px;
 }
