@@ -29,19 +29,53 @@ export class Login {
   hidePassword = true;
   loading = false;
   errorMessage = '';
+  loginForm: FormGroup;
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute,
+    public themeService: ThemeService
+  ) {
+
+    this.loginForm = this.fb.group({
+
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email
+        ]
+      ],
+
+      password: [
+        '',
+        [
+          Validators.required
+        ]
+      ],
+
+      rememberMe: [false]
+
+    });
+
+  }
 }
 
 const PLACEHOLDER_LOGIN_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 5, name: 'Harborline Equipment', status: 'Active' },
-  { id: 6, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 7, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 8, name: 'Copperfield Freight', status: 'Inactive' },
+  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
+  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
+  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
+  { id: 4, name: 'Harborline Equipment', status: 'Active' },
+  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
+  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
+  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
+  { id: 8, name: 'Northwind Steel', status: 'Active' },
 ];
 
 function usePlaceholderLogin(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_LOGIN_ROWS;
+  if (!rows || !rows.length) {
+    return PLACEHOLDER_LOGIN_ROWS;
+  }
+  return rows.filter((row) => !!row);
 }
