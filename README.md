@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 17 Jun - Ongoing backend work
 - 18 Jun - Expand auth with account status checks
 - 19 Jun - Add auth service with password reset flow
 - 20 Jun - Flesh out auth with account status checks
 - 21 Jun - Refine CORS configuration in the application config
 - 22 Jun - Round out auth with account status checks
+- 23 Jun - Add CORS configuration to password security
