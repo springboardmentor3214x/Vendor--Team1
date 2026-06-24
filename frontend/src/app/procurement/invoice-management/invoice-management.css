@@ -1,0 +1,30 @@
+.invoice-container {
+    padding: var(--v-6);
+    max-width: var(--v-content-max);
+    margin: 0 auto;
+    animation: fadeIn 0.5s var(--v-ease);
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--v-5);
+    margin-bottom: var(--v-6);
+}
+
+@media (max-width: 1100px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.placeholder-panel {
+  padding: 10px;
+  border: 1px dashed #c9c9c9;
+  border-radius: 4px;
+  color: #7a7a7a;
+}
+
+.placeholder-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}

@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 18 Jun - Refine HTTP service methods in the core API services
 - 19 Jun - Smooth out auth loading states found during testing
 - 20 Jun - Align auth payload fields between the API and the client
 - 21 Jun - Reconcile the Angular project with the Angular services
 - 22 Jun - Expand auth with password reset flow
 - 23 Jun - Support role assignment in user
+- 24 Jun - Settle the core API services behaviour between client and server
