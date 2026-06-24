@@ -10,7 +10,9 @@ export class AuthService {
   private readonly TOKEN_KEY = 'vrip_token';
   private readonly ROLE_KEY = 'vrip_role';
   private readonly USER_KEY = 'vrip_user';
+
   constructor(private http: HttpClient) {}
+
   login(request: LoginRequest): Observable<LoginResponse> {
     return this.http.post<any>(`${this.API_URL}/auth/login`, {
       email: request.email,
@@ -32,17 +34,21 @@ export class AuthService {
       )))
     );
   }
+
   register(data: any): Observable<any> {
     return this.http.post(`${this.API_URL}/auth/register`, data);
   }
+
   forgotPassword(email: string): Observable<any> {
     return this.http.post(`${this.API_URL}/auth/forgot-password`, { email });
   }
+
   resetPassword(token: string, newPassword: string): Observable<any> {
     return this.http.post(`${this.API_URL}/auth/reset-password`, {
       token, new_password: newPassword
     });
   }
+
   private mapRole(backendRole: string): string {
     const roleMap: Record<string, string> = {
       'Administrator': 'Administrator',
@@ -54,6 +60,7 @@ export class AuthService {
     };
     return roleMap[backendRole] || backendRole;
   }
+
   private storeSession(response: LoginResponse, rememberMe: boolean): void {
     this.logout();
 
@@ -67,6 +74,7 @@ export class AuthService {
       sessionStorage.setItem(this.USER_KEY, JSON.stringify(response));
     }
   }
+
   logout(): void {
     this.deleteCookie(this.TOKEN_KEY);
     this.deleteCookie(this.ROLE_KEY);
@@ -80,22 +88,41 @@ export class AuthService {
     localStorage.removeItem(this.ROLE_KEY);
     localStorage.removeItem(this.USER_KEY);
   }
-}
 
-const PLACEHOLDER_AUTH_SERVICE_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderAuthService(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_AUTH_SERVICE_ROWS;
+  getToken(): string | null {
+    return this.getCookie(this.TOKEN_KEY) || sessionStorage.getItem(this.TOKEN_KEY) || localStorage.getItem(this.TOKEN_KEY);
   }
-  return rows.filter((row) => !!row);
+
+  getUserRole(): string | null {
+    return this.getCookie(this.ROLE_KEY) || sessionStorage.getItem(this.ROLE_KEY) || localStorage.getItem(this.ROLE_KEY);
+  }
+
+  getCurrentUser(): LoginResponse | null {
+    const userStr = this.getCookie(this.USER_KEY) || sessionStorage.getItem(this.USER_KEY) || localStorage.getItem(this.USER_KEY);
+    return userStr ? JSON.parse(userStr) : null;
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
+
+  private setCookie(name: string, value: string, days: number = 30): void {
+    const d = new Date();
+    d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${encodeURIComponent(value)};expires=${d.toUTCString()};path=/;SameSite=Lax`;
+  }
+
+  private getCookie(name: string): string | null {
+    const nameEQ = name + '=';
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i].trim();
+      if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length));
+    }
+    return null;
+  }
+
+  private deleteCookie(name: string): void {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;SameSite=Lax`;
+  }
 }
