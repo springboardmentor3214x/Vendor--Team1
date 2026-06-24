@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+
 from app.database.connection import get_db
 from app.schemas.user import UserCreate, UserResponse
 from app.schemas.auth import LoginRequest, ForgotPasswordRequest, ResetPasswordRequest, ChangePasswordRequest
@@ -10,44 +11,59 @@ from app.models.user import User
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
+
 @router.post("/register", response_model=UserResponse, status_code=201)
 def register(user_data: UserCreate, db: Session = Depends(get_db)):
     return register_user(db, user_data)
 
 
-def _pending_auth_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
+@router.post("/login")
+def login(request: LoginRequest, db: Session = Depends(get_db)):
+    try:
+        user = login_user(db, request.email, request.password)
+    except HTTPException:
+        raise
+    if user is None:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+
+    token = create_access_token({"sub": user.email, "role": user.role})
+
+    return {
+        "message": "Login successful",
+        "access_token": token,
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "mobile_number": user.mobile_number,
+            "role": user.role
+        }
+    }
 
 
-def _pending_auth_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+@router.post("/forgot-password")
+def forgot_password_api(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    return forgot_password(db, request.email)
 
 
-def _pending_auth_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
+@router.post("/reset-password")
+def reset_password_api(request: ResetPasswordRequest, db: Session = Depends(get_db)):
+    payload = verify_reset_token(request.token)
+    if payload is None:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+
+    user = db.query(User).filter(User.email == payload["sub"]).first()
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return reset_password(db, user, request.new_password)
 
 
-def _pending_auth_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+@router.post("/change-password")
+def change_password_api(
+    request: ChangePasswordRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return change_password(db, current_user, request.current_password, request.new_password)
