@@ -14,14 +14,17 @@ import { NotificationService } from '../../core/services/notification.service';
   styleUrls: ['./navbar.css']
 })
 export class Navbar implements OnInit, OnDestroy {
+
   pageTitle: string = '';
   role: string = '';
   fullName: string = '';
   avatarInitial: string = '';
   isMenuOpen: boolean = false;
   unreadCount = 0;
+
   private unreadSub?: Subscription;
   private pollHandle?: ReturnType<typeof setInterval>;
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -29,25 +32,61 @@ export class Navbar implements OnInit, OnDestroy {
     private notificationService: NotificationService,
     private cdr: ChangeDetectorRef
   ) {}
+
   get notificationsRoute(): string {
     return this.role === 'Administrator' ? '/admin/notifications' : '/notification-center';
   }
-}
 
-const PLACEHOLDER_NAVBAR_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
+  ngOnInit(): void {
+    this.role = this.authService.getUserRole() || '';
+    this.loadUser();
 
-function usePlaceholderNavbar(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_NAVBAR_ROWS;
+    this.unreadSub = this.notificationService.unreadCount$.subscribe(count => {
+      this.unreadCount = count;
+      this.cdr.markForCheck();
+    });
+    this.notificationService.refreshUnreadCount().subscribe();
+
+    this.pollHandle = setInterval(
+      () => this.notificationService.refreshUnreadCount().subscribe(),
+      60000
+    );
   }
-  return rows.filter((row) => !!row);
+
+  ngOnDestroy(): void {
+    this.unreadSub?.unsubscribe();
+    if (this.pollHandle) {
+      clearInterval(this.pollHandle);
+    }
+  }
+
+  toggleMenu(event: Event): void {
+    event.stopPropagation();
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.isMenuOpen = false;
+    this.router.navigate(['/login']);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.isMenuOpen = false;
+    }
+  }
+
+  private loadUser(): void {
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.fullName = user.fullName || user.email || '';
+      this.role = user.role || this.role;
+    }
+    if (!this.fullName) {
+      this.fullName = this.role || 'User';
+    }
+    this.avatarInitial = this.fullName.charAt(0).toUpperCase();
+  }
 }
