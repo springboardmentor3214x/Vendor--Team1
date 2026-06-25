@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 19 Jun - Refine request feedback in the forgot password screen
 - 20 Jun - Add the settings screen with notification preferences
 - 21 Jun - Refine collapse behaviour in the sidebar
 - 22 Jun - Extend the settings screen with preference persistence
 - 23 Jun - Extend the settings screen with notification preferences
 - 24 Jun - Flesh out the navbar with logout handling
+- 25 Jun - Add the invoice management screen with amount columns
