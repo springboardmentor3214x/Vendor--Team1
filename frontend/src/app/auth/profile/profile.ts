@@ -23,7 +23,9 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrls: ['./profile.css']
 })
 export class Profile implements OnInit {
+
   isEditing = false;
+
   user = {
     fullName: '',
     email: '',
@@ -31,11 +33,13 @@ export class Profile implements OnInit {
     role: '',
     employeeId: ''
   };
+
   constructor(
     private http: HttpClient,
     private authService: AuthService,
     private router: Router
   ) {}
+
   ngOnInit(): void {
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
@@ -56,25 +60,35 @@ export class Profile implements OnInit {
       error: () => {}
     });
   }
+
   set fullName(val: string) {
     this.user.fullName = val;
   }
-}
 
-const PLACEHOLDER_PROFILE_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderProfile(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_PROFILE_ROWS;
+  editProfile() {
+    this.isEditing = true;
   }
-  return rows.filter((row) => !!row);
+
+  saveProfile() {
+    const payload = {
+      name: this.user.fullName,
+      mobile_number: this.user.mobile
+    };
+    this.http.put<any>('/users/me', payload).subscribe({
+      next: (res) => {
+        this.user.fullName = res.name || this.user.fullName;
+        this.user.mobile = res.mobile_number || this.user.mobile;
+        this.isEditing = false;
+        alert('Profile Updated Successfully');
+      },
+      error: (err) => {
+        alert(err.error?.detail || 'Failed to update profile');
+      }
+    });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 }
