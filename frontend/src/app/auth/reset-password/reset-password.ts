@@ -22,28 +22,61 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrls: ['./reset-password.css']
 })
 export class ResetPassword {
+
   token = '';
   newPassword = '';
   confirmPassword = '';
   hidePassword = true;
   hideConfirmPassword = true;
   loading = false;
-}
+  passwordReset = false;
+  errorMessage = '';
 
-const PLACEHOLDER_RESET_PASSWORD_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderResetPassword(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_RESET_PASSWORD_ROWS;
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private authService: AuthService
+  ) {
+    this.token = this.route.snapshot.queryParamMap.get('token') || '';
   }
-  return rows.filter((row) => !!row);
+
+  resetPassword() {
+    this.errorMessage = '';
+    if (!this.newPassword) {
+      alert('New Password is required');
+      return;
+    }
+
+    if (this.newPassword.length < 8) {
+      alert('Password must be at least 8 characters');
+      return;
+    }
+
+    if (!this.confirmPassword) {
+      alert('Confirm Password is required');
+      return;
+    }
+
+    if (this.newPassword !== this.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    if (!this.token) {
+      alert('Missing reset token. Please check your reset link.');
+      return;
+    }
+
+    this.loading = true;
+    this.authService.resetPassword(this.token, this.newPassword).subscribe({
+      next: () => {
+        this.loading = false;
+        this.passwordReset = true;
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = err.error?.detail || err.message || 'Failed to reset password';
+      }
+    });
+  }
 }
