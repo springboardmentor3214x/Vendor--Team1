@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import func
 from fastapi import HTTPException
+
 from app.models.user import User
 from app.schemas.user import UserCreate, AdminUserCreate
 from app.core.security import hash_password, verify_password
@@ -13,6 +14,7 @@ from app.core.config import (
     RESET_TOKEN_EXPIRE_MINUTES,
     SMTP_CONFIGURED,
 )
+
 
 def register_user(db: Session, user_data: UserCreate):
     from app.core.roles import ALL_ROLES
@@ -66,6 +68,7 @@ def register_user(db: Session, user_data: UserCreate):
         db.rollback()
         raise HTTPException(status_code=400, detail="Registration failed")
 
+
 def create_user_as_admin(db: Session, data: AdminUserCreate):
     from app.core.roles import ALL_ROLES
     if data.role not in ALL_ROLES:
@@ -116,6 +119,7 @@ def create_user_as_admin(db: Session, data: AdminUserCreate):
         db.rollback()
         raise HTTPException(status_code=400, detail="User creation failed")
 
+
 def login_user(db: Session, email: str, password: str):
     user = db.query(User).filter(User.email == email).first()
     if not user or not verify_password(password, user.password):
@@ -141,6 +145,7 @@ def login_user(db: Session, email: str, password: str):
 
     return user
 
+
 def forgot_password(db: Session, email: str):
     user = db.query(User).filter(func.lower(User.email) == email.lower()).first()
     if not user:
@@ -165,99 +170,16 @@ def forgot_password(db: Session, email: str):
         "email_delivered": SMTP_CONFIGURED,
     }
 
+
 def reset_password(db: Session, user: User, new_password: str):
     user.password = hash_password(new_password)
     db.commit()
     return {"message": "Password has been reset successfully"}
 
 
-def _pending_auth_service_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_auth_service_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_auth_service_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_auth_service_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_auth_service_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_auth_service_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_auth_service_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_auth_service_totals_4(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_auth_service_rows_5(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
+def change_password(db: Session, user: User, current_password: str, new_password: str):
+    if not verify_password(current_password, user.password):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    user.password = hash_password(new_password)
+    db.commit()
+    return {"message": "Password updated successfully"}
