@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 20 Jun - Extend user with account activation
 - 21 Jun - Build the application setup with database bootstrap
 - 22 Jun - Ongoing backend work
 - 23 Jun - Expand user with role assignment
 - 24 Jun - Add the vendor categories with registration validation rules
 - 25 Jun - Add order tracking model with shipment milestones
+- 26 Jun - Extend the application setup with database bootstrap
