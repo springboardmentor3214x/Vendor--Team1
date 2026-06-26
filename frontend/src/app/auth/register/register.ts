@@ -20,11 +20,13 @@ export class Register implements OnInit {
   loading = false;
   acceptedTerms = false;
   hidePassword = true;
+
   constructor(
     private router: Router,
     public themeService: ThemeService,
     private authService: AuthService
   ) {}
+
   ngOnInit(): void {
     try {
       localStorage.removeItem('vrip_registered_users');
@@ -32,22 +34,103 @@ export class Register implements OnInit {
 
     }
   }
-}
 
-const PLACEHOLDER_REGISTER_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
+  user = {
+    fullName: '',
+    employeeId: '',
+    companyName: '',
+    email: '',
+    mobile: '',
+    password: '',
+    confirmPassword: '',
+    role: 'Vendor'
+  };
 
-function usePlaceholderRegister(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_REGISTER_ROWS;
+  get isVendor(): boolean {
+    return this.user.role === 'Vendor';
   }
-  return rows.filter((row) => !!row);
+
+  register() {
+    if (!this.user.fullName.trim()) {
+      alert('Full Name is required');
+      return;
+    }
+
+    if (this.isVendor) {
+      if (!this.user.companyName.trim()) {
+        alert('Company Name is required');
+        return;
+      }
+    } else {
+      if (!this.user.employeeId.trim()) {
+        alert('Employee ID is required');
+        return;
+      }
+    }
+
+    if (!this.user.email.trim()) {
+      alert('Email is required');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.user.email)) {
+      alert('Enter a valid email address');
+      return;
+    }
+
+    if (!/^[0-9]{10}$/.test(this.user.mobile)) {
+      alert('Enter a valid 10-digit mobile number');
+      return;
+    }
+
+    if (!this.user.password) {
+      alert('Password is required');
+      return;
+    }
+
+    if (this.user.password.length < 8) {
+      alert('Password must be at least 8 characters');
+      return;
+    }
+
+    if (!this.user.confirmPassword) {
+      alert('Confirm Password is required');
+      return;
+    }
+
+    if (this.user.password !== this.user.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    if (!this.acceptedTerms) {
+      alert('Please accept the Terms and Conditions to continue');
+      return;
+    }
+
+    const payload = {
+      name: this.user.fullName.trim(),
+      email: this.user.email.trim(),
+      mobile_number: this.user.mobile.trim(),
+
+      employee_id: this.isVendor ? null : this.user.employeeId.trim(),
+      company_name: this.isVendor ? this.user.companyName.trim() : null,
+      password: this.user.password,
+      role: this.user.role
+    };
+
+    this.loading = true;
+    this.authService.register(payload).subscribe({
+      next: () => {
+        this.loading = false;
+        alert('Registration Successful');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        this.loading = false;
+        alert(err.error?.detail || err.message || 'Registration failed');
+      }
+    });
+  }
 }
