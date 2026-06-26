@@ -1,0 +1,58 @@
+@import "../procurement-approval/procurement-approval.css";
+
+.tracking-number {
+    font-family: monospace;
+    font-size: 1.125rem !important;
+    color: var(--vrip-primary-700) !important;
+    font-weight: 700 !important;
+}
+
+.text-primary-700 {
+    color: var(--vrip-primary-700) !important;
+}
+
+.font-bold {
+    font-weight: 700 !important;
+}
+
+.map-placeholder {
+    height: 300px;
+    background-color: var(--vrip-slate-100);
+    border-radius: var(--vrip-radius-md);
+    border: 1px dashed var(--vrip-slate-300);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.map-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--vrip-slate-400);
+}
+
+.map-overlay .material-symbols-outlined {
+    font-size: 48px;
+    margin-bottom: var(--vrip-space-2);
+}
+
+.vertical-timeline {
+    position: relative;
+    padding-left: 20px;
+}
+
+.placeholder-panel {
+  padding: 10px;
+  border: 1px dashed #c9c9c9;
+  border-radius: 4px;
+  color: #7a7a7a;
+}
+
+.placeholder-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
