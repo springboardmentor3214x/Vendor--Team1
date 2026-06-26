@@ -1,0 +1,51 @@
+<div class="tracking-container">
+    <div class="page-vrip-page-header print-hide">
+        <div>
+            <div class="vrip-page-header-breadcrumb">
+                <a [routerLink]="['/procurement/purchase-order', poId]">Purchase Order</a>
+                <span class="material-symbols-outlined icon-sm">chevron_right</span>
+                <span>Order Tracking</span>
+            </div>
+            <h1 class="vrip-page-title">Order Tracking: {{ poDetails?.po_number || ('PO-' + poId) }}</h1>
+            <p>Real-time delivery progress and delay monitoring for your procurement order.</p>
+        </div>
+        <div class="vrip-page-header-actions">
+            <app-button variant="outline" iconLeft="print" (onClick)="printTracking()">
+                Print Tracking Report
+            </app-button>
+        </div>
+    </div>
+
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+  </div>
+</div>
