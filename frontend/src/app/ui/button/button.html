@@ -1,0 +1,20 @@
+<button
+  class="vrip-button"
+  [ngClass]="[
+    'vrip-btn-' + variant,
+    'vrip-btn-' + size,
+    block ? 'vrip-btn-block' : '',
+    iconOnly ? 'vrip-btn-icon-only' : ''
+</button>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+</div>
