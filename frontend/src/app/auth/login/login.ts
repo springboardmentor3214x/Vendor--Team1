@@ -26,10 +26,15 @@ import { InputComponent } from '../../ui/input/input';
   styleUrls: ['./login.css']
 })
 export class Login {
+
   hidePassword = true;
+
   loading = false;
+
   errorMessage = '';
+
   loginForm: FormGroup;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -60,22 +65,111 @@ export class Login {
     });
 
   }
-}
 
-const PLACEHOLDER_LOGIN_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
+  togglePassword(): void {
 
-function usePlaceholderLogin(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_LOGIN_ROWS;
+    this.hidePassword = !this.hidePassword;
+
   }
-  return rows.filter((row) => !!row);
+
+  fieldError(controlName: 'email' | 'password'): string {
+
+    const control = this.loginForm.get(controlName);
+
+    if (!control || control.valid || !(control.touched || control.dirty)) {
+      return '';
+    }
+
+    if (control.hasError('required')) {
+      return controlName === 'email'
+        ? 'Email address is required'
+        : 'Password cannot be empty';
+    }
+
+    if (control.hasError('email')) {
+      return 'Enter a valid email address';
+    }
+
+    return '';
+
+  }
+
+  login(): void {
+
+    this.errorMessage = '';
+
+    if (this.loginForm.invalid) {
+
+      this.loginForm.markAllAsTouched();
+
+      return;
+
+    }
+
+    this.loading = true;
+
+    this.authService.login({
+
+      email: this.loginForm.value.email,
+
+      password: this.loginForm.value.password,
+
+      rememberMe: this.loginForm.value.rememberMe
+
+    }).subscribe({
+
+      next: () => {
+
+        this.loading = false;
+
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        if (returnUrl) {
+          this.router.navigateByUrl(returnUrl);
+          return;
+        }
+
+        const role = this.authService.getUserRole();
+
+        switch (role) {
+
+          case 'Administrator':
+            this.router.navigate(['/admin-dashboard']);
+            break;
+
+          case 'Procurement Manager':
+            this.router.navigate(['/procurement-dashboard']);
+            break;
+
+          case 'Supply Chain Manager':
+            this.router.navigate(['/supply-chain-dashboard']);
+            break;
+
+          case 'Vendor':
+            this.router.navigate(['/vendor-dashboard']);
+            break;
+
+          case 'Finance Officer':
+            this.router.navigate(['/finance-dashboard']);
+            break;
+
+          case 'Auditor':
+            this.router.navigate(['/auditor-dashboard']);
+            break;
+
+          default:
+            this.router.navigate(['/login']);
+
+        }
+
+      },
+
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = err.message || err.error?.detail || 'Invalid email or password';
+      }
+
+    });
+
+  }
+
 }
