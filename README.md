@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 21 Jun - Expand the Angular project with build config
 - 22 Jun - Extend the reset password screen with expired link messaging
 - 23 Jun - Extend the application shell with route definitions
 - 24 Jun - Refine typed responses in the core API services
 - 25 Jun - Refine expired link messaging in the reset password screen
 - 26 Jun - Refine password confirmation in the register screen
+- 27 Jun - Refine status colour mapping in the badge component
