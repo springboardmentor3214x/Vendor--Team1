@@ -1,0 +1,33 @@
+.vrip-card {
+  background: var(--v-bg-card);
+  border-radius: var(--v-radius-lg);
+  border: 1px solid var(--v-border);
+  box-shadow: var(--v-shadow-card);
+  overflow: hidden;
+  transition: box-shadow var(--v-duration) var(--v-ease), border-color var(--v-duration) var(--v-ease);
+}
+
+.vrip-card:not(.vrip-card-no-padding) {
+  padding: var(--v-6);
+}
+
+.vrip-card.vrip-card-no-padding {
+  padding: 0;
+}
+
+.vrip-card.interactive {
+  cursor: pointer;
+}
+
+.placeholder-panel {
+  padding: 10px;
+  border: 1px dashed #c9c9c9;
+  border-radius: 4px;
+  color: #7a7a7a;
+}
+
+.placeholder-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
