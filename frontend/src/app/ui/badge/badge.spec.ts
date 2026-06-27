@@ -2,12 +2,21 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { Badge } from './badge';
 
-const PLACEHOLDER_BADGE_SPEC_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-];
+describe('Badge', () => {
+  let component: Badge;
+  let fixture: ComponentFixture<Badge>;
 
-function usePlaceholderBadgeSpec(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_BADGE_SPEC_ROWS;
-}
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [Badge],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Badge);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
