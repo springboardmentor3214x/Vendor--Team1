@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 21 Jun - Reconcile the Angular project with the Angular services
 - 22 Jun - Expand auth with password reset flow
 - 23 Jun - Support role assignment in user
 - 24 Jun - Settle the core API services behaviour between client and server
 - 25 Jun - Handle empty responses from auth in the integrated flow
 - 26 Jun - Settle the badge component behaviour between client and server
+- 27 Jun - Verify the login screen end to end against the running backend
