@@ -10,19 +10,20 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './sidebar.css'
 })
 export class Sidebar implements OnInit {
+
   role: string = '';
+
   constructor(
     private authService: AuthService,
     private router: Router
   ) {}
-}
 
-const PLACEHOLDER_SIDEBAR_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-];
+  ngOnInit(): void {
+    this.role = this.authService.getUserRole() || '';
+  }
 
-function usePlaceholderSidebar(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_SIDEBAR_ROWS;
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 }
