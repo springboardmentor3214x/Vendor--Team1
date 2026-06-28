@@ -43,16 +43,16 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Milestone status
 
-- [ ] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
+- [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
 - [ ] Milestone 2 (24 Jul 2026) - Vendor and procurement management
 - [ ] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
 - [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 22 Jun - Ongoing backend work
 - 23 Jun - Expand user with role assignment
 - 24 Jun - Add the vendor categories with registration validation rules
 - 25 Jun - Add order tracking model with shipment milestones
 - 26 Jun - Extend the application setup with database bootstrap
 - 27 Jun - Refine role assignment in user
+- 28 Jun - Improve CORS configuration in the application setup
