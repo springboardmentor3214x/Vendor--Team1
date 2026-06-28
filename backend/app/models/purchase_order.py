@@ -1,0 +1,13 @@
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
+from datetime import datetime
+from app.database.base import Base
+
+class PurchaseOrder(Base):
+    __tablename__ = "purchase_orders"
+    id = Column(Integer, primary_key=True, index=True)
+    po_number = Column(String(50), unique=True, nullable=False)
+    procurement_id = Column(Integer, ForeignKey("procurements.id"), nullable=False)
+    vendor_id = Column(Integer, ForeignKey("vendors.id"), nullable=False)
+    vendor_name = Column(String(150), nullable=False)
+    vendor_address = Column(String(255), nullable=True)
+    contact_person = Column(String(100), nullable=True)
