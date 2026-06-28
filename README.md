@@ -41,16 +41,16 @@ src/app/
 
 ## Milestone status
 
-- [ ] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
+- [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
 - [ ] Milestone 2 (24 Jul 2026) - Vendor and procurement management
 - [ ] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
 - [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 22 Jun - Extend the settings screen with preference persistence
 - 23 Jun - Extend the settings screen with notification preferences
 - 24 Jun - Flesh out the navbar with logout handling
 - 25 Jun - Add the invoice management screen with amount columns
 - 26 Jun - Improve collapse behaviour in the sidebar
 - 27 Jun - Improve error messaging in the login screen
+- 28 Jun - Refine logout handling in the navbar
