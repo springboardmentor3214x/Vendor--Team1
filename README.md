@@ -43,16 +43,16 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Milestone status
 
-- [ ] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
+- [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
 - [ ] Milestone 2 (24 Jul 2026) - Vendor and procurement management
 - [ ] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
 - [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 22 Jun - Round out auth with account status checks
 - 23 Jun - Add CORS configuration to password security
 - 24 Jun - Refine password reset flow in auth
 - 25 Jun - Improve session handling in auth
 - 26 Jun - Add communication model with threaded discussions
 - 27 Jun - Add communication log model with file sharing
+- 28 Jun - Add compliance record model with audit findings
