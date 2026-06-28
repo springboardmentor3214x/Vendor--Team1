@@ -11,43 +11,169 @@
     <div *ngIf="errorMessage" style="background: rgba(239, 68, 68, 0.1); color: #991b1b; border: 1px solid #fca5a5; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 0.875rem; font-weight: 500;">
         ⚠ {{ errorMessage }}
     </div>
-</div>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+    <div class="settings-layout" style="display: grid; grid-template-columns: 240px 1fr; gap: 24px;">
+
+        <div class="settings-nav" style="display: flex; flex-direction: column; gap: 4px;">
+            <div (click)="selectTab('general')"
+                 [ngClass]="{'active': activeTab === 'general'}"
+                 style="padding: 12px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 10px; transition: background 0.2s;"
+                 [ngStyle]="{'background': activeTab === 'general' ? '#4f46e5' : 'transparent', 'color': activeTab === 'general' ? '#fff' : 'var(--text-secondary)'}">
+                <span class="material-symbols-outlined">settings</span>
+                General Preferences
+            </div>
+            <div (click)="selectTab('security')"
+                 [ngClass]="{'active': activeTab === 'security'}"
+                 style="padding: 12px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 10px; transition: background 0.2s;"
+                 [ngStyle]="{'background': activeTab === 'security' ? '#4f46e5' : 'transparent', 'color': activeTab === 'security' ? '#fff' : 'var(--text-secondary)'}">
+                <span class="material-symbols-outlined">lock</span>
+                Security & Password
+            </div>
+            <div (click)="selectTab('notifications')"
+                 [ngClass]="{'active': activeTab === 'notifications'}"
+                 style="padding: 12px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 10px; transition: background 0.2s;"
+                 [ngStyle]="{'background': activeTab === 'notifications' ? '#4f46e5' : 'transparent', 'color': activeTab === 'notifications' ? '#fff' : 'var(--text-secondary)'}">
+                <span class="material-symbols-outlined">notifications</span>
+                Notifications
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+
+            <app-card *ngIf="activeTab === 'general'">
+                <h2 style="margin: 0 0 20px 0; font-size: 1.125rem; font-weight: 600;">General Preferences</h2>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 6px; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);">Language</label>
+                        <select [(ngModel)]="language" class="vrip-select" style="width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg);">
+                            <option>English (US)</option>
+                            <option>Spanish</option>
+                            <option>French</option>
+                            <option>German</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 6px; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);">Timezone</label>
+                        <select [(ngModel)]="timezone" class="vrip-select" style="width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg);">
+                            <option>(GMT+05:30) India Standard Time</option>
+                            <option>(GMT-05:00) Eastern Time</option>
+                            <option>(GMT-08:00) Pacific Time</option>
+                            <option>(GMT+00:00) UTC</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 6px; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);">Date Format</label>
+                        <select [(ngModel)]="dateFormat" class="vrip-select" style="width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg);">
+                            <option>DD/MM/YYYY</option>
+                            <option>MM/DD/YYYY</option>
+                            <option>YYYY-MM-DD</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 6px; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);">Default Currency</label>
+                        <select [(ngModel)]="currency" class="vrip-select" style="width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg);">
+                            <option>INR (₹)</option>
+                            <option>USD ($)</option>
+                            <option>EUR (€)</option>
+                            <option>GBP (£)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
+                    <app-button variant="primary" (onClick)="saveGeneral()">Save General Preferences</app-button>
+                </div>
+            </app-card>
+
+            <app-card *ngIf="activeTab === 'security'">
+                <h2 style="margin: 0 0 20px 0; font-size: 1.125rem; font-weight: 600;">Security & Password</h2>
+
+                <div style="display: flex; flex-direction: column; gap: 16px; max-width: 480px; margin-bottom: 24px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 6px; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);">Current Password</label>
+                        <input type="password" [(ngModel)]="currentPassword" placeholder="Enter current password" style="width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg);" />
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 6px; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);">New Password</label>
+                        <input type="password" [(ngModel)]="newPassword" placeholder="Enter new password (min. 6 chars)" style="width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg);" />
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 6px; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);">Confirm New Password</label>
+                        <input type="password" [(ngModel)]="confirmPassword" placeholder="Confirm new password" style="width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg);" />
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <app-button variant="primary" (onClick)="changePassword()" [disabled]="isSubmitting">
+                            {{ isSubmitting ? 'Updating...' : 'Update Password' }}
+                        </app-button>
+                    </div>
+                </div>
+
+                <div style="padding-top: 20px; border-top: 1px solid var(--border-color);">
+                    <h3 style="margin: 0 0 12px 0; font-size: 1rem; font-weight: 600;">Additional Security Measures</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <div style="font-weight: 500; font-size: 0.875rem;">Two-Factor Authentication (2FA)</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Require verification code when logging into platform</div>
+                        </div>
+                        <input type="checkbox" [(ngModel)]="enableTwoFactor" style="width: 18px; height: 18px; cursor: pointer;" />
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 500; font-size: 0.875rem;">Session Timeout</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Auto logout after period of inactivity</div>
+                        </div>
+                        <select [(ngModel)]="sessionTimeout" class="vrip-select" style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                            <option>15 Minutes</option>
+                            <option>30 Minutes</option>
+                            <option>1 Hour</option>
+                            <option>Never</option>
+                        </select>
+                    </div>
+                </div>
+            </app-card>
+
+            <app-card *ngIf="activeTab === 'notifications'">
+                <h2 style="margin: 0 0 20px 0; font-size: 1.125rem; font-weight: 600;">Notification Preferences</h2>
+
+                <div style="display: flex; flex-direction: column; gap: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
+                        <div>
+                            <div style="font-weight: 500; font-size: 0.875rem;">Email Notifications</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Receive alerts & procurement updates via email</div>
+                        </div>
+                        <input type="checkbox" [(ngModel)]="emailNotifications" style="width: 18px; height: 18px; cursor: pointer;" />
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
+                        <div>
+                            <div style="font-weight: 500; font-size: 0.875rem;">SMS Urgent Alerts</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Receive high-priority delivery delay warnings on mobile phone</div>
+                        </div>
+                        <input type="checkbox" [(ngModel)]="smsAlerts" style="width: 18px; height: 18px; cursor: pointer;" />
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
+                        <div>
+                            <div style="font-weight: 500; font-size: 0.875rem;">Delivery Delay Warnings</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Auto-generate notification when shipment is delayed</div>
+                        </div>
+                        <input type="checkbox" [(ngModel)]="deliveryDelayAlerts" style="width: 18px; height: 18px; cursor: pointer;" />
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
+                        <div>
+                            <div style="font-weight: 500; font-size: 0.875rem;">Contract Expiry Reminders</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Alert when active contracts are within 30 days of expiry</div>
+                        </div>
+                        <input type="checkbox" [(ngModel)]="contractExpiryAlerts" style="width: 18px; height: 18px; cursor: pointer;" />
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px; display: flex; justify-content: flex-end;">
+                    <app-button variant="primary" (onClick)="saveNotificationSettings()">Save Notification Settings</app-button>
+                </div>
+            </app-card>
+        </div>
+    </div>
 </div>
