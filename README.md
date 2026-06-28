@@ -41,16 +41,16 @@ src/app/
 
 ## Milestone status
 
-- [ ] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
+- [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
 - [ ] Milestone 2 (24 Jul 2026) - Vendor and procurement management
 - [ ] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
 - [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 22 Jun - Extend the reset password screen with expired link messaging
 - 23 Jun - Extend the application shell with route definitions
 - 24 Jun - Refine typed responses in the core API services
 - 25 Jun - Refine expired link messaging in the reset password screen
 - 26 Jun - Refine password confirmation in the register screen
 - 27 Jun - Refine status colour mapping in the badge component
+- 28 Jun - Add the card component with header and footer slots
