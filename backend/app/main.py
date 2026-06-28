@@ -2,9 +2,11 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+
 from app.core.config import CORS_ORIGINS
 from app.database.connection import engine
 from app.database.base import Base
+
 from app.models.user import User
 from app.models.vendor import Vendor
 from app.models.procurement import Procurement
@@ -16,10 +18,12 @@ from app.models.communication_log import CommunicationLog
 from app.models.service_rating import ServiceRating
 from app.models.contract import Contract
 from app.models.communication import Communication
+
 from app.models.vendor_document import VendorDocument
 from app.models.purchase_order import PurchaseOrder
 from app.models.order_tracking import OrderTracking
 from app.models.invoice import Invoice
+
 from app.api.auth import router as auth_router
 from app.api.user import router as user_router
 from app.api.vendor import router as vendor_router
@@ -34,9 +38,10 @@ from app.api.notification import router as notification_router
 from app.api.communication import router as communication_router
 from app.api.contract import router as contract_router
 from app.api.reports import router as reports_router
-from app.database.schema_sync import sync_schema
 
 Base.metadata.create_all(bind=engine)
+
+from app.database.schema_sync import sync_schema
 
 try:
     _added_columns = sync_schema(engine)
@@ -60,61 +65,30 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
-
 app.include_router(user_router)
-
 app.include_router(vendor_router)
-
 app.include_router(procurement_router)
-
 app.include_router(purchase_order_router)
-
 app.include_router(order_tracking_router)
-
 app.include_router(invoice_router)
-
 app.include_router(performance_router)
+app.include_router(reliability_router)
+app.include_router(analytics_router)
+app.include_router(notification_router)
+app.include_router(contract_router)
+app.include_router(communication_router)
+app.include_router(reports_router)
 
 
-def _pending_main_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+@app.on_event("startup")
+def on_startup():
+    if os.getenv("SEED_ON_STARTUP", "false").lower() == "true":
+        from app.seed import seed_database
+        try:
+            seed_database(reset=False)
+        except Exception as e:
+            print(f"Startup seed notice: {e}")
 
-
-def _pending_main_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
-
-
-def _pending_main_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
-
-
-def _pending_main_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+@app.get("/")
+def health_check():
+    return {"status": "ok", "message": "Vendor Reliability Platform API is running"}
