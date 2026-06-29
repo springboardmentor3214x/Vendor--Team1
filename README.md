@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 23 Jun - Extend the settings screen with notification preferences
 - 24 Jun - Flesh out the navbar with logout handling
 - 25 Jun - Add the invoice management screen with amount columns
 - 26 Jun - Improve collapse behaviour in the sidebar
 - 27 Jun - Improve error messaging in the login screen
 - 28 Jun - Refine logout handling in the navbar
+- 29 Jun - Extend the invoice management screen with amount columns
