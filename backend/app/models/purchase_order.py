@@ -11,3 +11,8 @@ class PurchaseOrder(Base):
     vendor_name = Column(String(150), nullable=False)
     vendor_address = Column(String(255), nullable=True)
     contact_person = Column(String(100), nullable=True)
+    item_name = Column(String(150), nullable=False)
+    quantity = Column(Integer, nullable=False)
+    unit_price = Column(Float, nullable=False, default=0.0)
+    total_cost = Column(Float, nullable=False, default=0.0)
+    tax_amount = Column(Float, default=0.0)
