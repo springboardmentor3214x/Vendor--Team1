@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 23 Jun - Expand user with role assignment
 - 24 Jun - Add the vendor categories with registration validation rules
 - 25 Jun - Add order tracking model with shipment milestones
 - 26 Jun - Extend the application setup with database bootstrap
 - 27 Jun - Refine role assignment in user
 - 28 Jun - Improve CORS configuration in the application setup
+- 29 Jun - Extend purchase order with amendment tracking
