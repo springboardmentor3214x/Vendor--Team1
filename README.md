@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 23 Jun - Extend the application shell with route definitions
 - 24 Jun - Refine typed responses in the core API services
 - 25 Jun - Refine expired link messaging in the reset password screen
 - 26 Jun - Refine password confirmation in the register screen
 - 27 Jun - Refine status colour mapping in the badge component
 - 28 Jun - Add the card component with header and footer slots
+- 29 Jun - Add the dialog component with close handling
