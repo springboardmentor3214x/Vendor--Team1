@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 23 Jun - Add CORS configuration to password security
 - 24 Jun - Refine password reset flow in auth
 - 25 Jun - Improve session handling in auth
 - 26 Jun - Add communication model with threaded discussions
 - 27 Jun - Add communication log model with file sharing
 - 28 Jun - Add compliance record model with audit findings
+- 29 Jun - Add contract model with compliance clauses
