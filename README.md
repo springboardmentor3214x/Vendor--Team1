@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 23 Jun - Support role assignment in user
 - 24 Jun - Settle the core API services behaviour between client and server
 - 25 Jun - Handle empty responses from auth in the integrated flow
 - 26 Jun - Settle the badge component behaviour between client and server
 - 27 Jun - Verify the login screen end to end against the running backend
 - 28 Jun - Tighten database bootstrap in the application setup
+- 29 Jun - Retest contract after the latest backend changes
