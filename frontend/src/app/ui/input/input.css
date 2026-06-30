@@ -1,0 +1,59 @@
+.vrip-input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--v-5);
+}
+
+.vrip-input-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--v-text-primary);
+  margin-bottom: var(--v-2);
+}
+
+.vrip-input-required {
+  color: var(--v-danger);
+  margin-left: 2px;
+}
+
+.vrip-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.vrip-input-field {
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--v-3);
+  font-size: 0.875rem;
+  font-family: var(--v-font);
+  color: var(--v-text-primary);
+  background: var(--v-bg-card);
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-md);
+  transition: all var(--v-duration) var(--v-ease);
+  outline: none;
+}
+
+.vrip-input-field:hover:not(:disabled):not(:focus) {
+  border-color: var(--v-border-hover);
+}
+
+.vrip-input-field:focus {
+  border-color: var(--v-brand);
+  box-shadow: var(--v-shadow-focus);
+}
+
+.placeholder-panel {
+  padding: 10px;
+  border: 1px dashed #c9c9c9;
+  border-radius: 4px;
+  color: #7a7a7a;
+}
+
+.placeholder-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}

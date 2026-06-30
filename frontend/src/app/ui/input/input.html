@@ -1,0 +1,18 @@
+<div class="vrip-input-group" [ngClass]="{'has-error': error, 'is-disabled': disabled}">
+  <label class="vrip-input-label" *ngIf="label" [for]="id">
+    {{ label }}
+    <span class="vrip-input-required" *ngIf="required">*</span>
+  </label>
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+</div>
