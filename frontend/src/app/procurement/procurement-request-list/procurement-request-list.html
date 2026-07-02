@@ -1,0 +1,45 @@
+<div class="procurement-list-container">
+
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+        <div>
+            <h1 style="font-size: 1.75rem; font-weight: 700; color: #0f172a; margin: 0 0 6px 0;">Procurement Requests Directory</h1>
+            <p style="color: #64748b; margin: 0; font-size: 0.95rem;">Track, review, approve, and manage procurement requests across all organizational departments.</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <app-button variant="outline" iconLeft="refresh" (onClick)="loadRequests()">Refresh</app-button>
+            <app-button variant="primary" iconLeft="add" routerLink="/procurement-request">+ Raise Request</app-button>
+        </div>
+    </div>
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+  </div>
+</div>
