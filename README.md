@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 26 Jun - Refine password confirmation in the register screen
 - 27 Jun - Refine status colour mapping in the badge component
 - 28 Jun - Add the card component with header and footer slots
 - 29 Jun - Add the dialog component with close handling
 - 30 Jun - Add the input component with validation styling
 - 01 Jul - Create the input component with validation styling
+- 02 Jul - Create the search component with clear control
