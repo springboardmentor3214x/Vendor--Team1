@@ -1,0 +1,173 @@
+<div class="page-container">
+    <div class="vrip-page-header" style="margin-bottom: var(--v-6, 24px); display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1 class="vrip-page-title">User Management</h1>
+            <p class="vrip-page-subtitle">Manage account access, approve user signups, and send direct messages to registered users.</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <app-button variant="primary" iconLeft="person_add" (onClick)="openRegisterModal()">Register User</app-button>
+            <app-button variant="outline" iconLeft="refresh" (onClick)="loadUsers()">Refresh Directory</app-button>
+        </div>
+    </div>
+
+    <app-card [noPadding]="true">
+        <div class="vrip-table-wrapper" style="overflow-x: auto; width: 100%;">
+            <table class="vrip-table" style="min-width: 850px; width: 100%;">
+                <thead>
+                    <tr>
+                        <th style="width: 70px;">ID</th>
+                        <th style="min-width: 180px;">User Name</th>
+                        <th style="min-width: 200px;">Email</th>
+                        <th style="min-width: 160px;">Role</th>
+                        <th style="width: 120px;">Status</th>
+                        <th style="width: 280px; text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <ng-container *ngIf="loading">
+                        <tr *ngFor="let _ of [1,2,3,4,5]" class="vrip-table-row">
+                            <td><div class="skeleton-cell" style="width: 30px;"></div></td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="skeleton-avatar" style="width: 32px; height: 32px;"></div>
+                                    <div class="skeleton-text" style="width: 110px;"></div>
+                                </div>
+                            </td>
+                            <td><div class="skeleton-cell" style="width: 160px;"></div></td>
+                            <td><div class="skeleton-badge" style="width: 100px;"></div></td>
+                            <td><div class="skeleton-badge" style="width: 70px;"></div></td>
+                            <td style="text-align: right;"><div class="skeleton-button" style="width: 140px; margin-left: auto;"></div></td>
+                        </tr>
+                    </ng-container>
+
+                    <tr *ngIf="!loading && errorMsg">
+                        <td colspan="6" class="vrip-table-empty">
+                            <div class="empty-state">
+                                <span class="material-symbols-outlined empty-icon" style="color: var(--v-danger, #ef4444);">error</span>
+                                <p style="color: var(--v-danger, #ef4444); font-weight: 500;">{{ errorMsg }}</p>
+                                <app-button variant="outline" size="sm" (onClick)="loadUsers()">Retry</app-button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <ng-container *ngIf="!loading && !errorMsg">
+                        <tr *ngFor="let user of users" class="vrip-table-row">
+                            <td><span class="user-id-badge">#{{ user.id }}</span></td>
+                            <td>
+                                <div class="user-cell-flex">
+                                    <div class="user-avatar-pill" [ngClass]="getAvatarColorClass(user.role)">
+                                        {{ getInitials(user.name) }}
+                                    </div>
+                                    <span class="user-name-cell" style="font-weight: 600;">{{ user.name }}</span>
+                                </div>
+                            </td>
+                            <td><span class="user-email-cell">{{ user.email }}</span></td>
+                            <td>
+                                <span class="role-chip">{{ user.role }}</span>
+                            </td>
+                            <td>
+                                <app-badge [variant]="user.status === 'Active' ? 'success' : user.status === 'Blocked' ? 'danger' : 'warning'">
+                                    {{ user.status }}
+                                </app-badge>
+                            </td>
+                            <td style="text-align: right; white-space: nowrap;">
+                                <div class="user-action-buttons" style="display: flex; gap: 4px; justify-content: flex-end; align-items: center;">
+
+                                    <app-button
+                                        variant="primary" size="sm"
+                                        iconLeft="chat"
+                                        (onClick)="openMessageModal(user)">
+                                        Message
+                                    </app-button>
+
+                                    <app-button
+                                        variant="outline" size="sm"
+                                        iconLeft="edit"
+                                        (onClick)="openEditModal(user)">
+                                        Edit
+                                    </app-button>
+
+                                    <app-button
+                                        variant="outline" size="sm"
+                                        iconLeft="lock_reset"
+                                        (onClick)="openResetModal(user)">
+                                        Password
+                                    </app-button>
+
+                                    <app-button
+                                        *ngIf="user.status === 'Pending Approval' || user.status === 'Blocked' || user.status === 'Deactivated'"
+                                        variant="success" size="sm"
+                                        iconLeft="check_circle"
+                                        (onClick)="approveUser(user)">
+                                        Approve
+                                    </app-button>
+                                    <app-button
+                                        *ngIf="user.status === 'Active'"
+                                        variant="warning" size="sm"
+                                        iconLeft="block"
+                                        (onClick)="blockUser(user)">
+                                        Block
+                                    </app-button>
+                                    <app-button
+                                        *ngIf="user.status === 'Active'"
+                                        variant="outline" size="sm"
+                                        iconLeft="person_off"
+                                        (onClick)="deactivateUser(user)">
+                                        Deactivate
+                                    </app-button>
+                                    <app-button
+                                        variant="danger" size="sm"
+                                        iconLeft="delete"
+                                        (onClick)="deleteUser(user)">
+                                    </app-button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr *ngIf="users.length === 0">
+                            <td colspan="6" class="vrip-table-empty">
+                                <div class="empty-state">
+                                    <span class="material-symbols-outlined empty-icon">people</span>
+                                    <p>No registered users found</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </app-card>
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+  </div>
+</div>
