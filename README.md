@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 27 Jun - Improve error messaging in the login screen
 - 28 Jun - Refine logout handling in the navbar
 - 29 Jun - Extend the invoice management screen with amount columns
 - 30 Jun - Create the procurement dashboard screen with status breakdown
 - 01 Jul - Build the procurement dashboard screen with status breakdown
 - 02 Jul - Extend the procurement dashboard screen with status breakdown
+- 03 Jul - Expand the procurement request list screen with row actions
