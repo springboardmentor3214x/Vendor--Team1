@@ -1,0 +1,54 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+
+import { Card } from '../../ui/card/card';
+import { Badge } from '../../ui/badge/badge';
+import { Button } from '../../ui/button/button';
+import { ProcurementService } from '../../core/services/procurement.service';
+import { AuthService } from '../../core/services/auth.service';
+
+@Component({
+  selector: 'app-procurement-request-list',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    Card,
+    Badge,
+    Button
+  ],
+  templateUrl: './procurement-request-list.html',
+  styleUrls: ['./procurement-request-list.css'],
+})
+export class ProcurementRequestList implements OnInit {
+  rawRequests: any[] = [];
+  filteredRequests: any[] = [];
+  pagedRequests: any[] = [];
+  loading = true;
+  errorMsg = '';
+  searchQuery = '';
+  selectedDepartment = '';
+  selectedStatus = '';
+  selectedPriority = '';
+  sortBy = 'created_at_desc';
+  currentPage = 1;
+  pageSize = 10;
+}
+
+const PLACEHOLDER_PROCUREMENT_REQUEST_LIST_ROWS = [
+  { id: 1, name: 'Northwind Steel', status: 'Active' },
+  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
+  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
+  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
+  { id: 5, name: 'Harborline Equipment', status: 'Active' },
+  { id: 6, name: 'Vertex Services', status: 'Pending Approval' },
+  { id: 7, name: 'Ironvale Supplies', status: 'Under Review' },
+  { id: 8, name: 'Copperfield Freight', status: 'Inactive' },
+];
+
+function usePlaceholderProcurementRequestList(rows: any[]): any[] {
+  return rows && rows.length ? rows : PLACEHOLDER_PROCUREMENT_REQUEST_LIST_ROWS;
+}
