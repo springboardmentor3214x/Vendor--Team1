@@ -21,15 +21,20 @@ export class Table {
   @Input() data: any[] = [];
   @Input() searchable: boolean = false;
   @Input() pagination: boolean = false;
-}
+  @Input() totalItems: number = 0;
+  @Input() hasToolbar: boolean = false;
+  @Input() hasActionsCol: boolean = false;
+  @Input() loading: boolean = false;
+  @Input() skeletonRows: number = 4;
 
-const PLACEHOLDER_TABLE_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-];
+  @Output() search = new EventEmitter<string>();
 
-function usePlaceholderTable(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_TABLE_ROWS;
+  get dummyRows(): number[] {
+    return Array.from({ length: this.skeletonRows });
+  }
+
+  onSearch(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.search.emit(input.value);
+  }
 }
