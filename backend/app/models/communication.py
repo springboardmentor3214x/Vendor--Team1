@@ -10,3 +10,7 @@ class Communication(Base):
     po_id = Column(Integer, ForeignKey("purchase_orders.id"), nullable=True)
     contract_id = Column(Integer, ForeignKey("contracts.id"), nullable=True)
     discussion_id = Column(Integer, nullable=True)
+    sender_id = Column(Integer, nullable=True)
+    sender_name = Column(String(100), nullable=False)
+    receiver_id = Column(Integer, nullable=True)
+    receiver_name = Column(String(100), nullable=True)
