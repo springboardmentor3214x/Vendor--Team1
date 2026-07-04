@@ -1,0 +1,56 @@
+<div class="page-container">
+    <div class="page-vrip-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <a routerLink="/contract-management" style="font-size: 0.875rem; color: var(--text-secondary); text-decoration: none;">
+                &larr; Back to Contract Repository
+            </a>
+            <h1 class="vrip-page-title" style="margin-top: 6px;">Certifications &amp; Compliance</h1>
+            <p style="color: var(--text-secondary);">Track vendor certifications, expiry dates and compliance verification.</p>
+        </div>
+    </div>
+
+    <app-card style="margin-bottom: 20px;">
+        <div style="display: flex; gap: 16px; align-items: end; flex-wrap: wrap;">
+            <div class="form-group" style="min-width: 280px;">
+                <label>Vendor</label>
+                <select [(ngModel)]="selectedVendorId" (change)="loadRecords()" [disabled]="loadingVendors">
+                    <option [ngValue]="null">{{ loadingVendors ? 'Loading vendors...' : 'Select a vendor' }}</option>
+                    <option *ngFor="let v of vendors" [ngValue]="v.id">{{ v.companyName }}</option>
+                </select>
+            </div>
+            <app-button variant="outline" iconLeft="refresh" (onClick)="loadRecords()">Refresh</app-button>
+        </div>
+    </app-card>
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+  </div>
+</div>
