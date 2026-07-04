@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 28 Jun - Improve CORS configuration in the application setup
 - 29 Jun - Extend purchase order with amendment tracking
 - 30 Jun - Add vendor document model with status monitoring actions
 - 01 Jul - Add invoice schemas with payment tracking fields
 - 02 Jul - Add sample data service with application startup
 - 03 Jul - Add purchase order schemas with delivery schedule fields
+- 04 Jul - Refine status monitoring actions in vendor
