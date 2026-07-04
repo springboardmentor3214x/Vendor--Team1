@@ -5,32 +5,76 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class ContractService {
   private apiUrl = '/contracts';
+
   constructor(private http: HttpClient) {}
+
   getContracts(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/`);
   }
+
   getExpiringContracts(days: number = 90): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/expiring?days=${days}`);
   }
+
   downloadContractDocument(id: string | number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}${id}/document`, { responseType: 'blob' });
   }
+
   getContractById(id: string | number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
-}
 
-const PLACEHOLDER_CONTRACT_SERVICE_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 5, name: 'Harborline Equipment', status: 'Active' },
-  { id: 6, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 7, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 8, name: 'Copperfield Freight', status: 'Inactive' },
-];
+  createContract(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/`, data);
+  }
 
-function usePlaceholderContractService(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_CONTRACT_SERVICE_ROWS;
+  createContractWithFile(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/upload`, formData);
+  }
+
+  updateContract(id: string | number, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, data);
+  }
+
+  renewContract(id: string | number, newEndDate: string, newValue?: number): Observable<any> {
+    const url = newValue
+      ? `${this.apiUrl}/${id}/renew?new_end_date=${newEndDate}&new_value=${newValue}`
+      : `${this.apiUrl}/${id}/renew?new_end_date=${newEndDate}`;
+    return this.http.post(url, {});
+  }
+
+  deleteContract(id: string | number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  addCertification(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/certifications`, data);
+  }
+
+  getVendorCertifications(vendorId: string | number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/certifications/${vendorId}`);
+  }
+
+  deleteCertification(certId: string | number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/certifications/${certId}`);
+  }
+
+  recordCompliance(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/compliance`, data);
+  }
+
+  getVendorCompliance(vendorId: string | number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/compliance/${vendorId}`);
+  }
+
+  updateComplianceStatus(id: string | number, status: string, remarks?: string): Observable<any> {
+    const url = remarks
+      ? `${this.apiUrl}/compliance/${id}?status=${status}&remarks=${encodeURIComponent(remarks)}`
+      : `${this.apiUrl}/compliance/${id}?status=${status}`;
+    return this.http.put(url, {});
+  }
+
+  getComplianceDashboard(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/compliance/dashboard`);
+  }
 }
