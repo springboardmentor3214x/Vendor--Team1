@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 28 Jun - Add compliance record model with audit findings
 - 29 Jun - Add contract model with compliance clauses
 - 30 Jun - Create discussion model with threaded replies
 - 01 Jul - Create shared file model with upload size limits
 - 02 Jul - Add activity log schemas with actor and action capture
 - 03 Jul - Add certification schemas with renewal reminders
+- 04 Jul - Expand communication with activity logging
