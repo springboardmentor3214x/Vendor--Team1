@@ -33,3 +33,9 @@ try:
 except Exception as e:
     print("❌ Database Connection Failed")
     print(e)
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
