@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 29 Jun - Extend the invoice management screen with amount columns
 - 30 Jun - Create the procurement dashboard screen with status breakdown
 - 01 Jul - Build the procurement dashboard screen with status breakdown
 - 02 Jul - Extend the procurement dashboard screen with status breakdown
 - 03 Jul - Expand the procurement request list screen with row actions
 - 04 Jul - Add the procurement request screen with draft autosave
+- 05 Jul - Create the procurement request screen with line item rows
