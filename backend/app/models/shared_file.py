@@ -9,3 +9,6 @@ class SharedFile(Base):
     file_path = Column(String(500), nullable=False)
     file_type = Column(String(150), nullable=True)
     file_size = Column(Integer, nullable=True)
+    uploaded_by = Column(String(100), nullable=False)
+    vendor_id = Column(Integer, ForeignKey("vendors.id"), nullable=True)
+    procurement_id = Column(Integer, ForeignKey("procurements.id"), nullable=True)

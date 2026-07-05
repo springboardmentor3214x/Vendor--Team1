@@ -16,15 +16,39 @@
     .summary-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
+@media (max-width: 640px) {
+    .summary-grid { grid-template-columns: 1fr; }
+}
+
+.vrip-table-container {
+    background: var(--v-bg-card);
+    border: 1px solid var(--v-border);
+    border-radius: var(--v-radius-lg);
+    box-shadow: var(--v-shadow-card);
+    padding: var(--v-2);
+}
+
+.link-styled {
+    color: var(--v-brand);
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity var(--v-duration);
+}
+
 .placeholder-panel {
-  padding: 10px;
-  border: 1px dashed #c9c9c9;
-  border-radius: 4px;
+  padding: 12px;
+  border: 1px dashed #d2d2d2;
+  border-radius: 5px;
   color: #7a7a7a;
 }
 
 .placeholder-row {
   display: flex;
   justify-content: space-between;
-  padding: 4px 0;
+  padding: 5px 0;
+}
+
+.placeholder-row span {
+  font-size: 13px;
+  letter-spacing: 0.2px;
 }
