@@ -8,3 +8,5 @@ class Discussion(Base):
     topic = Column(String(200), nullable=False)
     vendor_id = Column(Integer, ForeignKey("vendors.id"), nullable=True)
     procurement_id = Column(Integer, ForeignKey("procurements.id"), nullable=True)
+    po_id = Column(Integer, ForeignKey("purchase_orders.id"), nullable=True)
+    contract_id = Column(Integer, ForeignKey("contracts.id"), nullable=True)
