@@ -3,16 +3,25 @@
     {{ label }}
     <span class="vrip-input-required" *ngIf="required">*</span>
   </label>
-</div>
 
-<div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
+  <div class="vrip-input-wrapper">
+    <span class="material-symbols-outlined vrip-input-icon-left" *ngIf="iconLeft">{{ iconLeft }}</span>
+
+    <input
+      class="vrip-input-field"
+      [ngClass]="{'has-icon-left': iconLeft, 'has-icon-right': iconRight}"
+      [type]="type"
+      [id]="id"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      [value]="value"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+      >
+
+    <span class="material-symbols-outlined vrip-input-icon-right" *ngIf="iconRight">{{ iconRight }}</span>
   </div>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-  </div>
+
+  <div class="vrip-input-hint" *ngIf="hint && !error">{{ hint }}</div>
+  <div class="vrip-input-error" *ngIf="error">{{ error }}</div>
 </div>
