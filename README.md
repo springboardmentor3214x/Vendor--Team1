@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 29 Jun - Retest contract after the latest backend changes
 - 30 Jun - Introduce the input component with validation styling
 - 01 Jul - Introduce the search component with clear control
 - 02 Jul - Add the procurement request list screen with keyword search
 - 03 Jul - Create certification schemas with issuing authority details
 - 04 Jul - Refine approval workflow transitions in vendor
+- 05 Jul - Handle empty responses from the procurement request screen in the integrated flow
