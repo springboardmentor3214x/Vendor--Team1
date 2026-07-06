@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 
 import { Sidebar } from './layout/sidebar/sidebar';
 import { Navbar } from './layout/navbar/navbar';
@@ -16,5 +16,7 @@ import { Navbar } from './layout/navbar/navbar';
   styleUrl: './app.css'
 })
 export class App {
+
+  constructor(public router: Router) {}
 
 }
