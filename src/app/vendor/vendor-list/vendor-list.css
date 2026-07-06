@@ -1,0 +1,126 @@
+.vendor-page{
+
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+
+}
+
+.header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+}
+
+.header h1{
+
+    margin:0;
+
+}
+
+.header p{
+
+    color:gray;
+
+}
+
+.add-btn{
+
+    background:#2563eb;
+    color:white;
+
+    border:none;
+
+    padding:12px 22px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+}
+
+.search-bar input{
+
+    width:350px;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    border:1px solid #ddd;
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    background:white;
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+}
+
+th{
+
+    background:#f8fafc;
+
+    text-align:left;
+
+    padding:18px;
+
+}
+
+td{
+
+    padding:18px;
+
+    border-bottom:1px solid #eee;
+
+}
+
+button{
+
+    margin-right:8px;
+
+    border:none;
+
+    padding:8px 14px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+}
+
+.delete{
+
+    background:#ef4444;
+
+    color:white;
+
+}
+
+.approved{
+
+    color:#16a34a;
+
+    font-weight:bold;
+
+}
+
+.pending{
+
+    color:#f59e0b;
+
+    font-weight:bold;
+
+}

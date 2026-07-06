@@ -1,0 +1,103 @@
+.navbar{
+
+    height:70px;
+
+    margin-left:260px;
+
+    background:white;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:0 30px;
+
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+
+}
+
+.left h2{
+
+    margin:0;
+
+    font-size:24px;
+
+    color:#0f172a;
+
+}
+
+.right{
+
+    display:flex;
+    align-items:center;
+    gap:20px;
+
+}
+
+.icon-btn{
+
+    width:42px;
+    height:42px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#f1f5f9;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.icon-btn:hover{
+
+    background:#dbeafe;
+
+}
+
+.profile{
+
+    display:flex;
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.avatar{
+
+    width:42px;
+    height:42px;
+
+    border-radius:50%;
+
+    background:#2563eb;
+
+    color:white;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-weight:bold;
+
+}
+
+.profile h4{
+
+    margin:0;
+    font-size:15px;
+
+}
+
+.profile p{
+
+    margin:2px 0 0;
+
+    font-size:12px;
+
+    color:gray;
+
+}
