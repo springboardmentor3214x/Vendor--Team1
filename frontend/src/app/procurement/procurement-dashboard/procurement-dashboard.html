@@ -11,32 +11,67 @@
         </div>
     </div>
 
-</div>
+    <div *ngIf="isLoading" class="loading-spinner-container">
+        <div class="spinner"></div>
+        <p>Loading procurement stats...</p>
+    </div>
 
-<div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-  </div>
+    <div *ngIf="!isLoading">
+
+        <div class="summary-grid">
+            <div class="summary-card" *ngFor="let card of summaryCards">
+                <div class="card-icon" [style.background-color]="card.color + '15'" [style.color]="card.color">
+                    <span class="material-symbols-outlined">{{ card.icon }}</span>
+                </div>
+                <div class="card-info">
+                    <h2 [style.color]="card.color">{{ card.value }}</h2>
+                    <p>{{ card.title }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <h2>Quick Navigation</h2>
+            <div class="quick-grid">
+                <a routerLink="/procurement-request" class="quick-card">
+                    <span class="material-symbols-outlined text-primary-500 quick-icon">add_shopping_cart</span>
+                    <h3>Procurement Request</h3>
+                    <p>Raise a new procurement request with justification.</p>
+                </a>
+                <a routerLink="/procurement/requests" class="quick-card">
+                    <span class="material-symbols-outlined text-primary-500 quick-icon">list_alt</span>
+                    <h3>Procurement Requests</h3>
+                    <p>View, search, filter, approve or reject requests.</p>
+                </a>
+                <a routerLink="/procurement/purchase-order/create" class="quick-card">
+                    <span class="material-symbols-outlined text-primary-500 quick-icon">receipt</span>
+                    <h3>Purchase Orders</h3>
+                    <p>Generate & review purchase orders for approved vendors.</p>
+                </a>
+                <a routerLink="/procurement/order-tracking/1" class="quick-card">
+                    <span class="material-symbols-outlined text-primary-500 quick-icon">local_shipping</span>
+                    <h3>Order Tracking</h3>
+                    <p>Track shipment dispatch, delivery progress, and delay alerts.</p>
+                </a>
+                <a routerLink="/procurement/invoice-management" class="quick-card">
+                    <span class="material-symbols-outlined text-primary-500 quick-icon">receipt_long</span>
+                    <h3>Invoice Management</h3>
+                    <p>Upload, verify invoices and approve payments.</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <h2>Recent Procurement Activities</h2>
+            <div class="activity-card">
+                <div class="activity-item" *ngFor="let activity of recentActivities">
+                    <span class="material-symbols-outlined activity-icon">history</span>
+                    <div class="activity-content">
+                        <span class="activity-text">{{ activity.message }}</span>
+                        <span class="activity-time" *ngIf="activity.timestamp">{{ activity.timestamp }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
