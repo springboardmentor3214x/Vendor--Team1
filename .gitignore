@@ -1,0 +1,29 @@
+# Node & Build Outputs
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.angular/
+**/.angular/
+tmp/
+out-tsc/
+
+# Environment & Secret files
+.env
+*.env
+!.env.example
+**/.env
+!**/.env.example
+
+# Untracked backend folder
+backend/
+
+# Agent & Utility Scripts
+.agents/
+scripts/
+
+# IDEs & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
