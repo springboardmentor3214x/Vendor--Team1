@@ -1,0 +1,47 @@
+<div class="status-container" *ngIf="procurement">
+    <div class="page-vrip-page-header">
+        <div>
+            <div class="vrip-page-header-breadcrumb">
+                <a routerLink="/procurement/requests">Procurement Requests</a>
+                <span class="material-symbols-outlined icon-sm">chevron_right</span>
+                <span>Lifecycle Progress</span>
+            </div>
+            <h1 class="vrip-page-title">Procurement Lifecycle: {{ procurement.request_number || ('PR-' + procurement.id) }}</h1>
+            <p>Track status progression, delivery state, and complete transition audit history.</p>
+        </div>
+        <div class="vrip-page-header-actions">
+            <app-button variant="outline" iconLeft="arrow_back" routerLink="/procurement/requests">
+                Back to Requests
+            </app-button>
+        </div>
+    </div>
+
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+</div>
