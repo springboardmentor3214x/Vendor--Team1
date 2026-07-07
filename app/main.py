@@ -1,9 +1,11 @@
 from fastapi import FastAPI
+from app.database.connection import engine
+from app.database.base import Base
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Vendor Reliability Platform API")
 
-dummy_vendors = [{"id": 1, "name": "Acme Corp"}]
-
 @app.get("/")
 def health_check():
-    return {"status": "ok", "vendors": dummy_vendors}
+    return {"status": "ok", "database": "connected"}
