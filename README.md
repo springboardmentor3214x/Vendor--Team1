@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 01 Jul - Create shared file model with upload size limits
 - 02 Jul - Add activity log schemas with actor and action capture
 - 03 Jul - Add certification schemas with renewal reminders
 - 04 Jul - Expand communication with activity logging
 - 05 Jul - Extend shared file with upload size limits
 - 06 Jul - Extend compliance record with audit findings
+- 07 Jul - Create discussion schemas with threaded replies
