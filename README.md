@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 01 Jul - Create the input component with validation styling
 - 02 Jul - Create the search component with clear control
 - 03 Jul - Create the table component with empty states
 - 04 Jul - Add the compliance management screen with certification expiry
 - 05 Jul - Add the contract details screen with attached documents
 - 06 Jul - Extend the core API services with HTTP service methods
+- 07 Jul - Expand the button component with disabled styling
