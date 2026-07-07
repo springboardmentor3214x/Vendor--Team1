@@ -11,6 +11,8 @@ from app.models.vendor_performance import VendorPerformance
 from app.api.vendor_performance import router as performance_router
 from app.models.procurement import Procurement
 from app.api.procurement import router as procurement_router
+from app.models.risk_assessment import RiskAssessment
+from app.api.risk_assessment import router as risk_router
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
@@ -23,6 +25,7 @@ app.include_router(auth_router)
 app.include_router(vendor_router)
 app.include_router(performance_router)
 app.include_router(procurement_router)
+app.include_router(risk_router)
 
 Base.metadata.create_all(bind=engine)
 
