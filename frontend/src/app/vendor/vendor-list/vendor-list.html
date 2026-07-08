@@ -1,1 +1,84 @@
-<p>vendor-list works!</p>
+<div class="vendor-page">
+
+    <div class="header">
+
+        <div>
+
+            <h1>Vendor Management</h1>
+            <p>Manage all registered vendors</p>
+
+        </div>
+
+        <button
+            class="add-btn"
+            routerLink="/vendors/add">
+
+            + Add Vendor
+
+        </button>
+
+    </div>
+
+    <div class="search-bar">
+
+        <input
+            type="text"
+            placeholder="Search Vendor...">
+
+    </div>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Vendor Name</th>
+                <th>Category</th>
+                <th>Rating</th>
+                <th>Status</th>
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <tr *ngFor="let vendor of vendors">
+
+                <td>{{ vendor.name }}</td>
+
+                <td>{{ vendor.category }}</td>
+
+                <td>{{ vendor.rating }} ⭐</td>
+
+                <td>
+
+                    <span
+                        [class.approved]="vendor.status === 'Approved'"
+                        [class.pending]="vendor.status === 'Pending'">
+
+                        {{ vendor.status }}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <button>View</button>
+
+                    <button>Edit</button>
+
+                    <button class="delete">Delete</button>
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>

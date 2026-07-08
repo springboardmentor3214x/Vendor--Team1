@@ -1,0 +1,164 @@
+.dashboard{
+
+    display:flex;
+    flex-direction:column;
+    gap:30px;
+
+}
+
+.dashboard-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+}
+
+.dashboard-header h1{
+
+    margin:0;
+    font-size:34px;
+    color:#0f172a;
+
+}
+
+.dashboard-header p{
+
+    color:#64748b;
+    margin-top:8px;
+
+}
+
+.refresh-btn{
+
+    border:none;
+    background:#2563eb;
+    color:white;
+
+    padding:12px 22px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+}
+
+.cards{
+
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+
+    gap:20px;
+
+}
+
+.card{
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:15px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+
+}
+
+.card h3{
+
+    margin:0;
+    color:#64748b;
+    font-size:16px;
+
+}
+
+.card h1{
+
+    margin:15px 0;
+
+    font-size:38px;
+
+    color:#1e293b;
+
+}
+
+.card p{
+
+    margin:0;
+
+    color:#16a34a;
+
+}
+
+.recent-vendors{
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:25px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+
+}
+
+.table-header{
+
+    margin-bottom:20px;
+
+}
+
+.table-header h2{
+
+    margin:0;
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+th{
+
+    text-align:left;
+
+    padding:15px;
+
+    background:#f8fafc;
+
+}
+
+td{
+
+    padding:18px 15px;
+
+    border-bottom:1px solid #e2e8f0;
+
+}
+
+.approved{
+
+    color:#16a34a;
+    font-weight:600;
+
+}
+
+.pending{
+
+    color:#f59e0b;
+    font-weight:600;
+
+}
+
+.risk{
+
+    color:#dc2626;
+    font-weight:600;
+
+}

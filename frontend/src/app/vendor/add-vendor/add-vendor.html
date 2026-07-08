@@ -1,1 +1,53 @@
-<p>add-vendor works!</p>
+<div class="form-container">
+
+    <h1>Add Vendor</h1>
+
+    <div class="form-grid">
+
+        <input
+            type="text"
+            placeholder="Vendor Name"
+            [(ngModel)]="vendor.name">
+
+        <input
+            type="text"
+            placeholder="Category"
+            [(ngModel)]="vendor.category">
+
+        <input
+            type="email"
+            placeholder="Email"
+            [(ngModel)]="vendor.email">
+
+        <input
+            type="text"
+            placeholder="Phone"
+            [(ngModel)]="vendor.phone">
+
+        <input
+            type="text"
+            placeholder="GST Number"
+            [(ngModel)]="vendor.gst">
+
+        <input
+            type="number"
+            placeholder="Rating"
+            [(ngModel)]="vendor.rating">
+
+        <select [(ngModel)]="vendor.status">
+
+            <option>Approved</option>
+            <option>Pending</option>
+            <option>Rejected</option>
+
+        </select>
+
+    </div>
+
+    <button (click)="saveVendor()">
+
+        Save Vendor
+
+    </button>
+
+</div>

@@ -1,0 +1,71 @@
+.cards{
+
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+
+}
+
+.card{
+
+    background:white;
+    border-radius:16px;
+    padding:25px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+.card h3{
+
+    color:#64748b;
+    margin:0;
+    font-size:15px;
+
+}
+
+.card h1{
+
+    margin:18px 0;
+    font-size:42px;
+
+}
+
+.card p{
+
+    margin:0;
+    font-weight:600;
+
+}
+
+.blue{
+
+    border-top:6px solid #2563eb;
+
+}
+
+.green{
+
+    border-top:6px solid #16a34a;
+
+}
+
+.orange{
+
+    border-top:6px solid #f59e0b;
+
+}
+
+.red{
+
+    border-top:6px solid #dc2626;
+
+}

@@ -1,1 +1,87 @@
-<p>dashboard works!</p>
+<div class="dashboard">
+
+    <div class="dashboard-header">
+
+        <div>
+
+            <h1>Dashboard</h1>
+            <p>Welcome to Vendor Reliability Intelligence Platform</p>
+
+        </div>
+
+        <button class="refresh-btn">
+            Refresh
+        </button>
+
+    </div>
+
+    <app-dashboard-cards></app-dashboard-cards>
+
+    <div class="recent-vendors">
+
+        <div class="table-header">
+
+            <h2>Recent Vendors</h2>
+
+        </div>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Vendor</th>
+                    <th>Category</th>
+                    <th>Rating</th>
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>ABC Pvt Ltd</td>
+                    <td>Electronics</td>
+                    <td>4.8 ⭐</td>
+                    <td><span class="approved">Approved</span></td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Delta Steel</td>
+                    <td>Manufacturing</td>
+                    <td>4.2 ⭐</td>
+                    <td><span class="pending">Pending</span></td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Tech Solutions</td>
+                    <td>Software</td>
+                    <td>4.9 ⭐</td>
+                    <td><span class="approved">Approved</span></td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Global Logistics</td>
+                    <td>Transport</td>
+                    <td>3.7 ⭐</td>
+                    <td><span class="risk">High Risk</span></td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
