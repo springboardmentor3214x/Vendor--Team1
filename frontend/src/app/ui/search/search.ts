@@ -11,14 +11,17 @@ import { CommonModule } from '@angular/common';
 export class Search {
   @Input() placeholder: string = 'Search...';
   @Input() value: string = '';
-}
 
-const PLACEHOLDER_SEARCH_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-];
+  @Output() search = new EventEmitter<string>();
 
-function usePlaceholderSearch(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_SEARCH_ROWS;
+  onInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.value = input.value;
+    this.search.emit(this.value);
+  }
+
+  clear() {
+    this.value = '';
+    this.search.emit(this.value);
+  }
 }
