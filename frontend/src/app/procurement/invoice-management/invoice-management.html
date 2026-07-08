@@ -10,36 +10,147 @@
         </div>
     </div>
 
+    <app-card [noPadding]="true">
+        <div class="vrip-table-wrapper" style="overflow-x: auto; width: 100%;">
+            <table class="vrip-table" style="min-width: 1000px; width: 100%;">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Invoice No</th>
+                        <th style="width: 140px;">PO Number</th>
+                        <th style="min-width: 160px;">Vendor Name</th>
+                        <th style="width: 120px;">Invoice Date</th>
+                        <th style="width: 110px;">Amount</th>
+                        <th style="width: 100px;">Tax</th>
+                        <th style="width: 120px;">Total Amount</th>
+                        <th style="width: 110px;">Due Date</th>
+                        <th style="width: 120px;">Payment Status</th>
+                        <th style="width: 220px; text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <ng-container *ngIf="loading">
+                        <tr *ngFor="let _ of [1,2,3,4]" class="vrip-table-row">
+                            <td><div class="skeleton-cell" style="width: 90px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 90px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 140px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 80px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 70px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 60px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 80px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 80px;"></div></td>
+                            <td><div class="skeleton-badge"></div></td>
+                            <td style="text-align: right;"><div class="skeleton-button" style="width: 100px; margin-left: auto;"></div></td>
+                        </tr>
+                    </ng-container>
+
+                    <tr *ngIf="!loading && errorMsg">
+                        <td colspan="10" class="vrip-table-empty">
+                            <div class="empty-state" style="padding: 24px; text-align: center;">
+                                <span class="material-symbols-outlined empty-icon" style="color: #ef4444; font-size: 32px;">error</span>
+                                <p style="color: #ef4444; font-weight: 500; margin-top: 8px;">{{ errorMsg }}</p>
+                                <app-button variant="outline" size="sm" (onClick)="loadInvoices()">Retry</app-button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <ng-container *ngIf="!loading && !errorMsg">
+                        <tr *ngFor="let row of invoices" class="vrip-table-row">
+                            <td><strong>{{ row.invoice_number }}</strong></td>
+                            <td><a [routerLink]="['/procurement/purchase-order', row.po_id]" class="link-styled">PO-{{ row.po_id }}</a></td>
+                            <td><span style="font-weight: 500;">{{ row.vendor_name }}</span></td>
+                            <td>{{ row.invoice_date ? (row.invoice_date | date:'mediumDate') : 'Recent' }}</td>
+                            <td>₹{{ row.invoice_amount | number:'1.2-2' }}</td>
+                            <td>₹{{ (row.tax_amount || 0) | number:'1.2-2' }}</td>
+                            <td><strong style="color: #2563eb;">₹{{ row.total_amount | number:'1.2-2' }}</strong></td>
+                            <td>{{ row.due_date ? (row.due_date | date:'mediumDate') : 'N/A' }}</td>
+                            <td>
+                                <app-badge [variant]="getBadgeVariant(row.payment_status)">
+                                    {{ row.payment_status }}
+                                </app-badge>
+                            </td>
+                            <td style="text-align: right; white-space: nowrap;">
+                                <div style="display: flex; gap: 4px; justify-content: flex-end; align-items: center;">
+
+                                    <app-button
+                                        *ngIf="isFinanceOfficer() && row.payment_status === 'Pending'"
+                                        variant="primary" size="sm" iconLeft="fact_check"
+                                        (onClick)="verifyInvoice(row)">
+                                        Verify
+                                    </app-button>
+
+                                    <app-button
+                                        *ngIf="isFinanceOfficer() && (row.payment_status === 'Verified' || row.payment_status === 'Pending')"
+                                        variant="success" size="sm" iconLeft="payments"
+                                        (onClick)="approvePayment(row)">
+                                        Approve Payment
+                                    </app-button>
+
+                                    <app-button
+                                        *ngIf="isFinanceOfficer() && row.payment_status !== 'Paid' && row.payment_status !== 'Rejected'"
+                                        variant="danger" size="sm" iconLeft="cancel"
+                                        (onClick)="rejectInvoice(row)">
+                                        Reject
+                                    </app-button>
+
+                                    <span *ngIf="row.payment_status === 'Paid'" style="color: #16a34a; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 2px;">
+                                        <span class="material-symbols-outlined" style="font-size: 16px;">verified</span> Paid
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr *ngIf="invoices.length === 0">
+                            <td colspan="10" class="vrip-table-empty" style="padding: 32px; text-align: center;">
+                                <div class="empty-state">
+                                    <span class="material-symbols-outlined empty-icon" style="font-size: 48px; color: #94a3b8;">receipt_long</span>
+                                    <p style="margin-top: 8px; font-weight: 500; color: #64748b;">No vendor invoices uploaded yet.</p>
+                                    <app-button variant="primary" size="sm" iconLeft="upload_file" (onClick)="openUploadModal()">Upload First Invoice</app-button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </app-card>
 </div>
 
 <div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
+  <p>Awaiting the backend endpoint.</p>
   <div class="placeholder-row">
     <span>Orbit IT Systems</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Copperfield Freight</span>
+    <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
 </div>
