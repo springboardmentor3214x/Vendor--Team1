@@ -1,9 +1,59 @@
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-forgot-password',
-  imports: [],
+  standalone: true,
+  imports: [
+    FormsModule,
+    RouterModule
+  ],
   templateUrl: './forgot-password.html',
-  styleUrl: './forgot-password.css',
+  styleUrl: './forgot-password.css'
 })
-export class ForgotPassword {}
+export class ForgotPassword {
+
+  email = '';
+
+  loading = false;
+
+  emailSent = false;
+
+  constructor(private router: Router) {}
+
+  sendResetLink() {
+
+    if (!this.email.trim()) {
+
+      alert('Email is required');
+
+      return;
+
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(this.email)) {
+
+      alert('Enter a valid email address');
+
+      return;
+
+    }
+
+    this.loading = true;
+
+    // Backend API will be connected here later
+
+    setTimeout(() => {
+
+      this.loading = false;
+
+      this.emailSent = true;
+
+    }, 1000);
+
+  }
+
+}

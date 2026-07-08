@@ -44,6 +44,8 @@ export class Register {
 
   register() {
 
+    // Full Name
+
     if (!this.user.fullName.trim()) {
 
       alert('Full Name is required');
@@ -51,6 +53,32 @@ export class Register {
       return;
 
     }
+
+    // Employee ID / Company Name
+
+    if (this.isVendor) {
+
+      if (!this.user.companyName.trim()) {
+
+        alert('Company Name is required');
+
+        return;
+
+      }
+
+    } else {
+
+      if (!this.user.employeeId.trim()) {
+
+        alert('Employee ID is required');
+
+        return;
+
+      }
+
+    }
+
+    // Email
 
     if (!this.user.email.trim()) {
 
@@ -60,9 +88,49 @@ export class Register {
 
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(this.user.email)) {
+
+      alert('Enter a valid email address');
+
+      return;
+
+    }
+
+    // Mobile Number
+
+    if (!/^[0-9]{10}$/.test(this.user.mobile)) {
+
+      alert('Enter a valid 10-digit mobile number');
+
+      return;
+
+    }
+
+    // Password
+
     if (!this.user.password) {
 
       alert('Password is required');
+
+      return;
+
+    }
+
+    if (this.user.password.length < 8) {
+
+      alert('Password must be at least 8 characters');
+
+      return;
+
+    }
+
+    // Confirm Password
+
+    if (!this.user.confirmPassword) {
+
+      alert('Confirm Password is required');
 
       return;
 
@@ -75,6 +143,8 @@ export class Register {
       return;
 
     }
+
+    // Backend will check duplicate email
 
     alert('Registration Successful');
 
