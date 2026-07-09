@@ -17,6 +17,7 @@ from app.models.purchase_order import PurchaseOrder
 from app.api.purchase_order import router as purchase_order_router
 from app.models.contract import Contract
 from app.api.contract import router as contract_router
+from app.api.analytics import router as analytics_router
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
@@ -33,6 +34,7 @@ app.include_router(risk_router)
 app.include_router(purchase_order_router)
 app.include_router(purchase_order_router)
 app.include_router(contract_router)
+app.include_router(analytics_router)
 
 Base.metadata.create_all(bind=engine)
 
