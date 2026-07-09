@@ -131,14 +131,94 @@ def update_vendor(db: Session, vendor_id: int, data: VendorUpdate, updated_by: O
     db.refresh(vendor)
     return vendor
 
+def check_vendor_active_activities(db: Session, vendor_id: int):
+    from app.models.procurement import Procurement
+    from app.models.purchase_order import PurchaseOrder
+    from app.models.contract import Contract
+    from fastapi import HTTPException
+
+    active_po = db.query(PurchaseOrder).filter(
+        PurchaseOrder.vendor_id == vendor_id,
+        PurchaseOrder.status.in_(["Issued", "In Transit", "Pending"])
+    ).first()
+    if active_po:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot delete or deactivate vendor with active Purchase Order #{active_po.po_number}. Complete or cancel orders first."
+        )
+
+    active_proc = db.query(Procurement).filter(
+        Procurement.vendor_id == vendor_id,
+        Procurement.status.in_(["Approved", "In Progress", "Pending"])
+    ).first()
+    if active_proc:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot delete or deactivate vendor with active Procurement Request #{active_proc.request_number or active_proc.id}."
+        )
+
+    active_contract = db.query(Contract).filter(
+        Contract.vendor_id == vendor_id,
+        Contract.status == "Active"
+    ).first()
+    if active_contract:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot delete or deactivate vendor with active Contract #{active_contract.contract_number or active_contract.id}."
+        )
+
+def check_vendor_has_history(db: Session, vendor_id: int):
+    from app.models.procurement import Procurement
+    from app.models.purchase_order import PurchaseOrder
+    from app.models.contract import Contract
+
+    referencing = [
+        ("procurement request", db.query(Procurement).filter(Procurement.vendor_id == vendor_id).count()),
+        ("purchase order", db.query(PurchaseOrder).filter(PurchaseOrder.vendor_id == vendor_id).count()),
+        ("contract", db.query(Contract).filter(Contract.vendor_id == vendor_id).count()),
+    ]
+    blocking = [(label, count) for label, count in referencing if count]
+
+    if blocking:
+        summary = ", ".join(f"{count} {label}{'s' if count > 1 else ''}" for label, count in blocking)
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                f"This vendor cannot be deleted because it is referenced by {summary}. "
+                f"Deactivate the vendor instead to keep the procurement history intact."
+            )
+        )
+
+def delete_vendor(db: Session, vendor_id: int):
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+    check_vendor_active_activities(db, vendor_id)
+    check_vendor_has_history(db, vendor_id)
+
+    try:
+        db.delete(vendor)
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "This vendor cannot be deleted because other records still reference it. "
+                "Deactivate the vendor instead to keep its history intact."
+            )
+        )
+    return vendor
+
 
 def _pending_vendor_service_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -148,6 +228,8 @@ def _pending_vendor_service_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -156,8 +238,9 @@ def _pending_vendor_service_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -167,6 +250,8 @@ def _pending_vendor_service_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -175,8 +260,9 @@ def _pending_vendor_service_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -186,6 +272,8 @@ def _pending_vendor_service_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -194,8 +282,9 @@ def _pending_vendor_service_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -205,6 +294,8 @@ def _pending_vendor_service_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -213,8 +304,9 @@ def _pending_vendor_service_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -224,23 +316,6 @@ def _pending_vendor_service_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-    return totals
-
-
-def _pending_vendor_service_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
-
-
-def _pending_vendor_service_totals_6(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
