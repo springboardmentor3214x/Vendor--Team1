@@ -10,15 +10,11 @@ import { AddVendor } from './vendor/add-vendor/add-vendor';
 import { VendorDetails } from './vendor/vendor-details/vendor-details';
 
 export const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full'
-  },
 
   {
-    path: 'dashboard',
-    component: Dashboard
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full'
   },
 
   {
@@ -37,8 +33,8 @@ export const routes: Routes = [
   },
 
   {
-    path: 'profile',
-    component: Profile
+    path: 'dashboard',
+    component: Dashboard
   },
 
   {
@@ -57,7 +53,13 @@ export const routes: Routes = [
   },
 
   {
+    path: 'profile',
+    component: Profile
+  },
+
+  {
     path: '**',
-    redirectTo: 'dashboard'
+    redirectTo: 'login'
   }
+
 ];
