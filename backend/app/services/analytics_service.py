@@ -68,4 +68,32 @@ def vendor_analytics(db: Session):
 
         "rejected_vendors": rejected_vendors
 
-    }   
+    }
+
+def procurement_analytics(db: Session):
+
+    total_procurements = db.query(Procurement).count()
+
+    pending_procurements = db.query(Procurement).filter(
+        Procurement.status == "Pending"
+    ).count()
+
+    completed_procurements = db.query(Procurement).filter(
+        Procurement.status == "Completed"
+    ).count()
+
+    cancelled_procurements = db.query(Procurement).filter(
+        Procurement.status == "Cancelled"
+    ).count()
+
+    return {
+
+        "total_procurements": total_procurements,
+
+        "pending_procurements": pending_procurements,
+
+        "completed_procurements": completed_procurements,
+
+        "cancelled_procurements": cancelled_procurements
+
+    }

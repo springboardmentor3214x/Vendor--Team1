@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
 
-from app.services.analytics_service import (dashboard_summary, vendor_analytics)
+from app.services.analytics_service import (dashboard_summary, vendor_analytics, procurement_analytics)
 
 router = APIRouter()
 
@@ -22,3 +22,11 @@ def get_vendor_analytics(
 ):
 
     return vendor_analytics(db)
+@router.get("/analytics/procurements")
+def get_procurement_analytics(
+
+    db: Session = Depends(get_db)
+
+):
+
+    return procurement_analytics(db)
