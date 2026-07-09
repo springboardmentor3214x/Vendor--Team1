@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 03 Jul - Create certification schemas with issuing authority details
 - 04 Jul - Refine approval workflow transitions in vendor
 - 05 Jul - Handle empty responses from the procurement request screen in the integrated flow
 - 06 Jul - Drop constants.py from the integrated tree
 - 07 Jul - Build the contract list screen with expiry highlighting
 - 08 Jul - Reconcile procurement with the Angular services
+- 09 Jul - Drop api-base.service.ts from the integrated tree
