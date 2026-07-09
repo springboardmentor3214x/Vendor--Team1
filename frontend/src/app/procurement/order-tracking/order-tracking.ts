@@ -30,19 +30,31 @@ export class OrderTracking implements OnInit {
   isDelayed = false;
   isLoading = true;
   errorMessage = '';
+  selectedStatus = '';
+  deliveryStatuses = ['Awaiting Shipment', 'In Transit', 'Delivered', 'Delayed', 'Completed'];
+  userRole = '';
+  events: any[] = [];
+  constructor(
+    private route: ActivatedRoute,
+    private procurementService: ProcurementService,
+    private authService: AuthService
+  ) {}
 }
 
 const PLACEHOLDER_ORDER_TRACKING_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 5, name: 'Harborline Equipment', status: 'Active' },
-  { id: 6, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 7, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 8, name: 'Copperfield Freight', status: 'Inactive' },
+  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
+  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
+  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
+  { id: 4, name: 'Harborline Equipment', status: 'Active' },
+  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
+  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
+  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
+  { id: 8, name: 'Northwind Steel', status: 'Active' },
 ];
 
 function usePlaceholderOrderTracking(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_ORDER_TRACKING_ROWS;
+  if (!rows || !rows.length) {
+    return PLACEHOLDER_ORDER_TRACKING_ROWS;
+  }
+  return rows.filter((row) => !!row);
 }
