@@ -26,43 +26,163 @@
          style="margin-bottom: 16px; padding: 10px 14px; border-radius: 6px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46;">
         {{ actionMsg }}
     </div>
-</div>
+    <div *ngIf="errorMsg"
+         style="margin-bottom: 16px; padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+        {{ errorMsg }}
+    </div>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+    <ng-container *ngIf="selectedVendorId">
+
+        <app-card style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 1rem;">Certifications — {{ selectedVendorName }}</h3>
+                <app-button variant="primary" size="sm" iconLeft="add" (onClick)="showCertForm = !showCertForm">
+                    {{ showCertForm ? 'Close' : 'Add Certification' }}
+                </app-button>
+            </div>
+
+            <div *ngIf="showCertForm" style="padding: 16px; background: #f8fafc; border-radius: 8px; margin-bottom: 16px;">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Certification Name *</label>
+                        <select [(ngModel)]="newCert.certification_name">
+                            <option value="">Select</option>
+                            <option *ngFor="let t of certificationTypes" [value]="t">{{ t }}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Certificate Number *</label>
+                        <input type="text" [(ngModel)]="newCert.certificate_number" />
+                    </div>
+                    <div class="form-group">
+                        <label>Issuing Authority *</label>
+                        <input type="text" [(ngModel)]="newCert.issuing_authority" />
+                    </div>
+                    <div class="form-group">
+                        <label>Issue Date *</label>
+                        <input type="date" [(ngModel)]="newCert.issue_date" />
+                    </div>
+                    <div class="form-group">
+                        <label>Expiry Date *</label>
+                        <input type="date" [(ngModel)]="newCert.expiry_date" />
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <app-button variant="primary" size="sm" iconLeft="save" (onClick)="addCertification()">Save Certification</app-button>
+                </div>
+            </div>
+
+            <table class="vrip-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8fafc; text-align: left; font-size: 0.8125rem; text-transform: uppercase; color: #64748b;">
+                        <th style="padding: 10px 14px;">Certification</th>
+                        <th style="padding: 10px 14px;">Certificate #</th>
+                        <th style="padding: 10px 14px;">Issuing Authority</th>
+                        <th style="padding: 10px 14px;">Issued</th>
+                        <th style="padding: 10px 14px;">Expires</th>
+                        <th style="padding: 10px 14px;">Status</th>
+                        <th style="padding: 10px 14px; text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let c of certifications" style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 12px 14px;"><strong>{{ c.certification_name }}</strong></td>
+                        <td style="padding: 12px 14px;">{{ c.certificate_number }}</td>
+                        <td style="padding: 12px 14px; color: #475569;">{{ c.issuing_authority }}</td>
+                        <td style="padding: 12px 14px;">{{ c.issue_date }}</td>
+                        <td style="padding: 12px 14px;">
+                            {{ c.expiry_date }}
+                            <div *ngIf="c.daysToExpiry !== null" style="font-size: 0.75rem; color: var(--text-secondary);">
+                                {{ c.daysToExpiry < 0 ? (-c.daysToExpiry) + ' days ago' : c.daysToExpiry + ' days left' }}
+                            </div>
+                        </td>
+                        <td style="padding: 12px 14px;">
+                            <app-badge [variant]="statusVariant(certStatus(c))">{{ certStatus(c) }}</app-badge>
+                        </td>
+                        <td style="padding: 12px 14px; text-align: right;">
+                            <app-button variant="danger" size="sm" iconLeft="delete" (onClick)="deleteCertification(c)"></app-button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="certifications.length === 0 && !loadingRecords">
+                        <td colspan="7" style="padding: 24px; text-align: center; color: var(--text-secondary);">
+                            No certifications recorded for this vendor.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </app-card>
+
+        <app-card>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 1rem;">Compliance Records — {{ selectedVendorName }}</h3>
+                <app-button variant="primary" size="sm" iconLeft="add" (onClick)="showComplianceForm = !showComplianceForm">
+                    {{ showComplianceForm ? 'Close' : 'Add Compliance Record' }}
+                </app-button>
+            </div>
+
+            <div *ngIf="showComplianceForm" style="padding: 16px; background: #f8fafc; border-radius: 8px; margin-bottom: 16px;">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Compliance Type *</label>
+                        <select [(ngModel)]="newCompliance.compliance_type">
+                            <option *ngFor="let t of complianceTypes" [value]="t">{{ t }}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select [(ngModel)]="newCompliance.status">
+                            <option *ngFor="let s of complianceStatuses" [value]="s">{{ s }}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Expiry Date</label>
+                        <input type="date" [(ngModel)]="newCompliance.expiry_date" />
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Remarks</label>
+                        <textarea rows="2" [(ngModel)]="newCompliance.remarks"></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <app-button variant="primary" size="sm" iconLeft="save" (onClick)="addCompliance()">Save Record</app-button>
+                </div>
+            </div>
+
+            <table class="vrip-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8fafc; text-align: left; font-size: 0.8125rem; text-transform: uppercase; color: #64748b;">
+                        <th style="padding: 10px 14px;">Compliance Type</th>
+                        <th style="padding: 10px 14px;">Status</th>
+                        <th style="padding: 10px 14px;">Verified By</th>
+                        <th style="padding: 10px 14px;">Verified On</th>
+                        <th style="padding: 10px 14px;">Expires</th>
+                        <th style="padding: 10px 14px;">Remarks</th>
+                        <th style="padding: 10px 14px; text-align: right;">Mark As</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let r of complianceRecords" style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 12px 14px;"><strong>{{ r.compliance_type }}</strong></td>
+                        <td style="padding: 12px 14px;"><app-badge [variant]="statusVariant(r.status)">{{ r.status }}</app-badge></td>
+                        <td style="padding: 12px 14px; color: #475569;">{{ r.verified_by || '—' }}</td>
+                        <td style="padding: 12px 14px;">{{ r.verification_date || '—' }}</td>
+                        <td style="padding: 12px 14px;">{{ r.expiry_date || '—' }}</td>
+                        <td style="padding: 12px 14px; color: #475569; max-width: 260px;">{{ r.remarks || '—' }}</td>
+                        <td style="padding: 12px 14px; text-align: right;">
+                            <select (change)="updateComplianceStatus(r, $any($event.target).value)"
+                                    style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+                                <option value="">Change…</option>
+                                <option *ngFor="let s of complianceStatuses" [value]="s">{{ s }}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr *ngIf="complianceRecords.length === 0 && !loadingRecords">
+                        <td colspan="7" style="padding: 24px; text-align: center; color: var(--text-secondary);">
+                            No compliance records for this vendor.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </app-card>
+    </ng-container>
 </div>
