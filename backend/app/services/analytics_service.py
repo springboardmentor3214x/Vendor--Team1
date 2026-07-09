@@ -30,4 +30,42 @@ def dashboard_summary(db: Session):
         "total_contracts": total_contracts,
         "total_risk_assessments": total_risk_assessments
     }
-    
+def vendor_analytics(db: Session):
+
+    total_vendors = db.query(Vendor).count()
+
+    active_vendors = db.query(Vendor).filter(
+        Vendor.status == "Active"
+    ).count()
+
+    pending_vendors = db.query(Vendor).filter(
+        Vendor.status == "Pending"
+    ).count()
+
+    inactive_vendors = db.query(Vendor).filter(
+        Vendor.status == "Inactive"
+    ).count()
+
+    suspended_vendors = db.query(Vendor).filter(
+        Vendor.status == "Suspended"
+    ).count()
+
+    rejected_vendors = db.query(Vendor).filter(
+        Vendor.status == "Rejected"
+    ).count()
+
+    return {
+
+        "total_vendors": total_vendors,
+
+        "active_vendors": active_vendors,
+
+        "pending_vendors": pending_vendors,
+
+        "inactive_vendors": inactive_vendors,
+
+        "suspended_vendors": suspended_vendors,
+
+        "rejected_vendors": rejected_vendors
+
+    }   
