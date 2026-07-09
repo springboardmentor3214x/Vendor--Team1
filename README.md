@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 03 Jul - Add purchase order schemas with delivery schedule fields
 - 04 Jul - Refine status monitoring actions in vendor
 - 05 Jul - Add invoice service with amount validation
 - 06 Jul - Fold shared constants into roles and vendor categories
 - 07 Jul - Extend order tracking with shipment milestones
 - 08 Jul - Extend procurement with rejection remarks
+- 09 Jul - Extend vendor with status monitoring actions
