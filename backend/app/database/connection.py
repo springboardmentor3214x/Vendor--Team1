@@ -1,22 +1,7 @@
-# app/database/connection.py
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
-import os
 
-# Load values from .env
-load_dotenv()
-
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-
-DATABASE_URL = (
-    f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-)
+DATABASE_URL = "postgresql://postgres:1234@localhost:5432/vendor_reliability_db"
 
 engine = create_engine(DATABASE_URL)
 
@@ -26,13 +11,7 @@ SessionLocal = sessionmaker(
     bind=engine
 )
 
-try:
-    connection = engine.connect()
-    print("✅ Database Connected Successfully")
-    connection.close()
-except Exception as e:
-    print("❌ Database Connection Failed")
-    print(e)
+
 def get_db():
     db = SessionLocal()
     try:
