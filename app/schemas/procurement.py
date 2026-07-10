@@ -7,6 +7,7 @@ class ProcurementCreate(BaseModel):
     vendor_id: int
     quantity: int
     unit_price: float
+    expected_delivery_date: Optional[datetime] = None
 
 class ProcurementResponse(BaseModel):
     id: int
@@ -16,5 +17,9 @@ class ProcurementResponse(BaseModel):
     unit_price: float
     total_price: float
     status: str
+    approval_status: str
+    approved_by: Optional[str] = None
+    expected_delivery_date: Optional[datetime] = None
+    actual_delivery_date: Optional[datetime] = None
     class Config:
         from_attributes = True

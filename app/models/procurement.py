@@ -11,4 +11,8 @@ class Procurement(Base):
     unit_price = Column(Float, nullable=False)
     total_price = Column(Float, nullable=False)
     status = Column(String(50), default="Pending")
+    approval_status = Column(String(50), default="Pending")
+    approved_by = Column(String(100), nullable=True)
+    expected_delivery_date = Column(DateTime, nullable=True)
+    actual_delivery_date = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
