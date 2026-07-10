@@ -51,6 +51,7 @@
             <option value="Active">Active</option>
             <option value="Pending">Pending</option>
             <option value="Suspended">Suspended</option>
+            <option value="Rejected">Rejected</option>
 
         </select>
 
@@ -134,11 +135,27 @@
 
                 <td>
 
-                    <button>View</button>
+                    <button
+                        [routerLink]="['/vendors', vendor.id]">
 
-                    <button>Edit</button>
+                        View
 
-                    <button class="delete">Delete</button>
+                    </button>
+
+                    <button
+                        [routerLink]="['/vendors/edit', vendor.id]">
+
+                        Edit
+
+                    </button>
+
+                    <button
+                        class="delete"
+                        (click)="deleteVendor(vendor.id)">
+
+                        Delete
+
+                    </button>
 
                 </td>
 
@@ -157,7 +174,9 @@
             margin-top:20px;
         ">
 
-        <button (click)="previousPage()">
+        <button
+            (click)="previousPage()"
+            [disabled]="currentPage === 1">
 
             Previous
 
@@ -169,7 +188,9 @@
 
         </span>
 
-        <button (click)="nextPage()">
+        <button
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages">
 
             Next
 

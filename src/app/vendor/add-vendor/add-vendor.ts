@@ -24,11 +24,41 @@ export class AddVendor {
 
     contactPerson: '',
 
+    designation: '',
+
     email: '',
 
     phone: '',
 
+    alternatePhone: '',
+
     gst: '',
+
+    pan: '',
+
+    companyRegistrationNumber: '',
+
+    addressLine1: '',
+
+    addressLine2: '',
+
+    city: '',
+
+    state: '',
+
+    country: '',
+
+    pincode: '',
+
+    website: '',
+
+    description: '',
+
+    bankAccountNumber: '',
+
+    ifscCode: '',
+
+    paymentTerms: '',
 
     rating: 5,
 
@@ -46,9 +76,91 @@ export class AddVendor {
 
   ) {}
 
-  saveVendor() {
+  saveVendor(): void {
+
+    if (!this.vendor.companyName.trim()) {
+
+      alert('Company Name is required');
+
+      return;
+
+    }
+
+    if (!this.vendor.category.trim()) {
+
+      alert('Vendor Category is required');
+
+      return;
+
+    }
+
+    if (!this.vendor.contactPerson.trim()) {
+
+      alert('Contact Person is required');
+
+      return;
+
+    }
+
+    if (!this.vendor.email.trim()) {
+
+      alert('Email Address is required');
+
+      return;
+
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(this.vendor.email)) {
+
+      alert('Enter a valid Email Address');
+
+      return;
+
+    }
+
+    if (!this.vendor.phone.trim()) {
+
+      alert('Phone Number is required');
+
+      return;
+
+    }
+
+    if (this.vendor.phone.length < 10) {
+
+      alert('Phone Number should be at least 10 digits');
+
+      return;
+
+    }
+
+    if (!this.vendor.gst.trim()) {
+
+      alert('GST Number is required');
+
+      return;
+
+    }
+
+    if (!this.vendor.pan?.trim()) {
+
+      alert('PAN Number is required');
+
+      return;
+
+    }
 
     this.vendorService.addVendor(this.vendor);
+
+    alert('Vendor added successfully!');
+
+    this.router.navigate(['/vendors']);
+
+  }
+
+  cancel(): void {
 
     this.router.navigate(['/vendors']);
 

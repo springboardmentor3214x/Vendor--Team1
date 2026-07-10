@@ -115,6 +115,18 @@ export class VendorList implements OnInit {
 
     this.totalPages = Math.ceil(this.filteredVendors.length / this.itemsPerPage);
 
+    if (this.totalPages === 0) {
+
+      this.totalPages = 1;
+
+    }
+
+    if (this.currentPage > this.totalPages) {
+
+      this.currentPage = this.totalPages;
+
+    }
+
     const start = (this.currentPage - 1) * this.itemsPerPage;
 
     const end = start + this.itemsPerPage;
@@ -144,6 +156,22 @@ export class VendorList implements OnInit {
       this.updatePagination();
 
     }
+
+  }
+
+  deleteVendor(id: number): void {
+
+    const confirmed = confirm(
+      'Are you sure you want to delete this vendor?'
+    );
+
+    if (!confirmed) {
+
+      return;
+
+    }
+
+    this.vendorService.deleteVendor(id);
 
   }
 

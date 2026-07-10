@@ -1,0 +1,142 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Inter,Arial,sans-serif;
+}
+
+body{
+    background:#f1f5f9;
+}
+
+.details-container{
+
+    max-width:1200px;
+
+    margin:40px auto;
+
+    padding:40px;
+
+}
+
+.details-container h1{
+
+    font-size:34px;
+
+    color:#1e293b;
+
+    margin-bottom:30px;
+
+}
+
+.details-card{
+
+    background:white;
+
+    border-radius:16px;
+
+    padding:25px;
+
+    margin-bottom:25px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+}
+
+.details-card h2{
+
+    color:#2563eb;
+
+    margin-bottom:20px;
+
+    border-bottom:2px solid #dbeafe;
+
+    padding-bottom:10px;
+
+}
+
+.details-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:18px;
+
+}
+
+.details-grid p{
+
+    background:#f8fafc;
+
+    padding:14px;
+
+    border-radius:10px;
+
+    border:1px solid #e2e8f0;
+
+    color:#334155;
+
+    line-height:24px;
+
+}
+
+.details-grid strong{
+
+    color:#0f172a;
+
+}
+
+.action-buttons{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    margin-top:30px;
+
+}
+
+.action-buttons button{
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    padding:14px 28px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    transition:.3s;
+
+}
+
+.action-buttons button:hover{
+
+    background:#1d4ed8;
+
+}
+
+@media(max-width:900px){
+
+.details-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.details-container{
+
+padding:20px;
+
+margin:20px;
+
+}
+
+}

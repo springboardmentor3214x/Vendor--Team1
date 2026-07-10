@@ -19,6 +19,7 @@ import { AuditorDashboard } from './dashboard/auditor-dashboard/auditor-dashboar
 
 import { VendorList } from './vendor/vendor-list/vendor-list';
 import { AddVendor } from './vendor/add-vendor/add-vendor';
+import { EditVendor } from './vendor/edit-vendor/edit-vendor';
 import { VendorDetails } from './vendor/vendor-details/vendor-details';
 
 export const routes: Routes = [
@@ -119,6 +120,12 @@ export const routes: Routes = [
   {
     path: 'vendors/add',
     component: AddVendor,
+    canActivate: [authGuard]
+  },
+
+  {
+    path: 'vendors/edit/:id',
+    component: EditVendor,
     canActivate: [authGuard]
   },
 
