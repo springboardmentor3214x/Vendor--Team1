@@ -6,8 +6,13 @@
 
         <input
             type="text"
-            placeholder="Vendor Name"
-            [(ngModel)]="vendor.name">
+            placeholder="Company Name"
+            [(ngModel)]="vendor.companyName">
+
+        <input
+            type="text"
+            placeholder="Contact Person"
+            [(ngModel)]="vendor.contactPerson">
 
         <input
             type="text"
@@ -35,6 +40,14 @@
             [(ngModel)]="vendor.rating">
 
         <select [(ngModel)]="vendor.status">
+
+            <option>Active</option>
+            <option>Pending</option>
+            <option>Suspended</option>
+
+        </select>
+
+        <select [(ngModel)]="vendor.approvalStatus">
 
             <option>Approved</option>
             <option>Pending</option>
