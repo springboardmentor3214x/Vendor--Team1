@@ -112,11 +112,36 @@
                     <span
                         [class.active]="vendor.status === 'Active'"
                         [class.pending]="vendor.status === 'Pending'"
-                        [class.rejected]="vendor.status === 'Rejected'">
+                        [class.rejected]="vendor.status === 'Rejected'"
+                        [class.suspended]="vendor.status === 'Suspended'">
 
                         {{ vendor.status }}
 
                     </span>
+
+                    <div
+                        *ngIf="vendor.approvalStatus === 'Approved'"
+                        style="margin-top:10px;">
+
+                        <button
+                            *ngIf="vendor.status === 'Active'"
+                            class="suspend-btn"
+                            (click)="suspendVendor(vendor.id)">
+
+                            Suspend
+
+                        </button>
+
+                        <button
+                            *ngIf="vendor.status === 'Suspended'"
+                            class="activate-btn"
+                            (click)="activateVendor(vendor.id)">
+
+                            Activate
+
+                        </button>
+
+                    </div>
 
                 </td>
 
