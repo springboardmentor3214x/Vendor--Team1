@@ -21,13 +21,17 @@ export interface VendorDocument {
   uploaded_at: string;
 }
 
-const PLACEHOLDER_VENDOR_DOCUMENTS_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-];
+export const ALLOWED_DOCUMENT_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png'];
+export const MAX_DOCUMENT_SIZE_BYTES = 10 * 1024 * 1024;
 
-function usePlaceholderVendorDocuments(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_VENDOR_DOCUMENTS_ROWS;
+export function validateDocumentFile(file: File): string {
+  const extension = (file.name.split('.').pop() || '').toLowerCase();
+  if (!ALLOWED_DOCUMENT_EXTENSIONS.includes(extension)) {
+    return `"${file.name}" is not a supported format. Upload a PDF, JPG or PNG file.`;
+  }
+  if (file.size > MAX_DOCUMENT_SIZE_BYTES) {
+    const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+    return `"${file.name}" is ${sizeMb} MB. Maximum allowed size is 10 MB.`;
+  }
+  return '';
 }
