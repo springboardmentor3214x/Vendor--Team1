@@ -69,9 +69,7 @@
                     style="cursor:pointer;"
                     (click)="sortData()">
 
-                    Company Name
-
-                    {{ sortAscending ? '▲' : '▼' }}
+                    Company Name {{ sortAscending ? '▲' : '▼' }}
 
                 </th>
 
@@ -113,7 +111,8 @@
 
                     <span
                         [class.active]="vendor.status === 'Active'"
-                        [class.pending]="vendor.status === 'Pending'">
+                        [class.pending]="vendor.status === 'Pending'"
+                        [class.rejected]="vendor.status === 'Rejected'">
 
                         {{ vendor.status }}
 
@@ -125,11 +124,34 @@
 
                     <span
                         [class.approved]="vendor.approvalStatus === 'Approved'"
-                        [class.pending]="vendor.approvalStatus === 'Pending'">
+                        [class.pending]="vendor.approvalStatus === 'Pending'"
+                        [class.rejected]="vendor.approvalStatus === 'Rejected'">
 
                         {{ vendor.approvalStatus }}
 
                     </span>
+
+                    <div
+                        *ngIf="vendor.approvalStatus === 'Pending'"
+                        style="margin-top:10px; display:flex; gap:8px;">
+
+                        <button
+                            class="approve-btn"
+                            (click)="approveVendor(vendor.id)">
+
+                            Approve
+
+                        </button>
+
+                        <button
+                            class="reject-btn"
+                            (click)="rejectVendor(vendor.id)">
+
+                            Reject
+
+                        </button>
+
+                    </div>
 
                 </td>
 
