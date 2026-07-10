@@ -1,1 +1,164 @@
-<p>register works!</p>
+<div class="register-page">
+
+    <div class="left-panel">
+
+        <div class="branding">
+
+            <h1>VRIP</h1>
+
+            <h2>
+                Vendor Reliability
+                <br>
+                Intelligence Platform
+            </h2>
+
+            <p>
+                Create your account to access the Vendor Reliability Intelligence Platform.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="right-panel">
+
+        <div class="register-card">
+
+            <h1>Create Account</h1>
+
+            <p>Register to continue</p>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>Full Name *</label>
+
+                    <input
+                        type="text"
+                        placeholder="Enter Full Name"
+                        [(ngModel)]="user.fullName">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Role *</label>
+
+                    <select [(ngModel)]="user.role">
+
+                        <option>Administrator</option>
+
+                        <option>Procurement Manager</option>
+
+                        <option>Supply Chain Manager</option>
+
+                        <option>Vendor</option>
+
+                        <option>Finance Officer</option>
+
+                        <option>Auditor</option>
+
+                    </select>
+
+                </div>
+
+                @if(isVendor){
+
+                    <div class="form-group">
+
+                        <label>Company Name *</label>
+
+                        <input
+                            type="text"
+                            placeholder="Company Name"
+                            [(ngModel)]="user.companyName">
+
+                    </div>
+
+                } @else {
+
+                    <div class="form-group">
+
+                        <label>Employee ID *</label>
+
+                        <input
+                            type="text"
+                            placeholder="Employee ID"
+                            [(ngModel)]="user.employeeId">
+
+                    </div>
+
+                }
+
+                <div class="form-group">
+
+                    <label>Email Address *</label>
+
+                    <input
+                        type="email"
+                        placeholder="Email Address"
+                        [(ngModel)]="user.email">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Mobile Number *</label>
+
+                    <input
+                        type="text"
+                        placeholder="Mobile Number"
+                        [(ngModel)]="user.mobile">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Password *</label>
+
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        [(ngModel)]="user.password">
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Confirm Password *</label>
+
+                    <input
+                        type="password"
+                        placeholder="Confirm Password"
+                        [(ngModel)]="user.confirmPassword">
+
+                </div>
+
+            </div>
+
+            <button
+                class="register-btn"
+                (click)="register()">
+
+                REGISTER
+
+            </button>
+
+            <p class="login-link">
+
+                Already have an account?
+
+                <a routerLink="/login">
+
+                    Login
+
+                </a>
+
+            </p>
+
+        </div>
+
+    </div>
+
+</div>

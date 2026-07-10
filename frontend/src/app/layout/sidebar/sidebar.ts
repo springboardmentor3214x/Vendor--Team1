@@ -10,4 +10,12 @@ import { RouterModule } from '@angular/router';
 })
 export class Sidebar {
 
+  role: string = '';
+
+  constructor() {
+
+    this.role = localStorage.getItem('vrip_role') || '';
+
+  }
+
 }

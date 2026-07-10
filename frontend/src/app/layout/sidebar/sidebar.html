@@ -7,30 +7,183 @@
 
     <nav>
 
-        <a routerLink="/dashboard">
-            <span class="material-icons">dashboard</span>
-            Dashboard
-        </a>
+        <!-- ================= ADMINISTRATOR ================= -->
 
-        <a routerLink="/vendors">
-            <span class="material-icons">business</span>
-            Vendors
-        </a>
+        @if(role === 'Administrator') {
 
-        <a>
-            <span class="material-icons">shopping_cart</span>
-            Procurement
-        </a>
+            <a routerLink="/admin-dashboard">
+                <span class="material-icons">dashboard</span>
+                Dashboard
+            </a>
 
-        <a>
-            <span class="material-icons">analytics</span>
-            Analytics
-        </a>
+            <a routerLink="/vendors">
+                <span class="material-icons">business</span>
+                Vendor Management
+            </a>
 
-        <a>
-            <span class="material-icons">assessment</span>
-            Reports
-        </a>
+            <a>
+                <span class="material-icons">group</span>
+                User Management
+            </a>
+
+            <a>
+                <span class="material-icons">shopping_cart</span>
+                Procurement
+            </a>
+
+            <a>
+                <span class="material-icons">analytics</span>
+                Analytics
+            </a>
+
+            <a>
+                <span class="material-icons">description</span>
+                Reports
+            </a>
+
+            <a>
+                <span class="material-icons">notifications</span>
+                Notifications
+            </a>
+
+        }
+
+        <!-- ================= VENDOR ================= -->
+
+        @if(role === 'Vendor') {
+
+            <a routerLink="/vendor-dashboard">
+                <span class="material-icons">dashboard</span>
+                Dashboard
+            </a>
+
+            <a>
+                <span class="material-icons">inventory_2</span>
+                Orders
+            </a>
+
+            <a>
+                <span class="material-icons">description</span>
+                Contracts
+            </a>
+
+            <a>
+                <span class="material-icons">chat</span>
+                Communication
+            </a>
+
+        }
+
+        <!-- ================= PROCUREMENT MANAGER ================= -->
+
+        @if(role === 'Procurement Manager') {
+
+            <a routerLink="/procurement-dashboard">
+                <span class="material-icons">dashboard</span>
+                Dashboard
+            </a>
+
+            <a routerLink="/vendors">
+                <span class="material-icons">business</span>
+                Vendor Management
+            </a>
+
+            <a>
+                <span class="material-icons">shopping_cart</span>
+                Procurement
+            </a>
+
+            <a>
+                <span class="material-icons">assignment</span>
+                Purchase Orders
+            </a>
+
+            <a>
+                <span class="material-icons">description</span>
+                Contracts
+            </a>
+
+        }
+
+        <!-- ================= SUPPLY CHAIN ================= -->
+
+        @if(role === 'Supply Chain Manager') {
+
+            <a routerLink="/supply-chain-dashboard">
+                <span class="material-icons">dashboard</span>
+                Dashboard
+            </a>
+
+            <a>
+                <span class="material-icons">analytics</span>
+                Vendor Performance
+            </a>
+
+            <a>
+                <span class="material-icons">verified</span>
+                Vendor Reliability
+            </a>
+
+            <a>
+                <span class="material-icons">local_shipping</span>
+                Procurement Tracking
+            </a>
+
+        }
+
+        <!-- ================= FINANCE ================= -->
+
+        @if(role === 'Finance Officer') {
+
+            <a routerLink="/finance-dashboard">
+                <span class="material-icons">dashboard</span>
+                Dashboard
+            </a>
+
+            <a>
+                <span class="material-icons">receipt_long</span>
+                Invoice Management
+            </a>
+
+            <a>
+                <span class="material-icons">payments</span>
+                Payment Details
+            </a>
+
+            <a>
+                <span class="material-icons">shopping_cart</span>
+                Purchase Orders
+            </a>
+
+        }
+
+        <!-- ================= AUDITOR ================= -->
+
+        @if(role === 'Auditor') {
+
+            <a routerLink="/auditor-dashboard">
+                <span class="material-icons">dashboard</span>
+                Dashboard
+            </a>
+
+            <a>
+                <span class="material-icons">assessment</span>
+                Reports
+            </a>
+
+            <a>
+                <span class="material-icons">fact_check</span>
+                Compliance
+            </a>
+
+            <a>
+                <span class="material-icons">history</span>
+                Audit Logs
+            </a>
+
+        }
+
+        <!-- ================= COMMON ================= -->
 
         <a routerLink="/profile">
             <span class="material-icons">person</span>
