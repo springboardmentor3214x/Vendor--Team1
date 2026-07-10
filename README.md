@@ -1,12 +1,15 @@
 # Vendor Reliability Platform - Backend
 
-## Module 2: Vendor Management (Completed)
-- POST /vendors/ — Add Vendor
-- GET /vendors/ — List Vendors (pagination + filtering)
-- GET /vendors/{id} — Vendor Details
-- PUT /vendors/{id} — Update Vendor
-- DELETE /vendors/{id} — Delete Vendor
+## Module 2: Vendor Management
+- Full CRUD, pagination, filtering
+
+## Module 3: Procurement Management
+- Full CRUD, approval/reject workflow
+- Dashboard (totals + total_spend), search, filter
+- Deliver/Complete order lifecycle, get-by-vendor
 
 ## Progress
-- **Jul 7**: Project setup, DB layer, .env config, CORS. Vendor model and schemas.
-- **Jul 8**: Full Vendor CRUD service, API router with docstrings, pagination, filtering.
+- **Jul 7**: Project setup, DB, .env config. Vendor model + schemas.
+- **Jul 8**: Vendor CRUD API, pagination, filtering. Module 2 complete.
+- **Jul 9**: Procurement model, schemas, CRUD service + API router.
+- **Jul 10**: Approval workflow, delivery tracking, dashboard, lifecycle endpoints. Module 3 complete.

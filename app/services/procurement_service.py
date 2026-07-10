@@ -78,3 +78,37 @@ def filter_procurements(db: Session, status: str):
 
 def search_procurements(db: Session, keyword: str):
     return db.query(Procurement).filter(or_(Procurement.item_name.ilike(f"%{keyword}%"))).all()
+
+def procurement_dashboard(db: Session):
+    total = db.query(Procurement).count()
+    approved = db.query(Procurement).filter(Procurement.status == "Approved").count()
+    pending = db.query(Procurement).filter(Procurement.status == "Pending").count()
+    rejected = db.query(Procurement).filter(Procurement.status == "Rejected").count()
+    delivered = db.query(Procurement).filter(Procurement.status == "Delivered").count()
+    completed = db.query(Procurement).filter(Procurement.status == "Completed").count()
+    total_spend = db.query(func.sum(Procurement.total_price)).filter(Procurement.status.in_(["Delivered", "Completed"])).scalar() or 0
+    return {"total": total, "approved": approved, "pending": pending, "rejected": rejected, "delivered": delivered, "completed": completed, "total_spend": total_spend}
+
+def mark_delivered(db: Session, procurement_id: int):
+    proc = get_procurement(db, procurement_id)
+    if not proc:
+        return None
+    proc.status = "Delivered"
+    proc.actual_delivery_date = datetime.utcnow()
+    db.commit()
+    db.refresh(proc)
+    return proc
+
+def mark_completed(db: Session, procurement_id: int):
+    proc = get_procurement(db, procurement_id)
+    if not proc:
+        return None
+    if proc.status != "Delivered":
+        raise HTTPException(status_code=400, detail="Only delivered orders can be completed")
+    proc.status = "Completed"
+    db.commit()
+    db.refresh(proc)
+    return proc
+
+def get_procurements_by_vendor(db: Session, vendor_id: int):
+    return db.query(Procurement).filter(Procurement.vendor_id == vendor_id).all()

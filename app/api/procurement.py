@@ -57,3 +57,25 @@ def reject(procurement_id: int, db: Session = Depends(get_db)):
     if not proc:
         raise HTTPException(status_code=404, detail="Procurement not found")
     return {"message": "Procurement rejected"}
+
+@router.get("/dashboard")
+def dashboard(db: Session = Depends(get_db)):
+    return procurement_service.procurement_dashboard(db)
+
+@router.get("/vendor/{vendor_id}", response_model=List[ProcurementResponse])
+def by_vendor(vendor_id: int, db: Session = Depends(get_db)):
+    return procurement_service.get_procurements_by_vendor(db, vendor_id)
+
+@router.post("/{procurement_id}/deliver")
+def deliver(procurement_id: int, db: Session = Depends(get_db)):
+    proc = procurement_service.mark_delivered(db, procurement_id)
+    if not proc:
+        raise HTTPException(status_code=404, detail="Procurement not found")
+    return {"message": "Marked as delivered"}
+
+@router.post("/{procurement_id}/complete")
+def complete(procurement_id: int, db: Session = Depends(get_db)):
+    proc = procurement_service.mark_completed(db, procurement_id)
+    if not proc:
+        raise HTTPException(status_code=404, detail="Procurement not found")
+    return {"message": "Marked as completed"}
