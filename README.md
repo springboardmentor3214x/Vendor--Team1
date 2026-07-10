@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 04 Jul - Add the compliance management screen with certification expiry
 - 05 Jul - Add the contract details screen with attached documents
 - 06 Jul - Extend the core API services with HTTP service methods
 - 07 Jul - Expand the button component with disabled styling
 - 08 Jul - Create the shared core helpers with session storage handling
 - 09 Jul - Retire the generic API base service in favour of per module services
+- 10 Jul - Add the add vendor screen with category selection
