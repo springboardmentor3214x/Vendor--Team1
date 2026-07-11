@@ -164,43 +164,99 @@
             </div>
         </div>
     </div>
-</div>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+    <div *ngIf="showRegisterModal" class="modal-backdrop" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+        <div class="modal-card" style="background: white; border-radius: 12px; width: 90%; max-width: 520px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+                <h2 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #0f172a;">Register New User</h2>
+                <button (click)="closeRegisterModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b;">&times;</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div>
+                    <label class="modal-label">Full Name *</label>
+                    <input class="vrip-input modal-input" [(ngModel)]="newUser.name" placeholder="e.g. Anita Rao">
+                </div>
+                <div>
+                    <label class="modal-label">Email *</label>
+                    <input class="vrip-input modal-input" type="email" [(ngModel)]="newUser.email" placeholder="user@company.com">
+                </div>
+                <div>
+                    <label class="modal-label">Mobile Number</label>
+                    <input class="vrip-input modal-input" [(ngModel)]="newUser.mobile_number" placeholder="10-digit mobile">
+                </div>
+                <div>
+                    <label class="modal-label">Role *</label>
+                    <select class="vrip-input modal-input" [(ngModel)]="newUser.role">
+                        <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+                    </select>
+                </div>
+                <div *ngIf="newUser.role === 'Vendor'">
+                    <label class="modal-label">Company Name *</label>
+                    <input class="vrip-input modal-input" [(ngModel)]="newUser.company_name" placeholder="Vendor company">
+                </div>
+                <div>
+                    <label class="modal-label">Temporary Password *</label>
+                    <input class="vrip-input modal-input" type="password" [(ngModel)]="newUser.password" placeholder="Min 8 characters">
+                </div>
+                <div *ngIf="formError" style="color: #ef4444; font-size: 0.85rem; font-weight: 500;">{{ formError }}</div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+                    <app-button variant="outline" (onClick)="closeRegisterModal()">Cancel</app-button>
+                    <app-button variant="primary" iconLeft="person_add" [disabled]="savingUser" (onClick)="submitRegister()">Create User</app-button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="showEditModal && editUser" class="modal-backdrop" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+        <div class="modal-card" style="background: white; border-radius: 12px; width: 90%; max-width: 520px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+                <h2 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #0f172a;">Edit User</h2>
+                <button (click)="closeEditModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b;">&times;</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="font-size: 0.8rem; color: #64748b;">{{ editUser.email }}</div>
+                <div>
+                    <label class="modal-label">Full Name *</label>
+                    <input class="vrip-input modal-input" [(ngModel)]="editUser.name">
+                </div>
+                <div>
+                    <label class="modal-label">Mobile Number</label>
+                    <input class="vrip-input modal-input" [(ngModel)]="editUser.mobile_number">
+                </div>
+                <div>
+                    <label class="modal-label">Role *</label>
+                    <select class="vrip-input modal-input" [(ngModel)]="editUser.role" [disabled]="isSelf(editUser)">
+                        <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+                    </select>
+                    <div *ngIf="isSelf(editUser)" style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">You cannot change your own role.</div>
+                </div>
+                <div *ngIf="formError" style="color: #ef4444; font-size: 0.85rem; font-weight: 500;">{{ formError }}</div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+                    <app-button variant="outline" (onClick)="closeEditModal()">Cancel</app-button>
+                    <app-button variant="primary" iconLeft="save" [disabled]="savingUser" (onClick)="submitEdit()">Save Changes</app-button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="showResetModal && resetUser" class="modal-backdrop" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+        <div class="modal-card" style="background: white; border-radius: 12px; width: 90%; max-width: 460px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+                <h2 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #0f172a;">Reset Password</h2>
+                <button (click)="closeResetModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b;">&times;</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="font-size: 0.85rem; color: #475569;">Set a new password for <strong>{{ resetUser.name }}</strong> ({{ resetUser.email }}).</div>
+                <div>
+                    <label class="modal-label">New Password *</label>
+                    <input class="vrip-input modal-input" type="password" [(ngModel)]="resetPasswordValue" placeholder="Min 8 characters">
+                </div>
+                <div *ngIf="formError" style="color: #ef4444; font-size: 0.85rem; font-weight: 500;">{{ formError }}</div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+                    <app-button variant="outline" (onClick)="closeResetModal()">Cancel</app-button>
+                    <app-button variant="primary" iconLeft="lock_reset" [disabled]="savingUser" (onClick)="submitReset()">Reset Password</app-button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -2,12 +2,21 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProcurementStatus } from './procurement-status';
 
-const PLACEHOLDER_PROCUREMENT_STATUS_SPEC_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-];
+describe('ProcurementStatus', () => {
+  let component: ProcurementStatus;
+  let fixture: ComponentFixture<ProcurementStatus>;
 
-function usePlaceholderProcurementStatusSpec(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_PROCUREMENT_STATUS_SPEC_ROWS;
-}
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ProcurementStatus],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(ProcurementStatus);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

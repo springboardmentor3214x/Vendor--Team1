@@ -16,36 +16,47 @@
         </div>
     </div>
 
+    <div *ngIf="isDelayed" class="error-box print-hide" style="margin-bottom: 20px; background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 14px 20px; border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.3); display: flex; align-items: center; gap: 12px; font-weight: 600;">
+        <span class="material-symbols-outlined" style="font-size: 24px;">warning</span>
+        <span>DELIVERY DELAYED: The expected delivery date has passed. Please contact the assigned vendor for dispatch status.</span>
+    </div>
 </div>
 
 <div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
+  <p>Awaiting the backend endpoint.</p>
   <div class="placeholder-row">
     <span>Orbit IT Systems</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Copperfield Freight</span>
+    <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
 </div>
