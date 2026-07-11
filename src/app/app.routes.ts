@@ -11,7 +11,7 @@ import { Profile } from './auth/profile/profile';
 import { Dashboard } from './dashboard/dashboard';
 
 import { AdminDashboard } from './dashboard/admin-dashboard/admin-dashboard';
-import { ProcurementDashboard } from './dashboard/procurement-dashboard/procurement-dashboard';
+import { ProcurementDashboard } from './procurement/procurement-dashboard/procurement-dashboard';
 import { SupplyChainDashboard } from './dashboard/supply-chain-dashboard/supply-chain-dashboard';
 import { VendorDashboard } from './dashboard/vendor-dashboard/vendor-dashboard';
 import { FinanceDashboard } from './dashboard/finance-dashboard/finance-dashboard';
@@ -135,11 +135,15 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
 
+  // -------------------- User Profile --------------------
+
   {
     path: 'profile',
     component: Profile,
     canActivate: [authGuard]
   },
+
+  // -------------------- Fallback --------------------
 
   {
     path: '**',

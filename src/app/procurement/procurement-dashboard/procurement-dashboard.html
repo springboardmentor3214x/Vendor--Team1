@@ -1,0 +1,119 @@
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+
+        <div>
+
+            <h1>Procurement Dashboard</h1>
+
+            <p>Monitor procurement requests, purchase orders and procurement lifecycle.</p>
+
+        </div>
+
+    </div>
+
+    <!-- Summary Cards -->
+
+    <div class="summary-grid">
+
+        <div
+            class="summary-card"
+            *ngFor="let card of summaryCards">
+
+            <h2 [style.color]="card.color">
+
+                {{ card.value }}
+
+            </h2>
+
+            <p>
+
+                {{ card.title }}
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- Quick Actions -->
+
+    <div class="dashboard-section">
+
+        <h2>Quick Actions</h2>
+
+        <div class="quick-grid">
+
+            <a
+                routerLink="/procurement-request-list"
+                class="quick-card">
+
+                📋
+
+                <h3>Procurement Requests</h3>
+
+                <p>Create and manage procurement requests.</p>
+
+            </a>
+
+            <a
+                routerLink="/purchase-order"
+                class="quick-card">
+
+                📦
+
+                <h3>Purchase Orders</h3>
+
+                <p>Generate and manage purchase orders.</p>
+
+            </a>
+
+            <a
+                routerLink="/order-tracking"
+                class="quick-card">
+
+                🚚
+
+                <h3>Order Tracking</h3>
+
+                <p>Track deliveries and shipment status.</p>
+
+            </a>
+
+            <a
+                routerLink="/invoice-management"
+                class="quick-card">
+
+                💳
+
+                <h3>Invoice Management</h3>
+
+                <p>Verify invoices and approve payments.</p>
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- Recent Activities -->
+
+    <div class="dashboard-section">
+
+        <h2>Recent Procurement Activities</h2>
+
+        <div class="activity-card">
+
+            <div
+                class="activity-item"
+                *ngFor="let activity of recentActivities">
+
+                ✔ {{ activity.message }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
