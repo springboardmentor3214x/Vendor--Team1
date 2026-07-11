@@ -147,14 +147,102 @@ def update_contract(db: Session, contract_id: int, data: ContractUpdate):
     db.refresh(c)
     return c
 
+def renew_contract(db: Session, contract_id: int, new_end_date: date, new_value: float = None):
+    c = get_contract_by_id(db, contract_id)
+    if not c:
+        raise HTTPException(status_code=404, detail="Contract not found")
+
+    if new_end_date <= date.today():
+        raise HTTPException(status_code=400, detail="Renewal end date must be in the future")
+
+    c.end_date = new_end_date
+    if new_value:
+        c.contract_value = new_value
+    c.status = "Active"
+    c.renewal_count += 1
+    c.last_renewed_at = datetime.utcnow()
+
+    db.commit()
+    db.refresh(c)
+    return c
+
+def delete_contract(db: Session, contract_id: int):
+    c = get_contract_by_id(db, contract_id)
+    if not c:
+        raise HTTPException(status_code=404, detail="Contract not found")
+    if c.status in ("Active", "Expiring Soon"):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot delete contract in '{c.status}' status. Terminate or let it expire first."
+        )
+    db.delete(c)
+    db.commit()
+    return {"message": "Contract deleted successfully"}
+
+def get_expiring_contracts(db: Session, days_threshold: int = 90):
+    today = date.today()
+    threshold_date = today + timedelta(days=days_threshold)
+    return db.query(Contract).filter(
+        Contract.end_date <= threshold_date,
+        Contract.status.in_(["Active", "Expiring Soon", "Expired"])
+    ).all()
+
+def certification_status(expiry_date: date) -> str:
+    today = date.today()
+    if expiry_date < today:
+        return "Expired"
+    if (expiry_date - today).days <= 30:
+        return "Expiring Soon"
+    return "Active"
+
+def add_certification(db: Session, data: CertificationCreate, file: UploadFile = None):
+    vendor = db.query(Vendor).filter(Vendor.id == data.vendor_id).first()
+    if not vendor:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+
+    if data.expiry_date < data.issue_date:
+        raise HTTPException(status_code=400, detail="Expiry date cannot be earlier than the issue date")
+
+    file_name = None
+    file_path = None
+
+    if file and file.filename:
+        file_name, file_path = _store_upload(file, "certifications", data.vendor_id)
+
+    status = certification_status(data.expiry_date)
+
+    cert = Certification(
+        vendor_id=data.vendor_id,
+        certification_name=data.certification_name,
+        certificate_number=data.certificate_number,
+        issuing_authority=data.issuing_authority,
+        issue_date=data.issue_date,
+        expiry_date=data.expiry_date,
+        status=status,
+        file_name=file_name,
+        file_path=file_path
+    )
+    db.add(cert)
+    db.commit()
+    db.refresh(cert)
+    return cert
+
+def get_vendor_certifications(db: Session, vendor_id: int):
+    certs = db.query(Certification).filter(Certification.vendor_id == vendor_id).all()
+    for c in certs:
+        c.status = certification_status(c.expiry_date)
+    db.commit()
+    return certs
+
 
 def _pending_contract_service_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -164,6 +252,8 @@ def _pending_contract_service_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -172,8 +262,9 @@ def _pending_contract_service_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -183,6 +274,8 @@ def _pending_contract_service_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -191,8 +284,9 @@ def _pending_contract_service_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -202,6 +296,8 @@ def _pending_contract_service_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -210,8 +306,9 @@ def _pending_contract_service_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -221,6 +318,8 @@ def _pending_contract_service_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -229,8 +328,9 @@ def _pending_contract_service_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -240,23 +340,6 @@ def _pending_contract_service_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-    return totals
-
-
-def _pending_contract_service_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
-
-
-def _pending_contract_service_totals_6(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
