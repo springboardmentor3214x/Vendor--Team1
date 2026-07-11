@@ -118,7 +118,119 @@
 
     </div>
 
-    <!-- Status -->
+    <!-- Vendor Documents -->
+
+    <div class="details-card">
+
+        <h2>📂 Vendor Documents</h2>
+
+        <div class="details-grid">
+
+            <p>
+
+                <strong>GST Certificate:</strong>
+
+                {{ vendor.gstCertificate || 'Not Uploaded' }}
+
+                @if(vendor.gstCertificateUrl){
+
+                <button
+                    class="view-btn"
+                    (click)="viewDocument(vendor.gstCertificateUrl)">
+
+                    View
+
+                </button>
+
+                }
+
+            </p>
+
+            <p>
+
+                <strong>PAN Card:</strong>
+
+                {{ vendor.panCard || 'Not Uploaded' }}
+
+                @if(vendor.panCardUrl){
+
+                <button
+                    class="view-btn"
+                    (click)="viewDocument(vendor.panCardUrl)">
+
+                    View
+
+                </button>
+
+                }
+
+            </p>
+
+            <p>
+
+                <strong>Registration Certificate:</strong>
+
+                {{ vendor.registrationCertificate || 'Not Uploaded' }}
+
+                @if(vendor.registrationCertificateUrl){
+
+                <button
+                    class="view-btn"
+                    (click)="viewDocument(vendor.registrationCertificateUrl)">
+
+                    View
+
+                </button>
+
+                }
+
+            </p>
+
+            <p>
+
+                <strong>ISO Certificate:</strong>
+
+                {{ vendor.isoCertificate || 'Not Uploaded' }}
+
+                @if(vendor.isoCertificateUrl){
+
+                <button
+                    class="view-btn"
+                    (click)="viewDocument(vendor.isoCertificateUrl)">
+
+                    View
+
+                </button>
+
+                }
+
+            </p>
+
+            <p>
+
+                <strong>Other Supporting Document:</strong>
+
+                {{ vendor.otherDocument || 'Not Uploaded' }}
+
+                @if(vendor.otherDocumentUrl){
+
+                <button
+                    class="view-btn"
+                    (click)="viewDocument(vendor.otherDocumentUrl)">
+
+                    View
+
+                </button>
+
+                }
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- Vendor Status -->
 
     <div class="details-card">
 

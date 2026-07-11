@@ -39,6 +39,16 @@ export class VendorList implements OnInit {
 
   totalPages = 1;
 
+  totalVendors = 0;
+
+  activeVendors = 0;
+
+  pendingVendors = 0;
+
+  suspendedVendors = 0;
+
+  rejectedVendors = 0;
+
   constructor(private vendorService: VendorService) {}
 
   ngOnInit(): void {
@@ -47,9 +57,33 @@ export class VendorList implements OnInit {
 
       this.vendors = data;
 
+      this.updateStatistics();
+
       this.filterVendors();
 
     });
+
+  }
+
+  updateStatistics(): void {
+
+    this.totalVendors = this.vendors.length;
+
+    this.activeVendors = this.vendors.filter(
+      vendor => vendor.status === 'Active'
+    ).length;
+
+    this.pendingVendors = this.vendors.filter(
+      vendor => vendor.status === 'Pending'
+    ).length;
+
+    this.suspendedVendors = this.vendors.filter(
+      vendor => vendor.status === 'Suspended'
+    ).length;
+
+    this.rejectedVendors = this.vendors.filter(
+      vendor => vendor.status === 'Rejected'
+    ).length;
 
   }
 

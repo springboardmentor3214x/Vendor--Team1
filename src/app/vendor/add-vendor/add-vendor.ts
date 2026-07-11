@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -8,7 +9,10 @@ import { Vendor } from '../../services/vendor.model';
 @Component({
   selector: 'app-add-vendor',
   standalone: true,
-  imports: [FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule
+  ],
   templateUrl: './add-vendor.html',
   styleUrl: './add-vendor.css'
 })
@@ -60,6 +64,21 @@ export class AddVendor {
 
     paymentTerms: '',
 
+    gstCertificate: '',
+    gstCertificateUrl: '',
+
+    panCard: '',
+    panCardUrl: '',
+
+    registrationCertificate: '',
+    registrationCertificateUrl: '',
+
+    isoCertificate: '',
+    isoCertificateUrl: '',
+
+    otherDocument: '',
+    otherDocumentUrl: '',
+
     rating: 5,
 
     status: 'Pending',
@@ -76,85 +95,71 @@ export class AddVendor {
 
   ) {}
 
+  onFileSelected(event: Event, field: keyof Vendor): void {
+
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0) {
+
+      return;
+
+    }
+
+    const file = input.files[0];
+
+    const fileName = file.name;
+
+    const fileUrl = URL.createObjectURL(file);
+
+    switch (field) {
+
+      case 'gstCertificate':
+
+        this.vendor.gstCertificate = fileName;
+        this.vendor.gstCertificateUrl = fileUrl;
+        break;
+
+      case 'panCard':
+
+        this.vendor.panCard = fileName;
+        this.vendor.panCardUrl = fileUrl;
+        break;
+
+      case 'registrationCertificate':
+
+        this.vendor.registrationCertificate = fileName;
+        this.vendor.registrationCertificateUrl = fileUrl;
+        break;
+
+      case 'isoCertificate':
+
+        this.vendor.isoCertificate = fileName;
+        this.vendor.isoCertificateUrl = fileUrl;
+        break;
+
+      case 'otherDocument':
+
+        this.vendor.otherDocument = fileName;
+        this.vendor.otherDocumentUrl = fileUrl;
+        break;
+
+    }
+
+  }
+
+  viewDocument(url?: string): void {
+
+    if (url) {
+
+      window.open(url, '_blank');
+
+    }
+
+  }
+
   saveVendor(): void {
 
-    if (!this.vendor.companyName.trim()) {
-
-      alert('Company Name is required');
-
-      return;
-
-    }
-
-    if (!this.vendor.category.trim()) {
-
-      alert('Vendor Category is required');
-
-      return;
-
-    }
-
-    if (!this.vendor.contactPerson.trim()) {
-
-      alert('Contact Person is required');
-
-      return;
-
-    }
-
-    if (!this.vendor.email.trim()) {
-
-      alert('Email Address is required');
-
-      return;
-
-    }
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailPattern.test(this.vendor.email)) {
-
-      alert('Enter a valid Email Address');
-
-      return;
-
-    }
-
-    if (!this.vendor.phone.trim()) {
-
-      alert('Phone Number is required');
-
-      return;
-
-    }
-
-    if (this.vendor.phone.length < 10) {
-
-      alert('Phone Number should be at least 10 digits');
-
-      return;
-
-    }
-
-    if (!this.vendor.gst.trim()) {
-
-      alert('GST Number is required');
-
-      return;
-
-    }
-
-    if (!this.vendor.pan?.trim()) {
-
-      alert('PAN Number is required');
-
-      return;
-
-    }
-
     this.vendorService.addVendor(this.vendor);
-
-    alert('Vendor added successfully!');
 
     this.router.navigate(['/vendors']);
 

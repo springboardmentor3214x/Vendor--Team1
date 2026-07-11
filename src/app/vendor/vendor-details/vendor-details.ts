@@ -37,4 +37,14 @@ export class VendorDetails implements OnInit {
 
   }
 
+  viewDocument(url?: string): void {
+
+    if (url) {
+
+      window.open(url, '_blank');
+
+    }
+
+  }
+
 }
