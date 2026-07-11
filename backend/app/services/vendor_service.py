@@ -1,0 +1,128 @@
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
+from typing import Optional
+
+from app.models.vendor import Vendor
+from app.schemas.vendor import VendorCreate, VendorUpdate
+
+
+def create_vendor(db: Session, vendor: VendorCreate):
+    db_vendor = Vendor(**vendor.dict())
+    try:
+        db.add(db_vendor)
+        db.commit()
+        db.refresh(db_vendor)
+        return db_vendor
+    except IntegrityError:
+        db.rollback()
+        return None
+
+
+def get_all_vendors(db: Session, skip: int = 0, limit: int = 100,
+                    category: Optional[str] = None, status: Optional[str] = None):
+    query = db.query(Vendor)
+    if category:
+        query = query.filter(Vendor.category == category)
+    if status:
+        query = query.filter(Vendor.status == status)
+    return query.offset(skip).limit(limit).all()
+
+
+def get_vendor(db: Session, vendor_id: int):
+    return db.query(Vendor).filter(Vendor.id == vendor_id).first()
+
+
+def update_vendor(db: Session, vendor_id: int, data: VendorUpdate):
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+    for key, value in data.dict(exclude_unset=True).items():
+        setattr(vendor, key, value)
+    db.commit()
+    db.refresh(vendor)
+    return vendor
+
+
+def delete_vendor(db: Session, vendor_id: int):
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+    db.delete(vendor)
+    db.commit()
+    return vendor
+
+
+def approve_vendor(db: Session, vendor_id: int, approved_by: str):
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+    vendor.approval_status = "Approved"
+    vendor.status = "Active"
+    vendor.approved_by = approved_by
+    db.commit()
+    db.refresh(vendor)
+    return vendor
+
+
+def reject_vendor(db: Session, vendor_id: int, approved_by: str):
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+    vendor.approval_status = "Rejected"
+    vendor.status = "Rejected"
+    vendor.approved_by = approved_by
+    db.commit()
+    db.refresh(vendor)
+    return vendor
+
+
+def block_vendor(db: Session, vendor_id: int):
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+    vendor.status = "Blocked"
+    db.commit()
+    db.refresh(vendor)
+    return vendor
+
+
+def deactivate_vendor(db: Session, vendor_id: int):
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+    vendor.status = "Inactive"
+    db.commit()
+    db.refresh(vendor)
+    return vendor
+
+
+def activate_vendor(db: Session, vendor_id: int):
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+    if vendor.approval_status != "Approved":
+        return None
+    vendor.status = "Active"
+    db.commit()
+    db.refresh(vendor)
+    return vendor
+
+# called after performance data is recorded to recalculate vendor scores
+def update_vendor_scores(db: Session, vendor_id: int):
+    from app.services.performance_service import calculate_vendor_metrics
+
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+
+    metrics = calculate_vendor_metrics(db, vendor_id)
+
+    vendor.delivery_score = metrics["delivery_score"]
+    vendor.quality_score = metrics["quality_score"]
+    vendor.communication_score = metrics["communication_score"]
+    vendor.service_score = metrics["service_score"]
+    vendor.reliability_score = metrics["overall_performance_score"]
+
+    db.commit()
+    db.refresh(vendor)
+    return vendor
