@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 05 Jul - Extend shared file with upload size limits
 - 06 Jul - Extend compliance record with audit findings
 - 07 Jul - Create discussion schemas with threaded replies
 - 08 Jul - Create shared file schemas with download links
 - 09 Jul - Expand contract with renewal window tracking
 - 10 Jul - Add contract service with certification records
+- 11 Jul - Extend contract with document repository links
