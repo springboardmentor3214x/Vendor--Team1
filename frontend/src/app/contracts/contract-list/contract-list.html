@@ -10,36 +10,66 @@
         </div>
     </div>
 
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: var(--vrip-space-6);">
+        <app-card>
+            <div style="font-size: 0.8125rem; color: var(--text-secondary);">Total Contracts</div>
+            <div style="font-size: 1.75rem; font-weight: 700;">{{ totalContracts }}</div>
+        </app-card>
+        <app-card style="border-left: 4px solid #34c759;">
+            <div style="font-size: 0.8125rem; color: var(--text-secondary);">Active</div>
+            <div style="font-size: 1.75rem; font-weight: 700; color: #248a3d;">{{ activeContracts }}</div>
+        </app-card>
+        <app-card style="border-left: 4px solid #ffcc00;">
+            <div style="font-size: 0.8125rem; color: var(--text-secondary);">Expiring (90 days)</div>
+            <div style="font-size: 1.75rem; font-weight: 700; color: #d4a000;">{{ expiringContracts }}</div>
+        </app-card>
+        <app-card style="border-left: 4px solid #ff3b30;">
+            <div style="font-size: 0.8125rem; color: var(--text-secondary);">Expired</div>
+            <div style="font-size: 1.75rem; font-weight: 700; color: #ff3b30;">{{ expiredContracts }}</div>
+        </app-card>
+        <app-card>
+            <div style="font-size: 0.8125rem; color: var(--text-secondary);">Total Value</div>
+            <div style="font-size: 1.75rem; font-weight: 700;">₹{{ totalValue | number:'1.0-0' }}</div>
+        </app-card>
+    </div>
+
 </div>
 
 <div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
+  <p>Awaiting the backend endpoint.</p>
   <div class="placeholder-row">
     <span>Orbit IT Systems</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Copperfield Freight</span>
+    <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
 </div>
