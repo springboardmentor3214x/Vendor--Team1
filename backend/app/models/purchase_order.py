@@ -2,8 +2,10 @@ from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
 from datetime import datetime
 from app.database.base import Base
 
+
 class PurchaseOrder(Base):
     __tablename__ = "purchase_orders"
+
     id = Column(Integer, primary_key=True, index=True)
     po_number = Column(String(50), unique=True, nullable=False)
     procurement_id = Column(Integer, ForeignKey("procurements.id"), nullable=False)
@@ -16,3 +18,9 @@ class PurchaseOrder(Base):
     unit_price = Column(Float, nullable=False, default=0.0)
     total_cost = Column(Float, nullable=False, default=0.0)
     tax_amount = Column(Float, default=0.0)
+    shipping_address = Column(String(255), nullable=True)
+    expected_delivery_date = Column(DateTime, nullable=True)
+    payment_terms = Column(String(100), nullable=True, default="Net 30")
+    status = Column(String(50), default="Issued")
+    approved_by = Column(String(100), nullable=True)
+    po_date = Column(DateTime, default=datetime.utcnow)
