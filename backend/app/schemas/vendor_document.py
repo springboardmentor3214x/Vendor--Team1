@@ -1,19 +1,25 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 
-class VendorDocumentBase(BaseModel):
-    vendor_id: int
+# ===========================
+# Create Document
+# ===========================
+class VendorDocumentCreate(BaseModel):
+    document_name: str
     document_type: str
+    file_path: str
 
 
-class VendorDocumentCreate(VendorDocumentBase):
-    pass
-
-
-class VendorDocumentResponse(VendorDocumentBase):
+# ===========================
+# Response
+# ===========================
+class VendorDocumentResponse(BaseModel):
     id: int
-    file_name: str
+    vendor_id: int
+    document_name: str
+    document_type: str
     file_path: str
     uploaded_at: datetime
 

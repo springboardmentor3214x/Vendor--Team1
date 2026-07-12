@@ -1,104 +1,120 @@
-from fastapi import APIRouter, Depends, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
+from app.models.user import User
+from app.schemas.vendor_document import VendorDocumentCreate
 
 from app.services.vendor_document_service import (
     upload_document,
-    get_all_documents,
+    get_vendor_documents,
     get_document,
     delete_document
 )
 
-router = APIRouter(
-    prefix="/vendor-documents",
-    tags=["Vendor Documents"]
+from app.core.dependencies import get_current_user
+from app.core.roles import (
+    procurement_manager,
+    admin_only
 )
 
+router = APIRouter()
 
-# --------------------------------------------------
-# Upload Document
-# --------------------------------------------------
 
-@router.post("/upload")
+# =====================================
+# Upload Vendor Document
+# =====================================
+@router.post("/vendors/{vendor_id}/documents")
 def upload_vendor_document(
-
-    vendor_id: int = Form(...),
-
-    document_type: str = Form(...),
-
-    file: UploadFile = File(...),
-
-    db: Session = Depends(get_db)
-
+    vendor_id: int,
+    document: VendorDocumentCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
 
-    return upload_document(
+    procurement_manager(current_user)
 
+    new_document = upload_document(
         db,
-
         vendor_id,
+        document
+    )
 
-        document_type,
+    if new_document is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Vendor Not Found"
+        )
 
-        file
+    return {
+        "message": "Document Uploaded Successfully",
+        "document": new_document
+    }
 
+
+# =====================================
+# Get Vendor Documents
+# =====================================
+@router.get("/vendors/{vendor_id}/documents")
+def read_vendor_documents(
+    vendor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    return get_vendor_documents(
+        db,
+        vendor_id
     )
 
 
-# --------------------------------------------------
-# Get All Documents
-# --------------------------------------------------
-
-@router.get("/")
-def read_all_documents(
-
-    db: Session = Depends(get_db)
-
-):
-
-    return get_all_documents(db)
-
-
-# --------------------------------------------------
-# Get One Document
-# --------------------------------------------------
-
-@router.get("/{document_id}")
+# =====================================
+# Get Single Document
+# =====================================
+@router.get("/documents/{document_id}")
 def read_document(
-
     document_id: int,
-
-    db: Session = Depends(get_db)
-
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
 
-    return get_document(
-
+    document = get_document(
         db,
-
         document_id
-
     )
 
+    if document is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Document Not Found"
+        )
 
-# --------------------------------------------------
+    return document
+
+
+# =====================================
 # Delete Document
-# --------------------------------------------------
-
-@router.delete("/{document_id}")
+# =====================================
+@router.delete("/documents/{document_id}")
 def remove_document(
-
     document_id: int,
-
-    db: Session = Depends(get_db)
-
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
 
-    return delete_document(
+    admin_only(current_user)
 
+    deleted = delete_document(
         db,
-
         document_id
-
     )
+
+    if deleted is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Document Not Found"
+        )
+
+    return {
+        "message": "Document Deleted Successfully"
+    }

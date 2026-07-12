@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Float, Integer, String
 from app.database.base import Base
 
 
@@ -18,6 +18,16 @@ class Vendor(Base):
     address = Column(String(255), nullable=False)
 
     category = Column(String(100), nullable=False)
+    
+    delivery_score = Column(Integer, default=0)
+
+    quality_score = Column(Integer, default=0)
+
+    compliance_score = Column(Integer, default=0)
+
+    communication_score = Column(Integer, default=0)
+
+    reliability_score = Column(Float, default=0)
 
     status = Column(
         String(50),

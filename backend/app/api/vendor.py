@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
-from app.schemas.vendor import VendorCreate
+from app.schemas.vendor import VendorCreate, VendorScoreUpdate
 from app.models.user import User
 
 from app.services.vendor_service import (
@@ -16,7 +16,14 @@ from app.services.vendor_service import (
     search_vendors,
     filter_vendors_by_status,
     filter_vendors_by_category,
-    vendor_dashboard
+    vendor_dashboard,
+    get_vendors_paginated,
+    sort_vendors,
+    calculate_reliability_score,
+    top_vendors,
+    bottom_vendors,
+    vendor_performance_report,
+    update_vendor_scores
 )
 
 from app.core.dependencies import get_current_user
@@ -116,6 +123,96 @@ def dashboard(
     procurement_manager(current_user)
 
     return vendor_dashboard(db)
+# =====================================
+# Vendor Pagination
+# Any Logged-in User
+# =====================================
+@router.get("/vendors/page")
+def vendor_pagination(
+    page: int = 1,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    return get_vendors_paginated(
+        db,
+        page,
+        limit
+    )
+# =====================================
+# Sort Vendors
+# Any Logged-in User
+# =====================================
+@router.get("/vendors/sort")
+def vendor_sort(
+    field: str,
+    order: str = "asc",
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    return sort_vendors(
+        db,
+        field,
+        order
+    )
+    
+# =====================================
+# Top Vendors
+# Any Logged-in User
+# =====================================
+@router.get("/vendors/top")
+def get_top_vendors(
+    limit: int = 5,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    return top_vendors(
+        db,
+        limit
+    )
+    
+# =====================================
+# Bottom Vendors
+# Any Logged-in User
+# =====================================
+@router.get("/vendors/bottom")
+def get_bottom_vendors(
+    limit: int = 5,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    return bottom_vendors(
+        db,
+        limit
+    )
+    
+# =====================================
+# Vendor Performance Report
+# Any Logged-in User
+# =====================================
+@router.get("/vendors/{vendor_id}/performance")
+def performance_report(
+    vendor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    report = vendor_performance_report(
+        db,
+        vendor_id
+    )
+
+    if report is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Vendor Not Found"
+        )
+
+    return report
 
 # =====================================
 # Get Vendor By ID
@@ -137,6 +234,35 @@ def one_vendor(
         )
 
     return vendor
+# =====================================
+# Calculate Vendor Reliability Score
+# Administrator & Procurement Manager
+# =====================================
+@router.post("/vendors/{vendor_id}/calculate-score")
+def calculate_vendor_score(
+    vendor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    procurement_manager(current_user)
+
+    vendor = calculate_reliability_score(
+        db,
+        vendor_id
+    )
+
+    if vendor is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Vendor Not Found"
+        )
+
+    return {
+        "message": "Vendor Reliability Score Calculated Successfully",
+        "vendor_name": vendor.vendor_name,
+        "reliability_score": vendor.reliability_score
+    }
 
 
 # =====================================
@@ -253,5 +379,31 @@ def reject_vendor_api(
 
     return {
         "message": "Vendor Rejected Successfully",
+        "vendor": vendor
+    }
+@router.put("/vendors/{vendor_id}/scores")
+def update_scores(
+    vendor_id: int,
+    scores: VendorScoreUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    procurement_manager(current_user)
+
+    vendor = update_vendor_scores(
+        db,
+        vendor_id,
+        scores
+    )
+
+    if vendor is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Vendor Not Found"
+        )
+
+    return {
+        "message": "Vendor Scores Updated Successfully",
         "vendor": vendor
     }
