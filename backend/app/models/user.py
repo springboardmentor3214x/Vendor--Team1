@@ -13,6 +13,8 @@ class User(Base):
 
     email = Column(String(100), unique=True, nullable=False)
 
+    mobile_number = Column(String(15), nullable=True)
+
     password = Column(String(255), nullable=False)
 
     role = Column(String(50), nullable=False)
