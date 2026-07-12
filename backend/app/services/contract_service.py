@@ -4,11 +4,13 @@ from sqlalchemy import func
 from fastapi import HTTPException, UploadFile
 from datetime import datetime, date, timedelta
 import os
+
 from app.utils.uploads import (
     validate_upload,
     ALLOWED_DOCUMENT_EXTENSIONS,
     MAX_DOCUMENT_SIZE_BYTES,
 )
+
 from app.models.contract import Contract
 from app.models.certification import Certification
 from app.models.compliance_record import ComplianceRecord
@@ -16,6 +18,7 @@ from app.models.vendor import Vendor
 from app.schemas.contract import ContractCreate, ContractUpdate
 from app.schemas.certification import CertificationCreate, CertificationUpdate
 from app.schemas.compliance_record import ComplianceRecordCreate, ComplianceRecordUpdate
+
 
 def generate_contract_number(db: Session) -> str:
     year = datetime.utcnow().year
@@ -38,6 +41,7 @@ def generate_contract_number(db: Session) -> str:
         next_seq += 1
     return f"{prefix}{next_seq:04d}"
 
+
 def _store_upload(file: UploadFile, folder: str, vendor_id: int):
     contents = validate_upload(file, ALLOWED_DOCUMENT_EXTENSIONS, MAX_DOCUMENT_SIZE_BYTES)
 
@@ -50,6 +54,7 @@ def _store_upload(file: UploadFile, folder: str, vendor_id: int):
         buffer.write(contents)
 
     return safe_filename, file_path
+
 
 def create_contract(db: Session, data: ContractCreate, file: UploadFile = None):
     v = db.query(Vendor).filter(Vendor.id == data.vendor_id).first()
@@ -98,6 +103,7 @@ def create_contract(db: Session, data: ContractCreate, file: UploadFile = None):
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
+
 def get_all_contracts(db: Session):
     contracts = db.query(Contract).all()
     today = date.today()
@@ -109,6 +115,7 @@ def get_all_contracts(db: Session):
                 c.status = "Expiring Soon"
     db.commit()
     return contracts
+
 
 def get_contracts_by_vendor(db: Session, vendor_id: int):
     contracts = db.query(Contract).filter(Contract.vendor_id == vendor_id).all()
@@ -122,6 +129,7 @@ def get_contracts_by_vendor(db: Session, vendor_id: int):
     db.commit()
     return contracts
 
+
 def get_contract_by_id(db: Session, contract_id: int):
     c = db.query(Contract).filter(Contract.id == contract_id).first()
     if c:
@@ -133,6 +141,7 @@ def get_contract_by_id(db: Session, contract_id: int):
                 c.status = "Expiring Soon"
             db.commit()
     return c
+
 
 def update_contract(db: Session, contract_id: int, data: ContractUpdate):
     c = get_contract_by_id(db, contract_id)
@@ -146,6 +155,7 @@ def update_contract(db: Session, contract_id: int, data: ContractUpdate):
     db.commit()
     db.refresh(c)
     return c
+
 
 def renew_contract(db: Session, contract_id: int, new_end_date: date, new_value: float = None):
     c = get_contract_by_id(db, contract_id)
@@ -166,6 +176,7 @@ def renew_contract(db: Session, contract_id: int, new_end_date: date, new_value:
     db.refresh(c)
     return c
 
+
 def delete_contract(db: Session, contract_id: int):
     c = get_contract_by_id(db, contract_id)
     if not c:
@@ -179,6 +190,7 @@ def delete_contract(db: Session, contract_id: int):
     db.commit()
     return {"message": "Contract deleted successfully"}
 
+
 def get_expiring_contracts(db: Session, days_threshold: int = 90):
     today = date.today()
     threshold_date = today + timedelta(days=days_threshold)
@@ -187,6 +199,7 @@ def get_expiring_contracts(db: Session, days_threshold: int = 90):
         Contract.status.in_(["Active", "Expiring Soon", "Expired"])
     ).all()
 
+
 def certification_status(expiry_date: date) -> str:
     today = date.today()
     if expiry_date < today:
@@ -194,6 +207,7 @@ def certification_status(expiry_date: date) -> str:
     if (expiry_date - today).days <= 30:
         return "Expiring Soon"
     return "Active"
+
 
 def add_certification(db: Session, data: CertificationCreate, file: UploadFile = None):
     vendor = db.query(Vendor).filter(Vendor.id == data.vendor_id).first()
@@ -227,6 +241,7 @@ def add_certification(db: Session, data: CertificationCreate, file: UploadFile =
     db.refresh(cert)
     return cert
 
+
 def get_vendor_certifications(db: Session, vendor_id: int):
     certs = db.query(Certification).filter(Certification.vendor_id == vendor_id).all()
     for c in certs:
@@ -235,111 +250,115 @@ def get_vendor_certifications(db: Session, vendor_id: int):
     return certs
 
 
-def _pending_contract_service_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def get_certification(db: Session, cert_id: int):
+    return db.query(Certification).filter(Certification.id == cert_id).first()
 
 
-def _pending_contract_service_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+def update_certification(db: Session, cert_id: int, data: CertificationUpdate, file: UploadFile = None):
+    cert = get_certification(db, cert_id)
+    if not cert:
+        raise HTTPException(status_code=404, detail="Certification not found")
+
+    for key, value in data.model_dump(exclude_unset=True).items():
+        if value is not None:
+            setattr(cert, key, value)
+
+    if file and file.filename:
+        previous_path = cert.file_path
+        cert.file_name, cert.file_path = _store_upload(file, "certifications", cert.vendor_id)
+        if previous_path and os.path.normpath(previous_path) != os.path.normpath(cert.file_path):
+            try:
+                os.remove(previous_path)
+            except OSError:
+                pass
+
+    if cert.expiry_date and cert.issue_date and cert.expiry_date < cert.issue_date:
+        raise HTTPException(status_code=400, detail="Expiry date cannot be earlier than the issue date")
+
+    cert.status = certification_status(cert.expiry_date)
+    db.commit()
+    db.refresh(cert)
+    return cert
 
 
-def _pending_contract_service_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def delete_certification(db: Session, cert_id: int):
+    c = get_certification(db, cert_id)
+    if not c:
+        raise HTTPException(status_code=404, detail="Certification not found")
+
+    stored_path = c.file_path
+    db.delete(c)
+    db.commit()
+
+    if stored_path:
+        try:
+            os.remove(stored_path)
+        except OSError:
+            pass
+
+    return {"message": "Certification deleted"}
 
 
-def _pending_contract_service_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+def get_expiring_certifications(db: Session, days_threshold: int = 90):
+    threshold_date = date.today() + timedelta(days=days_threshold)
+    certs = db.query(Certification).filter(
+        Certification.expiry_date <= threshold_date
+    ).order_by(Certification.expiry_date.asc()).all()
+    for c in certs:
+        c.status = certification_status(c.expiry_date)
+    db.commit()
+    return certs
 
 
-def _pending_contract_service_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def record_compliance(db: Session, data: ComplianceRecordCreate):
+    rec = ComplianceRecord(
+        vendor_id=data.vendor_id,
+        compliance_type=data.compliance_type,
+        status=data.status or "Pending Verification",
+        verified_by=data.verified_by,
+        verification_date=data.verification_date or date.today(),
+        expiry_date=data.expiry_date,
+        remarks=data.remarks
+    )
+    db.add(rec)
+    db.commit()
+    db.refresh(rec)
+    return rec
 
 
-def _pending_contract_service_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+def get_vendor_compliance(db: Session, vendor_id: int):
+    return db.query(ComplianceRecord).filter(ComplianceRecord.vendor_id == vendor_id).all()
 
 
-def _pending_contract_service_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def update_compliance_status(db: Session, compliance_id: int, status: str, verified_by: str = None, remarks: str = None):
+    rec = db.query(ComplianceRecord).filter(ComplianceRecord.id == compliance_id).first()
+    if not rec:
+        raise HTTPException(status_code=404, detail="Compliance record not found")
+
+    rec.status = status
+    if verified_by:
+        rec.verified_by = verified_by
+        rec.verification_date = date.today()
+    if remarks:
+        rec.remarks = remarks
+
+    db.commit()
+    db.refresh(rec)
+    return rec
 
 
-def _pending_contract_service_totals_4(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+def get_compliance_dashboard(db: Session):
+    total_records = db.query(ComplianceRecord).count()
+    compliant = db.query(ComplianceRecord).filter(ComplianceRecord.status == "Compliant").count()
+    pending = db.query(ComplianceRecord).filter(ComplianceRecord.status == "Pending Verification").count()
+    non_compliant = db.query(ComplianceRecord).filter(ComplianceRecord.status == "Non-Compliant").count()
 
+    compliance_percentage = round((compliant / total_records * 100), 2) if total_records > 0 else 100.0
 
-def _pending_contract_service_rows_5(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
-
-
-def _pending_contract_service_totals_5(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+    return {
+        "total_compliance_records": total_records,
+        "compliant_count": compliant,
+        "pending_verification_count": pending,
+        "non_compliant_count": non_compliant,
+        "compliance_percentage": compliance_percentage
+    }
