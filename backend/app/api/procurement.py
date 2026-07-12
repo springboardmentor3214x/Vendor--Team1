@@ -13,6 +13,7 @@ router = APIRouter(prefix="/procurements", tags=["Procurements"])
 
 class AssignVendorRequest(BaseModel):
     vendor_id: int
+    acknowledge_risk: bool = False
 
 class ApprovalActionRequest(BaseModel):
     remarks: Optional[str] = None
@@ -74,14 +75,62 @@ def assert_vendor_may_read(db: Session, current_user: User, proc):
             detail="You can only view procurement requests assigned to you"
         )
 
+@router.get("/search")
+def search(
+    keyword: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    results = procurement_service.search_procurements(db, keyword)
+    vendor_id = current_vendor_id(db, current_user)
+    if vendor_id is not None:
+        results = [p for p in results if p.vendor_id == vendor_id]
+    return results
+
+@router.get("/filter", response_model=List[ProcurementResponse])
+def filter_by_status(
+    status: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    results = procurement_service.filter_procurements(db, status)
+    vendor_id = current_vendor_id(db, current_user)
+    if vendor_id is not None:
+        results = [p for p in results if p.vendor_id == vendor_id]
+    return results
+
+@router.get("/vendor/{vendor_id}", response_model=List[ProcurementResponse])
+def by_vendor(
+    vendor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    own_vendor_id = current_vendor_id(db, current_user)
+    if own_vendor_id is not None and own_vendor_id != vendor_id:
+        raise HTTPException(status_code=403, detail="You can only view your own procurement records")
+    return procurement_service.get_procurements_by_vendor(db, vendor_id)
+
+@router.get("/{procurement_id}", response_model=ProcurementResponse)
+def view_procurement(
+    procurement_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    proc = procurement_service.get_procurement(db, procurement_id)
+    if not proc:
+        raise HTTPException(status_code=404, detail="Procurement not found")
+    assert_vendor_may_read(db, current_user, proc)
+    return proc
+
 
 def _pending_procurement_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -91,6 +140,8 @@ def _pending_procurement_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -99,8 +150,9 @@ def _pending_procurement_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -110,6 +162,8 @@ def _pending_procurement_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -118,8 +172,9 @@ def _pending_procurement_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -129,6 +184,8 @@ def _pending_procurement_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -137,8 +194,9 @@ def _pending_procurement_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -148,6 +206,8 @@ def _pending_procurement_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -156,8 +216,9 @@ def _pending_procurement_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -167,23 +228,6 @@ def _pending_procurement_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-    return totals
-
-
-def _pending_procurement_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
-
-
-def _pending_procurement_totals_6(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
