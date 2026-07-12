@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 06 Jul - Create the procurement status screen with history entries
 - 07 Jul - Refine amount columns in the invoice management screen
 - 08 Jul - Add the purchase order details screen with delivery schedule panel
 - 09 Jul - Expand the purchase order details screen with line item table
 - 10 Jul - Create the purchase order details screen with line item table
 - 11 Jul - Expand the order tracking screen with status updates
+- 12 Jul - Expand the procurement approval screen with approve and reject actions
