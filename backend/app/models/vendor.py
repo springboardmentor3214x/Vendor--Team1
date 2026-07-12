@@ -1,6 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
-from datetime import datetime
-
+from sqlalchemy import Column, Integer, String
 from app.database.base import Base
 
 
@@ -11,7 +9,7 @@ class Vendor(Base):
 
     vendor_name = Column(String(100), nullable=False)
 
-    company_name = Column(String(100), nullable=False)
+    company_name = Column(String(150), nullable=False)
 
     email = Column(String(100), unique=True, nullable=False)
 
@@ -21,6 +19,18 @@ class Vendor(Base):
 
     category = Column(String(100), nullable=False)
 
-    status = Column(String(50), default="Active")
+    status = Column(
+        String(50),
+        default="Pending"
+    )
 
-    created_at = Column(DateTime, default=datetime.utcnow)
+    # New Fields
+    approval_status = Column(
+        String(50),
+        default="Pending"
+    )
+
+    approved_by = Column(
+        String(100),
+        nullable=True
+    )
