@@ -29,19 +29,91 @@ export class ProcurementStatus implements OnInit {
   currentStatus: string = 'Pending';
   newRemarks: string = '';
   isLoading = true;
-}
 
-const PLACEHOLDER_PROCUREMENT_STATUS_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 5, name: 'Harborline Equipment', status: 'Active' },
-  { id: 6, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 7, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 8, name: 'Copperfield Freight', status: 'Inactive' },
-];
+  stages = ['Pending', 'Approved', 'Ordered', 'Delivered', 'Completed'];
 
-function usePlaceholderProcurementStatus(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_PROCUREMENT_STATUS_ROWS;
+  history: any[] = [];
+  userRole: string = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private procurementService: ProcurementService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    const user = this.authService.getCurrentUser();
+    this.userRole = user?.role || '';
+    this.procurementId = this.route.snapshot.paramMap.get('id');
+    if (this.procurementId) {
+      this.loadProcurementData(this.procurementId);
+    }
+  }
+
+  loadProcurementData(id: string): void {
+    this.isLoading = true;
+    this.procurementService.getProcurementRequestById(id).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        this.procurement = res;
+        this.currentStatus = res.status || 'Pending';
+        this.loadHistory(id);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Error fetching procurement status', err);
+      }
+    });
+  }
+
+  loadHistory(id: string): void {
+    this.procurementService.getProcurementStatusHistory(id).subscribe({
+      next: (res) => this.history = res,
+      error: () => this.history = []
+    });
+  }
+
+  isStageCompleted(stage: string): boolean {
+    if (this.currentStatus === 'Cancelled') return false;
+    const currentIndex = this.stages.indexOf(this.currentStatus);
+    const stageIndex = this.stages.indexOf(stage);
+    return stageIndex <= currentIndex && currentIndex !== -1;
+  }
+
+  updateStatus(targetStage: string): void {
+    if (!this.procurementId) return;
+
+    if (targetStage === 'Delivered') {
+      this.procurementService.deliverRequest(this.procurementId).subscribe({
+        next: () => {
+          alert('Procurement status updated to Delivered!');
+          this.loadProcurementData(this.procurementId!);
+        },
+        error: (err: any) => alert('Failed to update status: ' + (err.error?.detail || err.message))
+      });
+    } else if (targetStage === 'Completed') {
+      this.procurementService.completeRequest(this.procurementId).subscribe({
+        next: () => {
+          alert('Procurement completed successfully!');
+          this.loadProcurementData(this.procurementId!);
+        },
+        error: (err: any) => alert('Failed to update status: ' + (err.error?.detail || err.message))
+      });
+    }
+  }
+
+  cancelProcurement(): void {
+    if (!this.procurementId) return;
+    const reason = prompt('Please enter cancellation reason:');
+    if (reason !== null) {
+      this.procurementService.rejectRequest(this.procurementId, reason || 'Cancelled by user').subscribe({
+        next: () => {
+          alert('Procurement cancelled.');
+          this.loadProcurementData(this.procurementId!);
+        },
+        error: (err: any) => alert('Failed to cancel: ' + (err.error?.detail || err.message))
+      });
+    }
+  }
 }
