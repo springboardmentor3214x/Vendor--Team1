@@ -1,1 +1,227 @@
-<app-dashboard></app-dashboard>
+<div class="vendor-dashboard">
+
+    <div class="dashboard-header">
+
+        <div>
+
+            <h1>Vendor Dashboard</h1>
+
+            <p>Welcome back! Here's an overview of your vendor account.</p>
+
+        </div>
+
+        <button class="refresh-btn">
+
+            Refresh
+
+        </button>
+
+    </div>
+
+    <!-- Statistics Cards -->
+
+    <div class="cards">
+
+        <div class="card blue">
+
+            <h3>📦 My Orders</h3>
+
+            <h1>12</h1>
+
+            <p>2 Orders In Progress</p>
+
+        </div>
+
+        <div class="card green">
+
+            <h3>💰 Pending Payments</h3>
+
+            <h1>₹1.25L</h1>
+
+            <p>Awaiting Approval</p>
+
+        </div>
+
+        <div class="card orange">
+
+            <h3>📄 Documents</h3>
+
+            <h1>8</h1>
+
+            <p>All Documents Updated</p>
+
+        </div>
+
+        <div class="card purple">
+
+            <h3>⭐ Vendor Rating</h3>
+
+            <h1>4.8</h1>
+
+            <p>Excellent Performance</p>
+
+        </div>
+
+    </div>
+
+    <!-- Quick Actions -->
+
+    <div class="quick-actions">
+
+        <h2>Quick Actions</h2>
+
+        <div class="actions-grid">
+
+            <div
+                class="action-card"
+                routerLink="/profile">
+
+                <div class="icon">👤</div>
+
+                <h3>My Profile</h3>
+
+                <p>View and update your profile information.</p>
+
+            </div>
+
+            <div
+                class="action-card"
+                routerLink="/vendors/add"
+                fragment="documents">
+
+                <div class="icon">📂</div>
+
+                <h3>Upload Documents</h3>
+
+                <p>Upload GST, PAN and other vendor documents.</p>
+
+            </div>
+                        <div class="action-card">
+
+                <div class="icon">📦</div>
+
+                <h3>My Orders</h3>
+
+                <p>Coming Soon...</p>
+
+            </div>
+
+            <div class="action-card">
+
+                <div class="icon">🧾</div>
+
+                <h3>My Invoices</h3>
+
+                <p>Coming Soon...</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Recent Activities -->
+
+    <div class="recent-activities">
+
+        <div class="table-header">
+
+            <h2>Recent Activities</h2>
+
+        </div>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Date</th>
+                    <th>Activity</th>
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>13 Jul 2026</td>
+
+                    <td>Vendor Profile Updated</td>
+
+                    <td>
+
+                        <span class="completed">
+
+                            Completed
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>12 Jul 2026</td>
+
+                    <td>Invoice Uploaded</td>
+
+                    <td>
+
+                        <span class="pending">
+
+                            Pending Verification
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>11 Jul 2026</td>
+
+                    <td>Purchase Order Received</td>
+
+                    <td>
+
+                        <span class="approved">
+
+                            Active
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>10 Jul 2026</td>
+
+                    <td>GST Certificate Verified</td>
+
+                    <td>
+
+                        <span class="completed">
+
+                            Verified
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

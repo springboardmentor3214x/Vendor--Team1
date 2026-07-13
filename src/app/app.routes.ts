@@ -12,6 +12,7 @@ import { Dashboard } from './dashboard/dashboard';
 
 import { AdminDashboard } from './dashboard/admin-dashboard/admin-dashboard';
 import { ProcurementDashboard } from './procurement/procurement-dashboard/procurement-dashboard';
+import { ProcurementRequest } from './procurement/procurement-request/procurement-request';
 import { SupplyChainDashboard } from './dashboard/supply-chain-dashboard/supply-chain-dashboard';
 import { VendorDashboard } from './dashboard/vendor-dashboard/vendor-dashboard';
 import { FinanceDashboard } from './dashboard/finance-dashboard/finance-dashboard';
@@ -59,6 +60,17 @@ export const routes: Routes = [
   {
     path: 'procurement-dashboard',
     component: ProcurementDashboard,
+    canActivate: [authGuard, roleGuard],
+    data: {
+      roles: ['Procurement Manager']
+    }
+  },
+
+  // -------------------- Procurement Module --------------------
+
+  {
+    path: 'procurement-request',
+    component: ProcurementRequest,
     canActivate: [authGuard, roleGuard],
     data: {
       roles: ['Procurement Manager']

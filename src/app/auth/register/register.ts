@@ -144,7 +144,49 @@ export class Register {
 
     }
 
-    // Backend will check duplicate email
+    // Check duplicate email
+
+    const users = JSON.parse(
+
+      localStorage.getItem('vrip_registered_users') || '[]'
+
+    );
+
+    const emailExists = users.some(
+
+      (u: any) => u.email.toLowerCase() === this.user.email.toLowerCase()
+
+    );
+
+    if (emailExists) {
+
+      alert('Email already registered');
+
+      return;
+
+    }
+
+    // Save user
+
+    users.push({
+
+      fullName: this.user.fullName,
+
+      email: this.user.email,
+
+      password: this.user.password,
+
+      role: this.user.role
+
+    });
+
+    localStorage.setItem(
+
+      'vrip_registered_users',
+
+      JSON.stringify(users)
+
+    );
 
     alert('Registration Successful');
 

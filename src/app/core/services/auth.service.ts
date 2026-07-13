@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 
 import { LoginRequest } from '../models/login-request';
 import { LoginResponse } from '../models/login-response';
@@ -18,6 +18,44 @@ export class AuthService {
   constructor() {}
 
   login(request: LoginRequest): Observable<LoginResponse> {
+
+    // -----------------------------
+    // Check registered users first
+    // -----------------------------
+
+    const users = JSON.parse(
+      localStorage.getItem('vrip_registered_users') || '[]'
+    );
+
+    const registeredUser = users.find(
+      (u: any) =>
+        u.email.toLowerCase() === request.email.toLowerCase() &&
+        u.password === request.password
+    );
+
+    if (registeredUser) {
+
+      const response: LoginResponse = {
+
+        token: 'dummy-jwt-token',
+
+        role: registeredUser.role,
+
+        fullName: registeredUser.fullName,
+
+        email: registeredUser.email
+
+      };
+
+      this.storeSession(response);
+
+      return of(response);
+
+    }
+
+    // -----------------------------
+    // Demo Accounts
+    // -----------------------------
 
     let role = 'Vendor';
 
@@ -48,7 +86,7 @@ export class AuthService {
         break;
 
       default:
-        role = 'Vendor';
+        return throwError(() => new Error('Invalid credentials'));
 
     }
 
@@ -82,7 +120,9 @@ export class AuthService {
 
   logout(): void {
 
-    localStorage.clear();
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.ROLE_KEY);
+    localStorage.removeItem(this.USER_KEY);
 
   }
 
