@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 07 Jul - Expand the button component with disabled styling
 - 08 Jul - Create the shared core helpers with session storage handling
 - 09 Jul - Retire the generic API base service in favour of per module services
 - 10 Jul - Add the add vendor screen with category selection
 - 11 Jul - Add the edit vendor screen with update confirmation
 - 12 Jul - Extend the contract list screen with status filter
+- 13 Jul - Add the vendor list screen with table layout
