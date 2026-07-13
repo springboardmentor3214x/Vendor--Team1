@@ -1,0 +1,53 @@
+<div class="assignment-container" style="display: flex; flex-direction: column; gap: 24px;">
+    <div class="page-vrip-page-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <div class="vrip-page-header-breadcrumb" style="display: flex; align-items: center; gap: 6px; font-size: 0.875rem; color: #64748b; margin-bottom: 4px;">
+                <a routerLink="/procurement/requests" style="color: inherit; text-decoration: none;">Procurement Requests</a>
+                <span class="material-symbols-outlined icon-sm" style="font-size: 16px;">chevron_right</span>
+                <span>Vendor Assignment</span>
+            </div>
+            <h1 class="vrip-page-title" style="margin: 0; font-size: 1.75rem; font-weight: 700; color: #0f172a;">
+                Assign Vendor for {{ requestDetails?.request_number || ('PR-' + requestId) }}
+            </h1>
+            <p style="margin-top: 4px; color: #64748b;">Select an approved vendor from the Vendor Management Module.</p>
+        </div>
+        <div class="vrip-page-header-actions">
+            <app-button variant="outline" iconLeft="arrow_back" routerLink="/procurement/requests">
+                Back to Requests
+            </app-button>
+        </div>
+    </div>
+
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+  </div>
+</div>
