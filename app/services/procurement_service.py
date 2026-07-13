@@ -28,3 +28,24 @@ def get_all_procurements(db: Session):
 
 def get_procurement(db: Session, procurement_id: int):
     return db.query(Procurement).filter(Procurement.id == procurement_id).first()
+
+def update_procurement(db: Session, procurement_id: int, procurement: ProcurementCreate):
+    existing = get_procurement(db, procurement_id)
+    if not existing:
+        return None
+    existing.item_name = procurement.item_name
+    existing.vendor_id = procurement.vendor_id
+    existing.quantity = procurement.quantity
+    existing.unit_price = procurement.unit_price
+    existing.total_price = procurement.quantity * procurement.unit_price
+    db.commit()
+    db.refresh(existing)
+    return existing
+
+def delete_procurement(db: Session, procurement_id: int):
+    procurement = get_procurement(db, procurement_id)
+    if not procurement:
+        return None
+    db.delete(procurement)
+    db.commit()
+    return procurement
