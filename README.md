@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 07 Jul - Build the contract list screen with expiry highlighting
 - 08 Jul - Reconcile procurement with the Angular services
 - 09 Jul - Drop api-base.service.ts from the integrated tree
 - 10 Jul - Add the add vendor screen with validation messages
 - 11 Jul - Set up the purchase order screen with line item totals
 - 12 Jul - Cover contract in the end to end pass
+- 13 Jul - Round out the order tracking screen with status updates
