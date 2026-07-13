@@ -2,12 +2,21 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OrderTracking } from './order-tracking';
 
-const PLACEHOLDER_ORDER_TRACKING_SPEC_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-];
+describe('OrderTracking', () => {
+  let component: OrderTracking;
+  let fixture: ComponentFixture<OrderTracking>;
 
-function usePlaceholderOrderTrackingSpec(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_ORDER_TRACKING_SPEC_ROWS;
-}
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [OrderTracking],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(OrderTracking);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
