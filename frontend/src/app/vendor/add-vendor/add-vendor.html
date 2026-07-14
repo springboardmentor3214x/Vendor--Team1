@@ -6,43 +6,220 @@
         </div>
     </div>
 
-</div>
+    <div class="form-layout">
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">business</span> Company Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Company Name *</label>
+                    <app-input placeholder="Enter Company Name" [(ngModel)]="vendor.companyName"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Vendor Category *</label>
+                    <select class="vrip-select" [(ngModel)]="vendor.category">
+                        <option value="">Select Category</option>
+                        <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Company Registration Number</label>
+                    <app-input placeholder="Company Registration Number" [(ngModel)]="vendor.companyRegistrationNumber"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">person</span> Contact Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Contact Person *</label>
+                    <app-input placeholder="Contact Person Name" [(ngModel)]="vendor.contactPerson"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Designation</label>
+                    <app-input placeholder="Designation" [(ngModel)]="vendor.designation"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <app-input placeholder="Email Address" [(ngModel)]="vendor.email"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <app-input placeholder="Phone Number" [(ngModel)]="vendor.phone"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Alternate Phone</label>
+                    <app-input placeholder="Alternate Phone" [(ngModel)]="vendor.alternatePhone"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">receipt_long</span> Tax Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>GST Number *</label>
+                    <app-input placeholder="GST Number" [(ngModel)]="vendor.gst"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>PAN Number *</label>
+                    <app-input placeholder="PAN Number" [(ngModel)]="vendor.pan"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">location_on</span> Address Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Address Line 1 *</label>
+                    <app-input placeholder="Address Line 1" [(ngModel)]="vendor.addressLine1"></app-input>
+                </div>
+                <div class="form-group full-width">
+                    <label>Address Line 2</label>
+                    <app-input placeholder="Address Line 2" [(ngModel)]="vendor.addressLine2"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>City *</label>
+                    <app-input placeholder="City" [(ngModel)]="vendor.city"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>State *</label>
+                    <app-input placeholder="State" [(ngModel)]="vendor.state"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Country *</label>
+                    <app-input placeholder="Country" [(ngModel)]="vendor.country"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Pincode *</label>
+                    <app-input placeholder="Pincode" [(ngModel)]="vendor.pincode"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">public</span> Business Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Website</label>
+                    <app-input placeholder="https://example.com" [(ngModel)]="vendor.website"></app-input>
+                </div>
+                <div class="form-group full-width">
+                    <label>Description</label>
+                    <textarea class="vrip-textarea" placeholder="Describe the company..." [(ngModel)]="vendor.description"></textarea>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">account_balance</span> Banking Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Bank Account Number *</label>
+                    <app-input placeholder="Bank Account Number" [(ngModel)]="vendor.bankAccountNumber"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>IFSC Code *</label>
+                    <app-input placeholder="IFSC Code" [(ngModel)]="vendor.ifscCode"></app-input>
+                </div>
+                <div class="form-group full-width">
+                    <label>Payment Terms</label>
+                    <select class="vrip-select" [(ngModel)]="vendor.paymentTerms">
+                        <option value="">Select Payment Terms</option>
+                        <option>Immediate</option>
+                        <option>15 Days</option>
+                        <option>30 Days</option>
+                        <option>45 Days</option>
+                        <option>60 Days</option>
+                    </select>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">analytics</span> Vendor Status</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Vendor Status</label>
+                    <select class="vrip-select" [(ngModel)]="vendor.status">
+                        <option>Pending</option>
+                        <option>Active</option>
+                        <option>Inactive</option>
+                        <option>Suspended</option>
+                        <option>Rejected</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Approval Status</label>
+                    <select class="vrip-select" [(ngModel)]="vendor.approvalStatus">
+                        <option>Pending</option>
+                        <option>Approved</option>
+                        <option>Rejected</option>
+                    </select>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card id="documents" class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">folder</span> Vendor Documents</h2>
+            </div>
+            <p class="form-hint" style="margin-bottom: 12px; font-size: 0.8125rem; color: var(--v-text-secondary);">
+                PDF, JPG or PNG up to 10 MB. Files are uploaded once the vendor is saved.
+            </p>
+            <div class="form-grid">
+                <div class="form-group" *ngFor="let slot of documentSlots">
+                    <label>{{ slot.label }}</label>
+                    <div class="file-upload-container">
+                        <label class="file-btn">
+                            <span class="material-symbols-outlined">upload_file</span>
+                            Choose File
+                            <input type="file" accept=".pdf,.jpg,.jpeg,.png" style="display: none;"
+                                   (change)="onFileSelected($event, slot.type)">
+                        </label>
+                        <div class="file-selected-info" *ngIf="selectedFileName(slot.type)">
+                            <span class="file-name">
+                                <span class="material-symbols-outlined">draft</span>
+                                {{ selectedFileName(slot.type) }}
+                            </span>
+                            <app-button type="button" variant="outline" size="sm"
+                                        (click)="removeFile(slot.type)">Remove</app-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </app-card>
+
+        <div *ngIf="fileError"
+             style="padding: 10px 14px; border-radius: 6px; background: #fffbeb; border: 1px solid #fde68a; color: #92400e;">
+            {{ fileError }}
+        </div>
+        <div *ngIf="errorMsg"
+             style="padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+            {{ errorMsg }}
+        </div>
+
+        <div class="form-actions">
+            <app-button variant="outline" (click)="cancel()">Cancel</app-button>
+            <app-button variant="primary" iconLeft="save" [disabled]="saving" (click)="saveVendor()">
+                {{ saving ? 'Saving...' : 'Save Vendor' }}
+            </app-button>
+        </div>
+    </div>
 </div>

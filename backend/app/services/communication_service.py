@@ -172,14 +172,68 @@ def get_conversations(
 
     return query.order_by(Communication.sent_at.asc()).all()
 
+def create_discussion(db: Session, data: DiscussionCreate, created_by: str, user_id: int = None):
+    disc = Discussion(
+        topic=data.topic,
+        vendor_id=data.vendor_id,
+        procurement_id=data.procurement_id,
+        po_id=data.po_id,
+        contract_id=data.contract_id,
+        created_by=created_by,
+        status="Active"
+    )
+    db.add(disc)
+    db.commit()
+    db.refresh(disc)
+
+    log_activity(db, created_by, "Discussion Created", "Communication", f"Discussion #{disc.id}", user_id=user_id, details=f"Topic: {data.topic}")
+    return disc
+
+def get_discussions(db: Session, vendor_id: int = None, po_id: int = None):
+    query = db.query(Discussion)
+    if vendor_id:
+        query = query.filter(Discussion.vendor_id == vendor_id)
+    if po_id:
+        query = query.filter(Discussion.po_id == po_id)
+    return query.order_by(Discussion.created_at.desc()).all()
+
+def upload_shared_file(db: Session, uploaded_by: str, file: UploadFile, vendor_id: int = None, procurement_id: int = None, po_id: int = None, contract_id: int = None, discussion_id: int = None, user_id: int = None):
+    contents = validate_upload(file, ALLOWED_SHARED_FILE_EXTENSIONS, MAX_SHARED_FILE_SIZE_BYTES)
+
+    upload_dir = os.path.join("static", "shared_files", str(vendor_id or 0))
+    os.makedirs(upload_dir, exist_ok=True)
+    safe_filename, file_path = unique_upload_path(upload_dir, file.filename)
+    with open(file_path, "wb") as buffer:
+        buffer.write(contents)
+
+    sf = SharedFile(
+        file_name=safe_filename,
+        file_path=file_path,
+        file_type=file.content_type,
+        file_size=len(contents),
+        uploaded_by=uploaded_by,
+        vendor_id=vendor_id,
+        procurement_id=procurement_id,
+        po_id=po_id,
+        contract_id=contract_id,
+        discussion_id=discussion_id
+    )
+    db.add(sf)
+    db.commit()
+    db.refresh(sf)
+
+    log_activity(db, uploaded_by, "File Uploaded", "Communication", f"File #{sf.id}", user_id=user_id, details=f"Filename: {safe_filename}")
+    return sf
+
 
 def _pending_communication_service_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -189,6 +243,8 @@ def _pending_communication_service_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -197,8 +253,9 @@ def _pending_communication_service_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -208,6 +265,8 @@ def _pending_communication_service_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -216,8 +275,9 @@ def _pending_communication_service_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -227,6 +287,8 @@ def _pending_communication_service_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -235,8 +297,9 @@ def _pending_communication_service_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -246,6 +309,8 @@ def _pending_communication_service_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -254,8 +319,9 @@ def _pending_communication_service_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -265,23 +331,6 @@ def _pending_communication_service_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-    return totals
-
-
-def _pending_communication_service_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
-
-
-def _pending_communication_service_totals_6(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals

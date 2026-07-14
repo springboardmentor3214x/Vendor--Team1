@@ -83,14 +83,74 @@ def view_vendors(
         sort_by=sort_by, sort_dir=sort_dir
     )
 
+@router.get("/{vendor_id}", response_model=VendorResponse)
+def view_vendor(
+    vendor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    vendor = vendor_service.get_vendor(db, vendor_id)
+    if not vendor:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+    if current_user.role == Roles.VENDOR and vendor.email.lower() != current_user.email.lower():
+        raise HTTPException(status_code=403, detail="You can only view your own vendor profile")
+    return vendor
+
+@router.put("/{vendor_id}", response_model=VendorResponse)
+def modify_vendor(
+    vendor_id: int, data: VendorUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER]))
+):
+    updated = vendor_service.update_vendor(db, vendor_id, data, updated_by=current_user.name)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+    return updated
+
+@router.delete("/{vendor_id}")
+def remove_vendor(
+    vendor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN]))
+):
+    deleted = vendor_service.delete_vendor(db, vendor_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+    return {"message": "Vendor deleted successfully"}
+
+@router.post("/{vendor_id}/approve")
+def approve(
+    vendor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER]))
+):
+    vendor = vendor_service.approve_vendor(db, vendor_id, current_user.name)
+    if not vendor:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+    notification_service.notify_vendor_approval_decision(db, vendor, approved=True)
+    return {"message": "Vendor approved"}
+
+@router.post("/{vendor_id}/reject")
+def reject(
+    vendor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER]))
+):
+    vendor = vendor_service.reject_vendor(db, vendor_id, current_user.name)
+    if not vendor:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+    notification_service.notify_vendor_approval_decision(db, vendor, approved=False)
+    return {"message": "Vendor rejected"}
+
 
 def _pending_vendor_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -100,6 +160,8 @@ def _pending_vendor_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -108,8 +170,9 @@ def _pending_vendor_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -119,6 +182,8 @@ def _pending_vendor_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -127,8 +192,9 @@ def _pending_vendor_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -138,6 +204,8 @@ def _pending_vendor_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -146,8 +214,9 @@ def _pending_vendor_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -157,6 +226,8 @@ def _pending_vendor_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -165,8 +236,9 @@ def _pending_vendor_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -176,23 +248,6 @@ def _pending_vendor_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-    return totals
-
-
-def _pending_vendor_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
-
-
-def _pending_vendor_totals_6(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
