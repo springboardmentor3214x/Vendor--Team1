@@ -18,36 +18,53 @@
         </div>
     </div>
 
+    <app-card *ngIf="requestDetails" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; font-size: 0.9rem;">
+            <div><span style="color: #64748b;">Item / Product:</span> <strong>{{ requestDetails.item_name }}</strong></div>
+            <div><span style="color: #64748b;">Quantity:</span> <strong>{{ requestDetails.quantity }} {{ requestDetails.unit_of_measurement }}</strong></div>
+            <div><span style="color: #64748b;">Estimated Budget:</span> <strong>₹{{ requestDetails.total_price | number:'1.2-2' }}</strong></div>
+            <div><span style="color: #64748b;">Department:</span> <strong>{{ requestDetails.department }}</strong></div>
+            <div><span style="color: #64748b;">Status:</span> <app-badge variant="success">{{ requestDetails.status }}</app-badge></div>
+        </div>
+    </app-card>
+
 </div>
 
 <div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
+  <p>Awaiting the backend endpoint.</p>
   <div class="placeholder-row">
     <span>Orbit IT Systems</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Copperfield Freight</span>
+    <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
 </div>
