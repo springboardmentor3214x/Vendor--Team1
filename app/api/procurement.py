@@ -15,6 +15,14 @@ def add_procurement(procurement: ProcurementCreate, db: Session = Depends(get_db
 def view_procurements(db: Session = Depends(get_db)):
     return procurement_service.get_all_procurements(db)
 
+@router.get("/dashboard")
+def dashboard(db: Session = Depends(get_db)):
+    return procurement_service.procurement_dashboard(db)
+
+@router.get("/search")
+def search(keyword: str, db: Session = Depends(get_db)):
+    return procurement_service.search_procurements(db, keyword)
+
 @router.get("/filter", response_model=List[ProcurementResponse])
 def filter_by_status(status: str, db: Session = Depends(get_db)):
     return procurement_service.filter_procurements(db, status)
@@ -45,11 +53,25 @@ def approve(procurement_id: int, db: Session = Depends(get_db)):
     proc = procurement_service.approve_procurement(db, procurement_id, "Manager")
     if not proc:
         raise HTTPException(status_code=404, detail="Procurement not found")
-    return {"message": "Procurement approved", "procurement": proc}
+    return {"message": "Procurement approved"}
 
 @router.post("/{procurement_id}/reject")
 def reject(procurement_id: int, db: Session = Depends(get_db)):
     proc = procurement_service.reject_procurement(db, procurement_id, "Manager")
     if not proc:
         raise HTTPException(status_code=404, detail="Procurement not found")
-    return {"message": "Procurement rejected", "procurement": proc}
+    return {"message": "Procurement rejected"}
+
+@router.post("/{procurement_id}/deliver")
+def deliver(procurement_id: int, db: Session = Depends(get_db)):
+    proc = procurement_service.mark_delivered(db, procurement_id)
+    if not proc:
+        raise HTTPException(status_code=404, detail="Procurement not found")
+    return {"message": "Marked as delivered"}
+
+@router.post("/{procurement_id}/complete")
+def complete(procurement_id: int, db: Session = Depends(get_db)):
+    proc = procurement_service.mark_completed(db, procurement_id)
+    if not proc:
+        raise HTTPException(status_code=404, detail="Procurement not found")
+    return {"message": "Marked as completed"}

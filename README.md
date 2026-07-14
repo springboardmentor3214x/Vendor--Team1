@@ -3,14 +3,15 @@
 ## Modules Implemented
 
 ### Module 2: Vendor Management
-- **POST /vendors** - Add Vendor
-- **GET /vendors** - View Vendors (pagination + filters)
-- **GET /vendors/{id}** - View Vendor Details
-- **PUT /vendors/{id}** - Update Vendor
-- **DELETE /vendors/{id}** - Delete Vendor
+- Full CRUD with pagination and filtering
+
+### Module 3: Procurement Management
+- Full CRUD for procurement requests
+- Approval/Rejection workflow
+- Mark Delivered / Mark Completed lifecycle
+- Dashboard summary, search, status filter
 
 ## Progress
-- **Jul 7**: Project setup, database layer initialization.
-- **Jul 8**: Vendor model definition and field refactoring.
-- **Jul 9**: Vendor service CRUD + API router integration.
-- **Jul 10**: Delete, pagination, filtering, finalized Vendor module.
+- **Jul 7-10**: Vendor Management Module completed.
+- **Jul 13**: Procurement model, schema, initial CRUD service and router.
+- **Jul 14**: Approval workflow, delivery tracking fields, dashboard, search, deliver/complete lifecycle.

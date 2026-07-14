@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import or_
 from fastapi import HTTPException
+from datetime import datetime
 from app.models.procurement import Procurement
 from app.schemas.procurement import ProcurementCreate
 
@@ -76,3 +78,36 @@ def reject_procurement(db: Session, procurement_id: int, approved_by: str):
 
 def filter_procurements(db: Session, status: str):
     return db.query(Procurement).filter(Procurement.status == status).all()
+
+def search_procurements(db: Session, keyword: str):
+    return db.query(Procurement).filter(or_(Procurement.item_name.ilike(f"%{keyword}%"))).all()
+
+def procurement_dashboard(db: Session):
+    total = db.query(Procurement).count()
+    approved = db.query(Procurement).filter(Procurement.status == "Approved").count()
+    pending = db.query(Procurement).filter(Procurement.status == "Pending").count()
+    rejected = db.query(Procurement).filter(Procurement.status == "Rejected").count()
+    delivered = db.query(Procurement).filter(Procurement.status == "Delivered").count()
+    completed = db.query(Procurement).filter(Procurement.status == "Completed").count()
+    return {"total": total, "approved": approved, "pending": pending, "rejected": rejected, "delivered": delivered, "completed": completed}
+
+def mark_delivered(db: Session, procurement_id: int):
+    procurement = get_procurement(db, procurement_id)
+    if not procurement:
+        return None
+    procurement.status = "Delivered"
+    procurement.actual_delivery_date = datetime.utcnow()
+    db.commit()
+    db.refresh(procurement)
+    return procurement
+
+def mark_completed(db: Session, procurement_id: int):
+    procurement = get_procurement(db, procurement_id)
+    if not procurement:
+        return None
+    if procurement.status != "Delivered":
+        raise HTTPException(status_code=400, detail="Only delivered orders can be marked as completed")
+    procurement.status = "Completed"
+    db.commit()
+    db.refresh(procurement)
+    return procurement
