@@ -11,24 +11,28 @@ export class VendorService {
 
     {
       id: 1,
-      name: 'ABC Pvt Ltd',
+      companyName: 'ABC Pvt Ltd',
       category: 'Electronics',
+      contactPerson: 'Rahul Sharma',
       email: 'abc@gmail.com',
       phone: '9876543210',
       gst: '27ABCDE1234F1Z5',
       rating: 4.8,
-      status: 'Approved'
+      status: 'Active',
+      approvalStatus: 'Approved'
     },
 
     {
       id: 2,
-      name: 'Delta Steel',
+      companyName: 'Delta Steel',
       category: 'Manufacturing',
+      contactPerson: 'Priya Verma',
       email: 'delta@gmail.com',
       phone: '9876501234',
       gst: '27ABCDE5678F1Z5',
       rating: 4.2,
-      status: 'Pending'
+      status: 'Pending',
+      approvalStatus: 'Pending'
     }
 
   ];
@@ -37,17 +41,39 @@ export class VendorService {
 
   vendors$ = this.vendorSubject.asObservable();
 
-  getVendors() {
+  getVendors(): Vendor[] {
 
     return this.vendorSubject.value;
 
   }
 
-  addVendor(vendor: Vendor) {
+  addVendor(vendor: Vendor): void {
 
     vendor.id = this.vendors.length + 1;
 
     this.vendors.push(vendor);
+
+    this.vendorSubject.next(this.vendors);
+
+  }
+
+  updateVendor(updatedVendor: Vendor): void {
+
+    const index = this.vendors.findIndex(v => v.id === updatedVendor.id);
+
+    if (index !== -1) {
+
+      this.vendors[index] = updatedVendor;
+
+      this.vendorSubject.next(this.vendors);
+
+    }
+
+  }
+
+  deleteVendor(id: number): void {
+
+    this.vendors = this.vendors.filter(v => v.id !== id);
 
     this.vendorSubject.next(this.vendors);
 

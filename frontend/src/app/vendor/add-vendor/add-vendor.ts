@@ -18,9 +18,11 @@ export class AddVendor {
 
     id: 0,
 
-    name: '',
+    companyName: '',
 
     category: '',
+
+    contactPerson: '',
 
     email: '',
 
@@ -30,7 +32,9 @@ export class AddVendor {
 
     rating: 5,
 
-    status: 'Pending'
+    status: 'Pending',
+
+    approvalStatus: 'Pending'
 
   };
 
