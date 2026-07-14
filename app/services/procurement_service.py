@@ -12,6 +12,7 @@ def create_procurement(db: Session, procurement: ProcurementCreate):
         quantity=procurement.quantity,
         unit_price=procurement.unit_price,
         total_price=total_price,
+        expected_delivery_date=procurement.expected_delivery_date,
         status="Pending"
     )
     try:
@@ -38,6 +39,7 @@ def update_procurement(db: Session, procurement_id: int, procurement: Procuremen
     existing.quantity = procurement.quantity
     existing.unit_price = procurement.unit_price
     existing.total_price = procurement.quantity * procurement.unit_price
+    existing.expected_delivery_date = procurement.expected_delivery_date
     db.commit()
     db.refresh(existing)
     return existing
@@ -49,3 +51,28 @@ def delete_procurement(db: Session, procurement_id: int):
     db.delete(procurement)
     db.commit()
     return procurement
+
+def approve_procurement(db: Session, procurement_id: int, approved_by: str):
+    procurement = get_procurement(db, procurement_id)
+    if not procurement:
+        return None
+    procurement.approval_status = "Approved"
+    procurement.status = "Approved"
+    procurement.approved_by = approved_by
+    db.commit()
+    db.refresh(procurement)
+    return procurement
+
+def reject_procurement(db: Session, procurement_id: int, approved_by: str):
+    procurement = get_procurement(db, procurement_id)
+    if not procurement:
+        return None
+    procurement.approval_status = "Rejected"
+    procurement.status = "Rejected"
+    procurement.approved_by = approved_by
+    db.commit()
+    db.refresh(procurement)
+    return procurement
+
+def filter_procurements(db: Session, status: str):
+    return db.query(Procurement).filter(Procurement.status == status).all()
