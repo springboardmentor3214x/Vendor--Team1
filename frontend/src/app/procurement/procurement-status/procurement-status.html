@@ -16,43 +16,62 @@
         </div>
     </div>
 
-</div>
+    <div class="details-grid">
+        <div class="main-column">
+            <app-card title="Procurement Workflow Stages" icon="timeline">
+                <div class="timeline-container" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 10px; position: relative;">
+                    <div class="timeline-step" *ngFor="let stage of stages; let i = index" [class.completed]="isStageCompleted(stage)" style="display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2;">
+                        <div class="step-icon" [style.color]="isStageCompleted(stage) ? '#16a34a' : '#94a3b8'">
+                            <span class="material-symbols-outlined" style="font-size: 32px;">{{ isStageCompleted(stage) ? 'check_circle' : 'radio_button_unchecked' }}</span>
+                        </div>
+                        <div class="step-content" style="text-align: center; margin-top: 8px;">
+                            <h3 style="font-size: 0.9rem; font-weight: 600; margin: 0; color: #0f172a;">{{ stage }}</h3>
+                            <p style="font-size: 0.75rem; margin-top: 2px; color: #64748b;">
+                                {{ isStageCompleted(stage) ? 'Completed' : 'Pending' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+                <div class="status-actions mt-6" style="border-top: 1px solid #e2e8f0; padding-top: 20px;" *ngIf="currentStatus !== 'Completed' && currentStatus !== 'Cancelled'">
+                    <h4 style="margin: 0 0 12px 0; font-size: 1rem; color: #0f172a;">Available Stage Transitions</h4>
+                    <div class="action-buttons" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <app-button variant="primary" iconLeft="local_shipping" (onClick)="updateStatus('Delivered')" *ngIf="currentStatus === 'Ordered' || currentStatus === 'In Transit'">
+                            Mark as Delivered
+                        </app-button>
+                        <app-button variant="success" iconLeft="verified" (onClick)="updateStatus('Completed')" *ngIf="currentStatus === 'Delivered'">
+                            Mark as Completed
+                        </app-button>
+                        <app-button variant="danger" iconLeft="cancel" (onClick)="cancelProcurement()">
+                            Cancel Procurement
+                        </app-button>
+                    </div>
+                </div>
+                <div class="status-actions mt-6" *ngIf="currentStatus === 'Cancelled'" style="border-top: 1px solid #e2e8f0; padding-top: 16px;">
+                    <app-badge variant="danger">This procurement request has been cancelled.</app-badge>
+                </div>
+                <div class="status-actions mt-6" *ngIf="currentStatus === 'Completed'" style="border-top: 1px solid #e2e8f0; padding-top: 16px;">
+                    <app-badge variant="success">Procurement Lifecycle Completed & Paid.</app-badge>
+                </div>
+            </app-card>
+        </div>
+
+        <div class="side-column">
+            <app-card title="Status History Audit Log" icon="history">
+                <div class="history-list" style="display: flex; flex-direction: column; gap: 12px;">
+                    <div class="history-item" *ngFor="let record of history" style="background: #f8fafc; padding: 12px; border-radius: 8px; border-left: 4px solid #2563eb;">
+                        <div class="history-header" style="display: flex; justify-content: space-between; font-size: 0.875rem;">
+                            <strong style="color: #0f172a;">{{ record.status }}</strong>
+                            <span class="history-date" style="color: #64748b; font-size: 0.75rem;">{{ record.created_at | date:'medium' }}</span>
+                        </div>
+                        <p class="history-user" style="margin: 4px 0 0 0; font-size: 0.8rem; color: #475569;">By {{ record.updated_by }}</p>
+                        <p class="history-remarks" style="margin: 4px 0 0 0; font-size: 0.8rem; color: #64748b; font-style: italic;">{{ record.remarks || 'No remarks provided' }}</p>
+                    </div>
+                    <div *ngIf="history.length === 0" style="color: #94a3b8; font-size: 0.875rem; text-align: center; padding: 16px;">
+                        No history records logged yet.
+                    </div>
+                </div>
+            </app-card>
+        </div>
+    </div>
 </div>
