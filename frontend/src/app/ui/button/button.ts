@@ -17,18 +17,16 @@ export class Button {
   @Input() icon?: string;
   @Input() iconLeft?: string;
   @Input() iconRight?: string;
-}
+  @Input() iconOnly: boolean = false;
+  @Input() type: 'button' | 'submit' | 'reset' = 'button';
 
-const PLACEHOLDER_BUTTON_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-];
+  @Output() onClick = new EventEmitter<MouseEvent>();
+  @Output() btnClick = new EventEmitter<MouseEvent>();
 
-function usePlaceholderButton(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_BUTTON_ROWS;
+  handleClick(event: MouseEvent) {
+    if (!this.disabled && !this.loading) {
+      this.onClick.emit(event);
+      this.btnClick.emit(event);
+    }
   }
-  return rows.filter((row) => !!row);
 }
