@@ -47,3 +47,8 @@ def submit_rating(data: ServiceRatingCreate, db: Session = Depends(get_db)):
 @router.get("/service-rating/{vendor_id}", response_model=List[ServiceRatingResponse])
 def get_ratings(vendor_id: int, db: Session = Depends(get_db)):
     return performance_service.get_service_ratings(db, vendor_id)
+
+@router.get("/metrics/{vendor_id}")
+def vendor_metrics(vendor_id: int, db: Session = Depends(get_db)):
+    """Calculate weighted performance metrics for a vendor."""
+    return performance_service.calculate_vendor_metrics(db, vendor_id)

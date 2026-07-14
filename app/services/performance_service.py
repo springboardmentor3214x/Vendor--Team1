@@ -87,3 +87,31 @@ def submit_service_rating(db: Session, data: ServiceRatingCreate):
 
 def get_service_ratings(db: Session, vendor_id: int):
     return db.query(ServiceRating).filter(ServiceRating.vendor_id == vendor_id).all()
+
+from app.models.vendor import Vendor
+
+# ===== Performance Metrics =====
+def calculate_vendor_metrics(db: Session, vendor_id: int):
+    total_del = db.query(DeliveryPerformance).filter(DeliveryPerformance.vendor_id == vendor_id).count()
+    on_time = db.query(DeliveryPerformance).filter(DeliveryPerformance.vendor_id == vendor_id, DeliveryPerformance.delivery_status.in_(["On-Time Delivery", "Early Delivery"])).count()
+    delayed = db.query(DeliveryPerformance).filter(DeliveryPerformance.vendor_id == vendor_id, DeliveryPerformance.delivery_status == "Delayed Delivery").count()
+    on_time_rate = round((on_time / total_del * 100), 2) if total_del > 0 else 0
+    avg_quality = db.query(func.avg(QualityEvaluation.overall_rating)).filter(QualityEvaluation.vendor_id == vendor_id).scalar() or 0
+    avg_response = db.query(func.avg(CommunicationLog.response_duration_hours)).filter(CommunicationLog.vendor_id == vendor_id, CommunicationLog.response_duration_hours.isnot(None)).scalar() or 0
+    avg_service = db.query(func.avg(ServiceRating.overall_rating)).filter(ServiceRating.vendor_id == vendor_id).scalar() or 0
+
+    delivery_score = on_time_rate
+    quality_score = round(float(avg_quality) / 5.0 * 100, 2) if avg_quality else 0
+    communication_score = max(0, round(100 - float(avg_response) * 5, 2)) if avg_response else 0
+    service_score = round(float(avg_service) / 5.0 * 100, 2) if avg_service else 0
+    overall = round(delivery_score * 0.3 + quality_score * 0.25 + communication_score * 0.2 + service_score * 0.25, 2)
+
+    return {
+        "vendor_id": vendor_id, "total_deliveries": total_del, "on_time_deliveries": on_time,
+        "delayed_deliveries": delayed, "on_time_rate": on_time_rate,
+        "avg_quality_rating": round(float(avg_quality), 2), "avg_response_hours": round(float(avg_response), 2),
+        "avg_service_rating": round(float(avg_service), 2),
+        "delivery_score": delivery_score, "quality_score": quality_score,
+        "communication_score": communication_score, "service_score": service_score,
+        "overall_performance_score": overall
+    }
