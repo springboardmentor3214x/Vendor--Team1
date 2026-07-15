@@ -27,6 +27,10 @@ def search(keyword: str, db: Session = Depends(get_db)):
 def filter_by_status(status: str, db: Session = Depends(get_db)):
     return procurement_service.filter_procurements(db, status)
 
+@router.get("/vendor/{vendor_id}", response_model=List[ProcurementResponse])
+def view_by_vendor(vendor_id: int, db: Session = Depends(get_db)):
+    return procurement_service.get_procurements_by_vendor(db, vendor_id)
+
 @router.get("/{procurement_id}", response_model=ProcurementResponse)
 def view_procurement(procurement_id: int, db: Session = Depends(get_db)):
     proc = procurement_service.get_procurement(db, procurement_id)

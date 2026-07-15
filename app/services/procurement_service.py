@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 from fastapi import HTTPException
 from datetime import datetime
 from app.models.procurement import Procurement
@@ -89,7 +89,8 @@ def procurement_dashboard(db: Session):
     rejected = db.query(Procurement).filter(Procurement.status == "Rejected").count()
     delivered = db.query(Procurement).filter(Procurement.status == "Delivered").count()
     completed = db.query(Procurement).filter(Procurement.status == "Completed").count()
-    return {"total": total, "approved": approved, "pending": pending, "rejected": rejected, "delivered": delivered, "completed": completed}
+    total_spend = db.query(func.sum(Procurement.total_price)).filter(Procurement.status.in_(["Delivered", "Completed"])).scalar() or 0
+    return {"total": total, "approved": approved, "pending": pending, "rejected": rejected, "delivered": delivered, "completed": completed, "total_spend": total_spend}
 
 def mark_delivered(db: Session, procurement_id: int):
     procurement = get_procurement(db, procurement_id)
@@ -111,3 +112,6 @@ def mark_completed(db: Session, procurement_id: int):
     db.commit()
     db.refresh(procurement)
     return procurement
+
+def get_procurements_by_vendor(db: Session, vendor_id: int):
+    return db.query(Procurement).filter(Procurement.vendor_id == vendor_id).all()
