@@ -115,3 +115,37 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
         "communication_score": communication_score, "service_score": service_score,
         "overall_performance_score": overall
     }
+
+
+# ===== Vendor Ranking =====
+def generate_vendor_rankings(db: Session):
+    vendors = db.query(Vendor).all()
+    rankings = []
+    for v in vendors:
+        m = calculate_vendor_metrics(db, v.id)
+        rankings.append({
+            "vendor_id": v.id, "vendor_name": v.vendor_name, "category": v.category,
+            "overall_score": m["overall_performance_score"], "delivery_score": m["delivery_score"],
+            "quality_score": m["quality_score"], "communication_score": m["communication_score"],
+            "service_score": m["service_score"]
+        })
+    rankings.sort(key=lambda x: x["overall_score"], reverse=True)
+    for i, r in enumerate(rankings):
+        r["rank"] = i + 1
+    return rankings
+
+# ===== Performance Dashboard =====
+def performance_dashboard(db: Session):
+    total_vendors = db.query(Vendor).count()
+    total_del = db.query(DeliveryPerformance).count()
+    on_time = db.query(DeliveryPerformance).filter(DeliveryPerformance.delivery_status.in_(["On-Time Delivery", "Early Delivery"])).count()
+    delayed = db.query(DeliveryPerformance).filter(DeliveryPerformance.delivery_status == "Delayed Delivery").count()
+    avg_quality = db.query(func.avg(QualityEvaluation.overall_rating)).scalar() or 0
+    avg_response = db.query(func.avg(CommunicationLog.response_duration_hours)).filter(CommunicationLog.response_duration_hours.isnot(None)).scalar() or 0
+    return {
+        "total_vendors_evaluated": total_vendors, "total_deliveries": total_del,
+        "on_time_deliveries": on_time, "delayed_deliveries": delayed,
+        "avg_delivery_performance": round((on_time / total_del * 100), 2) if total_del > 0 else 0,
+        "avg_quality_rating": round(float(avg_quality), 2),
+        "avg_response_time_hours": round(float(avg_response), 2)
+    }

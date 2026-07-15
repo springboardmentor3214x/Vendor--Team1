@@ -52,3 +52,13 @@ def get_ratings(vendor_id: int, db: Session = Depends(get_db)):
 def vendor_metrics(vendor_id: int, db: Session = Depends(get_db)):
     """Calculate weighted performance metrics for a vendor."""
     return performance_service.calculate_vendor_metrics(db, vendor_id)
+
+@router.get("/dashboard")
+def dashboard(db: Session = Depends(get_db)):
+    """Get performance dashboard summary across all vendors."""
+    return performance_service.performance_dashboard(db)
+
+@router.get("/rankings")
+def vendor_rankings(db: Session = Depends(get_db)):
+    """Generate ranked list of all vendors by overall performance."""
+    return performance_service.generate_vendor_rankings(db)
