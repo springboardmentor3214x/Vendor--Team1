@@ -29,22 +29,47 @@ export class VendorDetails implements OnInit {
   documents: VendorDocument[] = [];
   documentsLoading = false;
   documentError = '';
+  constructor(
+    private route: ActivatedRoute,
+    private vendorService: VendorService,
+    private cdr: ChangeDetectorRef
+  ) {}
+  ngOnInit(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.loading = true;
+    this.vendorService.loadVendors().subscribe({
+      next: (vendors) => {
+        this.vendor = vendors.find(vendor => vendor.id === id);
+        this.loading = false;
+        if (this.vendor) {
+          this.loadDocuments(this.vendor.id);
+        }
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.vendor = undefined;
+        this.loading = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
 }
 
 const PLACEHOLDER_VENDOR_DETAILS_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
+  { id: 1, name: 'Delta Logistics', status: 'Under Review' },
+  { id: 2, name: 'Ashcroft Maintenance', status: 'Inactive' },
+  { id: 3, name: 'Harborline Equipment', status: 'Active' },
+  { id: 4, name: 'Vertex Services', status: 'Pending Approval' },
+  { id: 5, name: 'Ironvale Supplies', status: 'Under Review' },
+  { id: 6, name: 'Copperfield Freight', status: 'Inactive' },
+  { id: 7, name: 'Northwind Steel', status: 'Active' },
+  { id: 8, name: 'Orbit IT Systems', status: 'Pending Approval' },
 ];
 
 function usePlaceholderVendorDetails(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_VENDOR_DETAILS_ROWS;
-  }
-  return rows.filter((row) => !!row);
+  const source = rows && rows.length ? rows : PLACEHOLDER_VENDOR_DETAILS_ROWS;
+  return source.map((row) => ({
+    ...row,
+    status: row.status || 'Pending',
+  }));
 }
