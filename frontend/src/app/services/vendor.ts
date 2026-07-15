@@ -14,9 +14,24 @@ export class VendorService {
       companyName: 'ABC Pvt Ltd',
       category: 'Electronics',
       contactPerson: 'Rahul Sharma',
+      designation: 'Manager',
       email: 'abc@gmail.com',
       phone: '9876543210',
+      alternatePhone: '',
       gst: '27ABCDE1234F1Z5',
+      pan: 'ABCDE1234F',
+      companyRegistrationNumber: 'REG12345',
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      state: '',
+      country: '',
+      pincode: '',
+      website: '',
+      description: '',
+      bankAccountNumber: '',
+      ifscCode: '',
+      paymentTerms: '',
       rating: 4.8,
       status: 'Active',
       approvalStatus: 'Approved'
@@ -26,10 +41,25 @@ export class VendorService {
       id: 2,
       companyName: 'Delta Steel',
       category: 'Manufacturing',
-      contactPerson: 'Priya Verma',
+      contactPerson: 'Amit Verma',
+      designation: 'Owner',
       email: 'delta@gmail.com',
       phone: '9876501234',
+      alternatePhone: '',
       gst: '27ABCDE5678F1Z5',
+      pan: 'PQRSX5678K',
+      companyRegistrationNumber: 'REG67890',
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      state: '',
+      country: '',
+      pincode: '',
+      website: '',
+      description: '',
+      bankAccountNumber: '',
+      ifscCode: '',
+      paymentTerms: '',
       rating: 4.2,
       status: 'Pending',
       approvalStatus: 'Pending'
@@ -43,7 +73,13 @@ export class VendorService {
 
   getVendors(): Vendor[] {
 
-    return this.vendorSubject.value;
+    return this.vendors;
+
+  }
+
+  getVendorById(id: number): Vendor | undefined {
+
+    return this.vendors.find(v => v.id === id);
 
   }
 
@@ -53,19 +89,21 @@ export class VendorService {
 
     this.vendors.push(vendor);
 
-    this.vendorSubject.next(this.vendors);
+    this.vendorSubject.next([...this.vendors]);
 
   }
 
   updateVendor(updatedVendor: Vendor): void {
 
-    const index = this.vendors.findIndex(v => v.id === updatedVendor.id);
+    const index = this.vendors.findIndex(
+      vendor => vendor.id === updatedVendor.id
+    );
 
     if (index !== -1) {
 
       this.vendors[index] = updatedVendor;
 
-      this.vendorSubject.next(this.vendors);
+      this.vendorSubject.next([...this.vendors]);
 
     }
 
@@ -73,9 +111,11 @@ export class VendorService {
 
   deleteVendor(id: number): void {
 
-    this.vendors = this.vendors.filter(v => v.id !== id);
+    this.vendors = this.vendors.filter(
+      vendor => vendor.id !== id
+    );
 
-    this.vendorSubject.next(this.vendors);
+    this.vendorSubject.next([...this.vendors]);
 
   }
 

@@ -1,1 +1,153 @@
-<p>vendor-details works!</p>
+<div class="details-container">
+
+    <h1>Vendor Details</h1>
+
+    @if(vendor){
+
+    <!-- Company Information -->
+
+    <div class="details-card">
+
+        <h2>🏢 Company Information</h2>
+
+        <div class="details-grid">
+
+            <p><strong>Company Name:</strong> {{ vendor.companyName }}</p>
+
+            <p><strong>Category:</strong> {{ vendor.category }}</p>
+
+            <p><strong>Company Registration:</strong> {{ vendor.companyRegistrationNumber || '-' }}</p>
+
+        </div>
+
+    </div>
+
+    <!-- Contact Information -->
+
+    <div class="details-card">
+
+        <h2>👤 Contact Information</h2>
+
+        <div class="details-grid">
+
+            <p><strong>Contact Person:</strong> {{ vendor.contactPerson }}</p>
+
+            <p><strong>Designation:</strong> {{ vendor.designation || '-' }}</p>
+
+            <p><strong>Email:</strong> {{ vendor.email }}</p>
+
+            <p><strong>Phone:</strong> {{ vendor.phone }}</p>
+
+            <p><strong>Alternate Phone:</strong> {{ vendor.alternatePhone || '-' }}</p>
+
+        </div>
+
+    </div>
+
+    <!-- Tax Information -->
+
+    <div class="details-card">
+
+        <h2>🧾 Tax Information</h2>
+
+        <div class="details-grid">
+
+            <p><strong>GST Number:</strong> {{ vendor.gst }}</p>
+
+            <p><strong>PAN Number:</strong> {{ vendor.pan || '-' }}</p>
+
+        </div>
+
+    </div>
+
+    <!-- Address Information -->
+
+    <div class="details-card">
+
+        <h2>📍 Address Information</h2>
+
+        <div class="details-grid">
+
+            <p><strong>Address Line 1:</strong> {{ vendor.addressLine1 || '-' }}</p>
+
+            <p><strong>Address Line 2:</strong> {{ vendor.addressLine2 || '-' }}</p>
+
+            <p><strong>City:</strong> {{ vendor.city || '-' }}</p>
+
+            <p><strong>State:</strong> {{ vendor.state || '-' }}</p>
+
+            <p><strong>Country:</strong> {{ vendor.country || '-' }}</p>
+
+            <p><strong>Pincode:</strong> {{ vendor.pincode || '-' }}</p>
+
+        </div>
+
+    </div>
+
+    <!-- Business Information -->
+
+    <div class="details-card">
+
+        <h2>🌐 Business Information</h2>
+
+        <div class="details-grid">
+
+            <p><strong>Website:</strong> {{ vendor.website || '-' }}</p>
+
+            <p><strong>Description:</strong> {{ vendor.description || '-' }}</p>
+
+        </div>
+
+    </div>
+
+    <!-- Banking Information -->
+
+    <div class="details-card">
+
+        <h2>🏦 Banking Information</h2>
+
+        <div class="details-grid">
+
+            <p><strong>Bank Account:</strong> {{ vendor.bankAccountNumber || '-' }}</p>
+
+            <p><strong>IFSC Code:</strong> {{ vendor.ifscCode || '-' }}</p>
+
+            <p><strong>Payment Terms:</strong> {{ vendor.paymentTerms || '-' }}</p>
+
+        </div>
+
+    </div>
+
+    <!-- Status -->
+
+    <div class="details-card">
+
+        <h2>📊 Vendor Status</h2>
+
+        <div class="details-grid">
+
+            <p><strong>Status:</strong> {{ vendor.status }}</p>
+
+            <p><strong>Approval Status:</strong> {{ vendor.approvalStatus }}</p>
+
+        </div>
+
+    </div>
+
+    <div class="action-buttons">
+
+        <button routerLink="/vendors">
+
+            ← Back to Vendor List
+
+        </button>
+
+    </div>
+
+    } @else {
+
+    <h2>Vendor not found.</h2>
+
+    }
+
+</div>
