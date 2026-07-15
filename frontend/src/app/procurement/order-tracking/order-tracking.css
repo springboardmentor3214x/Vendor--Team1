@@ -75,20 +75,65 @@
     z-index: 2;
 }
 
-.placeholder-panel {
-  padding: 12px;
-  border: 1px dashed #d2d2d2;
-  border-radius: 5px;
-  color: #7a7a7a;
+.v-step.completed .v-indicator {
+    background-color: var(--vrip-success-500);
+    box-shadow: 0 0 0 3px var(--vrip-success-100);
 }
 
-.placeholder-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
+.v-step.completed ~ .v-step .v-indicator {
+    background-color: var(--vrip-success-500);
 }
 
-.placeholder-row span {
-  font-size: 13px;
-  letter-spacing: 0.2px;
+.vertical-timeline::before {
+    background: linear-gradient(to bottom, var(--vrip-success-500) 0%, var(--vrip-success-500) 50%, var(--vrip-slate-200) 50%, var(--vrip-slate-200) 100%);
+}
+
+.v-content h4 {
+    margin: 0 0 var(--vrip-space-1) 0;
+    font-size: 0.95rem;
+    color: var(--vrip-slate-900);
+}
+
+.v-location {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--vrip-slate-600);
+}
+
+.v-date {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--vrip-slate-500);
+    margin-top: var(--vrip-space-1);
+}
+
+.print-show {
+    display: none;
+}
+
+@media print {
+    .print-hide {
+        display: none !important;
+    }
+    .print-show {
+        display: block !important;
+    }
+    .tracking-container {
+        padding: 0;
+    }
+    .details-grid {
+        display: block;
+    }
+    .print-header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+    }
+    app-card {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        margin-bottom: 20px;
+        break-inside: avoid;
+    }
 }
