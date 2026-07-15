@@ -62,3 +62,8 @@ def dashboard(db: Session = Depends(get_db)):
 def vendor_rankings(db: Session = Depends(get_db)):
     """Generate ranked list of all vendors by overall performance."""
     return performance_service.generate_vendor_rankings(db)
+
+@router.get("/history/{vendor_id}")
+def vendor_history(vendor_id: int, db: Session = Depends(get_db)):
+    """Get complete performance history for a vendor."""
+    return performance_service.get_vendor_performance_history(db, vendor_id)
