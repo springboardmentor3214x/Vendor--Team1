@@ -50,19 +50,67 @@ export class PurchaseOrder implements OnInit {
     private procurementService: ProcurementService,
     private authService: AuthService
   ) {}
+  ngOnInit(): void {
+    const prId = this.route.snapshot.queryParamMap.get('pr');
+    const vendorId = this.route.snapshot.queryParamMap.get('vendor');
+
+    if (prId) {
+      this.poData.procurement_id = Number(prId);
+      this.poData.prNumber = `PR-${prId}`;
+      this.procurementService.getProcurementRequestById(prId).subscribe({
+        next: (res) => {
+          this.poData.productDetails = res.item_name;
+          this.poData.quantity = res.quantity;
+          this.poData.unitPrice = res.unit_price;
+          if (res.expected_delivery_date) {
+            this.poData.expectedDeliveryDate = res.expected_delivery_date.slice(0, 10);
+          }
+          if (res.vendor_id && !vendorId) {
+            this.loadVendor(res.vendor_id);
+          }
+        }
+      });
+    }
+
+    if (vendorId) {
+      this.poData.vendor_id = Number(vendorId);
+      this.loadVendor(Number(vendorId));
+    }
+  }
+  loadVendor(vId: number): void {
+    this.procurementService.getApprovedVendors().subscribe({
+      next: (vendors) => {
+        const v = vendors.find((item: any) => item.id === vId);
+        if (v) {
+          this.poData.vendor_id = v.id;
+          this.poData.vendorName = v.company_name || v.vendor_name;
+          this.poData.contactPerson = v.contact_person || v.vendor_name;
+          this.poData.vendorAddress = v.address_line1 || 'Registered Vendor Facility';
+        }
+      }
+    });
+  }
+  get totalCost(): number {
+    const subtotal = (this.poData.quantity || 0) * (this.poData.unitPrice || 0);
+    const tax = Number(this.poData.tax_amount || 0);
+    return subtotal + tax;
+  }
 }
 
 const PLACEHOLDER_PURCHASE_ORDER_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 5, name: 'Harborline Equipment', status: 'Active' },
-  { id: 6, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 7, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 8, name: 'Copperfield Freight', status: 'Inactive' },
+  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
+  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
+  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
+  { id: 4, name: 'Harborline Equipment', status: 'Active' },
+  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
+  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
+  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
+  { id: 8, name: 'Northwind Steel', status: 'Active' },
 ];
 
 function usePlaceholderPurchaseOrder(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_PURCHASE_ORDER_ROWS;
+  if (!rows || !rows.length) {
+    return PLACEHOLDER_PURCHASE_ORDER_ROWS;
+  }
+  return rows.filter((row) => !!row);
 }
