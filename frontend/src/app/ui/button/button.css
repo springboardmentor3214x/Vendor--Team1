@@ -35,15 +35,69 @@
 
 .vrip-btn-icon-only { width: 36px; height: 36px; padding: 0; }
 
+.vrip-btn-primary {
+  background: var(--v-brand);
+  color: var(--v-text-inverse);
+  box-shadow: var(--v-shadow-xs), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+.vrip-btn-primary:hover {
+  background: var(--v-brand-hover);
+  box-shadow: var(--v-shadow-sm), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+.vrip-btn-primary:active {
+  background: #4338CA;
+}
+
+.vrip-btn-secondary {
+  background: var(--v-bg-card);
+  color: var(--v-text-primary);
+  border-color: var(--v-border);
+  box-shadow: var(--v-shadow-xs);
+}
+
+.vrip-btn-secondary:hover {
+  background: var(--v-bg-inset);
+  border-color: var(--v-border-hover);
+}
+
+.vrip-btn-outline {
+  background: transparent;
+  color: var(--v-text-secondary);
+  border-color: var(--v-border);
+}
+
+.vrip-btn-outline:hover {
+  background: var(--v-bg-inset);
+  color: var(--v-text-primary);
+  border-color: var(--v-border-hover);
+}
+
+.vrip-btn-ghost {
+  background: transparent;
+  color: var(--v-text-secondary);
+}
+
+.vrip-btn-ghost:hover {
+  background: var(--v-bg-inset);
+  color: var(--v-text-primary);
+}
+
 .placeholder-panel {
-  padding: 10px;
-  border: 1px dashed #c9c9c9;
-  border-radius: 4px;
+  padding: 12px;
+  border: 1px dashed #d2d2d2;
+  border-radius: 5px;
   color: #7a7a7a;
 }
 
 .placeholder-row {
   display: flex;
   justify-content: space-between;
-  padding: 4px 0;
+  padding: 5px 0;
+}
+
+.placeholder-row span {
+  font-size: 13px;
+  letter-spacing: 0.2px;
 }

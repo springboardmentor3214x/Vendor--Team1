@@ -20,24 +20,30 @@ export class UserManagement implements OnInit {
   users: any[] = [];
   loading: boolean = true;
   errorMsg: string = '';
+
   showMessageModal: boolean = false;
   selectedUserForMessage: any | null = null;
   messageText: string = '';
   sendingMessage: boolean = false;
+
   readonly roles: string[] = [
     'Administrator', 'Procurement Manager', 'Supply Chain Manager',
     'Vendor', 'Finance Officer', 'Auditor'
   ];
   currentEmail: string = '';
+
   showRegisterModal = false;
   savingUser = false;
   formError = '';
   newUser: any = { name: '', email: '', mobile_number: '', role: 'Procurement Manager', company_name: '', password: '' };
+
   showEditModal = false;
   editUser: any = null;
+
   showResetModal = false;
   resetUser: any = null;
   resetPasswordValue = '';
+
   constructor(
     private userService: UserService,
     private commService: CommunicationService,
@@ -45,21 +51,26 @@ export class UserManagement implements OnInit {
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
+
   ngOnInit(): void {
     this.currentEmail = (this.authService.getCurrentUser()?.email || '').toLowerCase();
     this.loadUsers();
   }
+
   isSelf(u: any): boolean {
     return !!u && (u.email || '').toLowerCase() === this.currentEmail;
   }
+
   openRegisterModal(): void {
     this.newUser = { name: '', email: '', mobile_number: '', role: 'Procurement Manager', company_name: '', password: '' };
     this.formError = '';
     this.showRegisterModal = true;
   }
+
   closeRegisterModal(): void {
     this.showRegisterModal = false;
   }
+
   submitRegister(): void {
     this.formError = '';
     if (!this.newUser.name.trim() || !this.newUser.email.trim() || !this.newUser.password) {
@@ -87,27 +98,174 @@ export class UserManagement implements OnInit {
       }
     });
   }
+
   openEditModal(u: any): void {
     this.editUser = { id: u.id, name: u.name, mobile_number: u.mobile_number || '', role: u.role, email: u.email };
     this.formError = '';
     this.showEditModal = true;
   }
-}
 
-const PLACEHOLDER_USER_MANAGEMENT_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderUserManagement(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_USER_MANAGEMENT_ROWS;
+  closeEditModal(): void {
+    this.showEditModal = false;
+    this.editUser = null;
   }
-  return rows.filter((row) => !!row);
+
+  submitEdit(): void {
+    if (!this.editUser) return;
+    this.formError = '';
+    if (!this.editUser.name.trim()) {
+      this.formError = 'Name cannot be empty.';
+      return;
+    }
+    this.savingUser = true;
+    const payload: any = {
+      name: this.editUser.name,
+      mobile_number: this.editUser.mobile_number,
+      role: this.editUser.role
+    };
+    this.userService.updateUser(this.editUser.id, payload).subscribe({
+      next: () => {
+        this.savingUser = false;
+        this.showEditModal = false;
+        this.editUser = null;
+        this.loadUsers();
+      },
+      error: (err) => {
+        this.savingUser = false;
+        this.formError = err.error?.detail || 'Failed to update user.';
+      }
+    });
+  }
+
+  openResetModal(u: any): void {
+    this.resetUser = u;
+    this.resetPasswordValue = '';
+    this.formError = '';
+    this.showResetModal = true;
+  }
+
+  closeResetModal(): void {
+    this.showResetModal = false;
+    this.resetUser = null;
+  }
+
+  submitReset(): void {
+    if (!this.resetUser) return;
+    this.formError = '';
+    if (this.resetPasswordValue.length < 8) {
+      this.formError = 'Password must be at least 8 characters.';
+      return;
+    }
+    this.savingUser = true;
+    this.userService.resetPassword(this.resetUser.id, this.resetPasswordValue).subscribe({
+      next: () => {
+        this.savingUser = false;
+        this.showResetModal = false;
+        alert(`Password reset for ${this.resetUser.name}.`);
+        this.resetUser = null;
+      },
+      error: (err) => {
+        this.savingUser = false;
+        this.formError = err.error?.detail || 'Failed to reset password.';
+      }
+    });
+  }
+
+  loadUsers(): void {
+    this.loading = true;
+    this.errorMsg = '';
+    this.userService.getUsers().subscribe({
+      next: (data) => {
+        this.loading = false;
+        if (Array.isArray(data)) {
+          this.users = data.map(u => ({
+            ...u,
+            status: u.account_status || 'Active'
+          }));
+        } else {
+          this.users = [];
+        }
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error('Failed to load users', err);
+        this.errorMsg = err.error?.detail || err.message || 'Failed to load users from server.';
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  getInitials(name: string): string {
+    if (!name) return 'U';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  }
+
+  getAvatarColorClass(role: string): string {
+    switch (role) {
+      case 'Administrator': return 'avatar-admin';
+      case 'Procurement Manager': return 'avatar-procure';
+      case 'Supply Chain Manager': return 'avatar-supply';
+      case 'Vendor': return 'avatar-vendor';
+      case 'Finance Officer': return 'avatar-finance';
+      case 'Auditor': return 'avatar-auditor';
+      default: return 'avatar-default';
+    }
+  }
+
+  approveUser(u: any): void {
+    this.userService.approveUser(u.id).subscribe(() => this.loadUsers());
+  }
+
+  blockUser(u: any): void {
+    this.userService.blockUser(u.id).subscribe(() => this.loadUsers());
+  }
+
+  deactivateUser(u: any): void {
+    this.userService.deactivateUser(u.id).subscribe(() => this.loadUsers());
+  }
+
+  deleteUser(u: any): void {
+    if (confirm('Delete ' + u.name + '?')) {
+      this.userService.deleteUser(u.id).subscribe(() => this.loadUsers());
+    }
+  }
+
+  openMessageModal(u: any): void {
+    this.selectedUserForMessage = u;
+    this.messageText = '';
+    this.showMessageModal = true;
+  }
+
+  closeMessageModal(): void {
+    this.showMessageModal = false;
+    this.selectedUserForMessage = null;
+  }
+
+  sendDirectMessage(): void {
+    if (!this.selectedUserForMessage || !this.messageText.trim()) return;
+
+    this.sendingMessage = true;
+    const payload = {
+      receiver_id: this.selectedUserForMessage.id,
+      receiver_name: this.selectedUserForMessage.name,
+      message: this.messageText.trim()
+    };
+
+    this.commService.sendMessage(payload).subscribe({
+      next: () => {
+        this.sendingMessage = false;
+        alert(`Message sent to ${this.selectedUserForMessage.name}!`);
+        this.closeMessageModal();
+      },
+      error: (err) => {
+        this.sendingMessage = false;
+        alert('Failed to send message: ' + (err.error?.detail || err.message));
+      }
+    });
+  }
 }
