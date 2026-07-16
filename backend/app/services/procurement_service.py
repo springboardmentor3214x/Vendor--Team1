@@ -283,15 +283,85 @@ def send_back_procurement(db: Session, procurement_id: int, user_name: str, rema
     record_status_history(db, proc.id, "Modification Required", user_name, remarks)
     return proc
 
+def assign_vendor(db: Session, procurement_id: int, vendor_id: int, user_name: str = "Procurement Manager",
+                  acknowledge_risk: bool = False):
+    proc = get_procurement(db, procurement_id)
+    if not proc:
+        return None
+    if proc.status not in ("Approved", "Pending", "Vendor Assigned"):
+        raise HTTPException(status_code=400, detail="Vendor can only be assigned on approved requests")
+    vendor = db.query(Vendor).filter(Vendor.id == vendor_id).first()
+    if not vendor:
+        raise HTTPException(status_code=404, detail="Vendor not found")
+    if vendor.approval_status != "Approved":
+        raise HTTPException(status_code=400, detail=f"Cannot assign vendor '{vendor.vendor_name}' — vendor is not approved (status: {vendor.approval_status})")
+    if vendor.status not in ("Active",):
+        raise HTTPException(status_code=400, detail=f"Cannot assign vendor '{vendor.vendor_name}' — vendor is {vendor.status}")
+    risk_level = calculate_risk_level(
+        vendor.reliability_score,
+        vendor_has_performance_data(db, vendor_id)
+    )
+    if risk_level == HIGH_RISK and not acknowledge_risk:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                f"'{vendor.company_name or vendor.vendor_name}' is a HIGH RISK vendor "
+                f"(reliability score {vendor.reliability_score:.1f}). Assigning this vendor requires "
+                f"explicit confirmation from a Procurement Manager or Administrator."
+            )
+        )
+
+    proc.vendor_id = vendor_id
+    proc.status = "Vendor Assigned"
+    proc.approval_status = "Approved"
+    db.commit()
+    db.refresh(proc)
+
+    remark = f"Assigned to vendor: {vendor.company_name or vendor.vendor_name}"
+    if risk_level == HIGH_RISK:
+        remark += " (HIGH RISK vendor — assignment explicitly confirmed)"
+    record_status_history(db, proc.id, "Vendor Assigned", user_name, remark)
+
+    warning = None
+    if risk_level == HIGH_RISK:
+        warning = (
+            f"{vendor.company_name or vendor.vendor_name} is classified HIGH RISK "
+            f"(reliability {vendor.reliability_score:.1f}). Monitor this order closely."
+        )
+    elif risk_level == MEDIUM_RISK:
+        warning = (
+            f"{vendor.company_name or vendor.vendor_name} is classified MEDIUM RISK "
+            f"(reliability {vendor.reliability_score:.1f})."
+        )
+    elif risk_level == NOT_RATED:
+        warning = (
+            f"{vendor.company_name or vendor.vendor_name} has no performance history yet, "
+            f"so no reliability rating is available. Monitor this first order closely."
+        )
+
+    return proc, risk_level, warning
+
+def place_order(db: Session, procurement_id: int, user_name: str = "Procurement Manager"):
+    proc = get_procurement(db, procurement_id)
+    if not proc:
+        return None
+    if proc.status not in ("Approved", "Vendor Assigned"):
+        raise HTTPException(status_code=400, detail="Only approved requests with assigned vendor can be ordered")
+    proc.status = "Ordered"
+    db.commit()
+    db.refresh(proc)
+
+    record_status_history(db, proc.id, "Ordered", user_name, "Purchase Order Issued")
+    return proc
+
 
 def _pending_procurement_service_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -301,6 +371,10 @@ def _pending_procurement_service_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -309,9 +383,8 @@ def _pending_procurement_service_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -321,6 +394,10 @@ def _pending_procurement_service_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -329,9 +406,8 @@ def _pending_procurement_service_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -341,6 +417,10 @@ def _pending_procurement_service_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -349,9 +429,8 @@ def _pending_procurement_service_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -361,6 +440,10 @@ def _pending_procurement_service_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -369,9 +452,8 @@ def _pending_procurement_service_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -381,16 +463,8 @@ def _pending_procurement_service_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
-
-
-def _pending_procurement_service_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows

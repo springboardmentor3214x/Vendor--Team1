@@ -2,12 +2,14 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from datetime import datetime, timezone
 from typing import Optional
+
 from app.models.order_tracking import OrderTracking
 from app.models.purchase_order import PurchaseOrder
 from app.models.procurement import Procurement
 from app.schemas.order_tracking import OrderTrackingUpdate
 from app.utils.delivery_timing import delivery_status_from_times
 from app.services.procurement_service import record_status_history
+
 
 PO_STATUS_FOR_DELIVERY = {
     "Awaiting Shipment": "Issued",
@@ -22,6 +24,7 @@ PROCUREMENT_STATUS_FOR_DELIVERY = {
     "Delivered": "Delivered",
     "Completed": "Completed",
 }
+
 
 def get_all_tracking(db: Session):
     records = db.query(OrderTracking).order_by(OrderTracking.updated_at.desc()).all()
@@ -39,6 +42,7 @@ def get_all_tracking(db: Session):
             else:
                 r.delay_status = "On Time"
     return records
+
 
 def get_tracking_by_po(db: Session, po_id: int):
     tracking = db.query(OrderTracking).filter(OrderTracking.po_id == po_id).first()
@@ -73,79 +77,96 @@ def get_tracking_by_po(db: Session, po_id: int):
     return tracking
 
 
-def _pending_order_tracking_service_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def update_tracking_status(db: Session, po_id: int, data: OrderTrackingUpdate, user_name: str = "User"):
+    tracking = get_tracking_by_po(db, po_id)
+    if not tracking:
+        return None
 
+    tracking.delivery_status = data.delivery_status
+    if data.dispatch_date:
+        tracking.dispatch_date = data.dispatch_date
+    elif data.delivery_status == "In Transit" and not tracking.dispatch_date:
+        tracking.dispatch_date = datetime.utcnow()
 
-def _pending_order_tracking_service_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
+    if data.actual_delivery_date:
+        tracking.actual_delivery_date = data.actual_delivery_date
+    elif data.delivery_status in ("Delivered", "Completed") and not tracking.actual_delivery_date:
+        tracking.actual_delivery_date = datetime.utcnow()
+
+    now = datetime.utcnow()
+    expected = tracking.expected_delivery_date or now
+    actual = tracking.actual_delivery_date or now
+
+    if expected.tzinfo is not None:
+        expected = expected.replace(tzinfo=None)
+    if actual.tzinfo is not None:
+        actual = actual.replace(tzinfo=None)
+
+    if tracking.delivery_status in ("In Transit", "Awaiting Shipment"):
+        if now > expected:
+            tracking.delay_status = "Delayed"
         else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+            tracking.delay_status = "On Time"
+    elif tracking.delivery_status in ("Delivered", "Completed"):
+        del_status, delay_hours, delay_days = delivery_status_from_times(expected, actual)
+        tracking.delay_days = delay_days
+        tracking.delay_hours = delay_hours
+        tracking.delay_status = "Delayed" if delay_hours > 0 else "On Time"
+
+    po = db.query(PurchaseOrder).filter(PurchaseOrder.id == po_id).first()
+    if po:
+        po_status = PO_STATUS_FOR_DELIVERY.get(tracking.delivery_status)
+        if po_status:
+            po.status = po_status
+
+        proc = db.query(Procurement).filter(Procurement.id == po.procurement_id).first()
+        if proc:
+            proc_status = PROCUREMENT_STATUS_FOR_DELIVERY.get(tracking.delivery_status)
+            if proc_status:
+                proc.status = proc_status
+            if tracking.delivery_status == "Delivered":
+                proc.actual_delivery_date = tracking.actual_delivery_date
+            record_status_history(
+                db, proc.id, proc_status or proc.status, user_name,
+                f"Delivery status updated to {tracking.delivery_status}", po_id=po.id
+            )
+
+    db.commit()
+
+    if tracking.delivery_status in ("Delivered", "Completed") and tracking.actual_delivery_date:
+        _record_delivery_performance(db, tracking, expected, actual)
+
+    db.refresh(tracking)
+    if po:
+        setattr(tracking, 'po_number', po.po_number)
+    return tracking
 
 
-def _pending_order_tracking_service_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def _record_delivery_performance(db: Session, tracking: OrderTracking, expected: datetime, actual: datetime):
+    from app.models.delivery_performance import DeliveryPerformance
+    from app.services.vendor_service import update_vendor_scores
 
+    existing = db.query(DeliveryPerformance).filter(
+        DeliveryPerformance.procurement_id == tracking.procurement_id,
+        DeliveryPerformance.vendor_id == tracking.vendor_id
+    ).first()
 
-def _pending_order_tracking_service_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+    if not existing:
+        status, delay_hours, delay_days = delivery_status_from_times(expected, actual)
+        db.add(DeliveryPerformance(
+            procurement_id=tracking.procurement_id,
+            vendor_id=tracking.vendor_id,
+            expected_date=expected,
+            actual_date=actual,
+            delay_days=delay_days,
+            delay_hours=delay_hours,
+            delivery_status=status,
+            remarks="Recorded automatically on delivery status update"
+        ))
+        db.commit()
 
-
-def _pending_order_tracking_service_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
-
-
-def _pending_order_tracking_service_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
-
-
-def _pending_order_tracking_service_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+    try:
+        update_vendor_scores(db, tracking.vendor_id)
+    except Exception as e:
+        db.rollback()
+        print(f"Failed to refresh vendor scores after delivery: {e}")

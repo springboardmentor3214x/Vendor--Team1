@@ -102,14 +102,18 @@ def create_purchase_order(db: Session, data: PurchaseOrderCreate, approved_by: s
 def get_all_purchase_orders(db: Session):
     return db.query(PurchaseOrder).order_by(PurchaseOrder.po_date.desc()).all()
 
+def get_purchase_order(db: Session, po_id: int):
+    return db.query(PurchaseOrder).filter(PurchaseOrder.id == po_id).first()
+
 
 def _pending_purchase_order_service_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -119,6 +123,8 @@ def _pending_purchase_order_service_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -127,8 +133,9 @@ def _pending_purchase_order_service_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -138,6 +145,8 @@ def _pending_purchase_order_service_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -146,8 +155,9 @@ def _pending_purchase_order_service_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -157,6 +167,8 @@ def _pending_purchase_order_service_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -165,15 +177,8 @@ def _pending_purchase_order_service_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
-
-
-def _pending_purchase_order_service_totals_4(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
