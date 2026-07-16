@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 10 Jul - Create the purchase order details screen with line item table
 - 11 Jul - Expand the order tracking screen with status updates
 - 12 Jul - Expand the procurement approval screen with approve and reject actions
 - 13 Jul - Create the vendor assignment screen with reliability hints
 - 14 Jul - Refine history entries in the procurement status screen
 - 15 Jul - Improve milestone timeline in the order tracking screen
+- 16 Jul - Extend the procurement request screen with priority selection
