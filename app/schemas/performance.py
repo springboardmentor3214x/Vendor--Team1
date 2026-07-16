@@ -44,3 +44,48 @@ class QualityEvaluationResponse(BaseModel):
     remarks: Optional[str]
     class Config:
         from_attributes = True
+
+class CommunicationLogCreate(BaseModel):
+    procurement_id: int
+    vendor_id: int
+    message_sent_time: datetime
+    vendor_response_time: Optional[datetime] = None
+    remarks: Optional[str] = None
+
+class CommunicationLogResponse(BaseModel):
+    id: int
+    procurement_id: int
+    vendor_id: int
+    message_sent_time: datetime
+    vendor_response_time: Optional[datetime]
+    response_duration_hours: Optional[float]
+    communication_status: str
+    remarks: Optional[str]
+    class Config:
+        from_attributes = True
+
+class ServiceRatingCreate(BaseModel):
+    procurement_id: int
+    vendor_id: int
+    professionalism: int
+    customer_support: int
+    documentation_quality: int
+    flexibility: int
+    communication_effectiveness: int
+    issue_resolution: int
+    comments: Optional[str] = None
+
+class ServiceRatingResponse(BaseModel):
+    id: int
+    procurement_id: int
+    vendor_id: int
+    professionalism: int
+    customer_support: int
+    documentation_quality: int
+    flexibility: int
+    communication_effectiveness: int
+    issue_resolution: int
+    overall_rating: float
+    comments: Optional[str]
+    class Config:
+        from_attributes = True
