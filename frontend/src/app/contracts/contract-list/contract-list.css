@@ -16,15 +16,32 @@
 
 .form-group { display: flex; flex-direction: column; gap: 6px; }
 
+.form-group.full-width { grid-column: 1 / -1; }
+
+.form-group label { font-size: 0.8125rem; font-weight: 500; color: var(--text-secondary, #64748b); }
+
+.form-group input, .form-group select, .form-group textarea {
+  padding: 9px 12px; border-radius: 6px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  font: inherit; width: 100%;
+}
+
+.form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+
 .placeholder-panel {
-  padding: 10px;
-  border: 1px dashed #c9c9c9;
-  border-radius: 4px;
+  padding: 12px;
+  border: 1px dashed #d2d2d2;
+  border-radius: 5px;
   color: #7a7a7a;
 }
 
 .placeholder-row {
   display: flex;
   justify-content: space-between;
-  padding: 4px 0;
+  padding: 5px 0;
+}
+
+.placeholder-row span {
+  font-size: 13px;
+  letter-spacing: 0.2px;
 }

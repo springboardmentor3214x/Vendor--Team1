@@ -33,43 +33,104 @@
         </app-card>
     </div>
 
-</div>
+    <app-card>
+        <div *ngIf="actionMsg"
+             style="margin-bottom: 12px; padding: 10px 14px; border-radius: 6px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46;">
+            {{ actionMsg }}
+        </div>
+        <div *ngIf="errorMsg"
+             style="margin-bottom: 12px; padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+            {{ errorMsg }}
+        </div>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+            <input type="text" placeholder="Search contract #, title, vendor, manager or category..."
+                   [(ngModel)]="searchText" (input)="applyFilters()"
+                   style="flex: 1; min-width: 260px; padding: 9px 12px; border-radius: 6px; border: 1px solid var(--border-color);" />
+            <select [(ngModel)]="statusFilter" (change)="applyFilters()"
+                    style="padding: 9px 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+                <option value="All">All Statuses</option>
+                <option value="Draft">Draft</option>
+                <option value="Active">Active</option>
+                <option value="Expiring Soon">Expiring Soon</option>
+                <option value="Expired">Expired</option>
+                <option value="Renewed">Renewed</option>
+                <option value="Terminated">Terminated</option>
+            </select>
+            <select [(ngModel)]="expiryFilter" (change)="applyFilters()"
+                    style="padding: 9px 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+                <option value="All">Any Expiry</option>
+                <option value="30">Expiring in 30 days</option>
+                <option value="60">Expiring in 60 days</option>
+                <option value="90">Expiring in 90 days</option>
+                <option value="Expired">Already expired</option>
+            </select>
+        </div>
+
+        <div *ngIf="isLoading" style="padding: 40px; text-align: center; color: var(--text-secondary);">
+            Loading contracts...
+        </div>
+
+        <div class="vrip-table-wrapper" *ngIf="!isLoading" style="overflow-x: auto; width: 100%;">
+            <table class="vrip-table" style="width: 100%; min-width: 1000px; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8fafc; text-align: left; font-size: 0.8125rem; text-transform: uppercase; color: #64748b;">
+                        <th style="padding: 12px 16px; cursor: pointer;" (click)="sortBy('contract_number')">Contract #</th>
+                        <th style="padding: 12px 16px;">Title</th>
+                        <th style="padding: 12px 16px; cursor: pointer;" (click)="sortBy('vendor_name')">Vendor</th>
+                        <th style="padding: 12px 16px; cursor: pointer;" (click)="sortBy('contract_value')">Value</th>
+                        <th style="padding: 12px 16px;">Manager</th>
+                        <th style="padding: 12px 16px; cursor: pointer;" (click)="sortBy('end_date')">End Date</th>
+                        <th style="padding: 12px 16px;">Status</th>
+                        <th style="padding: 12px 16px; text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let c of paginated" style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 14px 16px;"><strong>{{ c.contract_number || '—' }}</strong></td>
+                        <td style="padding: 14px 16px;">{{ c.contract_title }}</td>
+                        <td style="padding: 14px 16px;">{{ c.vendor_name }}</td>
+                        <td style="padding: 14px 16px;">₹{{ c.contract_value | number:'1.2-2' }}</td>
+                        <td style="padding: 14px 16px; color: #475569;">{{ c.responsible_manager || '—' }}</td>
+                        <td style="padding: 14px 16px;">
+                            {{ c.end_date }}
+                            <div *ngIf="c.daysToExpiry !== null" style="font-size: 0.75rem; color: var(--text-secondary);">
+                                {{ c.daysToExpiry < 0 ? (-c.daysToExpiry) + ' days ago' : c.daysToExpiry + ' days left' }}
+                            </div>
+                        </td>
+                        <td style="padding: 14px 16px;">
+                            <app-badge [variant]="statusVariant(effectiveStatus(c))">{{ effectiveStatus(c) }}</app-badge>
+                        </td>
+                        <td style="padding: 14px 16px; text-align: right; white-space: nowrap;">
+                            <app-button variant="outline" size="sm" iconLeft="visibility" [routerLink]="['/contract-management', c.id]"></app-button>
+                            <app-button *ngIf="canEdit" variant="outline" size="sm" iconLeft="edit" [routerLink]="['/contract-management/edit', c.id]"></app-button>
+                            <app-button *ngIf="canEdit" variant="primary" size="sm" iconLeft="autorenew" (onClick)="renewContract(c)"></app-button>
+                            <app-button *ngIf="canDelete" variant="danger" size="sm" iconLeft="delete" (onClick)="deleteContract(c)"></app-button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="paginated.length === 0">
+                        <td colspan="8" style="padding: 32px; text-align: center; color: var(--text-secondary);">
+                            No contracts match the current filters.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="vrip-table-pagination" *ngIf="!isLoading && filtered.length > 0"
+             style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px;">
+            <span style="font-size: 0.875rem; color: var(--text-secondary);">
+                Showing {{ paginated.length }} of {{ filtered.length }} contracts
+            </span>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="pagination-btn" [disabled]="currentPage === 1" (click)="previousPage()">
+                    <span class="material-symbols-outlined">chevron_left</span>
+                </button>
+                <span style="font-size: 0.875rem;">Page {{ currentPage }} of {{ totalPages }}</span>
+                <button class="pagination-btn" [disabled]="currentPage === totalPages" (click)="nextPage()">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                </button>
+            </div>
+        </div>
+    </app-card>
 </div>
