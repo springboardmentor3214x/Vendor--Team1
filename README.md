@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 10 Jul - Add procurement endpoints with budget code capture
 - 11 Jul - Add purchase order endpoints with partial delivery handling
 - 12 Jul - Refine delivery schedule fields in purchase order
 - 13 Jul - Extend procurement with budget code capture
 - 14 Jul - Add the static asset folders with database bootstrap
 - 15 Jul - Extend the vendor categories with supplier ranking fields
+- 16 Jul - Refine expected versus actual dates in order tracking
