@@ -39,17 +39,42 @@
 
     cursor:pointer;
 
+    transition:.3s;
+
 }
 
-.search-bar input{
+.add-btn:hover{
 
-    width:350px;
+    background:#1d4ed8;
+
+}
+
+.search-bar{
+
+    display:flex;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+}
+
+.search-bar input,
+.search-bar select{
 
     padding:12px;
 
     border-radius:10px;
 
     border:1px solid #ddd;
+
+    font-size:14px;
+
+}
+
+.search-bar input{
+
+    width:350px;
 
 }
 
@@ -85,11 +110,15 @@ td{
 
     border-bottom:1px solid #eee;
 
+    vertical-align:top;
+
 }
 
 button{
 
     margin-right:8px;
+
+    margin-bottom:6px;
 
     border:none;
 
@@ -98,6 +127,14 @@ button{
     border-radius:8px;
 
     cursor:pointer;
+
+    transition:.3s;
+
+}
+
+button:hover{
+
+    opacity:.9;
 
 }
 
@@ -109,7 +146,23 @@ button{
 
 }
 
-.approved{
+.approve-btn{
+
+    background:#22c55e;
+
+    color:white;
+
+}
+
+.reject-btn{
+
+    background:#dc2626;
+
+    color:white;
+
+}
+
+.active{
 
     color:#16a34a;
 
@@ -122,5 +175,55 @@ button{
     color:#f59e0b;
 
     font-weight:bold;
+
+}
+
+.approved{
+
+    color:#16a34a;
+
+    font-weight:bold;
+
+}
+
+.rejected{
+
+    color:#dc2626;
+
+    font-weight:bold;
+
+}
+
+@media(max-width:900px){
+
+    .header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:15px;
+
+    }
+
+    .search-bar{
+
+        flex-direction:column;
+
+    }
+
+    .search-bar input{
+
+        width:100%;
+
+    }
+
+    table{
+
+        display:block;
+
+        overflow-x:auto;
+
+    }
 
 }

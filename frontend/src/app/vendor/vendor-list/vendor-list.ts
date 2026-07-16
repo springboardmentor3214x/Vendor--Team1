@@ -175,4 +175,16 @@ export class VendorList implements OnInit {
 
   }
 
+  approveVendor(id: number): void {
+
+    this.vendorService.approveVendor(id);
+
+  }
+
+  rejectVendor(id: number): void {
+
+    this.vendorService.rejectVendor(id);
+
+  }
+
 }
