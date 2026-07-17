@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 11 Jul - Add the edit vendor screen with update confirmation
 - 12 Jul - Extend the contract list screen with status filter
 - 13 Jul - Add the vendor list screen with table layout
 - 14 Jul - Expand the compliance management screen with certification expiry
 - 15 Jul - Extend the vendor details screen with reliability score panel
 - 16 Jul - Flesh out the button component with disabled styling
+- 17 Jul - Refine status filter in the contract list screen
