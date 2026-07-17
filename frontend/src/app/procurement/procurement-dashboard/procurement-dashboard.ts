@@ -17,22 +17,43 @@ export class ProcurementDashboard implements OnInit {
   isLoading = true;
   summaryCards: any[] = [];
   recentActivities: any[] = [];
+
   constructor(private procurementService: ProcurementService) {}
-}
 
-const PLACEHOLDER_PROCUREMENT_DASHBOARD_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-];
-
-function usePlaceholderProcurementDashboard(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_PROCUREMENT_DASHBOARD_ROWS;
+  ngOnInit(): void {
+    this.loadDashboardData();
   }
-  return rows.filter((row) => !!row);
+
+  loadDashboardData(): void {
+    this.isLoading = true;
+    this.procurementService.getProcurementDashboard().subscribe({
+      next: (data) => {
+        this.isLoading = false;
+        this.summaryCards = [
+          { title: 'Total Procurement Requests', value: data.total || 0, color: '#2563eb', icon: 'inventory_2' },
+          { title: 'Pending Requests', value: data.pending || 0, color: '#f59e0b', icon: 'hourglass_empty' },
+          { title: 'Approved Requests', value: data.approved || 0, color: '#16a34a', icon: 'task_alt' },
+          { title: 'Purchase Orders Created', value: data.po_created || 0, color: '#9333ea', icon: 'receipt' },
+          { title: 'Delivered Orders', value: data.delivered || 0, color: '#0f766e', icon: 'local_shipping' },
+          { title: 'Completed Procurements', value: data.completed || 0, color: '#15803d', icon: 'verified' },
+          { title: 'Cancelled Requests', value: data.cancelled || 0, color: '#dc2626', icon: 'cancel' }
+        ];
+        this.recentActivities = data.recent_activities || [];
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Error fetching procurement dashboard data', err);
+
+        this.summaryCards = [
+          { title: 'Total Procurement Requests', value: 0, color: '#2563eb', icon: 'inventory_2' },
+          { title: 'Pending Requests', value: 0, color: '#f59e0b', icon: 'hourglass_empty' },
+          { title: 'Approved Requests', value: 0, color: '#16a34a', icon: 'task_alt' },
+          { title: 'Purchase Orders Created', value: 0, color: '#9333ea', icon: 'receipt' },
+          { title: 'Delivered Orders', value: 0, color: '#0f766e', icon: 'local_shipping' },
+          { title: 'Completed Procurements', value: 0, color: '#15803d', icon: 'verified' },
+          { title: 'Cancelled Requests', value: 0, color: '#dc2626', icon: 'cancel' }
+        ];
+      }
+    });
+  }
 }
