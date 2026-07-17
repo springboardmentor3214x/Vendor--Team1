@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 11 Jul - Set up the purchase order screen with line item totals
 - 12 Jul - Cover contract in the end to end pass
 - 13 Jul - Round out the order tracking screen with status updates
 - 14 Jul - Round out the vendor assignment screen with reliability hints
 - 15 Jul - Rework certification expiry in the compliance management screen
 - 16 Jul - Expand contract with compliance clauses
+- 17 Jul - Rework issuing authority details in certification
