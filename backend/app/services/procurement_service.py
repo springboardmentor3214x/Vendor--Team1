@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from app.models.procurement import Procurement
 from app.schemas.procurement import ProcurementCreate
 from sqlalchemy import or_
+from sqlalchemy import asc, desc
 
 # =====================================
 # Create Procurement
@@ -170,6 +171,19 @@ def approve_procurement(
             status_code=500,
             detail=str(e)
         )
+        
+def filter_procurements(
+    db: Session,
+    status: str
+):
+
+    procurements = db.query(
+        Procurement
+    ).filter(
+        Procurement.status == status
+    ).all()
+
+    return procurements
 
 # =====================================
 # Reject Procurement
@@ -216,3 +230,131 @@ def search_procurements(
     ).all()
 
     return procurements
+
+def procurement_dashboard(db: Session):
+
+    total = db.query(Procurement).count()
+
+    approved = db.query(
+        Procurement
+    ).filter(
+        Procurement.status == "Approved"
+    ).count()
+
+    pending = db.query(
+        Procurement
+    ).filter(
+        Procurement.status == "Pending"
+    ).count()
+
+    rejected = db.query(
+        Procurement
+    ).filter(
+        Procurement.status == "Rejected"
+    ).count()
+
+    return {
+
+        "total_procurements": total,
+
+        "approved": approved,
+
+        "pending": pending,
+
+        "rejected": rejected
+
+    }
+
+def get_procurements_paginated(
+
+    db: Session,
+
+    page: int = 1,
+
+    limit: int = 10
+
+):
+
+    skip = (page - 1) * limit
+
+    procurements = (
+
+        db.query(Procurement)
+
+        .offset(skip)
+
+        .limit(limit)
+
+        .all()
+
+    )
+
+    total = db.query(Procurement).count()
+
+    return {
+
+        "page": page,
+
+        "limit": limit,
+
+        "total": total,
+
+        "data": procurements
+
+    }
+    
+def sort_procurements(
+
+    db: Session,
+
+    field: str,
+
+    order: str
+
+):
+
+    allowed_fields = {
+
+        "item_name": Procurement.item_name,
+
+        "quantity": Procurement.quantity,
+
+        "unit_price": Procurement.unit_price,
+
+        "status": Procurement.status
+
+    }
+
+    if field not in allowed_fields:
+
+        raise HTTPException(
+
+            status_code=400,
+
+            detail="Invalid sort field."
+
+        )
+
+    column = allowed_fields[field]
+
+    if order.lower() == "desc":
+
+        return db.query(
+
+            Procurement
+
+        ).order_by(
+
+            desc(column)
+
+        ).all()
+
+    return db.query(
+
+        Procurement
+
+    ).order_by(
+
+        asc(column)
+
+    ).all()

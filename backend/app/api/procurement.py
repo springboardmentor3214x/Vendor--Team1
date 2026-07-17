@@ -14,7 +14,11 @@ from app.services.procurement_service import (
     delete_procurement,
     approve_procurement,
     reject_procurement,
-    search_procurements
+    search_procurements,
+    filter_procurements,
+    procurement_dashboard,
+    get_procurements_paginated,
+    sort_procurements
 )
 
 from app.core.dependencies import get_current_user
@@ -70,7 +74,75 @@ def search_procurement_api(
         keyword
     )
 
+@router.get("/procurements/filter")
+def procurement_filter(
+    status: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
 
+    return filter_procurements(
+        db,
+        status
+    )
+    
+@router.get("/procurements/dashboard")
+def dashboard(
+
+    db: Session = Depends(get_db),
+
+    current_user: User = Depends(get_current_user)
+
+):
+
+    return procurement_dashboard(db)
+
+@router.get("/procurements/pagination")
+def pagination(
+
+    page: int = 1,
+
+    limit: int = 10,
+
+    db: Session = Depends(get_db),
+
+    current_user: User = Depends(get_current_user)
+
+):
+
+    return get_procurements_paginated(
+
+        db,
+
+        page,
+
+        limit
+
+    )
+
+@router.get("/procurements/sort")
+def sort(
+
+    field: str,
+
+    order: str,
+
+    db: Session = Depends(get_db),
+
+    current_user: User = Depends(get_current_user)
+
+):
+
+    return sort_procurements(
+
+        db,
+
+        field,
+
+        order
+
+    )
+    
 # =====================================
 # Get Procurement By ID
 # =====================================
