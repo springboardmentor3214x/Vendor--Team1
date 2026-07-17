@@ -149,4 +149,32 @@ export class VendorService {
 
   }
 
+  activateVendor(id: number): void {
+
+    const vendor = this.vendors.find(v => v.id === id);
+
+    if (vendor && vendor.approvalStatus === 'Approved') {
+
+      vendor.status = 'Active';
+
+      this.vendorSubject.next([...this.vendors]);
+
+    }
+
+  }
+
+  suspendVendor(id: number): void {
+
+    const vendor = this.vendors.find(v => v.id === id);
+
+    if (vendor && vendor.approvalStatus === 'Approved') {
+
+      vendor.status = 'Suspended';
+
+      this.vendorSubject.next([...this.vendors]);
+
+    }
+
+  }
+
 }

@@ -187,4 +187,16 @@ export class VendorList implements OnInit {
 
   }
 
+  activateVendor(id: number): void {
+
+    this.vendorService.activateVendor(id);
+
+  }
+
+  suspendVendor(id: number): void {
+
+    this.vendorService.suspendVendor(id);
+
+  }
+
 }
