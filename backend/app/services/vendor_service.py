@@ -210,15 +210,74 @@ def delete_vendor(db: Session, vendor_id: int):
         )
     return vendor
 
+def sync_user_status_by_email(db: Session, email: str, status: str):
+    from app.models.user import User
+    user = db.query(User).filter(User.email == email).first()
+    if user:
+        user.account_status = status
+
+def approve_vendor(db: Session, vendor_id: int, approved_by: str):
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+    vendor.approval_status = "Approved"
+    vendor.status = "Active"
+    vendor.approved_by = approved_by
+    vendor.approved_at = datetime.utcnow()
+    vendor.updated_by = approved_by
+    vendor.updated_at = datetime.utcnow()
+    sync_user_status_by_email(db, vendor.email, "Active")
+    db.commit()
+    db.refresh(vendor)
+    return vendor
+
+def reject_vendor(db: Session, vendor_id: int, approved_by: str):
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+    check_vendor_active_activities(db, vendor_id)
+    vendor.approval_status = "Rejected"
+    vendor.status = "Rejected"
+    vendor.approved_by = approved_by
+    vendor.approved_at = datetime.utcnow()
+    vendor.updated_by = approved_by
+    vendor.updated_at = datetime.utcnow()
+    sync_user_status_by_email(db, vendor.email, "Rejected")
+    db.commit()
+    db.refresh(vendor)
+    return vendor
+
+def block_vendor(db: Session, vendor_id: int):
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+    check_vendor_active_activities(db, vendor_id)
+    vendor.status = "Blocked"
+    sync_user_status_by_email(db, vendor.email, "Blocked")
+    db.commit()
+    db.refresh(vendor)
+    return vendor
+
+def deactivate_vendor(db: Session, vendor_id: int):
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+    check_vendor_active_activities(db, vendor_id)
+    vendor.status = "Inactive"
+    sync_user_status_by_email(db, vendor.email, "Deactivated")
+    db.commit()
+    db.refresh(vendor)
+    return vendor
+
 
 def _pending_vendor_service_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -228,8 +287,6 @@ def _pending_vendor_service_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -238,9 +295,9 @@ def _pending_vendor_service_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -250,8 +307,6 @@ def _pending_vendor_service_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -260,9 +315,9 @@ def _pending_vendor_service_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -272,8 +327,6 @@ def _pending_vendor_service_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -282,9 +335,9 @@ def _pending_vendor_service_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -294,8 +347,6 @@ def _pending_vendor_service_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -304,9 +355,9 @@ def _pending_vendor_service_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -316,6 +367,16 @@ def _pending_vendor_service_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
+
+
+def _pending_vendor_service_rows_6(items):
+    rows = []
+    for item in items:
+        rows.append({
+            "id": getattr(item, "id", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
+        })
+    return rows
