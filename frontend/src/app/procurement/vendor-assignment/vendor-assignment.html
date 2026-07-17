@@ -28,43 +28,47 @@
         </div>
     </app-card>
 
+    <div *ngIf="highRiskCount > 0"
+         style="display: flex; gap: 10px; align-items: flex-start; padding: 14px 16px; border-radius: 8px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+        <span class="material-symbols-outlined" style="font-size: 20px;">warning</span>
+        <div>
+            <strong>{{ highRiskCount }} high-risk vendor(s) in this list.</strong>
+            <div style="font-size: 0.875rem; margin-top: 2px;">
+                Vendors with a reliability score below 50 have a history of delays, quality issues or slow
+                communication. Assigning one requires explicit confirmation.
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+  <p>Sample rows shown until the API is ready.</p>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Copperfield Freight</span>
     <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
   </div>
 </div>
