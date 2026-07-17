@@ -2,6 +2,7 @@ from pydantic import BaseModel, ConfigDict
 from datetime import date, datetime
 from typing import Optional
 
+
 class ContractCreate(BaseModel):
     contract_title: str
     vendor_id: int
@@ -11,6 +12,12 @@ class ContractCreate(BaseModel):
     start_date: date
     end_date: date
     contract_value: float
+    payment_terms: Optional[str] = "Net 30"
+    sla_details: Optional[str] = None
+    warranty_details: Optional[str] = None
+    responsible_manager: Optional[str] = None
+    status: Optional[str] = "Active"
+
 
 class ContractUpdate(BaseModel):
     contract_title: Optional[str] = None
@@ -20,25 +27,19 @@ class ContractUpdate(BaseModel):
     end_date: Optional[date] = None
     contract_value: Optional[float] = None
     payment_terms: Optional[str] = None
+    sla_details: Optional[str] = None
+    warranty_details: Optional[str] = None
+    responsible_manager: Optional[str] = None
+    status: Optional[str] = None
 
 
-def _pending_contract_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+class ContractResponse(ContractCreate):
+    model_config = ConfigDict(from_attributes=True)
 
-
-def _pending_contract_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+    id: int
+    contract_number: Optional[str] = None
+    document_name: Optional[str] = None
+    document_path: Optional[str] = None
+    renewal_count: int = 0
+    last_renewed_at: Optional[datetime] = None
+    created_at: Optional[datetime] = None

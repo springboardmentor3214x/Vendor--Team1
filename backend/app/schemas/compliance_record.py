@@ -2,35 +2,27 @@ from pydantic import BaseModel, ConfigDict
 from datetime import date, datetime
 from typing import Optional
 
+
 class ComplianceRecordCreate(BaseModel):
     vendor_id: int
     compliance_type: str
     status: Optional[str] = "Pending Verification"
     verified_by: Optional[str] = None
     verification_date: Optional[date] = None
+    expiry_date: Optional[date] = None
+    remarks: Optional[str] = None
+
 
 class ComplianceRecordUpdate(BaseModel):
     status: Optional[str] = None
     verified_by: Optional[str] = None
     verification_date: Optional[date] = None
     expiry_date: Optional[date] = None
+    remarks: Optional[str] = None
 
 
-def _pending_compliance_record_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
+class ComplianceRecordResponse(ComplianceRecordCreate):
+    model_config = ConfigDict(from_attributes=True)
 
-
-def _pending_compliance_record_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+    id: int
+    created_at: Optional[datetime] = None

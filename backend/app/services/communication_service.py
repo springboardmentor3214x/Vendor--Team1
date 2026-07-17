@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Optional
 import os
 import shutil
+
 from app.models.communication import Communication
 from app.models.discussion import Discussion
 from app.models.shared_file import SharedFile
@@ -19,6 +20,7 @@ from app.utils.uploads import (
     MAX_SHARED_FILE_SIZE_BYTES,
 )
 
+
 def unique_upload_path(upload_dir: str, filename: str) -> tuple:
     safe_filename = os.path.basename(filename)
     stem, extension = os.path.splitext(safe_filename)
@@ -30,6 +32,7 @@ def unique_upload_path(upload_dir: str, filename: str) -> tuple:
         counter += 1
 
     return candidate, os.path.join(upload_dir, candidate)
+
 
 def log_activity(db: Session, user_name: str, action: str, module_name: str, related_record: str = None, user_id: int = None, details: str = None, ip_address: str = None):
     try:
@@ -50,6 +53,7 @@ def log_activity(db: Session, user_name: str, action: str, module_name: str, rel
         db.rollback()
         print(f"Log activity notice: {e}")
         return None
+
 
 def send_message(db: Session, data: CommunicationCreate, sender_id: int, sender_name: str, file: UploadFile = None):
     file_name = None
@@ -134,6 +138,7 @@ def send_message(db: Session, data: CommunicationCreate, sender_id: int, sender_
 
     return comm
 
+
 def get_conversations(
     db: Session,
     vendor_id: Optional[int] = None,
@@ -172,6 +177,7 @@ def get_conversations(
 
     return query.order_by(Communication.sent_at.asc()).all()
 
+
 def create_discussion(db: Session, data: DiscussionCreate, created_by: str, user_id: int = None):
     disc = Discussion(
         topic=data.topic,
@@ -189,6 +195,7 @@ def create_discussion(db: Session, data: DiscussionCreate, created_by: str, user
     log_activity(db, created_by, "Discussion Created", "Communication", f"Discussion #{disc.id}", user_id=user_id, details=f"Topic: {data.topic}")
     return disc
 
+
 def get_discussions(db: Session, vendor_id: int = None, po_id: int = None):
     query = db.query(Discussion)
     if vendor_id:
@@ -196,6 +203,7 @@ def get_discussions(db: Session, vendor_id: int = None, po_id: int = None):
     if po_id:
         query = query.filter(Discussion.po_id == po_id)
     return query.order_by(Discussion.created_at.desc()).all()
+
 
 def upload_shared_file(db: Session, uploaded_by: str, file: UploadFile, vendor_id: int = None, procurement_id: int = None, po_id: int = None, contract_id: int = None, discussion_id: int = None, user_id: int = None):
     contents = validate_upload(file, ALLOWED_SHARED_FILE_EXTENSIONS, MAX_SHARED_FILE_SIZE_BYTES)
@@ -226,111 +234,64 @@ def upload_shared_file(db: Session, uploaded_by: str, file: UploadFile, vendor_i
     return sf
 
 
-def _pending_communication_service_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def mark_messages_read(db: Session, user_id: int, message_ids: Optional[list] = None,
+                       vendor_id: Optional[int] = None, discussion_id: Optional[int] = None,
+                       user_name: str = "User"):
+    query = db.query(Communication).filter(
+        Communication.is_read == False,
+        Communication.sender_id != user_id
+    )
+    if message_ids:
+        query = query.filter(Communication.id.in_(message_ids))
+    if vendor_id:
+        query = query.filter(Communication.vendor_id == vendor_id)
+    if discussion_id:
+        query = query.filter(Communication.discussion_id == discussion_id)
+
+    messages = query.all()
+    for m in messages:
+        m.is_read = True
+    db.commit()
+
+    if messages:
+        log_activity(db, user_name, "Message Viewed", "Communication",
+                     f"{len(messages)} message(s)", user_id=user_id)
+
+    return {"message": f"Marked {len(messages)} message(s) as read", "count": len(messages)}
 
 
-def _pending_communication_service_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+def get_unread_message_count(db: Session, user_id: int, vendor_id: Optional[int] = None) -> int:
+    query = db.query(Communication).filter(
+        Communication.is_read == False,
+        Communication.sender_id != user_id
+    )
+    if vendor_id:
+        query = query.filter(
+            or_(Communication.vendor_id == vendor_id, Communication.receiver_id == user_id)
+        )
+    else:
+        query = query.filter(Communication.receiver_id == user_id)
+    return query.count()
 
 
-def _pending_communication_service_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def get_shared_files(db: Session, vendor_id: int = None, po_id: int = None, contract_id: int = None,
+                     procurement_id: int = None, discussion_id: int = None):
+    query = db.query(SharedFile)
+    if vendor_id:
+        query = query.filter(SharedFile.vendor_id == vendor_id)
+    if po_id:
+        query = query.filter(SharedFile.po_id == po_id)
+    if contract_id:
+        query = query.filter(SharedFile.contract_id == contract_id)
+    if procurement_id:
+        query = query.filter(SharedFile.procurement_id == procurement_id)
+    if discussion_id:
+        query = query.filter(SharedFile.discussion_id == discussion_id)
+    return query.order_by(SharedFile.created_at.desc()).all()
 
 
-def _pending_communication_service_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
-
-
-def _pending_communication_service_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
-
-
-def _pending_communication_service_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
-
-
-def _pending_communication_service_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
-
-
-def _pending_communication_service_totals_4(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
-
-
-def _pending_communication_service_rows_5(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
-
-
-def _pending_communication_service_totals_5(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+def get_activity_logs(db: Session, limit: int = 100, module_name: str = None):
+    query = db.query(ActivityLog)
+    if module_name and module_name != "All":
+        query = query.filter(ActivityLog.module_name == module_name)
+    return query.order_by(ActivityLog.timestamp.desc()).limit(limit).all()
