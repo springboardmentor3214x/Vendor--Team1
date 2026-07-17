@@ -2,31 +2,30 @@ from pydantic import BaseModel, ConfigDict
 from datetime import date, datetime
 from typing import Optional
 
+
 class CertificationCreate(BaseModel):
     vendor_id: int
     certification_name: str
     certificate_number: str
+    issuing_authority: str
+    issue_date: date
+    expiry_date: date
+    status: Optional[str] = "Active"
+
 
 class CertificationUpdate(BaseModel):
     certification_name: Optional[str] = None
     certificate_number: Optional[str] = None
     issuing_authority: Optional[str] = None
+    issue_date: Optional[date] = None
+    expiry_date: Optional[date] = None
+    status: Optional[str] = None
 
 
-def _pending_certification_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
+class CertificationResponse(CertificationCreate):
+    model_config = ConfigDict(from_attributes=True)
 
-
-def _pending_certification_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+    id: int
+    file_name: Optional[str] = None
+    file_path: Optional[str] = None
+    created_at: Optional[datetime] = None
