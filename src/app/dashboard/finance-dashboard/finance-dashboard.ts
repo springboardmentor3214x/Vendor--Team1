@@ -38,4 +38,6 @@ export class FinanceDashboard {
     if (status.includes('Pending') || status.includes('Review')) return 'warning';
     return 'default';
   }
+
+  refresh() { alert("Data refreshed!"); }
 }

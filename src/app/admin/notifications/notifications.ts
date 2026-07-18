@@ -13,6 +13,7 @@ import { Table } from '../../ui/table/table';
   styleUrls: ['./notifications.css']
 })
 export class Notifications {
+  markAllRead() { this.notifications.forEach(n => n.unread = false); }
   notifications = [
     { title: 'New Vendor Registration', message: 'TechCorp Solutions has submitted a registration request pending approval.', time: '10 mins ago', type: 'info', icon: 'domain_add', unread: true },
     { title: 'System Maintenance', message: 'Scheduled maintenance will occur on Sunday at 2:00 AM UTC.', time: '2 hours ago', type: 'alert', icon: 'warning', unread: true },

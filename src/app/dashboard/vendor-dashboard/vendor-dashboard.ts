@@ -39,4 +39,6 @@ export class VendorDashboard {
     if (status.includes('Active')) return 'primary';
     return 'default';
   }
+
+  refresh() { alert("Data refreshed!"); }
 }

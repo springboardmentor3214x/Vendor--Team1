@@ -40,9 +40,9 @@
         </div>
 
         <div style="padding: 16px; border-top: 1px solid var(--border-color); display: flex; gap: 12px; background: white;">
-            <app-button variant="ghost"><span class="material-symbols-outlined">attach_file</span></app-button>
+            <app-button variant="ghost" (onClick)="newChat()"><span class="material-symbols-outlined">attach_file</span></app-button>
             <input type="text" placeholder="Type a message..." style="flex: 1; padding: 10px 16px; border: 1px solid var(--border-color); border-radius: 20px; outline: none; font-family: inherit;">
-            <app-button variant="primary" iconLeft="send">Send</app-button>
+            <app-button variant="primary" iconLeft="send" (onClick)="sendMessage()">Send</app-button>
         </div>
     </app-card>
 </div>

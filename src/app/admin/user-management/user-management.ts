@@ -13,6 +13,10 @@ import { Table } from '../../ui/table/table';
   styleUrls: ['./user-management.css']
 })
 export class UserManagement {
+  addUser() { alert("Add user clicked"); }
+  editUser(u: any) { alert("Edit user: " + u.name); }
+  deleteUser(u: any) { if(confirm("Delete " + u.name + "?")) { this.users = this.users.filter(x => x.id !== u.id); } }
+
   users = [
     { id: 'USR-001', name: 'Alice Smith', email: 'alice@company.com', role: 'Administrator', status: 'Active' },
     { id: 'USR-002', name: 'Bob Johnson', email: 'bob@company.com', role: 'Procurement Manager', status: 'Active' },

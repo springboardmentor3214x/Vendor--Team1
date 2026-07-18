@@ -39,4 +39,6 @@ export class ProcurementDashboard {
     if (status.includes('Transit')) return 'primary';
     return 'default';
   }
+
+  refresh() { alert("Data refreshed!"); }
 }

@@ -4,7 +4,7 @@
             <h1>System Reports</h1>
             <p>Generate and view platform-wide administrative reports.</p>
         </div>
-        <app-button variant="primary" iconLeft="download">Export All</app-button>
+        <app-button variant="primary" iconLeft="download" (onClick)="exportCSV()">Export All</app-button>
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: var(--vrip-space-6);">
@@ -17,8 +17,8 @@
                     <h3 style="margin: 0 0 4px 0; font-size: 1.125rem;">{{ report.title }}</h3>
                     <p style="margin: 0 0 16px 0; color: var(--text-secondary); font-size: 0.875rem; line-height: 1.5;">{{ report.desc }}</p>
                     <div style="display: flex; gap: 8px;">
-                        <app-button variant="outline" size="sm">Generate PDF</app-button>
-                        <app-button variant="outline" size="sm">Export CSV</app-button>
+                        <app-button variant="outline" size="sm" (onClick)="exportCSV()">Generate PDF</app-button>
+                        <app-button variant="outline" size="sm" (onClick)="exportCSV()">Export CSV</app-button>
                     </div>
                 </div>
             </div>

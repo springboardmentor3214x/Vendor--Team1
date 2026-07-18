@@ -13,6 +13,8 @@ import { Table } from '../../ui/table/table';
   styleUrls: ['./audit-logs.css']
 })
 export class AuditLogs {
+  filter() { alert("Filter applied"); }
+
   logs = [
     { timestamp: '2023-10-25 14:32:01', user: 'Alice Smith', role: 'Administrator', action: 'UPDATE_ROLE', entity: 'User: USR-003', ip: '192.168.1.45' },
     { timestamp: '2023-10-25 14:15:22', user: 'Bob Johnson', role: 'Procurement Mgr', action: 'APPROVE_PO', entity: 'PO: PO-2023-1001', ip: '10.0.0.12' },

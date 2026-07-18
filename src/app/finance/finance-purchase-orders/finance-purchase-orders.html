@@ -5,8 +5,8 @@
             <p>Review and approve POs for budget alignment.</p>
         </div>
         <div style="display: flex; gap: 8px;">
-            <app-button variant="outline" iconLeft="filter_list">Filter</app-button>
-            <app-button variant="primary" iconLeft="download">Export Report</app-button>
+            <app-button variant="outline" iconLeft="filter_list" (onClick)="filter()">Filter</app-button>
+            <app-button variant="primary" iconLeft="download" (onClick)="export()">Export Report</app-button>
         </div>
     </div>
 
@@ -38,7 +38,7 @@
                         </span>
                     </td>
                     <td style="text-align: right;">
-                        <app-button variant="outline" size="sm">Review</app-button>
+                        <app-button variant="outline" size="sm" (onClick)="viewPO()">Review</app-button>
                     </td>
                 </tr>
             </ng-container>

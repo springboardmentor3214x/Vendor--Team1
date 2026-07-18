@@ -22,6 +22,7 @@ import { Button } from '../ui/button/button';
   styleUrls: ['./dashboard.css']
 })
 export class Dashboard {
+  refresh() { alert("Dashboard refreshed successfully!"); }
   columns: TableColumn[] = [
     { key: 'name', label: 'Vendor Name' },
     { key: 'category', label: 'Category' },

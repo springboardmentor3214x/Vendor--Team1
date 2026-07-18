@@ -1,0 +1,43 @@
+<div class="page-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1>Service Rating</h1>
+            <p style="color: var(--text-secondary); margin-top: 4px;">Provide and review overall service ratings for vendors after procurement cycles.</p>
+        </div>
+        <app-button variant="primary" size="md" iconLeft="star_rate">Submit Rating</app-button>
+    </div>
+
+    <app-card [noPadding]="true">
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>PO Number</th>
+                    <th>Vendor Name</th>
+                    <th>Professionalism</th>
+                    <th>Support</th>
+                    <th>Docs Quality</th>
+                    <th>Flexibility</th>
+                    <th>Overall Rating</th>
+                    <th>Comments</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let rating of ratings">
+                    <td><strong>{{ rating.poNumber }}</strong></td>
+                    <td>{{ rating.vendorName }}</td>
+                    <td>{{ rating.professionalism }}/5</td>
+                    <td>{{ rating.customerSupport }}/5</td>
+                    <td>{{ rating.documentationQuality }}/5</td>
+                    <td>{{ rating.flexibility }}/5</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 4px; font-weight: 600;">
+                            <span class="material-symbols-outlined" style="color: #ffcc00; font-size: 18px; font-variation-settings: 'FILL' 1;">star</span>
+                            {{ rating.overallRating }}
+                        </div>
+                    </td>
+                    <td style="color: var(--text-secondary);">{{ rating.comments }}</td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
+</div>

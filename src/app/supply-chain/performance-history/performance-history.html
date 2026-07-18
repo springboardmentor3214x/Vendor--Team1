@@ -1,0 +1,59 @@
+<div class="page-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1>Performance History</h1>
+            <p style="color: var(--text-secondary); margin-top: 4px;">Review long-term vendor performance across multiple procurement cycles.</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <app-button variant="outline" size="sm" iconLeft="filter_list">Filter</app-button>
+            <app-button variant="outline" size="sm" iconLeft="download">Export</app-button>
+        </div>
+    </div>
+
+    <app-card [noPadding]="true">
+        <div style="padding: 16px 24px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 16px;">
+            <label style="font-weight: 500;">Select Vendor:</label>
+            <select class="vrip-input" style="width: 250px;">
+                <option value="all">All Vendors</option>
+                <option value="TechCorp Solutions">TechCorp Solutions</option>
+                <option value="Prime Raw Materials">Prime Raw Materials</option>
+            </select>
+        </div>
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>Cycle ID</th>
+                    <th>Vendor Name</th>
+                    <th>PO Number</th>
+                    <th>Delivery</th>
+                    <th>Quality</th>
+                    <th>Comm.</th>
+                    <th>Issues (R/Res)</th>
+                    <th>Service</th>
+                    <th>Trend</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let record of history">
+                    <td><span style="color: var(--text-secondary); font-size: 0.875rem;">{{ record.cycleId }}</span></td>
+                    <td><strong>{{ record.vendorName }}</strong></td>
+                    <td>{{ record.poNumber }}</td>
+                    <td>
+                        <span class="vrip-badge" [ngStyle]="{'background': record.deliveryStatus === 'Delayed' ? 'rgba(255, 59, 48, 0.1)' : 'rgba(52, 199, 89, 0.1)', 'color': record.deliveryStatus === 'Delayed' ? '#ff3b30' : '#34c759'}">
+                            {{ record.deliveryStatus }}
+                        </span>
+                    </td>
+                    <td>{{ record.qualityRating }}/5</td>
+                    <td>{{ record.commRating }}</td>
+                    <td>{{ record.issuesRaised }} / {{ record.issuesResolved }}</td>
+                    <td><strong>{{ record.serviceRating }}</strong></td>
+                    <td>
+                        <span class="material-symbols-outlined" [ngStyle]="{'color': getTrendColor(record.trend)}" style="font-size: 20px;">
+                            {{ getTrendIcon(record.trend) }}
+                        </span>
+                    </td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
+</div>
