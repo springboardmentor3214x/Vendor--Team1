@@ -2,12 +2,21 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PurchaseOrderDetails } from './purchase-order-details';
 
-const PLACEHOLDER_PURCHASE_ORDER_DETAILS_SPEC_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-];
+describe('PurchaseOrderDetails', () => {
+  let component: PurchaseOrderDetails;
+  let fixture: ComponentFixture<PurchaseOrderDetails>;
 
-function usePlaceholderPurchaseOrderDetailsSpec(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_PURCHASE_ORDER_DETAILS_SPEC_ROWS;
-}
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [PurchaseOrderDetails],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(PurchaseOrderDetails);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
