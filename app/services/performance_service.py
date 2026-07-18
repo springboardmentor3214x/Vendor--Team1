@@ -182,3 +182,20 @@ def performance_dashboard(db: Session):
         "avg_response_time_hours": round(float(avg_response), 2),
         "total_completed_orders": total_completed
     }
+
+
+# ===== Performance History =====
+def get_vendor_performance_history(db: Session, vendor_id: int):
+    deliveries = get_delivery_records(db, vendor_id)
+    quality = get_quality_records(db, vendor_id)
+    communications = get_communication_records(db, vendor_id)
+    ratings = get_service_ratings(db, vendor_id)
+    metrics = calculate_vendor_metrics(db, vendor_id)
+    return {
+        "vendor_id": vendor_id,
+        "delivery_records": [{"id": d.id, "status": d.delivery_status, "delay_days": d.delay_days} for d in deliveries],
+        "quality_evaluations": [{"id": q.id, "overall_rating": q.overall_rating} for q in quality],
+        "communication_logs": [{"id": c.id, "response_hours": c.response_duration_hours, "status": c.communication_status} for c in communications],
+        "service_ratings": [{"id": s.id, "overall_rating": s.overall_rating} for s in ratings],
+        "current_metrics": metrics
+    }

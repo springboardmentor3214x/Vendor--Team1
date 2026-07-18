@@ -62,3 +62,8 @@ def submit_rating(data: ServiceRatingCreate, db: Session = Depends(get_db)):
 @router.get("/service-rating/{vendor_id}", response_model=List[ServiceRatingResponse])
 def get_ratings(vendor_id: int, db: Session = Depends(get_db)):
     return performance_service.get_service_ratings(db, vendor_id)
+
+# ===== Performance History =====
+@router.get("/history/{vendor_id}")
+def vendor_history(vendor_id: int, db: Session = Depends(get_db)):
+    return performance_service.get_vendor_performance_history(db, vendor_id)
