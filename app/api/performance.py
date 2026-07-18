@@ -12,6 +12,21 @@ from app.services import performance_service
 
 router = APIRouter(prefix="/performance", tags=["Vendor Performance"])
 
+# ===== Dashboard =====
+@router.get("/dashboard")
+def dashboard(db: Session = Depends(get_db)):
+    return performance_service.performance_dashboard(db)
+
+# ===== Metrics =====
+@router.get("/metrics/{vendor_id}")
+def vendor_metrics(vendor_id: int, db: Session = Depends(get_db)):
+    return performance_service.calculate_vendor_metrics(db, vendor_id)
+
+# ===== Rankings =====
+@router.get("/rankings")
+def vendor_rankings(db: Session = Depends(get_db)):
+    return performance_service.generate_vendor_rankings(db)
+
 # ===== Delivery =====
 @router.post("/delivery", response_model=DeliveryPerformanceResponse, status_code=201)
 def record_delivery(data: DeliveryPerformanceCreate, db: Session = Depends(get_db)):
