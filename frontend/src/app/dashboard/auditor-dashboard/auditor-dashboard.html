@@ -1,0 +1,59 @@
+<div class="dash-header">
+  <h1 class="dash-title">Audit & Compliance</h1>
+  <p class="dash-subtitle">Monitor system-wide compliance, logs, and audit reports.</p>
+</div>
+
+<div class="dash-kpi-grid">
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Compliance Score</h4>
+      <div class="dash-kpi-icon icon-success"><span class="material-symbols-outlined">fact_check</span></div>
+    </div>
+    <p class="dash-kpi-value">{{ complianceRate }}%</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Pending Reviews</h4>
+      <div class="dash-kpi-icon icon-warning"><span class="material-symbols-outlined">pending_actions</span></div>
+    </div>
+    <p class="dash-kpi-value">{{ pendingAudits }}</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Flagged Issues</h4>
+      <div class="dash-kpi-icon icon-danger"><span class="material-symbols-outlined">flag</span></div>
+    </div>
+    <p class="dash-kpi-value">{{ flaggedIssues }}</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Compliance Records</h4>
+      <div class="dash-kpi-icon icon-brand"><span class="material-symbols-outlined">assessment</span></div>
+    </div>
+    <p class="dash-kpi-value">{{ reportsGenerated }}</p>
+  </div>
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+</div>
