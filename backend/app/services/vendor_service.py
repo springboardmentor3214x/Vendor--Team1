@@ -4,6 +4,7 @@ from sqlalchemy import func, or_
 from fastapi import HTTPException
 from datetime import datetime
 from typing import Optional
+
 from app.models.vendor import Vendor
 from app.schemas.vendor import VendorCreate, VendorUpdate
 from app.core.risk import calculate_risk_level, is_high_risk, vendor_has_performance_data
@@ -16,6 +17,7 @@ UNIQUE_VENDOR_FIELDS = [
     ("company_registration_number", "A vendor with this company registration number already exists"),
 ]
 
+
 def validate_vendor_uniqueness(db: Session, data: dict, exclude_vendor_id: Optional[int] = None):
     for field, message in UNIQUE_VENDOR_FIELDS:
         value = data.get(field)
@@ -27,6 +29,7 @@ def validate_vendor_uniqueness(db: Session, data: dict, exclude_vendor_id: Optio
             query = query.filter(Vendor.id != exclude_vendor_id)
         if query.first():
             raise HTTPException(status_code=400, detail=message)
+
 
 def create_vendor(db: Session, vendor: VendorCreate, created_by: Optional[str] = None):
     data = vendor.model_dump()
@@ -53,6 +56,7 @@ def create_vendor(db: Session, vendor: VendorCreate, created_by: Optional[str] =
     except IntegrityError:
         db.rollback()
         return None
+
 
 def get_all_vendors(db: Session, skip: int = 0, limit: int = 100,
                     category: Optional[str] = None, status: Optional[str] = None,
@@ -95,6 +99,7 @@ def get_all_vendors(db: Session, skip: int = 0, limit: int = 100,
 
     return query.offset(skip).limit(limit).all()
 
+
 def get_assignable_vendors(db: Session, category: Optional[str] = None):
     query = db.query(Vendor).filter(
         Vendor.approval_status == "Approved",
@@ -104,8 +109,10 @@ def get_assignable_vendors(db: Session, category: Optional[str] = None):
         query = query.filter(Vendor.category == category)
     return query.order_by(Vendor.reliability_score.desc()).all()
 
+
 def get_vendor(db: Session, vendor_id: int):
     return db.query(Vendor).filter(Vendor.id == vendor_id).first()
+
 
 def update_vendor(db: Session, vendor_id: int, data: VendorUpdate, updated_by: Optional[str] = None):
     vendor = get_vendor(db, vendor_id)
@@ -130,6 +137,7 @@ def update_vendor(db: Session, vendor_id: int, data: VendorUpdate, updated_by: O
     db.commit()
     db.refresh(vendor)
     return vendor
+
 
 def check_vendor_active_activities(db: Session, vendor_id: int):
     from app.models.procurement import Procurement
@@ -167,6 +175,7 @@ def check_vendor_active_activities(db: Session, vendor_id: int):
             detail=f"Cannot delete or deactivate vendor with active Contract #{active_contract.contract_number or active_contract.id}."
         )
 
+
 def check_vendor_has_history(db: Session, vendor_id: int):
     from app.models.procurement import Procurement
     from app.models.purchase_order import PurchaseOrder
@@ -189,6 +198,7 @@ def check_vendor_has_history(db: Session, vendor_id: int):
             )
         )
 
+
 def delete_vendor(db: Session, vendor_id: int):
     vendor = get_vendor(db, vendor_id)
     if not vendor:
@@ -210,11 +220,13 @@ def delete_vendor(db: Session, vendor_id: int):
         )
     return vendor
 
+
 def sync_user_status_by_email(db: Session, email: str, status: str):
     from app.models.user import User
     user = db.query(User).filter(User.email == email).first()
     if user:
         user.account_status = status
+
 
 def approve_vendor(db: Session, vendor_id: int, approved_by: str):
     vendor = get_vendor(db, vendor_id)
@@ -230,6 +242,7 @@ def approve_vendor(db: Session, vendor_id: int, approved_by: str):
     db.commit()
     db.refresh(vendor)
     return vendor
+
 
 def reject_vendor(db: Session, vendor_id: int, approved_by: str):
     vendor = get_vendor(db, vendor_id)
@@ -247,6 +260,7 @@ def reject_vendor(db: Session, vendor_id: int, approved_by: str):
     db.refresh(vendor)
     return vendor
 
+
 def block_vendor(db: Session, vendor_id: int):
     vendor = get_vendor(db, vendor_id)
     if not vendor:
@@ -257,6 +271,7 @@ def block_vendor(db: Session, vendor_id: int):
     db.commit()
     db.refresh(vendor)
     return vendor
+
 
 def deactivate_vendor(db: Session, vendor_id: int):
     vendor = get_vendor(db, vendor_id)
@@ -270,113 +285,68 @@ def deactivate_vendor(db: Session, vendor_id: int):
     return vendor
 
 
-def _pending_vendor_service_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
+def activate_vendor(db: Session, vendor_id: int):
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+    if vendor.approval_status != "Approved":
+        return None
+    vendor.status = "Active"
+    sync_user_status_by_email(db, vendor.email, "Active")
+    db.commit()
+    db.refresh(vendor)
+    return vendor
 
 
-def _pending_vendor_service_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+def suspend_vendor(db: Session, vendor_id: int):
+    return deactivate_vendor(db, vendor_id)
 
 
-def _pending_vendor_service_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
+def update_vendor_scores(db: Session, vendor_id: int):
+    from app.services.performance_service import calculate_vendor_metrics
+
+    vendor = get_vendor(db, vendor_id)
+    if not vendor:
+        return None
+
+    metrics = calculate_vendor_metrics(db, vendor_id)
+
+    vendor.delivery_score = metrics["delivery_score"]
+    vendor.quality_score = metrics["quality_score"]
+    vendor.communication_score = metrics["communication_score"]
+    vendor.service_score = metrics["service_score"]
+    vendor.reliability_score = metrics["overall_performance_score"]
+
+    db.commit()
+    db.refresh(vendor)
+    return vendor
 
 
-def _pending_vendor_service_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+def get_vendor_stats(db: Session) -> dict:
+    all_vendors = db.query(Vendor).all()
+    total = len(all_vendors)
+    approved = sum(1 for v in all_vendors if v.approval_status == "Approved")
+    pending = sum(1 for v in all_vendors if v.approval_status == "Pending")
+    active = sum(1 for v in all_vendors if v.status == "Active")
+    inactive = sum(1 for v in all_vendors if v.status == "Inactive")
+    suspended = sum(1 for v in all_vendors if v.status in ("Inactive", "Suspended", "Blocked"))
+    rejected = sum(1 for v in all_vendors if v.approval_status == "Rejected")
+    high_risk = sum(
+        1 for v in all_vendors
+        if v.approval_status == "Approved"
+        and is_high_risk(v.reliability_score, vendor_has_performance_data(db, v.id))
+    )
+    return {
+        "total": total,
+        "approved": approved,
+        "pending_review": pending,
+        "active": active,
+        "inactive": inactive,
+        "suspended": suspended,
+        "rejected": rejected,
+        "high_risk": high_risk,
+    }
 
 
-def _pending_vendor_service_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_vendor_service_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_vendor_service_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_vendor_service_totals_4(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_vendor_service_rows_5(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_vendor_service_totals_5(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_vendor_service_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
+def get_recent_vendors(db: Session, limit: int = 5):
+    return db.query(Vendor).order_by(Vendor.id.desc()).limit(limit).all()
