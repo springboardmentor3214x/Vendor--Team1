@@ -83,36 +83,205 @@
         </ng-container>
     </div>
 
-</div>
+    <app-card>
+        <div *ngIf="actionMsg"
+             style="margin-bottom: 12px; padding: 10px 14px; border-radius: 6px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46;">
+            {{ actionMsg }}
+        </div>
+        <div *ngIf="errorMsg && !loading"
+             style="margin-bottom: 12px; padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+            {{ errorMsg }}
+        </div>
 
-<div class="placeholder-panel">
-  <p>Sample rows shown until the API is ready.</p>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
+        <div class="search-bar">
+            <div class="search-input-wrapper">
+                <app-input
+                    placeholder="Search by vendor ID, company, contact person, email or GST number..."
+                    iconLeft="search"
+                    [(ngModel)]="searchText"
+                    (input)="onFilterChange()">
+                </app-input>
+            </div>
+
+            <select
+                class="vrip-select filter-select"
+                [(ngModel)]="selectedCategory"
+                (change)="onFilterChange()">
+                <option value="All">All Categories</option>
+                <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+
+                <option value="Uncategorized">Uncategorized</option>
+            </select>
+
+            <select
+                class="vrip-select filter-select"
+                [(ngModel)]="selectedStatus"
+                (change)="onFilterChange()">
+                <option value="All">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Pending">Pending</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Suspended">Suspended</option>
+                <option value="Blocked">Blocked</option>
+                <option value="Rejected">Rejected</option>
+                <option [value]="SUSPENDED_GROUP">Suspended / Inactive / Blocked</option>
+            </select>
+
+            <select
+                class="vrip-select filter-select"
+                [(ngModel)]="selectedApprovalStatus"
+                (change)="onFilterChange()">
+                <option value="All">All Approvals</option>
+                <option value="Approved">Approved</option>
+                <option value="Pending">Pending</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+        </div>
+
+        <div class="vrip-table-wrapper" style="overflow-x: auto; width: 100%;">
+            <table class="vrip-table" style="min-width: 1100px; width: 100%;">
+                <thead>
+                    <tr>
+                        <th style="width: 90px; cursor: pointer;" (click)="sortBy('id')">
+                            <div style="display: inline-flex; align-items: center; gap: 4px;">
+                                <span>ID</span>
+                                <span *ngIf="sortColumn === 'id'" class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">{{ sortAscending ? 'arrow_upward' : 'arrow_downward' }}</span>
+                            </div>
+                        </th>
+                        <th style="cursor: pointer; min-width: 180px;" (click)="sortBy('companyName')">
+                            <div style="display: inline-flex; align-items: center; gap: 4px;">
+                                <span>Company Name</span>
+                                <span *ngIf="sortColumn === 'companyName'" class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">{{ sortAscending ? 'arrow_upward' : 'arrow_downward' }}</span>
+                            </div>
+                        </th>
+                        <th style="min-width: 160px; cursor: pointer;" (click)="sortBy('category')">
+                            <div style="display: inline-flex; align-items: center; gap: 4px;">
+                                <span>Category</span>
+                                <span *ngIf="sortColumn === 'category'" class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">{{ sortAscending ? 'arrow_upward' : 'arrow_downward' }}</span>
+                            </div>
+                        </th>
+                        <th style="min-width: 140px;">Contact</th>
+                        <th style="min-width: 180px;">Email</th>
+                        <th style="min-width: 120px;">Phone</th>
+                        <th style="width: 100px; cursor: pointer;" (click)="sortBy('status')">
+                            <div style="display: inline-flex; align-items: center; gap: 4px;">
+                                <span>Status</span>
+                                <span *ngIf="sortColumn === 'status'" class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">{{ sortAscending ? 'arrow_upward' : 'arrow_downward' }}</span>
+                            </div>
+                        </th>
+                        <th style="width: 110px; cursor: pointer;" (click)="sortBy('approvalStatus')">
+                            <div style="display: inline-flex; align-items: center; gap: 4px;">
+                                <span>Approval</span>
+                                <span *ngIf="sortColumn === 'approvalStatus'" class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">{{ sortAscending ? 'arrow_upward' : 'arrow_downward' }}</span>
+                            </div>
+                        </th>
+                        <th style="width: 240px; text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="!loading && !errorMsg">
+                    <tr *ngFor="let vendor of paginatedVendors" class="vrip-table-row">
+                        <td><span class="vendor-id-chip">#{{ vendor.id }}</span></td>
+                        <td><div class="vendor-company-title">{{ vendor.companyName }}</div></td>
+                        <td><span class="category-chip">{{ vendor.category }}</span></td>
+                        <td>{{ vendor.contactPerson }}</td>
+                        <td><span class="vendor-email-text">{{ vendor.email }}</span></td>
+                        <td>{{ vendor.phone }}</td>
+                        <td>
+                            <app-badge
+                                [variant]="vendor.status === 'Active' ? 'success' : vendor.status === 'Pending' ? 'warning' : vendor.status === 'Rejected' ? 'danger' : 'default'">
+                                {{ vendor.status }}
+                            </app-badge>
+                        </td>
+                        <td>
+                            <app-badge
+                                [variant]="vendor.approvalStatus === 'Approved' ? 'primary' : vendor.approvalStatus === 'Pending' ? 'warning' : 'danger'">
+                                {{ vendor.approvalStatus }}
+                            </app-badge>
+                        </td>
+                        <td style="text-align: right; white-space: nowrap;">
+                            <div class="vendor-action-buttons">
+                                <ng-container *ngIf="vendor.approvalStatus === 'Pending' || vendor.approvalStatus === 'Rejected' || vendor.status === 'Rejected'">
+                                    <app-button variant="success" size="sm" (click)="approveVendor(vendor.id)">Approve</app-button>
+                                    <app-button *ngIf="vendor.approvalStatus === 'Pending'" variant="danger" size="sm" (click)="rejectVendor(vendor.id)">Reject</app-button>
+                                </ng-container>
+                                <app-button
+                                    *ngIf="(vendor.approvalStatus === 'Approved' || vendor.status === 'Active') && vendor.status !== 'Rejected'"
+                                    variant="warning" size="sm"
+                                    (click)="suspendVendor(vendor.id)">
+                                    Suspend
+                                </app-button>
+                                <app-button
+                                    *ngIf="vendor.status === 'Suspended' || vendor.status === 'Inactive'"
+                                    variant="primary" size="sm"
+                                    (click)="activateVendor(vendor.id)">
+                                    Activate
+                                </app-button>
+                                <app-button
+                                    variant="outline"
+                                    size="sm"
+                                    iconLeft="visibility"
+                                    [routerLink]="['/vendors', vendor.id]">
+                                </app-button>
+                                <app-button
+                                    variant="outline"
+                                    size="sm"
+                                    iconLeft="edit"
+                                    [routerLink]="['/vendors/edit', vendor.id]">
+                                </app-button>
+                                <app-button
+                                    variant="danger"
+                                    size="sm"
+                                    iconLeft="delete"
+                                    (click)="deleteVendor(vendor.id)">
+                                </app-button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="paginatedVendors.length === 0">
+                        <td colspan="9" class="vrip-table-empty">
+                            <div class="empty-state">
+                                <span class="material-symbols-outlined empty-icon">inbox</span>
+                                <p>No vendors found</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody *ngIf="loading">
+                    <tr *ngFor="let _ of [1,2,3,4,5]" class="vrip-table-row">
+                        <td><div class="skeleton-cell" style="width: 36px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 130px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 100px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 110px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 140px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 90px;"></div></td>
+                        <td><div class="skeleton-badge"></div></td>
+                        <td><div class="skeleton-badge"></div></td>
+                        <td style="text-align: right;"><div class="skeleton-cell" style="width: 120px; margin-left: auto;"></div></td>
+                    </tr>
+                </tbody>
+                <tbody *ngIf="!loading && errorMsg">
+                    <tr><td colspan="9" class="vrip-table-empty"><div class="empty-state"><span class="material-symbols-outlined empty-icon">error</span><p>{{ errorMsg }}</p><app-button variant="outline" size="sm" (onClick)="loadVendors()">Retry</app-button></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="vrip-table-pagination" *ngIf="!loading && !errorMsg">
+            <span class="pagination-info">
+                Showing {{ paginatedVendors.length > 0 ? ((currentPage - 1) * itemsPerPage) + 1 : 0 }}
+                to {{ ((currentPage - 1) * itemsPerPage) + paginatedVendors.length }}
+                of {{ filteredVendors.length }} entries
+            </span>
+            <div class="pagination-controls">
+                <button class="pagination-btn" [disabled]="currentPage === 1" (click)="previousPage()">
+                    <span class="material-symbols-outlined">chevron_left</span>
+                </button>
+                <button class="pagination-btn active">{{ currentPage }}</button>
+                <span *ngIf="totalPages > 1" class="pagination-info" style="padding: 0 4px;">of {{ totalPages }}</span>
+                <button class="pagination-btn" [disabled]="currentPage === totalPages" (click)="nextPage()">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                </button>
+            </div>
+        </div>
+
+    </app-card>
 </div>
