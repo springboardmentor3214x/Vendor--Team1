@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 12 Jul - Refine certification records in contract
 - 13 Jul - Add communication endpoints with message history
 - 14 Jul - Expand communication with file sharing
 - 15 Jul - Expand compliance record with audit findings
 - 16 Jul - Extend contract with certification records
 - 17 Jul - Extend activity log with audit trail entries
+- 18 Jul - Expand contract with document repository links
