@@ -1,0 +1,26 @@
+@import "../procurement-request-list/procurement-request-list.css";
+@import "../../dashboard/vendor-dashboard/vendor-dashboard.css";
+
+.invoice-container {
+    padding: var(--vrip-space-6);
+    max-width: 1400px;
+    margin: 0 auto;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--vrip-space-6);
+    margin-bottom: var(--vrip-space-6);
+}
+
+.link-styled {
+    color: var(--vrip-primary-600);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.link-styled:hover {
+    text-decoration: underline;
+}

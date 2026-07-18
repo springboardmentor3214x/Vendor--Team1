@@ -1,0 +1,113 @@
+<div class="page-container" *ngIf="vendor">
+    <!-- Header -->
+    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: var(--vrip-space-6);">
+        <app-button variant="ghost" iconLeft="arrow_back" routerLink="/supply-chain/vendor-performance"></app-button>
+        <div>
+            <h1 style="margin: 0 0 4px 0; font-size: 1.5rem;">{{ vendor.name }}</h1>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="vrip-badge" style="background: var(--vrip-gray-100); color: var(--vrip-gray-700);">{{ vendor.category }}</span>
+                <span style="color: var(--text-secondary); font-size: 0.875rem;">Vendor ID: {{ vendor.id }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--vrip-space-6); margin-bottom: var(--vrip-space-6);">
+        
+        <!-- Delivery Performance Monitoring -->
+        <app-card>
+            <h3 style="margin-top: 0; margin-bottom: 24px; font-size: 1.125rem;">Delivery Performance</h3>
+            <div style="display: flex; gap: 16px; align-items: flex-end; height: 150px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                <div *ngFor="let month of deliveryHistory" style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 8px;">
+                    <span style="font-size: 0.75rem; color: var(--text-secondary);">{{ month.onTime }}%</span>
+                    <div style="width: 100%; max-width: 30px; background: #3b82f6; border-radius: 4px 4px 0 0; transition: height 0.3s;" [ngStyle]="{'height': month.onTime + '%'}"></div>
+                    <span style="font-size: 0.75rem; color: var(--text-secondary);">{{ month.month }}</span>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 24px; margin-top: 16px;">
+                <div style="display: flex; align-items: center; gap: 8px;"><div style="width: 12px; height: 12px; background: #3b82f6; border-radius: 2px;"></div><span style="font-size: 0.875rem;">On-Time %</span></div>
+            </div>
+        </app-card>
+
+        <!-- Product Quality Evaluation & Communication -->
+        <div style="display: flex; flex-direction: column; gap: var(--vrip-space-6);">
+            <app-card>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0; font-size: 1.125rem;">Quality &amp; Service Rating</h3>
+                    <div style="display: flex; color: #ffcc00; font-size: 24px;">
+                        <span class="material-symbols-outlined" *ngFor="let star of [1,2,3,4,5]" [ngStyle]="{'font-variation-settings': star <= vendor.rating ? '&quot;FILL&quot; 1' : '&quot;FILL&quot; 0'}">star</span>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.875rem;">
+                            <span>Product Quality Score</span>
+                            <strong>{{ vendor.score }} / 5.0</strong>
+                        </div>
+                        <div style="width: 100%; height: 8px; background: var(--vrip-gray-200); border-radius: 4px; overflow: hidden;">
+                            <div [ngStyle]="{'width': (vendor.score/5*100) + '%', 'background': '#34c759', 'height': '100%'}"></div>
+                        </div>
+                    </div>
+                </div>
+            </app-card>
+
+            <app-card>
+                <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 1.125rem;">Communication Tracking</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--vrip-gray-50); border-radius: 8px; margin-bottom: 8px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span class="material-symbols-outlined" style="color: #3b82f6;">forum</span>
+                        <span style="font-weight: 500;">Avg Response Time</span>
+                    </div>
+                    <strong>1.2 Hours</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--vrip-gray-50); border-radius: 8px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span class="material-symbols-outlined" style="color: #ff9500;">build</span>
+                        <span style="font-weight: 500;">Issue Resolution Time</span>
+                    </div>
+                    <strong>14 Hours</strong>
+                </div>
+            </app-card>
+        </div>
+    </div>
+
+    <!-- Performance History -->
+    <app-card [noPadding]="true">
+        <div style="padding: 20px 24px; border-bottom: 1px solid var(--border-color);">
+            <h3 style="margin: 0; font-size: 1.125rem;">Performance History (Recent Orders)</h3>
+        </div>
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>PO Number</th>
+                    <th>Date</th>
+                    <th>Delivery Status</th>
+                    <th>Quality Passed</th>
+                    <th>Service Rating</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let order of recentOrders">
+                    <td><strong>{{ order.po }}</strong></td>
+                    <td>{{ order.date }}</td>
+                    <td>
+                        <span class="vrip-badge" 
+                              [ngStyle]="{'background': order.delivery === 'On-Time' ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 59, 48, 0.1)', 
+                                          'color': order.delivery === 'On-Time' ? '#34c759' : '#ff3b30'}">
+                            {{ order.delivery }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="material-symbols-outlined" [ngStyle]="{'color': order.quality ? '#34c759' : '#ff3b30'}">
+                            {{ order.quality ? 'check_circle' : 'cancel' }}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; color: #ffcc00; font-size: 16px;">
+                            <span class="material-symbols-outlined" *ngFor="let star of [1,2,3,4,5]" [ngStyle]="{'font-variation-settings': star <= order.rating ? '&quot;FILL&quot; 1' : '&quot;FILL&quot; 0'}">star</span>
+                        </div>
+                    </td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
+</div>

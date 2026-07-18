@@ -1,0 +1,57 @@
+<div class="vrip-table-container">
+  <div class="vrip-table-toolbar" *ngIf="hasToolbar">
+    <div class="vrip-table-search" *ngIf="searchable">
+      <span class="material-symbols-outlined vrip-search-icon">search</span>
+      <input type="text" placeholder="Search..." class="vrip-search-input" (input)="onSearch($event)">
+    </div>
+    <div class="vrip-table-actions">
+      <ng-content select="[table-actions]"></ng-content>
+    </div>
+  </div>
+
+  <div class="vrip-table-wrapper">
+    <table class="vrip-table">
+      <thead>
+        <tr>
+          <th *ngFor="let col of columns" [style.width]="col.width || 'auto'">
+            {{ col.label }}
+            <span class="material-symbols-outlined sort-icon" *ngIf="col.sortable">unfold_more</span>
+          </th>
+          <th *ngIf="hasActionsCol" class="vrip-table-actions-th">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of data" class="vrip-table-row">
+          <td *ngFor="let col of columns">
+            <ng-container *ngIf="!col.template">
+              {{ item[col.key] }}
+            </ng-container>
+            <ng-container *ngIf="col.template">
+              <ng-container *TemplateOutlet="col.template; context: { $implicit: item }"></ng-container>
+            </ng-container>
+          </td>
+          <td *ngIf="hasActionsCol" class="vrip-table-actions-td">
+            <ng-content select="[row-actions]"></ng-content>
+          </td>
+        </tr>
+        <tr *ngIf="data.length === 0">
+          <td [attr.colspan]="columns.length + (hasActionsCol ? 1 : 0)" class="vrip-table-empty">
+            <div class="empty-state">
+              <span class="material-symbols-outlined empty-icon">inbox</span>
+              <p>No data available</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="vrip-table-pagination" *ngIf="pagination">
+    <span class="pagination-info">Showing {{ data.length > 0 ? 1 : 0 }} to {{ data.length }} of {{ totalItems }} entries</span>
+    <div class="pagination-controls">
+      <button class="pagination-btn" [disabled]="true"><span class="material-symbols-outlined">chevron_left</span></button>
+      <button class="pagination-btn active">1</button>
+      <button class="pagination-btn" [disabled]="true"><span class="material-symbols-outlined">chevron_right</span></button>
+    </div>
+  </div>
+</div>

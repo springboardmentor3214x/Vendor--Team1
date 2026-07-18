@@ -1,16 +1,24 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { Card } from '../../ui/card/card';
+import { Button } from '../../ui/button/button';
+import { InputComponent } from '../../ui/input/input';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
   imports: [
+    CommonModule,
     FormsModule,
-    RouterModule
+    RouterModule,
+    Card,
+    Button,
+    InputComponent
   ],
   templateUrl: './reset-password.html',
-  styleUrl: './reset-password.css'
+  styleUrls: ['./reset-password.css']
 })
 export class ResetPassword {
 

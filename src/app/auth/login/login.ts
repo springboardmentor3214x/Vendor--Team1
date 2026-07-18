@@ -9,6 +9,9 @@ import {
 import { Router, RouterModule } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
+import { Card } from '../../ui/card/card';
+import { Button } from '../../ui/button/button';
+import { InputComponent } from '../../ui/input/input';
 
 @Component({
   selector: 'app-login',
@@ -16,10 +19,13 @@ import { AuthService } from '../../core/services/auth.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterModule
+    RouterModule,
+    Card,
+    Button,
+    InputComponent
   ],
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  styleUrls: ['./login.css']
 })
 export class Login {
 

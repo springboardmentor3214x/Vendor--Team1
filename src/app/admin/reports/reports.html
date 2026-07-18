@@ -1,0 +1,27 @@
+<div class="page-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1>System Reports</h1>
+            <p>Generate and view platform-wide administrative reports.</p>
+        </div>
+        <app-button variant="primary" iconLeft="download">Export All</app-button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: var(--vrip-space-6);">
+        <app-card *ngFor="let report of reports">
+            <div style="display: flex; align-items: flex-start; gap: var(--vrip-space-4);">
+                <div style="padding: 12px; background: rgba(59, 130, 246, 0.1); color: var(--vrip-primary-600); border-radius: var(--vrip-radius-md);">
+                    <span class="material-symbols-outlined" style="font-size: 28px;">{{ report.icon }}</span>
+                </div>
+                <div style="flex: 1;">
+                    <h3 style="margin: 0 0 4px 0; font-size: 1.125rem;">{{ report.title }}</h3>
+                    <p style="margin: 0 0 16px 0; color: var(--text-secondary); font-size: 0.875rem; line-height: 1.5;">{{ report.desc }}</p>
+                    <div style="display: flex; gap: 8px;">
+                        <app-button variant="outline" size="sm">Generate PDF</app-button>
+                        <app-button variant="outline" size="sm">Export CSV</app-button>
+                    </div>
+                </div>
+            </div>
+        </app-card>
+    </div>
+</div>

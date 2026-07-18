@@ -1,195 +1,156 @@
-<div class="sidebar">
-
+<aside class="sidebar">
     <div class="logo">
-        <h2>VRIP</h2>
-        <p>Vendor Reliability</p>
+        <div class="logo-icon">
+            <span class="material-symbols-outlined">dashboard_customize</span>
+        </div>
+        <div class="logo-text">
+            <h2>VRIP</h2>
+            <p>Vendor Reliability</p>
+        </div>
     </div>
 
-    <nav>
-
+    <nav class="sidebar-nav">
         <!-- ================= ADMINISTRATOR ================= -->
-
         @if(role === 'Administrator') {
-
-            <a routerLink="/admin-dashboard">
-                <span class="material-icons">dashboard</span>
-                Dashboard
+            <a routerLink="/admin-dashboard" routerLinkActive="active">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Dashboard</span>
             </a>
-
-            <a routerLink="/vendors">
-                <span class="material-icons">business</span>
-                Vendor Management
+            <a routerLink="/vendors" routerLinkActive="active">
+                <span class="material-symbols-outlined">domain</span>
+                <span>Vendor Management</span>
             </a>
-
-            <a>
-                <span class="material-icons">group</span>
-                User Management
+            <a routerLink="/admin/user-management" routerLinkActive="active">
+                <span class="material-symbols-outlined">group</span>
+                <span>User Management</span>
             </a>
-
-            <a>
-                <span class="material-icons">shopping_cart</span>
-                Procurement
+            <a routerLink="/procurement/requests" routerLinkActive="active">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                <span>Procurement</span>
             </a>
-
-            <a>
-                <span class="material-icons">analytics</span>
-                Analytics
+            <a routerLink="/admin/analytics" routerLinkActive="active">
+                <span class="material-symbols-outlined">analytics</span>
+                <span>Analytics</span>
             </a>
-
-            <a>
-                <span class="material-icons">description</span>
-                Reports
+            <a routerLink="/admin/reports" routerLinkActive="active">
+                <span class="material-symbols-outlined">description</span>
+                <span>Reports</span>
             </a>
-
-            <a>
-                <span class="material-icons">notifications</span>
-                Notifications
+            <a routerLink="/admin/notifications" routerLinkActive="active">
+                <span class="material-symbols-outlined">notifications</span>
+                <span>Notifications</span>
             </a>
-
         }
 
         <!-- ================= VENDOR ================= -->
-
         @if(role === 'Vendor') {
-
-            <a routerLink="/vendor-dashboard">
-                <span class="material-icons">dashboard</span>
-                Dashboard
+            <a routerLink="/vendor-dashboard" routerLinkActive="active">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Dashboard</span>
             </a>
-
-            <a>
-                <span class="material-icons">inventory_2</span>
-                Orders
+            <a routerLink="/vendor-portal/orders" routerLinkActive="active">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <span>Orders</span>
             </a>
-
-            <a>
-                <span class="material-icons">description</span>
-                Contracts
+            <a routerLink="/vendor-portal/contracts" routerLinkActive="active">
+                <span class="material-symbols-outlined">contract</span>
+                <span>Contracts</span>
             </a>
-
-            <a>
-                <span class="material-icons">chat</span>
-                Communication
+            <a routerLink="/vendor-portal/communication" routerLinkActive="active">
+                <span class="material-symbols-outlined">chat</span>
+                <span>Communication</span>
             </a>
-
         }
 
         <!-- ================= PROCUREMENT MANAGER ================= -->
-
         @if(role === 'Procurement Manager') {
-
-            <a routerLink="/procurement-dashboard">
-                <span class="material-icons">dashboard</span>
-                Dashboard
+            <a routerLink="/procurement-dashboard" routerLinkActive="active">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Dashboard</span>
             </a>
-
-            <a routerLink="/vendors">
-                <span class="material-icons">business</span>
-                Vendor Management
+            <a routerLink="/vendors" routerLinkActive="active">
+                <span class="material-symbols-outlined">domain</span>
+                <span>Vendor Management</span>
             </a>
-
-            <a>
-                <span class="material-icons">shopping_cart</span>
-                Procurement
+            <a routerLink="/procurement/requests" routerLinkActive="active">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                <span>Procurement</span>
             </a>
-
-            <a>
-                <span class="material-icons">assignment</span>
-                Purchase Orders
+            <a routerLink="/procurement/invoices" routerLinkActive="active">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <span>Invoices</span>
             </a>
-
-            <a>
-                <span class="material-icons">description</span>
-                Contracts
-            </a>
-
         }
 
         <!-- ================= SUPPLY CHAIN ================= -->
-
         @if(role === 'Supply Chain Manager') {
-
-            <a routerLink="/supply-chain-dashboard">
-                <span class="material-icons">dashboard</span>
-                Dashboard
+            <a routerLink="/supply-chain-dashboard" routerLinkActive="active">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Dashboard</span>
             </a>
-
-            <a>
-                <span class="material-icons">analytics</span>
-                Vendor Performance
+            <a routerLink="/supply-chain/vendor-performance" routerLinkActive="active">
+                <span class="material-symbols-outlined">monitoring</span>
+                <span>Vendor Performance</span>
             </a>
-
-            <a>
-                <span class="material-icons">verified</span>
-                Vendor Reliability
+            <a routerLink="/supply-chain/vendor-reliability" routerLinkActive="active">
+                <span class="material-symbols-outlined">verified_user</span>
+                <span>Vendor Reliability</span>
             </a>
-
-            <a>
-                <span class="material-icons">local_shipping</span>
-                Procurement Tracking
+            <a routerLink="/procurement/requests" routerLinkActive="active">
+                <span class="material-symbols-outlined">local_shipping</span>
+                <span>Procurement Tracking</span>
             </a>
-
         }
 
         <!-- ================= FINANCE ================= -->
-
         @if(role === 'Finance Officer') {
-
-            <a routerLink="/finance-dashboard">
-                <span class="material-icons">dashboard</span>
-                Dashboard
+            <a routerLink="/finance-dashboard" routerLinkActive="active">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Dashboard</span>
             </a>
-
-            <a>
-                <span class="material-icons">receipt_long</span>
-                Invoice Management
+            <a routerLink="/procurement/invoice-management" routerLinkActive="active">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <span>Invoice Management</span>
             </a>
-
-            <a>
-                <span class="material-icons">payments</span>
-                Payment Details
+            <a routerLink="/finance/payment-details" routerLinkActive="active">
+                <span class="material-symbols-outlined">payments</span>
+                <span>Payment Details</span>
             </a>
-
-            <a>
-                <span class="material-icons">shopping_cart</span>
-                Purchase Orders
+            <a routerLink="/finance/purchase-orders" routerLinkActive="active">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                <span>Purchase Orders</span>
             </a>
-
         }
 
         <!-- ================= AUDITOR ================= -->
-
         @if(role === 'Auditor') {
-
-            <a routerLink="/auditor-dashboard">
-                <span class="material-icons">dashboard</span>
-                Dashboard
+            <a routerLink="/auditor-dashboard" routerLinkActive="active">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Dashboard</span>
             </a>
-
-            <a>
-                <span class="material-icons">assessment</span>
-                Reports
+            <a routerLink="/auditor/reports" routerLinkActive="active">
+                <span class="material-symbols-outlined">assessment</span>
+                <span>Reports</span>
             </a>
-
-            <a>
-                <span class="material-icons">fact_check</span>
-                Compliance
+            <a routerLink="/auditor/compliance" routerLinkActive="active">
+                <span class="material-symbols-outlined">fact_check</span>
+                <span>Compliance</span>
             </a>
-
-            <a>
-                <span class="material-icons">history</span>
-                Audit Logs
+            <a routerLink="/auditor/audit-logs" routerLinkActive="active">
+                <span class="material-symbols-outlined">history</span>
+                <span>Audit Logs</span>
             </a>
-
         }
 
         <!-- ================= COMMON ================= -->
-
-        <a routerLink="/profile">
-            <span class="material-icons">person</span>
-            Profile
+        <a class="nav-separator"></a>
+        <a routerLink="/settings" routerLinkActive="active">
+            <span class="material-symbols-outlined">settings</span>
+            <span>Settings</span>
         </a>
-
+        <a routerLink="/profile" routerLinkActive="active">
+            <span class="material-symbols-outlined">account_circle</span>
+            <span>Profile</span>
+        </a>
     </nav>
-
-</div>
+</aside>

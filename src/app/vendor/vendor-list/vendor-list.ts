@@ -6,16 +6,25 @@ import { RouterModule } from '@angular/router';
 import { VendorService } from '../../services/vendor';
 import { Vendor } from '../../services/vendor.model';
 
+import { Badge } from '../../ui/badge/badge';
+import { Button } from '../../ui/button/button';
+import { InputComponent } from '../../ui/input/input';
+import { Card } from '../../ui/card/card';
+
 @Component({
   selector: 'app-vendor-list',
   standalone: true,
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule
+    RouterModule,
+    Badge,
+    Button,
+    InputComponent,
+    Card
   ],
   templateUrl: './vendor-list.html',
-  styleUrl: './vendor-list.css'
+  styleUrls: ['./vendor-list.css']
 })
 export class VendorList implements OnInit {
 

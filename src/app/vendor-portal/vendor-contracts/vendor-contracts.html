@@ -1,0 +1,31 @@
+<div class="page-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1>Contracts</h1>
+            <p>Manage your legal agreements and documentation.</p>
+        </div>
+        <app-button variant="primary" iconLeft="upload_file">Upload Document</app-button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: var(--vrip-space-6);">
+        <app-card *ngFor="let contract of contracts">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <span class="material-symbols-outlined" style="font-size: 32px; color: #ff3b30;">picture_as_pdf</span>
+                    <div>
+                        <h3 style="margin: 0 0 4px 0; font-size: 1rem;">{{ contract.name }}</h3>
+                        <span style="font-size: 0.75rem; color: var(--text-secondary);">Uploaded: {{ contract.date }}</span>
+                    </div>
+                </div>
+                <span class="vrip-badge" [ngStyle]="{'background': contract.status === 'Active' ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 59, 48, 0.1)', 'color': contract.status === 'Active' ? '#34c759' : '#ff3b30'}">
+                    {{ contract.status }}
+                </span>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                <span style="font-size: 0.875rem; color: var(--text-secondary);">Valid till: {{ contract.expiry }}</span>
+                <app-button variant="outline" size="sm" iconLeft="download">Download</app-button>
+            </div>
+        </app-card>
+    </div>
+</div>

@@ -1,1 +1,205 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Enterprise Glass Design System Variables */
+:root {
+  /* Colors - Primary (Apple-inspired Soft Indigo/Blue) */
+  --vrip-primary-50: #f0f4ff;
+  --vrip-primary-100: #e0eaff;
+  --vrip-primary-200: #c2d5ff;
+  --vrip-primary-300: #93b5ff;
+  --vrip-primary-400: #5e8dff;
+  --vrip-primary-500: #3b6cff; /* Main Accent */
+  --vrip-primary-600: #2552ea; /* Hover */
+  --vrip-primary-700: #1b3dcc;
+  --vrip-primary-800: #1a35a6;
+  --vrip-primary-900: #1a3082;
+
+  /* Colors - Neutrals (Soft Apple Slate) */
+  --vrip-neutral-50: #fbfbfc;
+  --vrip-neutral-100: #f4f5f7;
+  --vrip-neutral-200: #e5e7eb;
+  --vrip-neutral-300: #d1d5db;
+  --vrip-neutral-400: #9ca3af;
+  --vrip-neutral-500: #6b7280;
+  --vrip-neutral-600: #4b5563;
+  --vrip-neutral-700: #374151;
+  --vrip-neutral-800: #1f2937;
+  --vrip-neutral-900: #111827;
+
+  /* Colors - Semantic (Pastel/Muted for Premium Feel) */
+  --vrip-success-bg: rgba(52, 199, 89, 0.15);
+  --vrip-success-text: #248a3d;
+  --vrip-warning-bg: rgba(255, 149, 0, 0.15);
+  --vrip-warning-text: #b36b00;
+  --vrip-danger-bg: rgba(255, 59, 48, 0.15);
+  --vrip-danger-text: #c91f14;
+  --vrip-info-bg: rgba(90, 200, 250, 0.15);
+  --vrip-info-text: #1b8eb3;
+
+  /* Glassmorphism Tokens */
+  --vrip-glass-bg: rgba(255, 255, 255, 0.65);
+  --vrip-glass-bg-hover: rgba(255, 255, 255, 0.85);
+  --vrip-glass-border: rgba(255, 255, 255, 0.5);
+  --vrip-glass-border-highlight: rgba(255, 255, 255, 0.9);
+  --vrip-glass-blur: blur(24px);
+  --vrip-glass-blur-heavy: blur(40px);
+  --vrip-glass-shadow: 0 12px 32px rgba(31, 38, 135, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --vrip-glass-shadow-hover: 0 16px 40px rgba(31, 38, 135, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+
+  /* Typography */
+  --vrip-font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  
+  /* Shadows - Classic */
+  --vrip-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --vrip-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.02);
+  --vrip-shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.06), 0 4px 8px rgba(0, 0, 0, 0.03);
+  --vrip-shadow-card: var(--vrip-glass-shadow);
+
+  /* Border Radius (More rounded for Apple feel) */
+  --vrip-radius-sm: 8px;
+  --vrip-radius-md: 14px;
+  --vrip-radius-lg: 20px;
+  --vrip-radius-xl: 28px;
+  --vrip-radius-full: 9999px;
+
+  /* Spacing */
+  --vrip-space-1: 0.25rem;
+  --vrip-space-2: 0.5rem;
+  --vrip-space-3: 0.75rem;
+  --vrip-space-4: 1rem;
+  --vrip-space-5: 1.25rem;
+  --vrip-space-6: 1.5rem;
+  --vrip-space-8: 2rem;
+  --vrip-space-10: 2.5rem;
+  --vrip-space-12: 3rem;
+}
+
+/* Global Reset & Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: var(--vrip-font-family);
+  background-color: #f2f4f8; /* Base color before mesh gradient */
+  color: var(--vrip-neutral-800);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em; /* Apple-like slight negative tracking */
+}
+
+/* Beautiful Animated Background Mesh Gradient */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -1;
+  background: 
+    radial-gradient(at 0% 0%, rgba(224, 234, 255, 0.6) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(240, 230, 255, 0.6) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(220, 248, 255, 0.6) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(230, 235, 255, 0.6) 0px, transparent 50%);
+  background-size: 150% 150%;
+  animation: bgMesh 15s ease infinite alternate;
+}
+
+/* Subtle Noise Texture Overlay */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -1;
+  opacity: 0.02;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+@keyframes bgMesh {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: 600;
+  color: var(--vrip-neutral-900);
+  letter-spacing: -0.02em;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--vrip-primary-600);
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+a:hover {
+  color: var(--vrip-primary-700);
+  opacity: 0.8;
+}
+
+/* Common Layout Utilities */
+.vrip-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--vrip-space-8) var(--vrip-space-6);
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.vrip-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--vrip-space-8);
+}
+
+.vrip-page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--vrip-neutral-900);
+  letter-spacing: -0.03em;
+}
+
+.vrip-page-subtitle {
+  font-size: 1rem;
+  color: var(--vrip-neutral-500);
+  margin-top: var(--vrip-space-2);
+  font-weight: 400;
+}
+
+.vrip-grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--vrip-space-6);
+  margin-bottom: var(--vrip-space-6);
+}
+
+/* Override Angular Material Typography */
+.mat-typography {
+  font-family: var(--vrip-font-family) !important;
+}
+
+/* Material Symbols alignment */
+.material-symbols-outlined {
+  vertical-align: middle;
+  font-size: 1.25rem;
+}
+
+/* Universal Fade Up Animation */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

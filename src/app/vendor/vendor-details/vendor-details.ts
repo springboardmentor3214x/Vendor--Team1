@@ -5,15 +5,22 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { VendorService } from '../../services/vendor';
 import { Vendor } from '../../services/vendor.model';
 
+import { Card } from '../../ui/card/card';
+import { Button } from '../../ui/button/button';
+import { Badge } from '../../ui/badge/badge';
+
 @Component({
   selector: 'app-vendor-details',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    Card,
+    Button,
+    Badge
   ],
   templateUrl: './vendor-details.html',
-  styleUrl: './vendor-details.css'
+  styleUrls: ['./vendor-details.css']
 })
 export class VendorDetails implements OnInit {
 

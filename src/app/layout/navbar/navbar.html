@@ -1,36 +1,31 @@
-<header class="navbar">
+<header class="vrip-navbar">
+  <div class="vrip-navbar-left">
+      <h1 class="vrip-navbar-title">{{ pageTitle || 'Vendor Reliability Intelligence Platform' }}</h1>
+  </div>
 
-    <div class="left">
+  <div class="vrip-navbar-right">
+      
+      <div class="vrip-navbar-search">
+        <app-search placeholder="Global search..."></app-search>
+      </div>
 
-        <h2>Vendor Reliability Intelligence Platform</h2>
+      <button class="vrip-icon-btn">
+          <span class="material-symbols-outlined">notifications</span>
+          <span class="vrip-badge-dot"></span>
+      </button>
 
-    </div>
+      <div class="vrip-divider-vertical"></div>
 
-    <div class="right">
+      <div class="vrip-profile-menu">
+          <div class="vrip-avatar">
+              C
+          </div>
+          <div class="vrip-profile-info">
+              <h4>Chirag</h4>
+              <p>{{ role || 'User' }}</p>
+          </div>
+          <span class="material-symbols-outlined vrip-dropdown-icon">expand_more</span>
+      </div>
 
-        <button class="icon-btn">
-            <span class="material-icons">notifications</span>
-        </button>
-
-        <button class="icon-btn">
-            <span class="material-icons">settings</span>
-        </button>
-
-        <div class="profile">
-
-            <div class="avatar">
-                C
-            </div>
-
-            <div>
-
-                <h4>Chirag</h4>
-                <p>Frontend Developer</p>
-
-            </div>
-
-        </div>
-
-    </div>
-
+  </div>
 </header>

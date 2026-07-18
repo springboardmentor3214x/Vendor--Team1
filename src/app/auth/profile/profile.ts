@@ -1,16 +1,22 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Card } from '../../ui/card/card';
+import { Button } from '../../ui/button/button';
+import { InputComponent } from '../../ui/input/input';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    Card,
+    Button,
+    InputComponent
   ],
   templateUrl: './profile.html',
-  styleUrl: './profile.css'
+  styleUrls: ['./profile.css']
 })
 export class Profile {
 

@@ -1,0 +1,21 @@
+<div class="page-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1>Audit Reports</h1>
+            <p>Generate and review quarterly compliance and financial audits.</p>
+        </div>
+        <app-button variant="primary" iconLeft="add">New Audit Plan</app-button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--vrip-space-6);">
+        <app-card *ngFor="let report of reports">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <span class="vrip-badge" style="background: var(--vrip-gray-100); color: var(--vrip-gray-700);">{{ report.type }}</span>
+                <span style="font-size: 0.75rem; color: var(--text-secondary);">{{ report.date }}</span>
+            </div>
+            <h3 style="margin: 0 0 8px 0; font-size: 1.125rem;">{{ report.title }}</h3>
+            <p style="margin: 0 0 24px 0; color: var(--text-secondary); font-size: 0.875rem;">Status: <strong>{{ report.status }}</strong></p>
+            <app-button variant="outline" [block]="true" iconLeft="visibility">View Report</app-button>
+        </app-card>
+    </div>
+</div>

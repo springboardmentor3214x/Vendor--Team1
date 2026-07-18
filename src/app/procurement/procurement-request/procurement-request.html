@@ -1,338 +1,180 @@
 <div class="form-container">
-
-    <h1>Procurement Request</h1>
-
-    <!-- Request Information -->
-
-    <div class="form-section">
-
-        <h2>📋 Request Information</h2>
-
-        <div class="form-grid">
-
-            <div class="form-group">
-
-                <label>Request Number</label>
-
-                <input
-                    type="text"
-                    [value]="procurement.requestNumber"
-                    readonly>
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Request Title *</label>
-
-                <input
-                    type="text"
-                    placeholder="Enter Request Title"
-                    [(ngModel)]="procurement.requestTitle">
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Department Name *</label>
-
-                <input
-                    type="text"
-                    placeholder="Department Name"
-                    [(ngModel)]="procurement.departmentName">
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Requested By *</label>
-
-                <input
-                    type="text"
-                    placeholder="Employee Name"
-                    [(ngModel)]="procurement.requestedBy">
-
-            </div>
-
+    <div class="header">
+        <div>
+            <h1>Procurement Request</h1>
+            <p>Create a new procurement request for approval</p>
         </div>
-
     </div>
 
-    <!-- Product Information -->
-
-    <div class="form-section">
-
-        <h2>📦 Product Information</h2>
-
-        <div class="form-grid">
-
-            <div class="form-group">
-
-                <label>Item / Product Name *</label>
-
-                <input
-                    type="text"
-                    placeholder="Product Name"
-                    [(ngModel)]="procurement.itemName">
-
+    <div class="form-layout">
+        <!-- Request Information -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">assignment</span> Request Information</h2>
             </div>
-
-            <div class="form-group">
-
-                <label>Product Category *</label>
-
-                <select
-                    [(ngModel)]="procurement.productCategory">
-
-                    <option value="">Select Category</option>
-
-                    <option>Raw Materials</option>
-
-                    <option>Electronics</option>
-
-                    <option>IT Equipment</option>
-
-                    <option>Office Supplies</option>
-
-                    <option>Furniture</option>
-
-                    <option>Maintenance</option>
-
-                    <option>Software</option>
-
-                    <option>Services</option>
-
-                </select>
-
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Request Number (Auto-Generated)</label>
+                    <app-input [(ngModel)]="procurement.requestNumber" [disabled]="true"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Request Title *</label>
+                    <app-input placeholder="Enter Request Title" [(ngModel)]="procurement.requestTitle"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Department Name *</label>
+                    <app-input placeholder="Department Name" [(ngModel)]="procurement.departmentName"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Requested By *</label>
+                    <app-input placeholder="Employee Name" [(ngModel)]="procurement.requestedBy"></app-input>
+                </div>
             </div>
+        </app-card>
 
-            <div class="form-group">
-
-                <label>Quantity Required *</label>
-
-                <input
-                    type="number"
-                    min="1"
-                    [(ngModel)]="procurement.quantity">
-
+        <!-- Product Information -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">inventory_2</span> Product Information</h2>
             </div>
-
-            <div class="form-group">
-
-                <label>Unit of Measurement *</label>
-
-                <select
-                    [(ngModel)]="procurement.unit">
-
-                    <option value="">Select Unit</option>
-
-                    <option>Pieces</option>
-
-                    <option>Boxes</option>
-
-                    <option>Kilograms</option>
-
-                    <option>Litres</option>
-
-                    <option>Packets</option>
-
-                    <option>Units</option>
-
-                </select>
-
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Item / Product Name *</label>
+                    <app-input placeholder="Product Name" [(ngModel)]="procurement.itemName"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Product Category *</label>
+                    <select class="vrip-select" [(ngModel)]="procurement.productCategory">
+                        <option value="">Select Category</option>
+                        <option>Raw Materials</option>
+                        <option>Electronics</option>
+                        <option>IT Equipment</option>
+                        <option>Office Supplies</option>
+                        <option>Furniture</option>
+                        <option>Maintenance</option>
+                        <option>Software</option>
+                        <option>Services</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity Required *</label>
+                    <app-input type="number" [(ngModel)]="procurement.quantity"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Unit of Measurement *</label>
+                    <select class="vrip-select" [(ngModel)]="procurement.unit">
+                        <option value="">Select Unit</option>
+                        <option>Pieces</option>
+                        <option>Boxes</option>
+                        <option>Kilograms</option>
+                        <option>Litres</option>
+                        <option>Packets</option>
+                        <option>Units</option>
+                    </select>
+                </div>
             </div>
+        </app-card>
 
-        </div>
-
-    </div>
         <!-- Budget Information -->
-
-    <div class="form-section">
-
-        <h2>💰 Budget Information</h2>
-
-        <div class="form-grid">
-
-            <div class="form-group">
-
-                <label>Estimated Budget *</label>
-
-                <input
-                    type="number"
-                    min="0"
-                    placeholder="Estimated Budget"
-                    [(ngModel)]="procurement.estimatedBudget">
-
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">payments</span> Budget Information</h2>
             </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Estimated Budget *</label>
+                    <app-input type="number" placeholder="Estimated Budget" [(ngModel)]="procurement.estimatedBudget"></app-input>
+                </div>
+            </div>
+        </app-card>
 
+        <!-- Delivery Information -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">local_shipping</span> Delivery Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Required Delivery Date *</label>
+                    <app-input type="date" [(ngModel)]="procurement.requiredDeliveryDate"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Priority *</label>
+                    <select class="vrip-select" [(ngModel)]="procurement.priority">
+                        <option>Low</option>
+                        <option>Medium</option>
+                        <option>High</option>
+                        <option>Critical</option>
+                    </select>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Business Information -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">notes</span> Business Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Business Justification *</label>
+                    <textarea class="vrip-textarea" rows="5" placeholder="Explain why this procurement is required..." [(ngModel)]="procurement.businessJustification"></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <label>Additional Remarks</label>
+                    <textarea class="vrip-textarea" rows="4" placeholder="Additional Remarks" [(ngModel)]="procurement.additionalRemarks"></textarea>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Supporting Documents -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">attach_file</span> Supporting Documents</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Upload Supporting Document</label>
+                    <div class="file-upload-container">
+                        <label class="file-btn">
+                            <span class="material-symbols-outlined">upload_file</span>
+                            Choose File
+                            <input type="file" style="display: none;" (change)="onFileSelected($event)">
+                        </label>
+                        @if(procurement.supportingDocument){
+                        <p style="margin-top: 8px; font-size: 0.875rem; color: var(--vrip-primary-700);">
+                            <strong>Selected:</strong> {{ procurement.supportingDocument }}
+                        </p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Request Status -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">analytics</span> Request Status</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Request Status</label>
+                    <app-input [(ngModel)]="procurement.requestStatus" [disabled]="true"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Error Message -->
+        <div *ngIf="formError" class="error-box" style="margin-bottom: var(--vrip-space-4); background-color: rgba(255, 59, 48, 0.1); color: #ff3b30; padding: var(--vrip-space-3); border-radius: var(--vrip-radius-md); border: 1px solid rgba(255, 59, 48, 0.2); display: flex; align-items: center; gap: var(--vrip-space-2);">
+            <span class="material-symbols-outlined">error</span>
+            <span>{{ formError }}</span>
         </div>
 
-    </div>
-
-    <!-- Delivery Information -->
-
-    <div class="form-section">
-
-        <h2>🚚 Delivery Information</h2>
-
-        <div class="form-grid">
-
-            <div class="form-group">
-
-                <label>Required Delivery Date *</label>
-
-                <input
-                    type="date"
-                    [(ngModel)]="procurement.requiredDeliveryDate">
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Priority *</label>
-
-                <select
-                    [(ngModel)]="procurement.priority">
-
-                    <option>Low</option>
-
-                    <option>Medium</option>
-
-                    <option>High</option>
-
-                    <option>Critical</option>
-
-                </select>
-
-            </div>
-
+        <!-- Buttons -->
+        <div class="form-actions">
+            <app-button variant="outline" (click)="cancel()">Cancel</app-button>
+            <app-button variant="secondary" iconLeft="save_as" (click)="saveDraft()">Save Draft</app-button>
+            <app-button variant="primary" iconLeft="send" (click)="submitRequest()">Submit Request</app-button>
         </div>
-
     </div>
-
-    <!-- Business Information -->
-
-    <div class="form-section">
-
-        <h2>📝 Business Information</h2>
-
-        <div class="form-grid">
-
-            <div class="form-group full-width">
-
-                <label>Business Justification *</label>
-
-                <textarea
-                    rows="5"
-                    placeholder="Explain why this procurement is required..."
-                    [(ngModel)]="procurement.businessJustification">
-
-                </textarea>
-
-            </div>
-
-            <div class="form-group full-width">
-
-                <label>Additional Remarks</label>
-
-                <textarea
-                    rows="4"
-                    placeholder="Additional Remarks"
-                    [(ngModel)]="procurement.additionalRemarks">
-
-                </textarea>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Supporting Documents -->
-
-    <div class="form-section">
-
-        <h2>📂 Supporting Documents</h2>
-
-        <div class="form-grid">
-
-            <div class="form-group">
-
-                <label>Upload Supporting Document</label>
-
-                <input
-                    type="file"
-                    (change)="onFileSelected($event)">
-
-                @if(procurement.supportingDocument){
-
-                <p>
-
-                    <strong>Selected:</strong>
-
-                    {{ procurement.supportingDocument }}
-
-                </p>
-
-                }
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Request Status -->
-
-    <div class="form-section">
-
-        <h2>📊 Request Status</h2>
-
-        <div class="form-grid">
-
-            <div class="form-group">
-
-                <label>Status</label>
-
-                <input
-                    type="text"
-                    [value]="procurement.requestStatus"
-                    readonly>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Buttons -->
-
-    <div class="form-actions">
-
-        <button
-            class="save-btn"
-            (click)="submitRequest()">
-
-            Submit Request
-
-        </button>
-
-        <button
-            class="draft-btn"
-            (click)="saveDraft()">
-
-            Save Draft
-
-        </button>
-
-        <button
-            class="cancel-btn"
-            (click)="cancel()">
-
-            Cancel
-
-        </button>
-
-    </div>
-
 </div>

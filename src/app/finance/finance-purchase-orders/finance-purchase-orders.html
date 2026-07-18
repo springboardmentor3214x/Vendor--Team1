@@ -1,0 +1,47 @@
+<div class="page-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1>Financial Purchase Orders</h1>
+            <p>Review and approve POs for budget alignment.</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <app-button variant="outline" iconLeft="filter_list">Filter</app-button>
+            <app-button variant="primary" iconLeft="download">Export Report</app-button>
+        </div>
+    </div>
+
+    <app-card [noPadding]="true">
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>PO Number</th>
+                    <th>Department</th>
+                    <th>Vendor</th>
+                    <th>Budget Code</th>
+                    <th>Total Amount</th>
+                    <th>Finance Status</th>
+                    <th style="text-align: right;">Action</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let order of orders">
+                    <td><strong>{{ order.poNumber }}</strong></td>
+                    <td>{{ order.dept }}</td>
+                    <td>{{ order.vendor }}</td>
+                    <td><code>{{ order.budgetCode }}</code></td>
+                    <td>{{ order.amount | currency:'USD':'symbol':'1.2-2' }}</td>
+                    <td>
+                        <span class="vrip-badge" 
+                              [ngStyle]="{'background': order.status === 'Approved' ? 'rgba(52, 199, 89, 0.1)' : 'rgba(59, 130, 246, 0.1)', 
+                                          'color': order.status === 'Approved' ? '#34c759' : '#3b82f6'}">
+                            {{ order.status }}
+                        </span>
+                    </td>
+                    <td style="text-align: right;">
+                        <app-button variant="outline" size="sm">Review</app-button>
+                    </td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
+</div>
