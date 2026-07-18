@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 12 Jul - Cover contract in the end to end pass
 - 13 Jul - Round out the order tracking screen with status updates
 - 14 Jul - Round out the vendor assignment screen with reliability hints
 - 15 Jul - Rework certification expiry in the compliance management screen
 - 16 Jul - Expand contract with compliance clauses
 - 17 Jul - Rework issuing authority details in certification
+- 18 Jul - Handle empty responses from the auditor dashboard screen in the integrated flow
