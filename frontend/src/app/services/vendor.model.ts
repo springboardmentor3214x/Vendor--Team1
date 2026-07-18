@@ -50,4 +50,26 @@ export interface Vendor {
 
   paymentTerms?: string;
 
+  /* ---------- Vendor Documents ---------- */
+
+  gstCertificate?: string;
+
+  gstCertificateUrl?: string;
+
+  panCard?: string;
+
+  panCardUrl?: string;
+
+  registrationCertificate?: string;
+
+  registrationCertificateUrl?: string;
+
+  isoCertificate?: string;
+
+  isoCertificateUrl?: string;
+
+  otherDocument?: string;
+
+  otherDocumentUrl?: string;
+
 }

@@ -30,15 +30,10 @@
 
     background:#2563eb;
     color:white;
-
     border:none;
-
     padding:12px 22px;
-
     border-radius:10px;
-
     cursor:pointer;
-
     transition:.3s;
 
 }
@@ -48,6 +43,77 @@
     background:#1d4ed8;
 
 }
+
+/* ---------- Dashboard Statistics ---------- */
+
+.stats-container{
+
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:20px;
+
+}
+
+.stat-card{
+
+    background:white;
+    border-radius:15px;
+    padding:22px;
+    text-align:center;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    border-top:5px solid #2563eb;
+    transition:.3s;
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-5px);
+
+}
+
+.stat-card h3{
+
+    margin:0;
+    color:#6b7280;
+    font-size:15px;
+    font-weight:600;
+
+}
+
+.stat-card h2{
+
+    margin-top:12px;
+    font-size:34px;
+    color:#111827;
+
+}
+
+.active-card{
+
+    border-top-color:#22c55e;
+
+}
+
+.pending-card{
+
+    border-top-color:#f59e0b;
+
+}
+
+.suspended-card{
+
+    border-top-color:#fb923c;
+
+}
+
+.rejected-card{
+
+    border-top-color:#dc2626;
+
+}
+
+/* ---------- Search ---------- */
 
 .search-bar{
 
@@ -72,6 +138,8 @@
     width:350px;
 
 }
+
+/* ---------- Table ---------- */
 
 table{
 
@@ -99,6 +167,8 @@ td{
     vertical-align:top;
 
 }
+
+/* ---------- Buttons ---------- */
 
 button{
 
@@ -153,6 +223,8 @@ button:hover{
 
 }
 
+/* ---------- Status ---------- */
+
 .active{
 
     color:#16a34a;
@@ -187,6 +259,8 @@ button:hover{
     font-weight:bold;
 
 }
+
+/* ---------- Responsive ---------- */
 
 @media(max-width:900px){
 
