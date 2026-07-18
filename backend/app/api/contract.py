@@ -121,14 +121,74 @@ def download_contract_document(
 
     return FileResponse(path=c.document_path, filename=c.document_name or "contract.pdf")
 
+@router.put("/{contract_id}", response_model=ContractResponse)
+def update_contract(
+    contract_id: int,
+    data: ContractUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER]))
+):
+    return contract_service.update_contract(db, contract_id, data)
+
+@router.post("/{contract_id}/renew", response_model=ContractResponse)
+def renew_contract(
+    contract_id: int,
+    new_end_date: date,
+    new_value: Optional[float] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER]))
+):
+    return contract_service.renew_contract(db, contract_id, new_end_date, new_value)
+
+@router.delete("/{contract_id}")
+def delete_contract(
+    contract_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN]))
+):
+    return contract_service.delete_contract(db, contract_id)
+
+@router.post("/certifications", response_model=CertificationResponse, status_code=201)
+def add_certification(
+    data: CertificationCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER, Roles.VENDOR]))
+):
+    assert_owns(db, current_user, data.vendor_id, "certifications")
+    return contract_service.add_certification(db, data)
+
+@router.post("/certifications/upload", response_model=CertificationResponse, status_code=201)
+async def add_certification_with_file(
+    vendor_id: int = Form(...),
+    certification_name: str = Form(...),
+    certificate_number: str = Form(...),
+    issuing_authority: str = Form(...),
+    issue_date: date = Form(...),
+    expiry_date: date = Form(...),
+    file: Optional[UploadFile] = File(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER, Roles.VENDOR]))
+):
+    assert_owns(db, current_user, vendor_id, "certifications")
+    data = CertificationCreate(
+        vendor_id=vendor_id,
+        certification_name=certification_name,
+        certificate_number=certificate_number,
+        issuing_authority=issuing_authority,
+        issue_date=issue_date,
+        expiry_date=expiry_date,
+    )
+    return contract_service.add_certification(db, data, file=file)
+
 
 def _pending_contract_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -138,6 +198,8 @@ def _pending_contract_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -146,8 +208,9 @@ def _pending_contract_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -157,6 +220,8 @@ def _pending_contract_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -165,8 +230,9 @@ def _pending_contract_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -176,6 +242,8 @@ def _pending_contract_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -184,8 +252,9 @@ def _pending_contract_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -195,6 +264,8 @@ def _pending_contract_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -203,8 +274,9 @@ def _pending_contract_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -214,23 +286,6 @@ def _pending_contract_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-    return totals
-
-
-def _pending_contract_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
-
-
-def _pending_contract_totals_6(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
