@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 12 Jul - Expand the procurement approval screen with approve and reject actions
 - 13 Jul - Create the vendor assignment screen with reliability hints
 - 14 Jul - Refine history entries in the procurement status screen
 - 15 Jul - Improve milestone timeline in the order tracking screen
 - 16 Jul - Extend the procurement request screen with priority selection
 - 17 Jul - Flesh out the vendor assignment screen with reliability hints
+- 18 Jul - Add the admin dashboard screen with user counts
