@@ -1,0 +1,38 @@
+<div class="cards-grid">
+
+    <ng-container *ngIf="loading">
+        <div class="vrip-stat-card border-primary" *ngFor="let _ of [1,2,3,4]">
+            <div class="stat-header">
+                <div class="skeleton-text" style="width: 65%;"></div>
+                <div class="skeleton-avatar" style="width: 20px; height: 20px; border-radius: 4px;"></div>
+            </div>
+            <div class="skeleton-number"></div>
+            <div class="skeleton-text" style="width: 45%; height: 10px; margin-top: 4px;"></div>
+        </div>
+    </ng-container>
+
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+</div>
