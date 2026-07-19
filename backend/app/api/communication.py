@@ -80,14 +80,67 @@ async def send_message_with_file(
     data = enforce_sender_vendor(db, current_user, data)
     return communication_service.send_message(db, data, current_user.id, current_user.name, file=file)
 
+@router.get("/messages", response_model=List[CommunicationResponse])
+def get_conversations(
+    vendor_id: Optional[int] = Query(None),
+    po_id: Optional[int] = Query(None),
+    contract_id: Optional[int] = Query(None),
+    discussion_id: Optional[int] = Query(None),
+    user_id: Optional[int] = Query(None),
+    receiver_id: Optional[int] = Query(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    own_vendor_id = get_vendor_id_for_user(db, current_user)
+    if own_vendor_id is not None:
+        if vendor_id and vendor_id != own_vendor_id:
+            raise HTTPException(status_code=403, detail="You can only read your own conversations")
+        if not receiver_id:
+            vendor_id = own_vendor_id
+
+    if current_user.role == Roles.ADMIN:
+        effective_user_id = user_id
+    else:
+        effective_user_id = current_user.id
+    return communication_service.get_conversations(
+        db,
+        vendor_id=vendor_id,
+        po_id=po_id,
+        contract_id=contract_id,
+        discussion_id=discussion_id,
+        user_id=effective_user_id,
+        receiver_id=receiver_id
+    )
+
+class MarkReadRequest(BaseModel):
+    message_ids: Optional[List[int]] = None
+    vendor_id: Optional[int] = None
+
+@router.post("/messages/mark-read")
+def mark_messages_read(
+    body: Optional[MarkReadRequest] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    body = body or MarkReadRequest()
+    return communication_service.mark_messages_read(
+        db,
+        user_id=current_user.id,
+        message_ids=body.message_ids,
+        vendor_id=body.vendor_id,
+        discussion_id=body.discussion_id,
+        user_name=current_user.name
+    )
+
 
 def _pending_communication_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -97,6 +150,8 @@ def _pending_communication_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -105,8 +160,9 @@ def _pending_communication_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -116,6 +172,8 @@ def _pending_communication_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -124,8 +182,9 @@ def _pending_communication_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -135,6 +194,8 @@ def _pending_communication_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -143,8 +204,9 @@ def _pending_communication_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -154,6 +216,8 @@ def _pending_communication_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -162,8 +226,9 @@ def _pending_communication_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -173,23 +238,6 @@ def _pending_communication_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-    return totals
-
-
-def _pending_communication_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
-
-
-def _pending_communication_totals_6(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
