@@ -2,8 +2,10 @@ from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey, DateTim
 from sqlalchemy.sql import func
 from app.database.base import Base
 
+
 class Contract(Base):
     __tablename__ = "contracts"
+
     id = Column(Integer, primary_key=True, index=True)
     contract_number = Column(String(50), unique=True, index=True, nullable=True)
     contract_title = Column(String(150), nullable=False)
@@ -17,3 +19,10 @@ class Contract(Base):
     payment_terms = Column(String(100), default="Net 30")
     sla_details = Column(String(500), nullable=True)
     warranty_details = Column(String(500), nullable=True)
+    responsible_manager = Column(String(100), nullable=True)
+    status = Column(String(50), default="Active")
+    document_name = Column(String(255), nullable=True)
+    document_path = Column(String(500), nullable=True)
+    renewal_count = Column(Integer, default=0)
+    last_renewed_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=func.now())
