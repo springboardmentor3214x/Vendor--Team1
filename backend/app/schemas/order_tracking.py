@@ -5,20 +5,34 @@ from datetime import datetime
 DELIVERY_STATUSES = ["Awaiting Shipment", "In Transit", "Delivered", "Completed"]
 
 
-def _pending_order_tracking_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
+class OrderTrackingResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    po_id: int
+    procurement_id: int
+    vendor_id: int
+    po_number: Optional[str] = None
+    dispatch_date: Optional[datetime] = None
+    expected_delivery_date: Optional[datetime] = None
+    actual_delivery_date: Optional[datetime] = None
+    delivery_status: str
+    delay_status: str
+    delay_hours: int
+    delay_days: int
+    updated_at: datetime
 
 
-def _pending_order_tracking_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+class OrderTrackingUpdate(BaseModel):
+    delivery_status: str
+    dispatch_date: Optional[datetime] = None
+    actual_delivery_date: Optional[datetime] = None
+
+    @field_validator("delivery_status")
+    @classmethod
+    def status_allowed(cls, v: str) -> str:
+        if v not in DELIVERY_STATUSES:
+            raise ValueError(
+                f"Invalid delivery status '{v}'. Allowed values: {', '.join(DELIVERY_STATUSES)}"
+            )
+        return v
