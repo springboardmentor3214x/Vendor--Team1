@@ -1,0 +1,69 @@
+<div class="page-container">
+    <div class="page-vrip-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1 class="vrip-page-title">Platform Analytics</h1>
+            <p>System usage, procurement expenditure, and vendor performance intelligence.</p>
+        </div>
+        <app-button variant="outline" iconLeft="refresh" (onClick)="refreshAnalytics()">Refresh Analytics</app-button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--vrip-space-6); margin-bottom: var(--vrip-space-6);">
+        <app-card>
+            <h3 style="margin-bottom: var(--vrip-space-2); color: var(--text-secondary); font-size: 0.875rem; text-transform: uppercase;">Total Active Users</h3>
+            <div style="font-size: 2.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">{{ activeUsers }}</div>
+            <div style="color: var(--text-secondary); font-weight: 500; font-size: 0.875rem;">Out of {{ totalUsers }} Accounts</div>
+        </app-card>
+        <app-card>
+            <h3 style="margin-bottom: var(--vrip-space-2); color: var(--text-secondary); font-size: 0.875rem; text-transform: uppercase;">Total Vendors</h3>
+            <div style="font-size: 2.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">{{ totalVendors }}</div>
+            <div style="color: var(--text-secondary); font-weight: 500; font-size: 0.875rem;">Registered Suppliers</div>
+        </app-card>
+        <app-card>
+            <h3 style="margin-bottom: var(--vrip-space-2); color: var(--text-secondary); font-size: 0.875rem; text-transform: uppercase;">Active Contracts</h3>
+            <div style="font-size: 2.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">{{ totalContracts }}</div>
+            <div style="color: var(--text-secondary); font-weight: 500; font-size: 0.875rem;">Executed Agreements</div>
+        </app-card>
+        <app-card>
+            <h3 style="margin-bottom: var(--vrip-space-2); color: var(--text-secondary); font-size: 0.875rem; text-transform: uppercase;">Total Procurement Spend</h3>
+            <div style="font-size: 2.25rem; font-weight: 700; color: #4f46e5; margin-bottom: 4px;">{{ totalSpend }}</div>
+            <div style="color: var(--text-secondary); font-weight: 500; font-size: 0.875rem;">Across {{ totalProcurements }} Requests</div>
+        </app-card>
+        <app-card>
+            <h3 style="margin-bottom: var(--vrip-space-2); color: var(--text-secondary); font-size: 0.875rem; text-transform: uppercase;">Compliance Rate</h3>
+            <div style="font-size: 2.25rem; font-weight: 700; color: #10b981; margin-bottom: 4px;">{{ complianceRate }}%</div>
+            <div style="color: var(--text-secondary); font-weight: 500; font-size: 0.875rem;">System Compliance Score</div>
+        </app-card>
+    </div>
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+  </div>
+</div>
