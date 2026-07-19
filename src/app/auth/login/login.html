@@ -135,12 +135,8 @@
                     type="submit"
                     class="login-btn"
                     [disabled]="loading">
-                    @if(loading){
-                      <span class="spinner"></span>
-                      Signing In...  
-                    } @else {
-                        LOGIN
-                    }
+
+                    {{ loading ? 'Signing In...' : 'LOGIN' }}
 
                 </button>
 
