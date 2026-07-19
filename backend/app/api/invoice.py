@@ -80,14 +80,34 @@ async def upload_invoice(
 
     return invoice_service.create_invoice(db, inv_data, file_name=file_name, file_path=file_path)
 
+@router.post("/", response_model=InvoiceResponse, status_code=201)
+def create_invoice_json(
+    data: InvoiceCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.VENDOR, Roles.PROCUREMENT_MANAGER, Roles.FINANCE_OFFICER]))
+):
+    data.vendor_id = resolve_invoice_vendor(db, current_user, data.po_id, data.vendor_id)
+    return invoice_service.create_invoice(db, data)
+
+@router.get("/", response_model=List[InvoiceResponse])
+def list_invoices(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role == Roles.VENDOR:
+        vendor = invoice_service.get_vendor_for_user(db, current_user)
+        return invoice_service.get_invoices_by_vendor(db, vendor.id) if vendor else []
+    return invoice_service.get_all_invoices(db)
+
 
 def _pending_invoice_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -97,6 +117,8 @@ def _pending_invoice_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -105,8 +127,9 @@ def _pending_invoice_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -116,6 +139,8 @@ def _pending_invoice_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -124,8 +149,9 @@ def _pending_invoice_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -135,6 +161,8 @@ def _pending_invoice_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -143,7 +171,8 @@ def _pending_invoice_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
