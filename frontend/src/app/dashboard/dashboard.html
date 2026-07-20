@@ -5,17 +5,138 @@
         <div>
 
             <h1>Dashboard</h1>
+
             <p>Welcome to Vendor Reliability Intelligence Platform</p>
 
         </div>
 
         <button class="refresh-btn">
+
             Refresh
+
         </button>
 
     </div>
 
+    <!-- Statistics -->
+
     <app-dashboard-cards></app-dashboard-cards>
+
+    <!-- Business Modules -->
+
+    <div class="modules-section">
+
+        <div class="table-header">
+
+            <h2>Business Modules</h2>
+
+        </div>
+
+        <div class="modules-grid">
+
+            <a
+                routerLink="/vendors"
+                class="module-card">
+
+                <div class="module-icon">
+
+                    👥
+
+                </div>
+
+                <h3>Vendor Management</h3>
+
+                <p>
+
+                    Manage vendors, approvals and vendor profiles.
+
+                </p>
+
+            </a>
+
+            <a
+                routerLink="/procurement-dashboard"
+                class="module-card">
+
+                <div class="module-icon">
+
+                    📦
+
+                </div>
+
+                <h3>Procurement Management</h3>
+
+                <p>
+
+                    Create procurement requests and purchase orders.
+
+                </p>
+
+            </a>
+
+            <a
+                routerLink="/supply-chain-dashboard"
+                class="module-card">
+
+                <div class="module-icon">
+
+                    🚚
+
+                </div>
+
+                <h3>Supply Chain</h3>
+
+                <p>
+
+                    Track deliveries and logistics.
+
+                </p>
+
+            </a>
+
+            <a
+                routerLink="/finance-dashboard"
+                class="module-card">
+
+                <div class="module-icon">
+
+                    💰
+
+                </div>
+
+                <h3>Finance</h3>
+
+                <p>
+
+                    Verify invoices and approve payments.
+
+                </p>
+
+            </a>
+
+            <div class="module-card disabled">
+
+                <div class="module-icon">
+
+                    📊
+
+                </div>
+
+                <h3>Analytics</h3>
+
+                <p>
+
+                    Coming in Module 4.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Recent Vendors -->
 
     <div class="recent-vendors">
 
