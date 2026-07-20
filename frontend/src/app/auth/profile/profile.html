@@ -1,0 +1,82 @@
+<div class="profile-page">
+    <div class="profile-container">
+        <app-card>
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <span class="material-symbols-outlined">person</span>
+                </div>
+                <div class="profile-info">
+                    <h2>{{ user.fullName }}</h2>
+                    <p>{{ user.role }}</p>
+                </div>
+                <div class="profile-actions-top">
+                    <app-button
+                        *ngIf="!isEditing"
+                        variant="outline"
+                        iconLeft="edit"
+                        (click)="editProfile()">
+                        Edit Profile
+                    </app-button>
+                </div>
+            </div>
+
+            <div class="profile-content">
+                <div class="profile-form-grid">
+                    <app-input
+                        label="Full Name"
+                        type="text"
+                        [(ngModel)]="user.fullName"
+                        [disabled]="!isEditing"
+                        iconLeft="badge"
+                    ></app-input>
+
+                    <app-input
+                        label="Email Address"
+                        type="email"
+                        [(ngModel)]="user.email"
+                        [disabled]="!isEditing"
+                        iconLeft="mail"
+                    ></app-input>
+
+                    <app-input
+                        label="Mobile Number"
+                        type="text"
+                        [(ngModel)]="user.mobile"
+                        [disabled]="!isEditing"
+                        iconLeft="phone_iphone"
+                    ></app-input>
+
+                    <app-input
+                        label="Role"
+                        type="text"
+                        [value]="user.role"
+                        [disabled]="true"
+                        iconLeft="admin_panel_settings"
+                    ></app-input>
+                </div>
+            </div>
+
+            <div class="profile-footer" *ngIf="isEditing">
+                <app-button
+                    variant="outline"
+                    (click)="isEditing = false">
+                    Cancel
+                </app-button>
+                <app-button
+                    variant="primary"
+                    (click)="saveProfile()">
+                    Save Changes
+                </app-button>
+            </div>
+            
+            <div class="profile-footer" *ngIf="!isEditing">
+                 <app-button
+                    variant="secondary"
+                    iconLeft="lock"
+                    routerLink="/settings">
+                    Change Password
+                </app-button>
+            </div>
+        </app-card>
+    </div>
+</div>

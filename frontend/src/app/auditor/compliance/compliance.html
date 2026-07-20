@@ -1,0 +1,47 @@
+<div class="page-container">
+    <div class="page-header" style="margin-bottom: var(--vrip-space-6);">
+        <h1>Compliance Monitoring</h1>
+        <p>Track vendor adherence to regulatory policies and required certifications.</p>
+    </div>
+
+    <app-card [noPadding]="true">
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>Vendor Name</th>
+                    <th>Category</th>
+                    <th>ISO 9001</th>
+                    <th>Data Privacy (GDPR)</th>
+                    <th>Overall Status</th>
+                    <th style="text-align: right;">Action</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let vendor of vendors">
+                    <td><strong>{{ vendor.name }}</strong></td>
+                    <td>{{ vendor.category }}</td>
+                    <td>
+                        <span class="material-symbols-outlined" [ngStyle]="{'color': vendor.iso ? '#34c759' : '#ff3b30'}">
+                            {{ vendor.iso ? 'check_circle' : 'cancel' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="material-symbols-outlined" [ngStyle]="{'color': vendor.gdpr ? '#34c759' : '#ff3b30'}">
+                            {{ vendor.gdpr ? 'check_circle' : 'cancel' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="vrip-badge" 
+                              [ngStyle]="{'background': vendor.status === 'Compliant' ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 59, 48, 0.1)', 
+                                          'color': vendor.status === 'Compliant' ? '#34c759' : '#ff3b30'}">
+                            {{ vendor.status }}
+                        </span>
+                    </td>
+                    <td style="text-align: right;">
+                        <app-button variant="outline" size="sm" (onClick)="download()">Audit File</app-button>
+                    </td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
+</div>

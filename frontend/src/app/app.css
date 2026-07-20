@@ -1,0 +1,6 @@
+.content {
+  margin-left: 280px; /* Leave space for floating sidebar */
+  min-height: calc(100vh - 100px); /* Leave space for floating navbar */
+  padding-top: 100px; /* Offset for absolute floating navbar */
+  background-color: transparent; /* Rely on body mesh background */
+}

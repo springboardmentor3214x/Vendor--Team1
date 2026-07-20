@@ -1,49 +1,63 @@
-# Vendor Reliability Platform - Backend
+# Vendor Reliability Platform - Integrated Build
+
+## Project Structure
+```
+Vendor--Team1/
+├── backend/         # FastAPI Backend (Python)
+│   ├── app/
+│   │   ├── api/             # API route handlers
+│   │   ├── database/        # SQLAlchemy connection & base
+│   │   ├── models/          # ORM models
+│   │   ├── schemas/         # Pydantic schemas
+│   │   ├── services/        # Business logic
+│   │   └── main.py          # App entry point (CORS enabled)
+│   └── requirements.txt
+│
+├── frontend/        # Angular Frontend (TypeScript)
+│   ├── src/
+│   │   ├── app/             # Angular components & services
+│   │   ├── environments/    # API URL configuration
+│   │   └── index.html
+│   ├── angular.json
+│   └── package.json
+│
+└── README.md
+```
+
+## How to Run
+
+### Backend (FastAPI)
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
+Backend runs at: **http://localhost:8000**
+API Docs: **http://localhost:8000/docs**
+
+### Frontend (Angular)
+```bash
+cd frontend
+npm install
+ng serve
+```
+Frontend runs at: **http://localhost:4200**
 
 ## Modules Implemented
 
-### Module 2: Vendor Management
-- **POST /vendors** - Add Vendor
-- **GET /vendors** - View Vendors (pagination + filtering)
-- **GET /vendors/{id}** - View Vendor Details
-- **PUT /vendors/{id}** - Update Vendor
-- **DELETE /vendors/{id}** - Delete Vendor
+### Backend APIs
+- **Module 2**: Vendor Management (CRUD, pagination, filtering)
+- **Module 3**: Procurement Management (CRUD, approval workflow, order lifecycle, dashboard)
+- **Module 4**: Vendor Performance (delivery, quality, communication, service rating, metrics, rankings)
 
-### Module 3: Procurement Management
-- **POST /procurements** - Create Procurement Request
-- **GET /procurements** - View All Procurements
-- **GET /procurements/dashboard** - Procurement Dashboard Summary
-- **GET /procurements/search** - Search Procurements
-- **GET /procurements/filter** - Filter by Status
-- **GET /procurements/vendor/{id}** - Get Procurements by Vendor
-- **GET /procurements/{id}** - View Single Procurement
-- **PUT /procurements/{id}** - Update Procurement
-- **DELETE /procurements/{id}** - Delete Procurement
-- **POST /procurements/{id}/approve** - Approve Procurement
-- **POST /procurements/{id}/reject** - Reject Procurement
-- **POST /procurements/{id}/deliver** - Mark as Delivered
-- **POST /procurements/{id}/complete** - Mark as Completed
+### Frontend Pages
+- Login, Registration, Forgot Password, Profile
+- Role-based Dashboards (Admin, Procurement Manager, Supply Chain Manager, Vendor, Finance, Auditor)
+- Vendor Management (List, Add, Edit, Details, Approval, Status Monitoring)
+- Procurement (Requests, Approval, Purchase Orders, Order Tracking, Invoice Management)
+- Vendor Performance (Delivery, Quality, Communication, Service Rating, History, Rankings)
 
-### Module 4: Vendor Performance Management
-- **GET /performance/dashboard** - Performance Dashboard
-- **GET /performance/metrics/{vendor_id}** - Calculate Vendor Performance Metrics
-- **GET /performance/rankings** - Generate Vendor Rankings
-- **GET /performance/history/{vendor_id}** - Complete Performance History
-- **POST /performance/delivery** - Record Delivery Performance
-- **GET /performance/delivery/{vendor_id}** - Get Delivery Records
-- **POST /performance/quality** - Submit Quality Evaluation
-- **GET /performance/quality/{vendor_id}** - Get Quality Records
-- **POST /performance/communication** - Record Communication Log
-- **GET /performance/communication/{vendor_id}** - Get Communication Records
-- **POST /performance/service-rating** - Submit Service Rating
-- **GET /performance/service-rating/{vendor_id}** - Get Service Ratings
-
-## Progress
-- **Jul 7-10**: Vendor Management Module (CRUD, pagination, filtering).
-- **Jul 13**: Procurement model, schema, initial CRUD and API router.
-- **Jul 14**: Procurement approval workflow, delivery tracking, dashboard, search.
-- **Jul 15**: Procurement finalization — total_spend, get-by-vendor, module completed.
-- **Jul 16**: Performance models — DeliveryPerformance, QualityEvaluation, CommunicationLog, ServiceRating.
-- **Jul 17**: Performance service layer and API router for all 4 performance areas.
-- **Jul 18**: Performance metrics calculation, vendor rankings, performance dashboard, history endpoint.
-- **Jul 19**: Registered all models in main.py, finalized documentation.
+## Integration Details
+- Backend CORS is configured to accept requests from `http://localhost:4200`
+- Frontend environment config points to `http://localhost:8000`
+- Angular `HttpClient` is provisioned in app config for API communication

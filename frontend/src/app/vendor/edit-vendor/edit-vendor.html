@@ -1,0 +1,173 @@
+<div class="form-container">
+    <div class="header">
+        <div>
+            <h1>Edit Vendor</h1>
+            <p>Update vendor profile details</p>
+        </div>
+    </div>
+
+    @if(vendor){
+    <div class="form-layout">
+        <!-- Company Information -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">business</span> Company Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Company Name *</label>
+                    <app-input [(ngModel)]="vendor.companyName"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Vendor Category *</label>
+                    <select class="vrip-select" [(ngModel)]="vendor.category">
+                        <option>Raw Material Suppliers</option>
+                        <option>Equipment Vendors</option>
+                        <option>IT Vendors</option>
+                        <option>Service Providers</option>
+                        <option>Logistics Partners</option>
+                        <option>Maintenance Vendors</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Company Registration Number</label>
+                    <app-input [(ngModel)]="vendor.companyRegistrationNumber"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Contact Information -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">person</span> Contact Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Contact Person *</label>
+                    <app-input [(ngModel)]="vendor.contactPerson"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Designation</label>
+                    <app-input [(ngModel)]="vendor.designation"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <app-input [(ngModel)]="vendor.email"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <app-input [(ngModel)]="vendor.phone"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Alternate Phone</label>
+                    <app-input [(ngModel)]="vendor.alternatePhone"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Tax Information -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">receipt_long</span> Tax Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>GST Number *</label>
+                    <app-input [(ngModel)]="vendor.gst"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>PAN Number *</label>
+                    <app-input [(ngModel)]="vendor.pan"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Address Information -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">location_on</span> Address Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Address Line 1</label>
+                    <app-input [(ngModel)]="vendor.addressLine1"></app-input>
+                </div>
+                <div class="form-group full-width">
+                    <label>Address Line 2</label>
+                    <app-input [(ngModel)]="vendor.addressLine2"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>City</label>
+                    <app-input [(ngModel)]="vendor.city"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>State</label>
+                    <app-input [(ngModel)]="vendor.state"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Country</label>
+                    <app-input [(ngModel)]="vendor.country"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Pincode</label>
+                    <app-input [(ngModel)]="vendor.pincode"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Business Information -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">public</span> Business Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Website</label>
+                    <app-input [(ngModel)]="vendor.website"></app-input>
+                </div>
+                <div class="form-group full-width">
+                    <label>Description</label>
+                    <textarea class="vrip-textarea" [(ngModel)]="vendor.description"></textarea>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Banking Information -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">account_balance</span> Banking Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Bank Account Number</label>
+                    <app-input [(ngModel)]="vendor.bankAccountNumber"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>IFSC Code</label>
+                    <app-input [(ngModel)]="vendor.ifscCode"></app-input>
+                </div>
+                <div class="form-group full-width">
+                    <label>Payment Terms</label>
+                    <app-input [(ngModel)]="vendor.paymentTerms"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <div class="form-actions">
+            <app-button variant="outline" (click)="cancel()">Cancel</app-button>
+            <app-button variant="primary" iconLeft="save" (click)="updateVendor()">Update Vendor</app-button>
+        </div>
+    </div>
+    } @else {
+        <app-card>
+            <div class="empty-state">
+                <span class="material-symbols-outlined empty-icon">error</span>
+                <h2>Vendor not found</h2>
+                <p>The vendor you are trying to edit does not exist.</p>
+                <app-button variant="primary" routerLink="/vendors" style="margin-top: 16px;">
+                    Back to Vendors
+                </app-button>
+            </div>
+        </app-card>
+    }
+</div>

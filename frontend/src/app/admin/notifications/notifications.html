@@ -1,0 +1,29 @@
+<div class="page-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1>Notifications</h1>
+            <p>System alerts and administrative updates.</p>
+        </div>
+        <app-button variant="outline" iconLeft="done_all" (onClick)="markAllRead()">Mark All as Read</app-button>
+    </div>
+
+    <app-card [noPadding]="true">
+        <div style="display: flex; flex-direction: column;">
+            <div *ngFor="let notif of notifications" 
+                 [ngStyle]="{'background': notif.unread ? 'rgba(59, 130, 246, 0.05)' : 'transparent'}"
+                 style="padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; gap: 16px; align-items: flex-start; transition: background 0.2s;">
+                <div [ngStyle]="{'color': notif.type === 'alert' ? '#ff3b30' : (notif.type === 'success' ? '#34c759' : '#3b82f6')}"
+                     style="padding: 8px; border-radius: 50%; background: var(--vrip-gray-100); display: flex;">
+                    <span class="material-symbols-outlined">{{ notif.icon }}</span>
+                </div>
+                <div style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <h4 style="margin: 0; font-size: 1rem; font-weight: 600;" [ngStyle]="{'color': notif.unread ? 'var(--text-primary)' : 'var(--text-secondary)'}">{{ notif.title }}</h4>
+                        <span style="font-size: 0.75rem; color: var(--vrip-gray-500);">{{ notif.time }}</span>
+                    </div>
+                    <p style="margin: 0; color: var(--text-secondary); font-size: 0.875rem;">{{ notif.message }}</p>
+                </div>
+            </div>
+        </div>
+    </app-card>
+</div>

@@ -1,0 +1,38 @@
+<div class="page-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1>System Audit Logs</h1>
+            <p>Immutable record of all critical platform activities.</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <app-input placeholder="Search logs..." iconLeft="search" style="margin-bottom: 0;"></app-input>
+            <app-button variant="outline" iconLeft="filter_alt" (onClick)="filter()">Filter</app-button>
+        </div>
+    </div>
+
+    <app-card [noPadding]="true">
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>User / Role</th>
+                    <th>Action</th>
+                    <th>Entity</th>
+                    <th>IP Address</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let log of logs">
+                    <td style="font-size: 0.875rem; color: var(--text-secondary);">{{ log.timestamp }}</td>
+                    <td>
+                        <div style="font-weight: 500;">{{ log.user }}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">{{ log.role }}</div>
+                    </td>
+                    <td><span class="vrip-badge" style="background: var(--vrip-gray-100); color: var(--text-primary);">{{ log.action }}</span></td>
+                    <td>{{ log.entity }}</td>
+                    <td style="font-family: monospace; font-size: 0.875rem; color: var(--text-secondary);">{{ log.ip }}</td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
+</div>

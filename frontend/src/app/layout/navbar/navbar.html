@@ -1,0 +1,31 @@
+<header class="vrip-navbar">
+  <div class="vrip-navbar-left">
+      <h1 class="vrip-navbar-title">{{ pageTitle || 'Vendor Reliability Intelligence Platform' }}</h1>
+  </div>
+
+  <div class="vrip-navbar-right">
+      
+      <div class="vrip-navbar-search">
+        <app-search placeholder="Global search..."></app-search>
+      </div>
+
+                <button class="vrip-icon-btn" routerLink="/admin/notifications">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <span class="vrip-notification-dot"></span>
+                </button>
+
+      <div class="vrip-divider-vertical"></div>
+
+      <div class="vrip-profile-menu" routerLink="/profile">
+          <div class="vrip-avatar">
+              C
+          </div>
+          <div class="vrip-profile-info">
+              <h4>Chirag</h4>
+              <p>{{ role || 'User' }}</p>
+          </div>
+          <span class="material-symbols-outlined vrip-dropdown-icon">expand_more</span>
+      </div>
+
+  </div>
+</header>

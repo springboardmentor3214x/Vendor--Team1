@@ -1,0 +1,49 @@
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div>
+            <h1>Procurement Dashboard</h1>
+            <p>Monitor procurement requests, purchase orders and procurement lifecycle.</p>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+        <div class="summary-card" *ngFor="let card of summaryCards">
+            <h2 [style.color]="card.color">{{ card.value }}</h2>
+            <p>{{ card.title }}</p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="dashboard-section">
+        <h2>Quick Actions</h2>
+        <div class="quick-grid">
+            <a routerLink="/procurement-request" class="quick-card">
+                <span class="material-symbols-outlined text-primary-500 quick-icon">add_shopping_cart</span>
+                <h3>New Request</h3>
+                <p>Create a new procurement request.</p>
+            </a>
+            <a routerLink="/procurement/requests" class="quick-card">
+                <span class="material-symbols-outlined text-primary-500 quick-icon">list_alt</span>
+                <h3>Requests List</h3>
+                <p>Manage all procurement requests.</p>
+            </a>
+            <a routerLink="/procurement/invoice-management" class="quick-card">
+                <span class="material-symbols-outlined text-primary-500 quick-icon">receipt_long</span>
+                <h3>Invoices</h3>
+                <p>Verify invoices and approve payments.</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="dashboard-section">
+        <h2>Recent Procurement Activities</h2>
+        <div class="activity-card">
+            <div class="activity-item" *ngFor="let activity of recentActivities">
+                <span class="material-symbols-outlined">check_circle</span>
+                <span>{{ activity.message }}</span>
+            </div>
+        </div>
+    </div>
+</div>

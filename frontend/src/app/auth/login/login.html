@@ -1,0 +1,81 @@
+<div class="login-page">
+    <div class="left-panel">
+        <div class="branding">
+            <div class="branding-logo">
+                <span class="material-symbols-outlined branding-icon">dashboard_customize</span>
+                <h1>VRIP</h1>
+            </div>
+            <h2>Vendor Reliability<br>Intelligence Platform</h2>
+            <p>AI-powered platform for evaluating vendors, monitoring procurement performance and managing enterprise supplier relationships.</p>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="login-container">
+            <app-card [noPadding]="true">
+                <div class="login-card-content">
+                    <div class="login-header">
+                        <h1>Welcome Back 👋</h1>
+                        <p>Sign in to continue to your dashboard.</p>
+                    </div>
+
+                    <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login()">
+                        <app-input
+                            label="Email Address"
+                            type="email"
+                            placeholder="Enter your email"
+                            iconLeft="mail"
+                            formControlName="email"
+                            [error]="(loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')) ? 'Email is required.' : 
+                                    (loginForm.get('email')?.touched && loginForm.get('email')?.hasError('email')) ? 'Enter a valid email address.' : undefined"
+                        ></app-input>
+
+                        <app-input
+                            label="Password"
+                            [type]="hidePassword ? 'password' : 'text'"
+                            placeholder="Enter your password"
+                            iconLeft="lock"
+                            formControlName="password"
+                            [error]="(loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')) ? 'Password is required.' : 
+                                    (loginForm.get('password')?.touched && loginForm.get('password')?.hasError('minlength')) ? 'Password must be at least 8 characters.' : undefined"
+                        ></app-input>
+
+                        <div class="password-toggle" (click)="togglePassword()">
+                            {{ hidePassword ? 'Show Password' : 'Hide Password' }}
+                        </div>
+
+                        <div class="options">
+                            <label class="remember-me">
+                                <input type="checkbox" formControlName="rememberMe">
+                                <span>Remember Me</span>
+                            </label>
+                            <a routerLink="/forgot-password" class="forgot-password">Forgot Password?</a>
+                        </div>
+
+                        <div class="error-box" *ngIf="errorMessage">
+                            <span class="material-symbols-outlined">error</span>
+                            {{ errorMessage }}
+                        </div>
+
+                        <app-button
+                            type="submit"
+                            variant="primary"
+                            [block]="true"
+                            [loading]="loading">
+                            {{ loading ? 'Signing In...' : 'LOGIN' }}
+                        </app-button>
+                    </form>
+
+                    <div class="divider">
+                        <span>OR</span>
+                    </div>
+
+                    <p class="register-text">
+                        Don't have an account?
+                        <a routerLink="/register">Create Account</a>
+                    </p>
+                </div>
+            </app-card>
+        </div>
+    </div>
+</div>

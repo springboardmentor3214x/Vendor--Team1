@@ -1,0 +1,94 @@
+<div class="invoice-container">
+    <div class="page-header">
+        <div>
+            <h1>Invoice Management</h1>
+            <p>Manage and process payments for procurement invoices.</p>
+        </div>
+        <app-button variant="outline" iconLeft="download" (onClick)="exportCSV()">
+            Export Report
+        </app-button>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+        <div class="vrip-stat-card border-primary">
+            <div class="stat-header">
+                <h3>Total Invoices</h3>
+                <span class="material-symbols-outlined text-primary-600">receipt_long</span>
+            </div>
+            <h1>3</h1>
+            <p class="text-primary">All time</p>
+        </div>
+        <div class="vrip-stat-card border-warning">
+            <div class="stat-header">
+                <h3>Pending Approval</h3>
+                <span class="material-symbols-outlined text-warning-600">pending_actions</span>
+            </div>
+            <h1>1</h1>
+            <p class="text-warning">₹50,000 Total</p>
+        </div>
+        <div class="vrip-stat-card border-danger">
+            <div class="stat-header">
+                <h3>Overdue</h3>
+                <span class="material-symbols-outlined text-danger-600">warning</span>
+            </div>
+            <h1>1</h1>
+            <p class="text-danger">Action Required</p>
+        </div>
+        <div class="vrip-stat-card border-success">
+            <div class="stat-header">
+                <h3>Paid</h3>
+                <span class="material-symbols-outlined text-success-600">check_circle</span>
+            </div>
+            <h1>1</h1>
+            <p class="text-success">₹2,50,000 Total</p>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <app-table 
+            [columns]="columns" 
+            [data]="invoices"
+            [hasToolbar]="true"
+            [pagination]="true"
+            [searchable]="true">
+            
+            <ng-template let-row>
+                <td>
+                    <strong>{{ row.invoiceNumber }}</strong>
+                </td>
+                <td>
+                    <a [routerLink]="['/procurement/purchase-order', row.id]" class="link-styled">{{ row.poNumber }}</a>
+                </td>
+                <td>
+                    {{ row.vendorName }}
+                </td>
+                <td>
+                    <strong>₹{{ row.amount | number }}</strong>
+                </td>
+                <td>
+                    {{ row.issueDate }}
+                </td>
+                <td>
+                    {{ row.dueDate }}
+                </td>
+                <td>
+                    <app-badge [variant]="getBadgeVariant(row.status)">
+                        {{ row.status }}
+                    </app-badge>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <app-button variant="success" size="sm" iconLeft="payments" (onClick)="processPayment(row.id)" *ngIf="row.status !== 'Paid'" title="Process Payment">
+                            Pay
+                        </app-button>
+                        <app-button variant="outline" size="sm" iconLeft="download" (onClick)="downloadInvoice(row.id)" title="Download Invoice">
+                            PDF
+                        </app-button>
+                    </div>
+                </td>
+            </ng-template>
+            
+        </app-table>
+    </div>
+</div>

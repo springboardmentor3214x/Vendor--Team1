@@ -1,0 +1,99 @@
+<div class="dashboard">
+    <div class="dashboard-header">
+        <div>
+            <h1>Dashboard</h1>
+            <p>Welcome to Vendor Reliability Intelligence Platform</p>
+        </div>
+        <app-button variant="primary" iconLeft="refresh" (onClick)="refresh()">
+            Refresh
+        </app-button>
+    </div>
+
+    <!-- Statistics -->
+    <app-dashboard-cards></app-dashboard-cards>
+
+    <!-- Business Modules -->
+    <div class="modules-section">
+        <div class="section-header">
+            <h2>Business Modules</h2>
+        </div>
+        <div class="modules-grid">
+            <a routerLink="/vendors" class="module-card">
+                <div class="module-icon bg-primary-100 text-primary-600">
+                    <span class="material-symbols-outlined">groups</span>
+                </div>
+                <h3>Vendor Management</h3>
+                <p>Manage vendors, approvals and vendor profiles.</p>
+            </a>
+
+            <a routerLink="/procurement-dashboard" class="module-card">
+                <div class="module-icon bg-indigo-100 text-indigo-600">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                </div>
+                <h3>Procurement Management</h3>
+                <p>Create procurement requests and purchase orders.</p>
+            </a>
+
+            <a routerLink="/supply-chain-dashboard" class="module-card">
+                <div class="module-icon bg-emerald-100 text-emerald-600">
+                    <span class="material-symbols-outlined">local_shipping</span>
+                </div>
+                <h3>Supply Chain</h3>
+                <p>Track deliveries and logistics.</p>
+            </a>
+
+            <a routerLink="/finance-dashboard" class="module-card">
+                <div class="module-icon bg-amber-100 text-amber-600">
+                    <span class="material-symbols-outlined">account_balance_wallet</span>
+                </div>
+                <h3>Finance</h3>
+                <p>Verify invoices and approve payments.</p>
+            </a>
+
+            <div class="module-card disabled">
+                <div class="module-icon bg-slate-100 text-slate-500">
+                    <span class="material-symbols-outlined">analytics</span>
+                </div>
+                <h3>Analytics</h3>
+                <p>Coming in Module 4.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Vendors -->
+    <div class="recent-vendors">
+        <div class="section-header">
+            <h2>Recent Vendors</h2>
+        </div>
+        
+        <div class="table-container">
+            <app-table 
+                [columns]="columns" 
+                [data]="recentVendors"
+                [hasToolbar]="false"
+                [pagination]="false"
+                [searchable]="false">
+                
+                <ng-template let-row>
+                    <td>
+                        <div class="vendor-name">{{ row.name }}</div>
+                    </td>
+                    <td>
+                        <span class="category-text">{{ row.category }}</span>
+                    </td>
+                    <td>
+                        <div class="rating-badge">
+                            {{ row.rating }}
+                        </div>
+                    </td>
+                    <td>
+                        <app-badge [variant]="getBadgeVariant(row.status)">
+                            {{ row.status }}
+                        </app-badge>
+                    </td>
+                </ng-template>
+                
+            </app-table>
+        </div>
+    </div>
+</div>

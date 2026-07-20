@@ -1,0 +1,88 @@
+<div class="tracking-container">
+    <div class="page-header print-hide">
+        <div>
+            <div class="header-breadcrumb">
+                <a [routerLink]="['/procurement/purchase-order', poId]">Purchase Order</a>
+                <span class="material-symbols-outlined icon-sm">chevron_right</span>
+                <span>Track Order</span>
+            </div>
+            <h1>Track Shipment: PO-84{{ poId || 92 }}</h1>
+            <p>Real-time delivery tracking for your procurement order.</p>
+        </div>
+        <div class="header-actions">
+            <app-button variant="outline" iconLeft="print" (onClick)="printTracking()">
+                Print Details
+            </app-button>
+        </div>
+    </div>
+
+    <!-- Delay Warning -->
+    <div *ngIf="isDelayed" class="error-box print-hide" style="margin-bottom: var(--vrip-space-4); background-color: rgba(255, 149, 0, 0.1); color: #ff9500; padding: var(--vrip-space-3); border-radius: var(--vrip-radius-md); border: 1px solid rgba(255, 149, 0, 0.2); display: flex; align-items: center; gap: var(--vrip-space-2);">
+        <span class="material-symbols-outlined">warning</span>
+        <span>Warning: This delivery is delayed past its expected delivery date.</span>
+    </div>
+
+    <!-- Print Header -->
+    <div class="print-show print-header">
+        <h1>SHIPMENT TRACKING</h1>
+        <p>PO Number: PO-84{{ poId || 92 }}</p>
+        <p>Tracking #: {{ trackingData.trackingNumber }}</p>
+    </div>
+
+    <div class="details-grid">
+        <div class="main-column">
+            <app-card title="Shipment Details" icon="local_shipping">
+                <div class="info-grid">
+                    <div class="info-group">
+                        <label>Tracking Number</label>
+                        <p class="tracking-number">{{ trackingData.trackingNumber }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Carrier</label>
+                        <p>{{ trackingData.carrier }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Shipping Method</label>
+                        <p>{{ trackingData.shippingMethod }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Est. Delivery Date</label>
+                        <p class="text-primary-700 font-bold">{{ trackingData.estimatedDelivery }}</p>
+                    </div>
+                    <div class="info-group full-width mt-4">
+                        <label>Origin</label>
+                        <p>{{ trackingData.origin }}</p>
+                    </div>
+                    <div class="info-group full-width mt-2">
+                        <label>Destination</label>
+                        <p>{{ trackingData.destination }}</p>
+                    </div>
+                </div>
+            </app-card>
+            
+            <app-card title="Delivery Progress" icon="map" class="print-hide">
+                <div class="map-placeholder">
+                    <div class="map-overlay">
+                        <span class="material-symbols-outlined">map</span>
+                        <p>Interactive Map Available in Production</p>
+                    </div>
+                </div>
+            </app-card>
+        </div>
+
+        <div class="side-column">
+            <app-card title="Tracking Updates" icon="list_alt">
+                <div class="vertical-timeline">
+                    <div class="v-step" *ngFor="let event of events" [class.completed]="event.completed">
+                        <div class="v-indicator"></div>
+                        <div class="v-content">
+                            <h4>{{ event.status }}</h4>
+                            <p class="v-location">{{ event.location }}</p>
+                            <p class="v-date">{{ event.date }}</p>
+                        </div>
+                    </div>
+                </div>
+            </app-card>
+        </div>
+    </div>
+</div>

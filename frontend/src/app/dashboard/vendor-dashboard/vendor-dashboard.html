@@ -1,0 +1,113 @@
+<div class="vendor-dashboard">
+    <div class="dashboard-header">
+        <div>
+            <h1>Vendor Dashboard</h1>
+            <p>Welcome back! Here's an overview of your vendor account.</p>
+        </div>
+        <app-button variant="primary" iconLeft="refresh" (onClick)="refresh()">
+            Refresh
+        </app-button>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="cards-grid">
+        <div class="vrip-stat-card border-primary">
+            <div class="stat-header">
+                <h3>My Orders</h3>
+                <span class="material-symbols-outlined text-primary-600">inventory_2</span>
+            </div>
+            <h1>12</h1>
+            <p class="text-primary"><span class="material-symbols-outlined icon-sm">sync</span> 2 Orders In Progress</p>
+        </div>
+
+        <div class="vrip-stat-card border-success">
+            <div class="stat-header">
+                <h3>Pending Payments</h3>
+                <span class="material-symbols-outlined text-success-600">payments</span>
+            </div>
+            <h1>₹1.25L</h1>
+            <p class="text-warning"><span class="material-symbols-outlined icon-sm">schedule</span> Awaiting Approval</p>
+        </div>
+
+        <div class="vrip-stat-card border-warning">
+            <div class="stat-header">
+                <h3>Documents</h3>
+                <span class="material-symbols-outlined text-warning-600">description</span>
+            </div>
+            <h1>8</h1>
+            <p class="text-success"><span class="material-symbols-outlined icon-sm">check_circle</span> All Documents Updated</p>
+        </div>
+
+        <div class="vrip-stat-card border-purple">
+            <div class="stat-header">
+                <h3>Vendor Rating</h3>
+                <span class="material-symbols-outlined text-purple-600">star</span>
+            </div>
+            <h1>4.8</h1>
+            <p class="text-success"><span class="material-symbols-outlined icon-sm">thumb_up</span> Excellent Performance</p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <div class="section-header">
+            <h2>Quick Actions</h2>
+        </div>
+        <div class="actions-grid">
+            <a class="action-card" routerLink="/profile">
+                <div class="icon bg-indigo-100 text-indigo-600"><span class="material-symbols-outlined">person</span></div>
+                <h3>My Profile</h3>
+                <p>View and update your profile information.</p>
+            </a>
+
+            <a class="action-card" routerLink="/vendors/add" fragment="documents">
+                <div class="icon bg-emerald-100 text-emerald-600"><span class="material-symbols-outlined">folder_open</span></div>
+                <h3>Upload Documents</h3>
+                <p>Upload GST, PAN and other vendor documents.</p>
+            </a>
+            
+            <div class="action-card">
+                <div class="icon bg-amber-100 text-amber-600"><span class="material-symbols-outlined">inventory_2</span></div>
+                <h3>My Orders</h3>
+                <p>Coming Soon...</p>
+            </div>
+
+            <div class="action-card">
+                <div class="icon bg-slate-100 text-slate-500"><span class="material-symbols-outlined">receipt_long</span></div>
+                <h3>My Invoices</h3>
+                <p>Coming Soon...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="recent-activities">
+        <div class="section-header">
+            <h2>Recent Activities</h2>
+        </div>
+        <div class="table-container">
+            <app-table 
+                [columns]="columns" 
+                [data]="recentActivities"
+                [hasToolbar]="false"
+                [pagination]="false"
+                [searchable]="false">
+                
+                <ng-template let-row>
+                    <td>
+                        <div class="date-text">{{ row.date }}</div>
+                    </td>
+                    <td>
+                        <div class="activity-text">{{ row.activity }}</div>
+                    </td>
+                    <td>
+                        <app-badge [variant]="getBadgeVariant(row.status)">
+                            {{ row.status }}
+                        </app-badge>
+                    </td>
+                </ng-template>
+                
+            </app-table>
+        </div>
+    </div>
+</div>
