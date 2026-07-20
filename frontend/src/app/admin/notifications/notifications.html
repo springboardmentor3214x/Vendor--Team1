@@ -1,0 +1,80 @@
+<div class="page-container">
+    <div class="page-vrip-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1 class="vrip-page-title">Notifications & Direct Messaging</h1>
+            <p>System alert hub and direct communication platform for all registered application users.</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <app-button *ngIf="canRunBackgroundChecks" variant="outline" iconLeft="sync" (onClick)="triggerChecks()" [disabled]="isChecking">
+                {{ isChecking ? 'Checking...' : 'Run Auto-Checks' }}
+            </app-button>
+            <app-button variant="outline" iconLeft="done_all" (onClick)="markAllRead()">Mark All Read</app-button>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">
+        <button
+            (click)="activeTab = 'notifications'"
+            [ngStyle]="{
+                'padding': '10px 20px',
+                'border': 'none',
+                'background': 'none',
+                'font-size': '1rem',
+                'font-weight': '600',
+                'cursor': 'pointer',
+                'color': activeTab === 'notifications' ? '#2563eb' : '#64748b',
+                'border-bottom': activeTab === 'notifications' ? '3px solid #2563eb' : 'none'
+            }">
+            <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 6px;">notifications</span>
+            System Alerts & Notifications
+        </button>
+
+        <button
+            (click)="activeTab = 'direct_messaging'"
+            [ngStyle]="{
+                'padding': '10px 20px',
+                'border': 'none',
+                'background': 'none',
+                'font-size': '1rem',
+                'font-weight': '600',
+                'cursor': 'pointer',
+                'color': activeTab === 'direct_messaging' ? '#2563eb' : '#64748b',
+                'border-bottom': activeTab === 'direct_messaging' ? '3px solid #2563eb' : 'none'
+            }">
+            <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 6px;">mark_chat_read</span>
+            Direct User Messaging
+        </button>
+    </div>
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+  </div>
+</div>
