@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 14 Jul - Add the static asset folders with database bootstrap
 - 15 Jul - Extend the vendor categories with supplier ranking fields
 - 16 Jul - Refine expected versus actual dates in order tracking
 - 17 Jul - Extend invoice with payment tracking fields
 - 18 Jul - Extend invoice with tax and net amount split
 - 19 Jul - Refine status history tracking in procurement
+- 20 Jul - Tighten expected versus actual dates in order tracking
