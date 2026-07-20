@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
+
 from app.database.connection import get_db
 from app.schemas.order_tracking import OrderTrackingResponse, OrderTrackingUpdate
 from app.services import order_tracking_service
@@ -10,6 +11,7 @@ from app.core.vendor_scope import assert_owns, restrict_to_vendor
 from app.models.user import User
 
 router = APIRouter(prefix="/order-tracking", tags=["Order Tracking"])
+
 
 @router.get("/", response_model=List[OrderTrackingResponse])
 def list_tracking(
@@ -21,6 +23,7 @@ def list_tracking(
         order_tracking_service.get_all_tracking(db),
         "order tracking records"
     )
+
 
 @router.get("/{po_id}", response_model=OrderTrackingResponse)
 def get_tracking(
@@ -35,35 +38,18 @@ def get_tracking(
     return tracking
 
 
-def _pending_order_tracking_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+@router.put("/{po_id}", response_model=OrderTrackingResponse)
+def update_tracking(
+    po_id: int,
+    data: OrderTrackingUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.SUPPLY_CHAIN_MANAGER, Roles.PROCUREMENT_MANAGER, Roles.VENDOR]))
+):
+    existing = order_tracking_service.get_tracking_by_po(db, po_id)
+    if existing:
+        assert_owns(db, current_user, existing.vendor_id, "order tracking records")
 
-
-def _pending_order_tracking_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
-
-
-def _pending_order_tracking_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+    updated = order_tracking_service.update_tracking_status(db, po_id, data, user_name=current_user.name)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Purchase Order not found")
+    return updated
