@@ -28,11 +28,8 @@
 }
 
 .vrip-btn-sm  { height: 32px; padding: 0 12px; font-size: 0.75rem; border-radius: var(--v-radius-sm); }
-
 .vrip-btn-md  { height: 36px; padding: 0 14px; }
-
 .vrip-btn-lg  { height: 40px; padding: 0 18px; font-size: 0.875rem; }
-
 .vrip-btn-icon-only { width: 36px; height: 36px; padding: 0; }
 
 .vrip-btn-primary {
@@ -40,12 +37,10 @@
   color: var(--v-text-inverse);
   box-shadow: var(--v-shadow-xs), inset 0 1px 0 rgba(255,255,255,0.12);
 }
-
 .vrip-btn-primary:hover {
   background: var(--v-brand-hover);
   box-shadow: var(--v-shadow-sm), inset 0 1px 0 rgba(255,255,255,0.12);
 }
-
 .vrip-btn-primary:active {
   background: #4338CA;
 }
@@ -56,7 +51,6 @@
   border-color: var(--v-border);
   box-shadow: var(--v-shadow-xs);
 }
-
 .vrip-btn-secondary:hover {
   background: var(--v-bg-inset);
   border-color: var(--v-border-hover);
@@ -67,7 +61,6 @@
   color: var(--v-text-secondary);
   border-color: var(--v-border);
 }
-
 .vrip-btn-outline:hover {
   background: var(--v-bg-inset);
   color: var(--v-text-primary);
@@ -78,26 +71,42 @@
   background: transparent;
   color: var(--v-text-secondary);
 }
-
 .vrip-btn-ghost:hover {
   background: var(--v-bg-inset);
   color: var(--v-text-primary);
 }
 
-.placeholder-panel {
-  padding: 12px;
-  border: 1px dashed #d2d2d2;
-  border-radius: 5px;
-  color: #7a7a7a;
+.vrip-btn-danger {
+  background: var(--v-danger);
+  color: var(--v-text-inverse);
+  box-shadow: var(--v-shadow-xs);
+}
+.vrip-btn-danger:hover {
+  background: #B91C1C;
 }
 
-.placeholder-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
+.vrip-btn-success {
+  background: var(--v-success);
+  color: var(--v-text-inverse);
+  box-shadow: var(--v-shadow-xs);
+}
+.vrip-btn-success:hover {
+  background: #047857;
 }
 
-.placeholder-row span {
-  font-size: 13px;
-  letter-spacing: 0.2px;
+.vrip-btn-text {
+  background: transparent;
+  color: var(--v-brand);
+  padding: 0;
+  height: auto;
 }
+.vrip-btn-text:hover {
+  color: var(--v-brand-hover);
+}
+
+.vrip-button .material-symbols-outlined {
+  font-size: 16px;
+  font-variation-settings: 'wght' 500, 'opsz' 20;
+}
+
+.spinner { animation: v-spin 0.7s linear infinite; }
