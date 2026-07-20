@@ -1,0 +1,64 @@
+<div class="assignment-container">
+    <div class="page-header">
+        <div>
+            <div class="header-breadcrumb">
+                <a routerLink="/procurement/requests">Procurement Requests</a>
+                <span class="material-symbols-outlined icon-sm">chevron_right</span>
+                <span>Assign Vendor</span>
+            </div>
+            <h1>Assign Vendor for PR-102{{ requestId || 4 }}</h1>
+            <p>Select an approved vendor from the list below to fulfill this procurement request.</p>
+        </div>
+        <div class="header-actions">
+            <app-button variant="outline" iconLeft="arrow_back" routerLink="/procurement/requests">
+                Back to List
+            </app-button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <app-table 
+            [columns]="columns" 
+            [data]="vendors"
+            [hasToolbar]="true"
+            [pagination]="true"
+            [searchable]="true">
+            
+            <ng-template let-row>
+                <td>
+                    <strong>{{ row.name }}</strong>
+                </td>
+                <td>
+                    {{ row.category }}
+                </td>
+                <td>
+                    {{ row.contactPerson }}
+                </td>
+                <td>
+                    <div class="score-container">
+                        <app-badge [variant]="getBadgeVariant(row.reliabilityScore)">
+                            {{ row.reliabilityScore }}%
+                        </app-badge>
+                    </div>
+                </td>
+                <td>
+                    <div class="rating">
+                        <span class="material-symbols-outlined star-icon">star</span>
+                        {{ row.deliveryRating }} / 5.0
+                    </div>
+                </td>
+                <td>
+                    <app-badge variant="success">
+                        {{ row.status }}
+                    </app-badge>
+                </td>
+                <td>
+                    <app-button variant="primary" size="sm" iconLeft="how_to_reg" (onClick)="assignVendor(row)">
+                        Assign Vendor
+                    </app-button>
+                </td>
+            </ng-template>
+            
+        </app-table>
+    </div>
+</div>
