@@ -28,34 +28,80 @@ export class PurchaseOrderDetails implements OnInit {
   isLoading = true;
   selectedStatus = '';
   errorMsg = '';
+
   statusOptions = ['Issued', 'In Transit', 'Delivered', 'Completed', 'Cancelled'];
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private procurementService: ProcurementService
   ) {}
+
   ngOnInit(): void {
     this.poId = this.route.snapshot.paramMap.get('id');
     if (this.poId) {
       this.loadPO(this.poId);
     }
   }
-}
 
-const PLACEHOLDER_PURCHASE_ORDER_DETAILS_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderPurchaseOrderDetails(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_PURCHASE_ORDER_DETAILS_ROWS;
+  loadPO(id: string): void {
+    this.isLoading = true;
+    this.procurementService.getPurchaseOrderById(id).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        this.po = res;
+        this.selectedStatus = res.status || 'Issued';
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Error fetching PO details', err);
+        this.po = null;
+      }
+    });
   }
-  return rows.filter((row) => !!row);
+
+  getBadgeVariant(status: string): 'success' | 'warning' | 'primary' | 'danger' | 'default' {
+    if (status === 'Completed' || status === 'Delivered') return 'success';
+    if (status === 'Issued' || status === 'In Transit') return 'primary';
+    if (status === 'Pending') return 'warning';
+    if (status === 'Cancelled') return 'danger';
+    return 'default';
+  }
+
+  updateStatus(): void {
+    if (!this.poId || !this.selectedStatus) return;
+    if (confirm(`Update Purchase Order status to '${this.selectedStatus}'?`)) {
+      this.procurementService.updatePOStatus(this.poId, this.selectedStatus).subscribe({
+        next: (res) => {
+          alert(`Status updated to ${res.status || this.selectedStatus}`);
+          this.loadPO(this.poId!);
+        },
+        error: (err) => alert('Failed to update status: ' + (err.error?.detail || err.message))
+      });
+    }
+  }
+
+  printPO(): void {
+    window.print();
+  }
+
+  downloadPDF(): void {
+    if (!this.poId) {
+      return;
+    }
+
+    this.procurementService.downloadPurchaseOrderPdf(this.poId).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${this.po?.po_number || 'purchase-order'}.pdf`;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+      },
+      error: () => {
+        this.errorMsg = 'The purchase order PDF could not be generated.';
+      }
+    });
+  }
 }

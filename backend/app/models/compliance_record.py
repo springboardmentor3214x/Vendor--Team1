@@ -8,3 +8,4 @@ class ComplianceRecord(Base):
     vendor_id = Column(Integer, ForeignKey("vendors.id"), nullable=False)
     compliance_type = Column(String(100), nullable=False)
     status = Column(String(50), default="Pending Verification")
+    verified_by = Column(String(100), nullable=True)

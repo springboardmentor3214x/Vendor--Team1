@@ -2,12 +2,21 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AdminDashboard } from './admin-dashboard';
 
-const PLACEHOLDER_ADMIN_DASHBOARD_SPEC_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-];
+describe('AdminDashboard', () => {
+  let component: AdminDashboard;
+  let fixture: ComponentFixture<AdminDashboard>;
 
-function usePlaceholderAdminDashboardSpec(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_ADMIN_DASHBOARD_SPEC_ROWS;
-}
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AdminDashboard],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(AdminDashboard);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
