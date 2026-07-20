@@ -1,0 +1,24 @@
+<button
+  class="vrip-button"
+  [ngClass]="[
+    'vrip-button-' + variant,
+    'vrip-button-' + size,
+    block ? 'vrip-button-block' : '',
+    iconOnly ? 'vrip-button-icon-only' : ''
+  ]"
+  [disabled]="disabled || loading"
+  [type]="type"
+  (click)="onClick($event)">
+  
+  <span class="vrip-button-icon" *ngIf="icon && !loading">
+    <span class="material-symbols-outlined">{{ icon }}</span>
+  </span>
+  
+  <span class="vrip-button-spinner material-symbols-outlined" *ngIf="loading">
+    progress_activity
+  </span>
+
+  <span class="vrip-button-content" *ngIf="!iconOnly">
+    <ng-content></ng-content>
+  </span>
+</button>

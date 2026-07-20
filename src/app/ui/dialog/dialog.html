@@ -1,0 +1,18 @@
+<div class="vrip-dialog-backdrop" *ngIf="isOpen" (click)="closeOnBackdrop && close()">
+  <div class="vrip-dialog" (click)="$event.stopPropagation()" [ngStyle]="{'max-width': maxWidth}">
+    <div class="vrip-dialog-header">
+      <h3 class="vrip-dialog-title">{{ title }}</h3>
+      <button class="vrip-dialog-close" (click)="close()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    
+    <div class="vrip-dialog-content">
+      <ng-content></ng-content>
+    </div>
+    
+    <div class="vrip-dialog-footer" *ngIf="showFooter">
+      <ng-content select="[dialog-actions]"></ng-content>
+    </div>
+  </div>
+</div>

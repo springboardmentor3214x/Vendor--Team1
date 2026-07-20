@@ -1,0 +1,12 @@
+<div class="vrip-global-search">
+  <span class="material-symbols-outlined search-icon">search</span>
+  <input 
+    type="text" 
+    [placeholder]="placeholder" 
+    [value]="value"
+    (input)="onInput($event)"
+    class="search-input">
+  <button *ngIf="value" class="clear-btn" (click)="clear()">
+    <span class="material-symbols-outlined">close</span>
+  </button>
+</div>

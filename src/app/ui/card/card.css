@@ -1,0 +1,57 @@
+.vrip-card {
+  background: var(--vrip-glass-bg);
+  backdrop-filter: var(--vrip-glass-blur);
+  -webkit-backdrop-filter: var(--vrip-glass-blur);
+  border: 1px solid var(--vrip-glass-border);
+  border-radius: var(--vrip-radius-lg);
+  box-shadow: var(--vrip-shadow-card);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  height: 100%;
+}
+
+.vrip-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--vrip-glass-shadow-hover);
+  border-color: var(--vrip-glass-border-highlight);
+}
+
+.vrip-card-header {
+  padding: var(--vrip-space-5) var(--vrip-space-6);
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+}
+
+.vrip-card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--vrip-neutral-900);
+  margin-bottom: 0.15rem;
+  letter-spacing: -0.01em;
+}
+
+.vrip-card-subtitle {
+  font-size: 0.875rem;
+  color: var(--vrip-neutral-500);
+  margin: 0;
+  font-weight: 400;
+}
+
+.vrip-card-content {
+  padding: var(--vrip-space-6);
+  flex-grow: 1;
+}
+
+.vrip-card-content.no-padding {
+  padding: 0;
+}
+
+.vrip-card-actions {
+  display: flex;
+  gap: var(--vrip-space-3);
+}
