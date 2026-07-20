@@ -115,6 +115,7 @@ def get_conversations(
 class MarkReadRequest(BaseModel):
     message_ids: Optional[List[int]] = None
     vendor_id: Optional[int] = None
+    discussion_id: Optional[int] = None
 
 @router.post("/messages/mark-read")
 def mark_messages_read(
@@ -132,15 +133,48 @@ def mark_messages_read(
         user_name=current_user.name
     )
 
+@router.get("/messages/unread-count")
+def unread_message_count(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    vendor_id = None
+    if current_user.role == Roles.VENDOR:
+        from app.models.vendor import Vendor
+        from sqlalchemy import func
+        vendor = db.query(Vendor).filter(func.lower(Vendor.email) == current_user.email.lower()).first()
+        vendor_id = vendor.id if vendor else None
+    return {"unread_count": communication_service.get_unread_message_count(db, current_user.id, vendor_id)}
+
+@router.post("/discussions", response_model=DiscussionResponse, status_code=201)
+def create_discussion(
+    data: DiscussionCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return communication_service.create_discussion(db, data, current_user.name, user_id=current_user.id)
+
+@router.get("/discussions", response_model=List[DiscussionResponse])
+def list_discussions(
+    vendor_id: Optional[int] = Query(None),
+    po_id: Optional[int] = Query(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    own_vendor_id = get_vendor_id_for_user(db, current_user)
+    if own_vendor_id is not None:
+        vendor_id = own_vendor_id
+    return communication_service.get_discussions(db, vendor_id, po_id)
+
 
 def _pending_communication_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -150,8 +184,6 @@ def _pending_communication_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -160,9 +192,9 @@ def _pending_communication_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -172,8 +204,6 @@ def _pending_communication_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -182,9 +212,9 @@ def _pending_communication_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -194,8 +224,6 @@ def _pending_communication_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -204,9 +232,9 @@ def _pending_communication_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -216,8 +244,6 @@ def _pending_communication_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -226,9 +252,9 @@ def _pending_communication_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -238,6 +264,16 @@ def _pending_communication_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
+
+
+def _pending_communication_rows_6(items):
+    rows = []
+    for item in items:
+        rows.append({
+            "id": getattr(item, "id", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
+        })
+    return rows
