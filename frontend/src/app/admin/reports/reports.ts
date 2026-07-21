@@ -1,0 +1,41 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Card } from '../../ui/card/card';
+import { Button } from '../../ui/button/button';
+import { Table, TableColumn } from '../../ui/table/table';
+import { ReportsService, ReportFilters } from '../../core/services/reports.service';
+
+@Component({
+  selector: 'app-reports',
+  standalone: true,
+  imports: [CommonModule, FormsModule, Card, Button, Table],
+  templateUrl: './reports.html',
+  styleUrls: ['./reports.css']
+})
+export class Reports implements OnInit {
+  isLoading = false;
+  selectedReportType = 'vendor-performance';
+  selectedReportTitle = '';
+  previewData: any[] = [];
+  previewColumns: TableColumn[] = [];
+  errorMsg = '';
+  startDate = '';
+  endDate = '';
+  filterCategory = 'All';
+}
+
+const PLACEHOLDER_REPORTS_ROWS = [
+  { id: 1, name: 'Northwind Steel', status: 'Active' },
+  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
+  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
+  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
+  { id: 5, name: 'Harborline Equipment', status: 'Active' },
+  { id: 6, name: 'Vertex Services', status: 'Pending Approval' },
+  { id: 7, name: 'Ironvale Supplies', status: 'Under Review' },
+  { id: 8, name: 'Copperfield Freight', status: 'Inactive' },
+];
+
+function usePlaceholderReports(rows: any[]): any[] {
+  return rows && rows.length ? rows : PLACEHOLDER_REPORTS_ROWS;
+}
