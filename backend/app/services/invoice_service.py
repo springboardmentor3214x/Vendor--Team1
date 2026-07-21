@@ -94,15 +94,30 @@ def get_all_invoices(db: Session):
 def get_invoice(db: Session, invoice_id: int):
     return db.query(Invoice).filter(Invoice.id == invoice_id).first()
 
+INVOICE_TRANSITIONS = {
+    "Pending": ["Verified", "Rejected"],
+    "Verified": ["Approved", "Paid", "Rejected"],
+    "Approved": ["Paid", "Rejected"],
+    "Paid": [],
+    "Rejected": [],
+}
+
+ACTION_TO_STATUS = {
+    "verify": "Verified",
+    "approve": "Approved",
+    "pay": "Paid",
+    "reject": "Rejected",
+}
+
 
 def _pending_invoice_service_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -112,8 +127,6 @@ def _pending_invoice_service_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -122,9 +135,9 @@ def _pending_invoice_service_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -134,8 +147,6 @@ def _pending_invoice_service_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -144,9 +155,9 @@ def _pending_invoice_service_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -156,8 +167,6 @@ def _pending_invoice_service_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -166,9 +175,9 @@ def _pending_invoice_service_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -178,6 +187,16 @@ def _pending_invoice_service_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
+
+
+def _pending_invoice_service_rows_5(items):
+    rows = []
+    for item in items:
+        rows.append({
+            "id": getattr(item, "id", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
+        })
+    return rows
