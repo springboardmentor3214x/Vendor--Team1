@@ -11,36 +11,114 @@
          style="padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
         {{ errorMsg }}
     </div>
-</div>
 
-<div class="placeholder-panel">
-  <p>Sample rows shown until the API is ready.</p>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
+    <ng-container *ngIf="!loading && contract">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--vrip-space-6);">
+            <div>
+                <h1 class="vrip-page-title" style="margin: 0;">{{ contract.contract_title }}</h1>
+                <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px;">
+                    <strong>{{ contract.contract_number || '—' }}</strong>
+                    <app-badge [variant]="statusVariant(effectiveStatus)">{{ effectiveStatus }}</app-badge>
+                    <span *ngIf="daysToExpiry !== null" style="font-size: 0.875rem; color: var(--text-secondary);">
+                        {{ daysToExpiry < 0 ? 'Expired ' + (-daysToExpiry) + ' days ago' : daysToExpiry + ' days remaining' }}
+                    </span>
+                </div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <app-button *ngIf="contract.document_path" variant="outline" iconLeft="download" (onClick)="downloadDocument()">
+                    Signed Document
+                </app-button>
+                <app-button variant="primary" iconLeft="edit" (onClick)="edit()">Edit Contract</app-button>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: start;">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <app-card>
+                    <h3 style="margin: 0 0 16px 0; font-size: 1rem;">Contract Information</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="label">Vendor</span>
+                            <span class="value">{{ contract.vendor_name }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Contract Type</span>
+                            <span class="value">{{ contract.contract_type || '—' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Procurement Category</span>
+                            <span class="value">{{ contract.procurement_category || '—' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Responsible Manager</span>
+                            <span class="value">{{ contract.responsible_manager || '—' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Start Date</span>
+                            <span class="value">{{ contract.start_date }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">End Date</span>
+                            <span class="value">{{ contract.end_date }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Contract Value</span>
+                            <span class="value">₹{{ contract.contract_value | number:'1.2-2' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Payment Terms</span>
+                            <span class="value">{{ contract.payment_terms || '—' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Renewals</span>
+                            <span class="value">{{ contract.renewal_count || 0 }}</span>
+                        </div>
+                    </div>
+                </app-card>
+
+                <app-card>
+                    <h3 style="margin: 0 0 16px 0; font-size: 1rem;">Service Level Agreement</h3>
+                    <p style="margin: 0; line-height: 1.6; color: var(--text-secondary);">
+                        {{ contract.sla_details || 'No SLA details recorded.' }}
+                    </p>
+                </app-card>
+
+                <app-card>
+                    <h3 style="margin: 0 0 16px 0; font-size: 1rem;">Warranty Details</h3>
+                    <p style="margin: 0; line-height: 1.6; color: var(--text-secondary);">
+                        {{ contract.warranty_details || 'No warranty details recorded.' }}
+                    </p>
+                </app-card>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <app-card>
+                    <h3 style="margin: 0 0 16px 0; font-size: 1rem;">Linked Certifications</h3>
+                    <div *ngIf="certifications.length === 0" style="color: var(--text-secondary); font-size: 0.875rem;">
+                        No certifications recorded for this vendor.
+                    </div>
+                    <div *ngFor="let c of certifications"
+                         style="padding: 10px 0; border-bottom: 1px solid #f1f5f9;">
+                        <div style="font-weight: 600; font-size: 0.875rem;">{{ c.certification_name }}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                            {{ c.certificate_number }} · expires {{ c.expiry_date }}
+                        </div>
+                        <app-badge [variant]="statusVariant(c.status)">{{ c.status }}</app-badge>
+                    </div>
+                </app-card>
+
+                <app-card>
+                    <h3 style="margin: 0 0 16px 0; font-size: 1rem;">Compliance Status</h3>
+                    <div *ngIf="compliance.length === 0" style="color: var(--text-secondary); font-size: 0.875rem;">
+                        No compliance records for this vendor.
+                    </div>
+                    <div *ngFor="let r of compliance"
+                         style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9;">
+                        <span style="font-size: 0.875rem;">{{ r.compliance_type }}</span>
+                        <app-badge [variant]="statusVariant(r.status)">{{ r.status }}</app-badge>
+                    </div>
+                </app-card>
+            </div>
+        </div>
+    </ng-container>
 </div>
