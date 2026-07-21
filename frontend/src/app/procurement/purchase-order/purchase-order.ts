@@ -42,14 +42,17 @@ export class PurchaseOrder implements OnInit {
     paymentTerms: 'Net 30',
     status: 'Issued'
   };
+
   formError = '';
   isSubmitting = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private procurementService: ProcurementService,
     private authService: AuthService
   ) {}
+
   ngOnInit(): void {
     const prId = this.route.snapshot.queryParamMap.get('pr');
     const vendorId = this.route.snapshot.queryParamMap.get('vendor');
@@ -77,6 +80,7 @@ export class PurchaseOrder implements OnInit {
       this.loadVendor(Number(vendorId));
     }
   }
+
   loadVendor(vId: number): void {
     this.procurementService.getApprovedVendors().subscribe({
       next: (vendors) => {
@@ -90,27 +94,66 @@ export class PurchaseOrder implements OnInit {
       }
     });
   }
+
   get totalCost(): number {
     const subtotal = (this.poData.quantity || 0) * (this.poData.unitPrice || 0);
     const tax = Number(this.poData.tax_amount || 0);
     return subtotal + tax;
   }
-}
 
-const PLACEHOLDER_PURCHASE_ORDER_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderPurchaseOrder(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_PURCHASE_ORDER_ROWS;
+  validateForm(): boolean {
+    this.formError = '';
+    if (!this.poData.procurement_id || !this.poData.vendor_id) {
+      this.formError = 'Procurement Request and Vendor must be selected.';
+      return false;
+    }
+    if (!this.poData.expectedDeliveryDate) {
+      this.formError = 'Expected Delivery Date is required.';
+      return false;
+    }
+    return true;
   }
-  return rows.filter((row) => !!row);
+
+  generatePO(): void {
+    if (!this.validateForm()) return;
+
+    this.isSubmitting = true;
+    const currentUser: any = this.authService.getCurrentUser();
+
+    const payload = {
+      procurement_id: Number(this.poData.procurement_id),
+      vendor_id: Number(this.poData.vendor_id),
+      vendor_name: this.poData.vendorName,
+      vendor_address: this.poData.vendorAddress,
+      contact_person: this.poData.contactPerson,
+      item_name: this.poData.productDetails,
+      quantity: Number(this.poData.quantity),
+      unit_price: Number(this.poData.unitPrice),
+      tax_amount: Number(this.poData.tax_amount || 0),
+      shipping_address: this.poData.shippingAddress,
+      expected_delivery_date: this.poData.expectedDeliveryDate,
+      payment_terms: this.poData.paymentTerms,
+      approved_by: currentUser?.name || 'Procurement Manager'
+    };
+
+    this.procurementService.createPurchaseOrder(payload).subscribe({
+      next: (poRes) => {
+        this.isSubmitting = false;
+        alert(`Purchase Order ${poRes.po_number} generated successfully!`);
+        this.router.navigate([`/procurement/purchase-order/${poRes.id}`]);
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        this.formError = err.error?.detail || 'Failed to generate Purchase Order. Please try again.';
+      }
+    });
+  }
+
+  saveDraft(): void {
+    alert('Purchase Order draft saved.');
+  }
+
+  cancel(): void {
+    this.router.navigate(['/procurement/requests']);
+  }
 }
