@@ -1,0 +1,94 @@
+<div class="page-container">
+    <div class="page-header" style="margin-bottom: var(--vrip-space-6);">
+        <h1>Vendor Reliability & Risk</h1>
+        <p>Assess and mitigate risks associated with your suppliers.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--vrip-space-6); margin-bottom: var(--vrip-space-6);">
+        <app-card>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h3 style="margin: 0;">Risk Distribution</h3>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.875rem;">
+                        <span>Low Risk Vendors</span>
+                        <strong>65%</strong>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: var(--vrip-gray-200); border-radius: 4px; overflow: hidden;">
+                        <div style="width: 65%; height: 100%; background: #34c759;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.875rem;">
+                        <span>Medium Risk Vendors</span>
+                        <strong>25%</strong>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: var(--vrip-gray-200); border-radius: 4px; overflow: hidden;">
+                        <div style="width: 25%; height: 100%; background: #ffcc00;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.875rem;">
+                        <span>High Risk Vendors</span>
+                        <strong>10%</strong>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: var(--vrip-gray-200); border-radius: 4px; overflow: hidden;">
+                        <div style="width: 10%; height: 100%; background: #ff3b30;"></div>
+                    </div>
+                </div>
+            </div>
+        </app-card>
+        
+        <app-card [noPadding]="true">
+             <div style="padding: 20px 24px; border-bottom: 1px solid var(--border-color);">
+                <h3 style="margin: 0;">High Risk Alerts</h3>
+            </div>
+            <div style="padding: 0;">
+                <div style="padding: 16px 24px; border-bottom: 1px solid var(--border-color); display: flex; gap: 16px; align-items: center;">
+                    <span class="material-symbols-outlined" style="color: #ff3b30;">warning</span>
+                    <div>
+                        <strong style="display: block;">Apex Suppliers Ltd.</strong>
+                        <span style="font-size: 0.875rem; color: var(--text-secondary);">Financial instability detected in Q3 report.</span>
+                    </div>
+                </div>
+                <div style="padding: 16px 24px; display: flex; gap: 16px; align-items: center;">
+                    <span class="material-symbols-outlined" style="color: #ffcc00;">warning</span>
+                    <div>
+                        <strong style="display: block;">Global Parts Co.</strong>
+                        <span style="font-size: 0.875rem; color: var(--text-secondary);">3 consecutive delayed shipments in EU region.</span>
+                    </div>
+                </div>
+            </div>
+        </app-card>
+    </div>
+    
+    <app-card [noPadding]="true">
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>Vendor Name</th>
+                    <th>Category</th>
+                    <th>Financial Health</th>
+                    <th>Operational Risk</th>
+                    <th>Overall Reliability</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let vendor of vendors">
+                    <td><strong>{{ vendor.name }}</strong></td>
+                    <td>{{ vendor.category }}</td>
+                    <td>{{ vendor.financial }}</td>
+                    <td>{{ vendor.operational }}</td>
+                    <td>
+                        <span class="vrip-badge" 
+                              [ngStyle]="{'background': vendor.risk === 'Low' ? 'rgba(52, 199, 89, 0.1)' : (vendor.risk === 'High' ? 'rgba(255, 59, 48, 0.1)' : 'rgba(255, 204, 0, 0.1)'), 
+                                          'color': vendor.risk === 'Low' ? '#34c759' : (vendor.risk === 'High' ? '#ff3b30' : '#d4a000')}">
+                            {{ vendor.risk }} Risk
+                        </span>
+                    </td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
+</div>

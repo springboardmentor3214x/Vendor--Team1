@@ -1,20 +1,28 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 import { VendorService } from '../../services/vendor';
 import { Vendor } from '../../services/vendor.model';
+
+import { Card } from '../../ui/card/card';
+import { Button } from '../../ui/button/button';
+import { InputComponent } from '../../ui/input/input';
 
 @Component({
   selector: 'app-add-vendor',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    RouterModule,
+    Card,
+    Button,
+    InputComponent
   ],
   templateUrl: './add-vendor.html',
-  styleUrl: './add-vendor.css'
+  styleUrls: ['./add-vendor.css']
 })
 export class AddVendor {
 

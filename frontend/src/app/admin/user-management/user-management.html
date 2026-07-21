@@ -1,0 +1,48 @@
+<div class="page-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1>User Management</h1>
+            <p>Manage system users, roles, and permissions.</p>
+        </div>
+        <app-button variant="primary" iconLeft="add">Add New User</app-button>
+    </div>
+
+    <app-card [noPadding]="true">
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Email Address</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let user of users">
+                    <td><strong>{{ user.id }}</strong></td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: var(--vrip-space-2);">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--vrip-primary-100); color: var(--vrip-primary-700); display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                                {{ user.name.charAt(0) }}
+                            </div>
+                            <span>{{ user.name }}</span>
+                        </div>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td><span class="vrip-badge" style="background: var(--vrip-gray-100); color: var(--vrip-gray-700);">{{ user.role }}</span></td>
+                    <td>
+                        <span class="vrip-badge" [ngStyle]="{'background': user.status === 'Active' ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 59, 48, 0.1)', 'color': user.status === 'Active' ? '#34c759' : '#ff3b30'}">
+                            {{ user.status }}
+                        </span>
+                    </td>
+                    <td style="text-align: right;">
+                        <app-button variant="ghost"><span class="material-symbols-outlined">edit</span></app-button>
+                        <app-button variant="ghost"><span class="material-symbols-outlined">delete</span></app-button>
+                    </td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
+</div>

@@ -1,0 +1,88 @@
+<div class="page-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1>Vendor Performance Dashboard</h1>
+            <p>Comprehensive monitoring of delivery, quality, and service metrics.</p>
+        </div>
+        <app-button variant="outline" size="sm" iconLeft="calendar_month">Last 30 Days</app-button>
+    </div>
+
+    <!-- Performance Metrics Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--vrip-space-4); margin-bottom: var(--vrip-space-6);">
+        <app-card>
+            <h3 style="margin-bottom: var(--vrip-space-2); color: var(--text-secondary); font-size: 0.875rem;">On-Time Deliveries</h3>
+            <div style="font-size: 2rem; font-weight: 700; color: #34c759; margin-bottom: var(--vrip-space-1);">94.2%</div>
+            <div style="color: var(--text-secondary); font-size: 0.75rem;">Target: >95%</div>
+        </app-card>
+        <app-card>
+            <h3 style="margin-bottom: var(--vrip-space-2); color: var(--text-secondary); font-size: 0.875rem;">Delayed Deliveries</h3>
+            <div style="font-size: 2rem; font-weight: 700; color: #ff3b30; margin-bottom: var(--vrip-space-1);">5.8%</div>
+            <div style="color: var(--text-secondary); font-size: 0.75rem;">Target: &lt;5%</div>
+        </app-card>
+        <app-card>
+            <h3 style="margin-bottom: var(--vrip-space-2); color: var(--text-secondary); font-size: 0.875rem;">Quality Rating</h3>
+            <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--vrip-space-1);">4.8<span style="font-size: 1rem; color: var(--text-secondary);">/5</span></div>
+            <div style="color: var(--text-secondary); font-size: 0.75rem;">Based on QC evaluations</div>
+        </app-card>
+        <app-card>
+            <h3 style="margin-bottom: var(--vrip-space-2); color: var(--text-secondary); font-size: 0.875rem;">Avg Response Time</h3>
+            <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--vrip-space-1);">2.4<span style="font-size: 1rem; color: var(--text-secondary);"> Hrs</span></div>
+            <div style="color: var(--text-secondary); font-size: 0.75rem;">Communication tracking</div>
+        </app-card>
+        <app-card>
+            <h3 style="margin-bottom: var(--vrip-space-2); color: var(--text-secondary); font-size: 0.875rem;">Issue Resolution</h3>
+            <div style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--vrip-space-1);">18<span style="font-size: 1rem; color: var(--text-secondary);"> Hrs</span></div>
+            <div style="color: var(--text-secondary); font-size: 0.75rem;">Average time to resolve</div>
+        </app-card>
+        <app-card>
+            <h3 style="margin-bottom: var(--vrip-space-2); color: var(--text-secondary); font-size: 0.875rem;">Order Completion</h3>
+            <div style="font-size: 2rem; font-weight: 700; color: #3b82f6; margin-bottom: var(--vrip-space-1);">98.5%</div>
+            <div style="color: var(--text-secondary); font-size: 0.75rem;">Fulfilled without issues</div>
+        </app-card>
+    </div>
+
+    <!-- Vendor Ranking -->
+    <app-card [noPadding]="true">
+        <div style="padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 1.125rem;">Vendor Ranking</h3>
+            <app-button variant="outline" size="sm" iconLeft="filter_list">Filter</app-button>
+        </div>
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>Vendor Name</th>
+                    <th>Category</th>
+                    <th>Service Rating</th>
+                    <th>On-Time %</th>
+                    <th>Quality Score</th>
+                    <th style="text-align: right;">Action</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let vendor of topVendors">
+                    <td><strong>{{ vendor.name }}</strong></td>
+                    <td>{{ vendor.category }}</td>
+                    <td>
+                        <div style="display: flex; color: #ffcc00; font-size: 18px;">
+                            <span class="material-symbols-outlined" *ngFor="let star of [1,2,3,4,5]" [ngStyle]="{'font-variation-settings': star <= vendor.rating ? '&quot;FILL&quot; 1' : '&quot;FILL&quot; 0'}">star</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="flex: 1; height: 6px; background: var(--vrip-gray-200); border-radius: 3px; overflow: hidden; min-width: 60px;">
+                                <div [ngStyle]="{'width': vendor.onTime, 'background': '#34c759', 'height': '100%'}"></div>
+                            </div>
+                            <span style="font-size: 0.875rem; width: 40px;">{{ vendor.onTime }}</span>
+                        </div>
+                    </td>
+                    <td><strong>{{ vendor.score }}/5.0</strong></td>
+                    <td style="text-align: right;">
+                        <a [routerLink]="['/supply-chain/vendor-performance', vendor.id]">
+                            <app-button variant="ghost" size="sm">View Details</app-button>
+                        </a>
+                    </td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
+</div>

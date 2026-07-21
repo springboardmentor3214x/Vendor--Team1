@@ -1,1 +1,118 @@
-<p>purchase-order works!</p>
+<div class="form-container">
+    <div class="header">
+        <div class="header-breadcrumb">
+            <a routerLink="/procurement/requests">Procurement Requests</a>
+            <span class="material-symbols-outlined icon-sm">chevron_right</span>
+            <span>Create PO</span>
+        </div>
+        <div>
+            <h1>Create Purchase Order</h1>
+            <p>Generate a new purchase order for the assigned vendor.</p>
+        </div>
+    </div>
+
+    <div class="form-layout">
+        <!-- Order Details -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">receipt_long</span> Order Details</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>PO Number (Auto-Generated)</label>
+                    <app-input [disabled]="true" [(ngModel)]="poData.poNumber"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Procurement Request Number</label>
+                    <app-input [(ngModel)]="poData.prNumber" [disabled]="true"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Vendor Details -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">storefront</span> Vendor Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Vendor Name</label>
+                    <app-input [(ngModel)]="poData.vendorName"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Contact Person</label>
+                    <app-input [(ngModel)]="poData.contactPerson"></app-input>
+                </div>
+                <div class="form-group full-width">
+                    <label>Vendor Address</label>
+                    <app-input [(ngModel)]="poData.vendorAddress"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Product Details -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">inventory_2</span> Product & Pricing</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Product Details</label>
+                    <app-input [(ngModel)]="poData.productDetails"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" class="vrip-input" [(ngModel)]="poData.quantity">
+                </div>
+                <div class="form-group">
+                    <label>Unit Price (₹)</label>
+                    <input type="number" class="vrip-input" [(ngModel)]="poData.unitPrice">
+                </div>
+                
+                <div class="form-group full-width summary-box">
+                    <div class="summary-item">
+                        <span>Total Cost</span>
+                        <span class="summary-value">₹{{ totalCost | number }}</span>
+                    </div>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Delivery Details -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">local_shipping</span> Delivery & Terms</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Shipping Address</label>
+                    <app-input [(ngModel)]="poData.shippingAddress"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Expected Delivery Date</label>
+                    <input type="date" class="vrip-input" [(ngModel)]="poData.expectedDeliveryDate">
+                </div>
+                <div class="form-group">
+                    <label>Payment Terms</label>
+                    <select class="vrip-select" [(ngModel)]="poData.paymentTerms">
+                        <option>Immediate</option>
+                        <option>Net 15</option>
+                        <option>Net 30</option>
+                        <option>Net 60</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tax Details</label>
+                    <app-input [(ngModel)]="poData.taxDetails"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Buttons -->
+        <div class="form-actions">
+            <app-button variant="outline" (click)="cancel()">Cancel</app-button>
+            <app-button variant="outline" iconLeft="save" (click)="saveDraft()">Save Draft</app-button>
+            <app-button variant="primary" iconLeft="check_circle" (click)="generatePO()">Generate Purchase Order</app-button>
+        </div>
+    </div>
+</div>

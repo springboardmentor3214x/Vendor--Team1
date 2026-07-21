@@ -1,0 +1,27 @@
+<div class="vrip-input-group" [ngClass]="{'has-error': error, 'is-disabled': disabled}">
+  <label class="vrip-input-label" *ngIf="label" [for]="id">
+    {{ label }}
+    <span class="vrip-input-required" *ngIf="required">*</span>
+  </label>
+  
+  <div class="vrip-input-wrapper">
+    <span class="material-symbols-outlined vrip-input-icon-left" *ngIf="iconLeft">{{ iconLeft }}</span>
+    
+    <input
+      class="vrip-input-field"
+      [ngClass]="{'has-icon-left': iconLeft, 'has-icon-right': iconRight}"
+      [type]="type"
+      [id]="id"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      [value]="value"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+      >
+      
+    <span class="material-symbols-outlined vrip-input-icon-right" *ngIf="iconRight">{{ iconRight }}</span>
+  </div>
+
+  <div class="vrip-input-hint" *ngIf="hint && !error">{{ hint }}</div>
+  <div class="vrip-input-error" *ngIf="error">{{ error }}</div>
+</div>

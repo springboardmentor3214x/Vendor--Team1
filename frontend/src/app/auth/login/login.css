@@ -1,377 +1,230 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Inter, Arial, Helvetica, sans-serif;
-}
-
-.login-page{
-
-    display:flex;
-    width:100%;
-    height:100vh;
-
-    overflow:hidden;
-
+.login-page {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--vrip-font-family);
 }
 
 /* ================= LEFT PANEL ================= */
-
-.left-panel{
-
-    width:50%;
-
-    background:linear-gradient(135deg,#2563eb,#1d4ed8,#1e3a8a);
-
-    color:white;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    padding:60px;
-
+.left-panel {
+  width: 50%;
+  background: linear-gradient(135deg, var(--vrip-primary-800), var(--vrip-primary-600), var(--vrip-primary-900));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--vrip-space-12);
+  position: relative;
 }
 
-.branding{
-
-    max-width:500px;
-
+.left-panel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
 }
 
-.branding h1{
-
-    font-size:72px;
-
-    font-weight:800;
-
-    letter-spacing:3px;
-
+.branding {
+  max-width: 500px;
+  z-index: 1;
 }
 
-.branding h2{
-
-    margin-top:20px;
-
-    font-size:42px;
-
-    line-height:52px;
-
-    font-weight:700;
-
+.branding-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--vrip-space-3);
+  margin-bottom: var(--vrip-space-6);
 }
 
-.branding>p{
-
-    margin-top:25px;
-
-    color:#dbeafe;
-
-    font-size:18px;
-
-    line-height:32px;
-
+.branding-icon {
+  font-size: 3rem;
+  background: rgba(255,255,255,0.1);
+  padding: 12px;
+  border-radius: var(--vrip-radius-lg);
+  backdrop-filter: blur(4px);
 }
 
-.features{
-
-    margin-top:50px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:25px;
-
+.branding h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: white;
 }
 
-.feature{
-
-    display:flex;
-
-    gap:18px;
-
-    align-items:flex-start;
-
+.branding h2 {
+  font-size: 2.25rem;
+  line-height: 1.2;
+  font-weight: 700;
+  margin-bottom: var(--vrip-space-4);
+  color: var(--vrip-primary-50);
 }
 
-.feature span{
-
-    width:38px;
-    height:38px;
-
-    border-radius:50%;
-
-    background:rgba(255,255,255,.15);
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:18px;
-
-}
-
-.feature h3{
-
-    font-size:20px;
-
-    margin-bottom:5px;
-
-}
-
-.feature p{
-
-    color:#dbeafe;
-
-    line-height:26px;
-
+.branding p {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--vrip-primary-100);
 }
 
 /* ================= RIGHT PANEL ================= */
-
-.right-panel{
-
-    width:50%;
-
-    background:#f8fafc;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    padding:50px;
-
+.right-panel {
+  width: 50%;
+  background: var(--vrip-neutral-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--vrip-space-8);
 }
 
-.login-card{
-
-    width:430px;
-
-    background:white;
-
-    border-radius:24px;
-
-    padding:45px;
-
-    box-shadow:0 20px 60px rgba(0,0,0,.08);
-
+.login-container {
+  width: 100%;
+  max-width: 440px;
 }
 
-.login-card h1{
-
-    color:#0f172a;
-
-    font-size:34px;
-
+.login-card-content {
+  padding: var(--vrip-space-8);
 }
 
-.login-card>p{
-
-    color:#64748b;
-
-    margin-top:10px;
-
-    margin-bottom:35px;
-
+.login-header {
+  margin-bottom: var(--vrip-space-8);
+  text-align: center;
 }
 
-/* ================= FORM ================= */
-
-.form-group{
-
-    margin-bottom:20px;
-
+.login-header h1 {
+  color: var(--vrip-neutral-900);
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: var(--vrip-space-2);
 }
 
-.form-group label{
-
-    display:block;
-
-    margin-bottom:10px;
-
-    font-weight:600;
-
-    color:#334155;
-
+.login-header p {
+  color: var(--vrip-neutral-500);
+  font-size: 0.875rem;
 }
 
-.form-group input{
-
-    width:100%;
-
-    padding:16px;
-
-    border-radius:12px;
-
-    border:1px solid #cbd5e1;
-
-    outline:none;
-
-    font-size:15px;
-
-    transition:.3s;
-
+.password-toggle {
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--vrip-primary-600);
+  cursor: pointer;
+  margin-top: -12px;
+  margin-bottom: var(--vrip-space-4);
+  font-weight: 500;
 }
 
-.form-group input:focus{
-
-    border-color:#2563eb;
-
-    box-shadow:0 0 0 3px rgba(37,99,235,.15);
-
-}
-
-/* ================= PASSWORD ================= */
-
-.password-box{
-
-    display:flex;
-
-}
-
-.password-box input{
-
-    border-radius:12px 0 0 12px;
-
-}
-
-.eye-btn{
-
-    width:90px;
-
-    border:none;
-
-    background:#2563eb;
-
-    color:white;
-
-    cursor:pointer;
-
-    border-radius:0 12px 12px 0;
-
-    font-weight:600;
-
+.password-toggle:hover {
+  text-decoration: underline;
 }
 
 /* ================= OPTIONS ================= */
-
-.options{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-top:10px;
-
-    margin-bottom:30px;
-
-    font-size:14px;
-
+.options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--vrip-space-6);
+  font-size: 0.875rem;
 }
 
-.options a{
-
-    text-decoration:none;
-
-    color:#2563eb;
-
-    font-weight:600;
-
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: var(--vrip-space-2);
+  color: var(--vrip-neutral-700);
+  cursor: pointer;
 }
 
-/* ================= LOGIN BUTTON ================= */
-
-.login-btn{
-
-    width:100%;
-
-    padding:16px;
-
-    border:none;
-
-    border-radius:12px;
-
-    background:#2563eb;
-
-    color:white;
-
-    font-size:16px;
-
-    font-weight:600;
-
-    cursor:pointer;
-
-    transition:.3s;
-
+.remember-me input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--vrip-primary-600);
+  cursor: pointer;
 }
 
-.login-btn:hover{
+.forgot-password {
+  color: var(--vrip-primary-600);
+  font-weight: 600;
+  text-decoration: none;
+}
 
-    background:#1d4ed8;
+.forgot-password:hover {
+  text-decoration: underline;
+}
 
-    transform:translateY(-2px);
+/* ================= ERROR BOX ================= */
+.error-box {
+  background-color: var(--vrip-danger-bg);
+  color: var(--vrip-danger-text);
+  padding: var(--vrip-space-3);
+  border-radius: var(--vrip-radius-md);
+  margin-bottom: var(--vrip-space-4);
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: var(--vrip-space-2);
+}
 
+.error-box .material-symbols-outlined {
+  font-size: 1.25rem;
 }
 
 /* ================= DIVIDER ================= */
+.divider {
+  text-align: center;
+  margin: var(--vrip-space-6) 0;
+  position: relative;
+}
 
-.divider{
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--vrip-neutral-200);
+  z-index: 0;
+}
 
-    text-align:center;
-
-    margin:30px 0;
-
-    color:#94a3b8;
-
-    font-weight:600;
-
+.divider span {
+  background-color: white;
+  padding: 0 var(--vrip-space-3);
+  color: var(--vrip-neutral-400);
+  font-size: 0.75rem;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
 }
 
 /* ================= REGISTER ================= */
-
-.register-text{
-
-    text-align:center;
-
-    color:#64748b;
-
+.register-text {
+  text-align: center;
+  color: var(--vrip-neutral-600);
+  font-size: 0.875rem;
 }
 
-.register-text a{
+.register-text a {
+  color: var(--vrip-primary-600);
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 4px;
+}
 
-    text-decoration:none;
-
-    color:#2563eb;
-
-    font-weight:700;
-
+.register-text a:hover {
+  text-decoration: underline;
 }
 
 /* ================= MOBILE ================= */
-
-@media(max-width:900px){
-
-.left-panel{
-
-display:none;
-
-}
-
-.right-panel{
-
-width:100%;
-
-}
-
-.login-card{
-
-width:100%;
-
-max-width:430px;
-
-}
-
+@media (max-width: 900px) {
+  .left-panel {
+    display: none;
+  }
+  .right-panel {
+    width: 100%;
+    padding: var(--vrip-space-4);
+  }
 }

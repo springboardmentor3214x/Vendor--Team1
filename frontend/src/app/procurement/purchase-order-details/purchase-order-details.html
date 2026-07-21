@@ -1,1 +1,128 @@
-<p>purchase-order-details works!</p>
+<div class="po-details-container" *ngIf="po">
+    <div class="page-header print-hide">
+        <div>
+            <div class="header-breadcrumb">
+                <a routerLink="/dashboard">Dashboard</a>
+                <span class="material-symbols-outlined icon-sm">chevron_right</span>
+                <span>Purchase Order Details</span>
+            </div>
+            <h1>Purchase Order: {{ po.poNumber }}</h1>
+            <p>Created on {{ po.createdDate }} • Approved by {{ po.approvedBy }}</p>
+        </div>
+        <div class="header-actions">
+            <app-button variant="outline" iconLeft="print" (onClick)="printPO()">
+                Print
+            </app-button>
+            <app-button variant="outline" iconLeft="download" (onClick)="downloadPDF()">
+                Download PDF
+            </app-button>
+        </div>
+    </div>
+
+    <!-- Print Header -->
+    <div class="print-show print-header">
+        <h1>PURCHASE ORDER</h1>
+        <p>PO Number: {{ po.poNumber }}</p>
+        <p>Date: {{ po.createdDate }}</p>
+    </div>
+
+    <div class="details-grid">
+        <div class="main-column">
+            <app-card title="Vendor Information" icon="storefront">
+                <div class="info-grid">
+                    <div class="info-group">
+                        <label>Vendor Name</label>
+                        <p>{{ po.vendorName }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Contact Person</label>
+                        <p>{{ po.contactPerson }}</p>
+                    </div>
+                    <div class="info-group full-width">
+                        <label>Vendor Address</label>
+                        <p>{{ po.vendorAddress }}</p>
+                    </div>
+                </div>
+            </app-card>
+
+            <app-card title="Order Items" icon="inventory_2">
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Item Description</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th class="text-right">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ po.productDetails }}</td>
+                            <td>{{ po.quantity }}</td>
+                            <td>₹{{ po.unitPrice | number }}</td>
+                            <td class="text-right">₹{{ (po.quantity * po.unitPrice) | number }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>Subtotal</strong></td>
+                            <td class="text-right">₹{{ (po.quantity * po.unitPrice) | number }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>Tax ({{ po.taxDetails }})</strong></td>
+                            <td class="text-right">Included</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="3" class="text-right"><strong>Total Amount</strong></td>
+                            <td class="text-right"><strong>₹{{ po.totalCost | number }}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </app-card>
+            
+            <app-card title="Delivery & Terms" icon="local_shipping">
+                <div class="info-grid">
+                    <div class="info-group full-width">
+                        <label>Shipping Address</label>
+                        <p>{{ po.shippingAddress }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Expected Delivery</label>
+                        <p>{{ po.expectedDeliveryDate }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Payment Terms</label>
+                        <p>{{ po.paymentTerms }}</p>
+                    </div>
+                </div>
+            </app-card>
+        </div>
+
+        <div class="side-column print-hide">
+            <app-card title="Status Tracking" icon="track_changes">
+                <div class="status-box">
+                    <label>Current Status</label>
+                    <app-badge [variant]="getBadgeVariant(po.status)">
+                        {{ po.status }}
+                    </app-badge>
+                </div>
+                
+                <div class="status-box mt-4">
+                    <label>Related Request</label>
+                    <a [routerLink]="['/procurement/approve', po.id]" class="link-styled">{{ po.prNumber }}</a>
+                </div>
+
+                <div class="action-panel mt-6">
+                    <p class="action-hint">Need to track the delivery of this order?</p>
+                    <app-button variant="primary" class="full-width-btn" iconLeft="local_shipping" [routerLink]="['/procurement/order-tracking', po.id]">
+                        Track Order
+                    </app-button>
+                    
+                    <app-button variant="outline" class="full-width-btn mt-2" iconLeft="update" [routerLink]="['/procurement/status', po.id]">
+                        Update Status
+                    </app-button>
+                </div>
+            </app-card>
+        </div>
+    </div>
+</div>

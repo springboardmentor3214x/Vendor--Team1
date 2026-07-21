@@ -1,12 +1,6 @@
-.content{
-
-    margin-left:260px;
-    margin-top:70px;
-
-    padding:30px;
-
-    background:#f8fafc;
-
-    min-height:calc(100vh - 70px);
-
+.content {
+  margin-left: 280px; /* Leave space for floating sidebar */
+  min-height: calc(100vh - 100px); /* Leave space for floating navbar */
+  padding-top: 100px; /* Offset for absolute floating navbar */
+  background-color: transparent; /* Rely on body mesh background */
 }

@@ -1,0 +1,44 @@
+<div class="page-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1>My Orders</h1>
+            <p>View and manage your assigned purchase orders.</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <app-button variant="outline" iconLeft="filter_alt">Filter</app-button>
+        </div>
+    </div>
+
+    <app-card [noPadding]="true">
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>PO Number</th>
+                    <th>Date Issued</th>
+                    <th>Total Amount</th>
+                    <th>Delivery Deadline</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Action</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let order of orders">
+                    <td><strong>{{ order.poNumber }}</strong></td>
+                    <td>{{ order.date }}</td>
+                    <td>{{ order.amount | currency:'USD':'symbol':'1.2-2' }}</td>
+                    <td>{{ order.deadline }}</td>
+                    <td>
+                        <span class="vrip-badge" 
+                              [ngStyle]="{'background': order.status === 'Delivered' ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 149, 0, 0.1)', 
+                                          'color': order.status === 'Delivered' ? '#34c759' : '#ff9500'}">
+                            {{ order.status }}
+                        </span>
+                    </td>
+                    <td style="text-align: right;">
+                        <app-button variant="outline" size="sm">View Details</app-button>
+                    </td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
+</div>

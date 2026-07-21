@@ -1,1 +1,66 @@
-<p>procurement-status works!</p>
+<div class="status-container">
+    <div class="page-header">
+        <div>
+            <div class="header-breadcrumb">
+                <a [routerLink]="['/procurement/purchase-order', poId]">Purchase Order</a>
+                <span class="material-symbols-outlined icon-sm">chevron_right</span>
+                <span>Update Status</span>
+            </div>
+            <h1>Lifecycle Status: PO-84{{ poId || 92 }}</h1>
+            <p>Track and manage the overall lifecycle of this procurement.</p>
+        </div>
+        <div class="header-actions">
+            <app-button variant="outline" iconLeft="arrow_back" [routerLink]="['/procurement/purchase-order', poId]">
+                Back to PO
+            </app-button>
+        </div>
+    </div>
+
+    <div class="details-grid">
+        <div class="main-column">
+            <app-card title="Procurement Lifecycle" icon="timeline">
+                <div class="timeline-container">
+                    <div class="timeline-step" *ngFor="let stage of stages; let i = index" [class.completed]="isStageCompleted(stage)">
+                        <div class="step-icon">
+                            <span class="material-symbols-outlined" *ngIf="isStageCompleted(stage)">check_circle</span>
+                            <span class="material-symbols-outlined" *ngIf="!isStageCompleted(stage)">radio_button_unchecked</span>
+                        </div>
+                        <div class="step-content">
+                            <h3>{{ stage }}</h3>
+                            <p *ngIf="isStageCompleted(stage)">Completed</p>
+                            <p *ngIf="!isStageCompleted(stage)">Pending</p>
+                        </div>
+                        <div class="step-line" *ngIf="i < stages.length - 1"></div>
+                    </div>
+                </div>
+
+                <div class="status-actions mt-6" *ngIf="currentStatus !== 'Completed' && currentStatus !== 'Cancelled'">
+                    <h4>Update Status</h4>
+                    <div class="action-buttons">
+                        <app-button variant="primary" (onClick)="updateStatus('Delivered')" *ngIf="currentStatus === 'Ordered'">Mark as Delivered</app-button>
+                        <app-button variant="success" (onClick)="updateStatus('Completed')" *ngIf="currentStatus === 'Delivered'">Mark as Completed</app-button>
+                        <app-button variant="danger" (onClick)="cancelProcurement()">Cancel Procurement</app-button>
+                    </div>
+                </div>
+                <div class="status-actions mt-6" *ngIf="currentStatus === 'Cancelled'">
+                    <app-badge variant="danger">This procurement has been cancelled.</app-badge>
+                </div>
+            </app-card>
+        </div>
+
+        <div class="side-column">
+            <app-card title="Status History" icon="history">
+                <div class="history-list">
+                    <div class="history-item" *ngFor="let record of history">
+                        <div class="history-header">
+                            <strong>{{ record.status }}</strong>
+                            <span class="history-date">{{ record.updatedAt }}</span>
+                        </div>
+                        <p class="history-user">By {{ record.updatedBy }}</p>
+                        <p class="history-remarks">{{ record.remarks }}</p>
+                    </div>
+                </div>
+            </app-card>
+        </div>
+    </div>
+</div>

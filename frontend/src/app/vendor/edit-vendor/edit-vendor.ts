@@ -6,16 +6,23 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { VendorService } from '../../services/vendor';
 import { Vendor } from '../../services/vendor.model';
 
+import { Card } from '../../ui/card/card';
+import { Button } from '../../ui/button/button';
+import { InputComponent } from '../../ui/input/input';
+
 @Component({
   selector: 'app-edit-vendor',
   standalone: true,
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule
+    RouterModule,
+    Card,
+    Button,
+    InputComponent
   ],
   templateUrl: './edit-vendor.html',
-  styleUrl: './edit-vendor.css'
+  styleUrls: ['./edit-vendor.css']
 })
 export class EditVendor implements OnInit {
 

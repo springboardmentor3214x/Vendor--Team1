@@ -1,227 +1,113 @@
 <div class="vendor-dashboard">
-
     <div class="dashboard-header">
-
         <div>
-
             <h1>Vendor Dashboard</h1>
-
             <p>Welcome back! Here's an overview of your vendor account.</p>
-
         </div>
-
-        <button class="refresh-btn">
-
+        <app-button variant="primary" iconLeft="refresh">
             Refresh
-
-        </button>
-
+        </app-button>
     </div>
 
     <!-- Statistics Cards -->
-
-    <div class="cards">
-
-        <div class="card blue">
-
-            <h3>📦 My Orders</h3>
-
+    <div class="cards-grid">
+        <div class="vrip-stat-card border-primary">
+            <div class="stat-header">
+                <h3>My Orders</h3>
+                <span class="material-symbols-outlined text-primary-600">inventory_2</span>
+            </div>
             <h1>12</h1>
-
-            <p>2 Orders In Progress</p>
-
+            <p class="text-primary"><span class="material-symbols-outlined icon-sm">sync</span> 2 Orders In Progress</p>
         </div>
 
-        <div class="card green">
-
-            <h3>💰 Pending Payments</h3>
-
+        <div class="vrip-stat-card border-success">
+            <div class="stat-header">
+                <h3>Pending Payments</h3>
+                <span class="material-symbols-outlined text-success-600">payments</span>
+            </div>
             <h1>₹1.25L</h1>
-
-            <p>Awaiting Approval</p>
-
+            <p class="text-warning"><span class="material-symbols-outlined icon-sm">schedule</span> Awaiting Approval</p>
         </div>
 
-        <div class="card orange">
-
-            <h3>📄 Documents</h3>
-
+        <div class="vrip-stat-card border-warning">
+            <div class="stat-header">
+                <h3>Documents</h3>
+                <span class="material-symbols-outlined text-warning-600">description</span>
+            </div>
             <h1>8</h1>
-
-            <p>All Documents Updated</p>
-
+            <p class="text-success"><span class="material-symbols-outlined icon-sm">check_circle</span> All Documents Updated</p>
         </div>
 
-        <div class="card purple">
-
-            <h3>⭐ Vendor Rating</h3>
-
+        <div class="vrip-stat-card border-purple">
+            <div class="stat-header">
+                <h3>Vendor Rating</h3>
+                <span class="material-symbols-outlined text-purple-600">star</span>
+            </div>
             <h1>4.8</h1>
-
-            <p>Excellent Performance</p>
-
+            <p class="text-success"><span class="material-symbols-outlined icon-sm">thumb_up</span> Excellent Performance</p>
         </div>
-
     </div>
 
     <!-- Quick Actions -->
-
     <div class="quick-actions">
-
-        <h2>Quick Actions</h2>
-
+        <div class="section-header">
+            <h2>Quick Actions</h2>
+        </div>
         <div class="actions-grid">
-
-            <div
-                class="action-card"
-                routerLink="/profile">
-
-                <div class="icon">👤</div>
-
+            <a class="action-card" routerLink="/profile">
+                <div class="icon bg-indigo-100 text-indigo-600"><span class="material-symbols-outlined">person</span></div>
                 <h3>My Profile</h3>
-
                 <p>View and update your profile information.</p>
+            </a>
 
-            </div>
-
-            <div
-                class="action-card"
-                routerLink="/vendors/add"
-                fragment="documents">
-
-                <div class="icon">📂</div>
-
+            <a class="action-card" routerLink="/vendors/add" fragment="documents">
+                <div class="icon bg-emerald-100 text-emerald-600"><span class="material-symbols-outlined">folder_open</span></div>
                 <h3>Upload Documents</h3>
-
                 <p>Upload GST, PAN and other vendor documents.</p>
-
-            </div>
-                        <div class="action-card">
-
-                <div class="icon">📦</div>
-
+            </a>
+            
+            <div class="action-card">
+                <div class="icon bg-amber-100 text-amber-600"><span class="material-symbols-outlined">inventory_2</span></div>
                 <h3>My Orders</h3>
-
                 <p>Coming Soon...</p>
-
             </div>
 
             <div class="action-card">
-
-                <div class="icon">🧾</div>
-
+                <div class="icon bg-slate-100 text-slate-500"><span class="material-symbols-outlined">receipt_long</span></div>
                 <h3>My Invoices</h3>
-
                 <p>Coming Soon...</p>
-
             </div>
-
         </div>
-
     </div>
 
     <!-- Recent Activities -->
-
     <div class="recent-activities">
-
-        <div class="table-header">
-
+        <div class="section-header">
             <h2>Recent Activities</h2>
-
         </div>
-
-        <table>
-
-            <thead>
-
-                <tr>
-
-                    <th>Date</th>
-                    <th>Activity</th>
-                    <th>Status</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                <tr>
-
-                    <td>13 Jul 2026</td>
-
-                    <td>Vendor Profile Updated</td>
-
+        <div class="table-container">
+            <app-table 
+                [columns]="columns" 
+                [data]="recentActivities"
+                [hasToolbar]="false"
+                [pagination]="false"
+                [searchable]="false">
+                
+                <ng-template let-row>
                     <td>
-
-                        <span class="completed">
-
-                            Completed
-
-                        </span>
-
+                        <div class="date-text">{{ row.date }}</div>
                     </td>
-
-                </tr>
-
-                <tr>
-
-                    <td>12 Jul 2026</td>
-
-                    <td>Invoice Uploaded</td>
-
                     <td>
-
-                        <span class="pending">
-
-                            Pending Verification
-
-                        </span>
-
+                        <div class="activity-text">{{ row.activity }}</div>
                     </td>
-
-                </tr>
-
-                <tr>
-
-                    <td>11 Jul 2026</td>
-
-                    <td>Purchase Order Received</td>
-
                     <td>
-
-                        <span class="approved">
-
-                            Active
-
-                        </span>
-
+                        <app-badge [variant]="getBadgeVariant(row.status)">
+                            {{ row.status }}
+                        </app-badge>
                     </td>
-
-                </tr>
-
-                <tr>
-
-                    <td>10 Jul 2026</td>
-
-                    <td>GST Certificate Verified</td>
-
-                    <td>
-
-                        <span class="completed">
-
-                            Verified
-
-                        </span>
-
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
+                </ng-template>
+                
+            </app-table>
+        </div>
     </div>
-
 </div>

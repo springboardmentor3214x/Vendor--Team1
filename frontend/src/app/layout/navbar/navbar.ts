@@ -1,12 +1,18 @@
 import { Component } from '@angular/core';
+import { Search } from '../../ui/search/search';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [],
+  imports: [Search],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.css'
+  styleUrls: ['./navbar.css']
 })
 export class Navbar {
+  pageTitle: string = '';
+  role: string = '';
 
+  constructor() {
+    this.role = localStorage.getItem('vrip_role') || '';
+  }
 }

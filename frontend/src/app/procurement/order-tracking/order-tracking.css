@@ -1,0 +1,140 @@
+@import "../procurement-approval/procurement-approval.css";
+
+.tracking-number {
+    font-family: monospace;
+    font-size: 1.125rem !important;
+    color: var(--vrip-primary-700) !important;
+    font-weight: 700 !important;
+}
+
+.text-primary-700 {
+    color: var(--vrip-primary-700) !important;
+}
+
+.font-bold {
+    font-weight: 700 !important;
+}
+
+.map-placeholder {
+    height: 300px;
+    background-color: var(--vrip-slate-100);
+    border-radius: var(--vrip-radius-md);
+    border: 1px dashed var(--vrip-slate-300);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.map-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--vrip-slate-400);
+}
+
+.map-overlay .material-symbols-outlined {
+    font-size: 48px;
+    margin-bottom: var(--vrip-space-2);
+}
+
+/* Vertical Timeline */
+.vertical-timeline {
+    position: relative;
+    padding-left: 20px;
+}
+
+.vertical-timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 4px;
+    height: 100%;
+    width: 2px;
+    background-color: var(--vrip-slate-200);
+}
+
+.v-step {
+    position: relative;
+    padding-bottom: var(--vrip-space-6);
+}
+
+.v-step:last-child {
+    padding-bottom: 0;
+}
+
+.v-indicator {
+    position: absolute;
+    left: -20px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--vrip-slate-300);
+    border: 2px solid white;
+    z-index: 2;
+}
+
+.v-step.completed .v-indicator {
+    background-color: var(--vrip-success-500);
+    box-shadow: 0 0 0 3px var(--vrip-success-100);
+}
+
+.v-step.completed ~ .v-step .v-indicator {
+    background-color: var(--vrip-success-500);
+}
+
+.vertical-timeline::before {
+    background: linear-gradient(to bottom, var(--vrip-success-500) 0%, var(--vrip-success-500) 50%, var(--vrip-slate-200) 50%, var(--vrip-slate-200) 100%);
+}
+
+.v-content h4 {
+    margin: 0 0 var(--vrip-space-1) 0;
+    font-size: 0.95rem;
+    color: var(--vrip-slate-900);
+}
+
+.v-location {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--vrip-slate-600);
+}
+
+.v-date {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--vrip-slate-500);
+    margin-top: var(--vrip-space-1);
+}
+
+.print-show {
+    display: none;
+}
+
+@media print {
+    .print-hide {
+        display: none !important;
+    }
+    .print-show {
+        display: block !important;
+    }
+    .tracking-container {
+        padding: 0;
+    }
+    .details-grid {
+        display: block;
+    }
+    .print-header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+    }
+    app-card {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        margin-bottom: 20px;
+        break-inside: avoid;
+    }
+}

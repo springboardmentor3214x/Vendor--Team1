@@ -1,0 +1,43 @@
+@import "../../vendor/add-vendor/add-vendor.css";
+
+.header-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--vrip-space-2);
+    margin-bottom: var(--vrip-space-2);
+    font-size: 0.875rem;
+    color: var(--vrip-slate-500);
+}
+
+.header-breadcrumb a {
+    color: var(--vrip-primary-600);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.header-breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.summary-box {
+    background-color: var(--vrip-slate-50);
+    border: 1px solid var(--vrip-slate-200);
+    border-radius: var(--vrip-radius-md);
+    padding: var(--vrip-space-4);
+    margin-top: var(--vrip-space-2);
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--vrip-slate-800);
+}
+
+.summary-value {
+    color: var(--vrip-primary-700);
+    font-size: 1.5rem;
+    font-weight: 700;
+}

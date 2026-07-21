@@ -1,1 +1,111 @@
-<p>procurement-approval works!</p>
+<div class="approval-container" *ngIf="request">
+    <div class="page-header">
+        <div>
+            <div class="header-breadcrumb">
+                <a routerLink="/procurement/requests">Procurement Requests</a>
+                <span class="material-symbols-outlined icon-sm">chevron_right</span>
+                <span>Approval</span>
+            </div>
+            <h1>Approve Request: {{ request.requestNumber }}</h1>
+            <p>Review the details below and take appropriate action on this procurement request.</p>
+        </div>
+        <div class="header-actions">
+            <app-button variant="outline" iconLeft="arrow_back" routerLink="/procurement/requests">
+                Back to List
+            </app-button>
+        </div>
+    </div>
+
+    <div class="details-grid">
+        <div class="main-column">
+            <app-card title="Request Information" icon="info">
+                <div class="info-grid">
+                    <div class="info-group">
+                        <label>Request Title</label>
+                        <p>{{ request.title }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Department</label>
+                        <p>{{ request.department }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Requested By</label>
+                        <p>{{ request.requestedBy }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Created Date</label>
+                        <p>{{ request.createdDate }}</p>
+                    </div>
+                </div>
+            </app-card>
+
+            <app-card title="Product Details" icon="inventory_2">
+                <div class="info-grid">
+                    <div class="info-group">
+                        <label>Category</label>
+                        <p>{{ request.itemCategory }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Item Name</label>
+                        <p>{{ request.itemName }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Quantity</label>
+                        <p>{{ request.quantity }} {{ request.uom }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Required By</label>
+                        <p>{{ request.requiredDate }}</p>
+                    </div>
+                </div>
+                <div class="info-group full-width mt-4">
+                    <label>Business Justification</label>
+                    <div class="justification-box">
+                        {{ request.justification }}
+                    </div>
+                </div>
+            </app-card>
+        </div>
+
+        <div class="side-column">
+            <app-card title="Status & Financials" icon="analytics">
+                <div class="status-box">
+                    <label>Current Status</label>
+                    <app-badge [variant]="getBadgeVariant(request.status)">
+                        {{ request.status }}
+                    </app-badge>
+                </div>
+                
+                <div class="status-box mt-4">
+                    <label>Priority</label>
+                    <app-badge [variant]="getBadgeVariant(request.priority)">
+                        {{ request.priority }}
+                    </app-badge>
+                </div>
+
+                <div class="finance-box mt-4">
+                    <label>Estimated Budget</label>
+                    <h2>₹{{ request.budget | number }}</h2>
+                </div>
+            </app-card>
+
+            <app-card title="Actions" icon="gavel">
+                <div class="action-panel">
+                    <p class="action-hint">Please review carefully. Once approved, this request will be eligible for Vendor Assignment.</p>
+                    
+                    <app-button variant="success" class="full-width-btn" iconLeft="check_circle" (onClick)="approveRequest()">
+                        Approve Request
+                    </app-button>
+                    
+                    <app-button variant="danger" class="full-width-btn" iconLeft="cancel" (onClick)="rejectRequest()">
+                        Reject Request
+                    </app-button>
+                    
+                    <app-button variant="outline" class="full-width-btn" iconLeft="edit_document" (onClick)="sendBack()">
+                        Send Back for Modification
+                    </app-button>
+                </div>
+            </app-card>
+        </div>
+    </div>
+</div>

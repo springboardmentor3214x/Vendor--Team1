@@ -1,1 +1,69 @@
-<p>procurement-request-list works!</p>
+<div class="procurement-list-container">
+    <div class="page-header">
+        <div>
+            <h1>Procurement Requests</h1>
+            <p>Manage and track all departmental procurement requests.</p>
+        </div>
+        <app-button variant="primary" iconLeft="add" routerLink="/procurement-request">
+            New Request
+        </app-button>
+    </div>
+
+    <div class="table-container">
+        <app-table 
+            [columns]="columns" 
+            [data]="requests"
+            [hasToolbar]="true"
+            [pagination]="true"
+            [searchable]="true">
+            
+            <ng-template let-row>
+                <td>
+                    <strong>{{ row.requestNumber }}</strong>
+                </td>
+                <td>
+                    {{ row.title }}
+                </td>
+                <td>
+                    {{ row.department }}
+                </td>
+                <td>
+                    {{ row.requestedBy }}
+                </td>
+                <td>
+                    {{ row.vendor || 'Unassigned' }}
+                </td>
+                <td>
+                    <app-badge [variant]="getBadgeVariant(row.priority)">
+                        {{ row.priority }}
+                    </app-badge>
+                </td>
+                <td>
+                    ₹{{ row.budget | number }}
+                </td>
+                <td>
+                    <app-badge [variant]="getBadgeVariant(row.status)">
+                        {{ row.status }}
+                    </app-badge>
+                </td>
+                <td>
+                    <div class="text-sm text-slate-500">{{ row.createdDate }}</div>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <app-button variant="outline" size="sm" [routerLink]="['/procurement/approve', row.id]" title="View/Approve">
+                            <span class="material-symbols-outlined icon-sm">visibility</span>
+                        </app-button>
+                        <app-button variant="outline" size="sm" title="Edit Request">
+                            <span class="material-symbols-outlined icon-sm">edit</span>
+                        </app-button>
+                        <app-button variant="danger" size="sm" (onClick)="deleteRequest(row.id)" title="Delete Request">
+                            <span class="material-symbols-outlined icon-sm">delete</span>
+                        </app-button>
+                    </div>
+                </td>
+            </ng-template>
+            
+        </app-table>
+    </div>
+</div>

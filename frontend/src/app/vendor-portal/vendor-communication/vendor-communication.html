@@ -1,0 +1,48 @@
+<div class="page-container" style="height: calc(100vh - 120px); display: flex; flex-direction: column;">
+    <div class="page-header" style="margin-bottom: var(--vrip-space-4);">
+        <h1>Communication</h1>
+        <p>Direct messaging with the Procurement Team.</p>
+    </div>
+
+    <app-card [noPadding]="true" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+        <div style="padding: 16px 24px; border-bottom: 1px solid var(--border-color); background: var(--vrip-gray-50); display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--vrip-primary-100); color: var(--vrip-primary-700); display: flex; align-items: center; justify-content: center;">
+                <span class="material-symbols-outlined">support_agent</span>
+            </div>
+            <div>
+                <h3 style="margin: 0; font-size: 1rem;">Procurement Helpdesk</h3>
+                <span style="font-size: 0.75rem; color: #34c759;">Typically replies in 1-2 hours</span>
+            </div>
+        </div>
+        
+        <div style="flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; background: var(--vrip-gray-50);">
+            
+            <div style="align-self: flex-start; max-width: 70%;">
+                <div style="background: white; padding: 12px 16px; border-radius: 12px; border-bottom-left-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-size: 0.875rem;">Hello! How can we assist you with PO-2023-1001?</p>
+                </div>
+                <span style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 4px; display: block;">10:30 AM</span>
+            </div>
+            
+            <div style="align-self: flex-end; max-width: 70%;">
+                <div style="background: var(--vrip-primary-600); color: white; padding: 12px 16px; border-radius: 12px; border-bottom-right-radius: 4px;">
+                    <p style="margin: 0; font-size: 0.875rem;">The shipment has been delayed due to weather conditions. Expected delivery is now Nov 3rd.</p>
+                </div>
+                <span style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 4px; display: block; text-align: right;">10:45 AM</span>
+            </div>
+            
+             <div style="align-self: flex-start; max-width: 70%;">
+                <div style="background: white; padding: 12px 16px; border-radius: 12px; border-bottom-left-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    <p style="margin: 0; font-size: 0.875rem;">Noted. Please ensure the tracking portal is updated with the new date.</p>
+                </div>
+                <span style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 4px; display: block;">11:00 AM</span>
+            </div>
+        </div>
+
+        <div style="padding: 16px; border-top: 1px solid var(--border-color); display: flex; gap: 12px; background: white;">
+            <app-button variant="ghost"><span class="material-symbols-outlined">attach_file</span></app-button>
+            <input type="text" placeholder="Type a message..." style="flex: 1; padding: 10px 16px; border: 1px solid var(--border-color); border-radius: 20px; outline: none; font-family: inherit;">
+            <app-button variant="primary" iconLeft="send">Send</app-button>
+        </div>
+    </app-card>
+</div>

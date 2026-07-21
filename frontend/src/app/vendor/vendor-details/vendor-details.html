@@ -1,265 +1,252 @@
 <div class="details-container">
-
-    <h1>Vendor Details</h1>
+    <div class="header">
+        <div>
+            <h1>Vendor Details</h1>
+            <p>View complete vendor profile and documents</p>
+        </div>
+        <app-button variant="outline" iconLeft="arrow_back" routerLink="/vendors">
+            Back to Vendor List
+        </app-button>
+    </div>
 
     @if(vendor){
+        <div class="details-grid-layout">
+            <div class="main-details">
+                <!-- Company Information -->
+                <app-card>
+                    <div class="card-header">
+                        <h2><span class="material-symbols-outlined text-primary">business</span> Company Information</h2>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="label">Company Name</span>
+                            <span class="value">{{ vendor.companyName }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Category</span>
+                            <span class="value">{{ vendor.category }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Company Registration</span>
+                            <span class="value">{{ vendor.companyRegistrationNumber || '-' }}</span>
+                        </div>
+                    </div>
+                </app-card>
 
-    <!-- Company Information -->
+                <!-- Contact Information -->
+                <app-card>
+                    <div class="card-header">
+                        <h2><span class="material-symbols-outlined text-primary">person</span> Contact Information</h2>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="label">Contact Person</span>
+                            <span class="value">{{ vendor.contactPerson }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Designation</span>
+                            <span class="value">{{ vendor.designation || '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Email</span>
+                            <span class="value">{{ vendor.email }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Phone</span>
+                            <span class="value">{{ vendor.phone }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Alternate Phone</span>
+                            <span class="value">{{ vendor.alternatePhone || '-' }}</span>
+                        </div>
+                    </div>
+                </app-card>
 
-    <div class="details-card">
+                <!-- Tax Information -->
+                <app-card>
+                    <div class="card-header">
+                        <h2><span class="material-symbols-outlined text-primary">receipt_long</span> Tax Information</h2>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="label">GST Number</span>
+                            <span class="value">{{ vendor.gst }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">PAN Number</span>
+                            <span class="value">{{ vendor.pan || '-' }}</span>
+                        </div>
+                    </div>
+                </app-card>
 
-        <h2>🏢 Company Information</h2>
+                <!-- Address Information -->
+                <app-card>
+                    <div class="card-header">
+                        <h2><span class="material-symbols-outlined text-primary">location_on</span> Address Information</h2>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item full-width">
+                            <span class="label">Address Line 1</span>
+                            <span class="value">{{ vendor.addressLine1 || '-' }}</span>
+                        </div>
+                        <div class="info-item full-width">
+                            <span class="label">Address Line 2</span>
+                            <span class="value">{{ vendor.addressLine2 || '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">City</span>
+                            <span class="value">{{ vendor.city || '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">State</span>
+                            <span class="value">{{ vendor.state || '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Country</span>
+                            <span class="value">{{ vendor.country || '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Pincode</span>
+                            <span class="value">{{ vendor.pincode || '-' }}</span>
+                        </div>
+                    </div>
+                </app-card>
+                
+                <!-- Business Information -->
+                <app-card>
+                    <div class="card-header">
+                        <h2><span class="material-symbols-outlined text-primary">public</span> Business Information</h2>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item full-width">
+                            <span class="label">Website</span>
+                            <span class="value">{{ vendor.website || '-' }}</span>
+                        </div>
+                        <div class="info-item full-width">
+                            <span class="label">Description</span>
+                            <span class="value">{{ vendor.description || '-' }}</span>
+                        </div>
+                    </div>
+                </app-card>
+                
+                <!-- Banking Information -->
+                <app-card>
+                    <div class="card-header">
+                        <h2><span class="material-symbols-outlined text-primary">account_balance</span> Banking Information</h2>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="label">Bank Account</span>
+                            <span class="value">{{ vendor.bankAccountNumber || '-' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">IFSC Code</span>
+                            <span class="value">{{ vendor.ifscCode || '-' }}</span>
+                        </div>
+                        <div class="info-item full-width">
+                            <span class="label">Payment Terms</span>
+                            <span class="value">{{ vendor.paymentTerms || '-' }}</span>
+                        </div>
+                    </div>
+                </app-card>
+            </div>
 
-        <div class="details-grid">
+            <div class="side-details">
+                <!-- Vendor Status -->
+                <app-card>
+                    <div class="card-header">
+                        <h2><span class="material-symbols-outlined text-primary">analytics</span> Vendor Status</h2>
+                    </div>
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <span class="label">Status</span>
+                            <app-badge [variant]="vendor.status === 'Active' ? 'success' : vendor.status === 'Pending' ? 'warning' : vendor.status === 'Rejected' ? 'danger' : 'default'">
+                                {{ vendor.status }}
+                            </app-badge>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">Approval Status</span>
+                            <app-badge [variant]="vendor.approvalStatus === 'Approved' ? 'primary' : vendor.approvalStatus === 'Pending' ? 'warning' : 'danger'">
+                                {{ vendor.approvalStatus }}
+                            </app-badge>
+                        </div>
+                    </div>
+                </app-card>
 
-            <p><strong>Company Name:</strong> {{ vendor.companyName }}</p>
+                <!-- Vendor Documents -->
+                <app-card>
+                    <div class="card-header">
+                        <h2><span class="material-symbols-outlined text-primary">folder</span> Vendor Documents</h2>
+                    </div>
+                    <div class="docs-list">
+                        <div class="doc-item">
+                            <div class="doc-info">
+                                <span class="material-symbols-outlined doc-icon text-neutral">description</span>
+                                <div>
+                                    <span class="doc-title">GST Certificate</span>
+                                    <span class="doc-status">{{ vendor.gstCertificate || 'Not Uploaded' }}</span>
+                                </div>
+                            </div>
+                            <app-button *ngIf="vendor.gstCertificateUrl" variant="outline" size="sm" (click)="viewDocument(vendor.gstCertificateUrl)">View</app-button>
+                        </div>
 
-            <p><strong>Category:</strong> {{ vendor.category }}</p>
+                        <div class="doc-item">
+                            <div class="doc-info">
+                                <span class="material-symbols-outlined doc-icon text-neutral">description</span>
+                                <div>
+                                    <span class="doc-title">PAN Card</span>
+                                    <span class="doc-status">{{ vendor.panCard || 'Not Uploaded' }}</span>
+                                </div>
+                            </div>
+                            <app-button *ngIf="vendor.panCardUrl" variant="outline" size="sm" (click)="viewDocument(vendor.panCardUrl)">View</app-button>
+                        </div>
 
-            <p><strong>Company Registration:</strong> {{ vendor.companyRegistrationNumber || '-' }}</p>
+                        <div class="doc-item">
+                            <div class="doc-info">
+                                <span class="material-symbols-outlined doc-icon text-neutral">description</span>
+                                <div>
+                                    <span class="doc-title">Registration Certificate</span>
+                                    <span class="doc-status">{{ vendor.registrationCertificate || 'Not Uploaded' }}</span>
+                                </div>
+                            </div>
+                            <app-button *ngIf="vendor.registrationCertificateUrl" variant="outline" size="sm" (click)="viewDocument(vendor.registrationCertificateUrl)">View</app-button>
+                        </div>
 
+                        <div class="doc-item">
+                            <div class="doc-info">
+                                <span class="material-symbols-outlined doc-icon text-neutral">description</span>
+                                <div>
+                                    <span class="doc-title">ISO Certificate</span>
+                                    <span class="doc-status">{{ vendor.isoCertificate || 'Not Uploaded' }}</span>
+                                </div>
+                            </div>
+                            <app-button *ngIf="vendor.isoCertificateUrl" variant="outline" size="sm" (click)="viewDocument(vendor.isoCertificateUrl)">View</app-button>
+                        </div>
+
+                        <div class="doc-item">
+                            <div class="doc-info">
+                                <span class="material-symbols-outlined doc-icon text-neutral">description</span>
+                                <div>
+                                    <span class="doc-title">Other Document</span>
+                                    <span class="doc-status">{{ vendor.otherDocument || 'Not Uploaded' }}</span>
+                                </div>
+                            </div>
+                            <app-button *ngIf="vendor.otherDocumentUrl" variant="outline" size="sm" (click)="viewDocument(vendor.otherDocumentUrl)">View</app-button>
+                        </div>
+                    </div>
+                </app-card>
+            </div>
         </div>
-
-    </div>
-
-    <!-- Contact Information -->
-
-    <div class="details-card">
-
-        <h2>👤 Contact Information</h2>
-
-        <div class="details-grid">
-
-            <p><strong>Contact Person:</strong> {{ vendor.contactPerson }}</p>
-
-            <p><strong>Designation:</strong> {{ vendor.designation || '-' }}</p>
-
-            <p><strong>Email:</strong> {{ vendor.email }}</p>
-
-            <p><strong>Phone:</strong> {{ vendor.phone }}</p>
-
-            <p><strong>Alternate Phone:</strong> {{ vendor.alternatePhone || '-' }}</p>
-
-        </div>
-
-    </div>
-
-    <!-- Tax Information -->
-
-    <div class="details-card">
-
-        <h2>🧾 Tax Information</h2>
-
-        <div class="details-grid">
-
-            <p><strong>GST Number:</strong> {{ vendor.gst }}</p>
-
-            <p><strong>PAN Number:</strong> {{ vendor.pan || '-' }}</p>
-
-        </div>
-
-    </div>
-
-    <!-- Address Information -->
-
-    <div class="details-card">
-
-        <h2>📍 Address Information</h2>
-
-        <div class="details-grid">
-
-            <p><strong>Address Line 1:</strong> {{ vendor.addressLine1 || '-' }}</p>
-
-            <p><strong>Address Line 2:</strong> {{ vendor.addressLine2 || '-' }}</p>
-
-            <p><strong>City:</strong> {{ vendor.city || '-' }}</p>
-
-            <p><strong>State:</strong> {{ vendor.state || '-' }}</p>
-
-            <p><strong>Country:</strong> {{ vendor.country || '-' }}</p>
-
-            <p><strong>Pincode:</strong> {{ vendor.pincode || '-' }}</p>
-
-        </div>
-
-    </div>
-
-    <!-- Business Information -->
-
-    <div class="details-card">
-
-        <h2>🌐 Business Information</h2>
-
-        <div class="details-grid">
-
-            <p><strong>Website:</strong> {{ vendor.website || '-' }}</p>
-
-            <p><strong>Description:</strong> {{ vendor.description || '-' }}</p>
-
-        </div>
-
-    </div>
-
-    <!-- Banking Information -->
-
-    <div class="details-card">
-
-        <h2>🏦 Banking Information</h2>
-
-        <div class="details-grid">
-
-            <p><strong>Bank Account:</strong> {{ vendor.bankAccountNumber || '-' }}</p>
-
-            <p><strong>IFSC Code:</strong> {{ vendor.ifscCode || '-' }}</p>
-
-            <p><strong>Payment Terms:</strong> {{ vendor.paymentTerms || '-' }}</p>
-
-        </div>
-
-    </div>
-
-    <!-- Vendor Documents -->
-
-    <div class="details-card">
-
-        <h2>📂 Vendor Documents</h2>
-
-        <div class="details-grid">
-
-            <p>
-
-                <strong>GST Certificate:</strong>
-
-                {{ vendor.gstCertificate || 'Not Uploaded' }}
-
-                @if(vendor.gstCertificateUrl){
-
-                <button
-                    class="view-btn"
-                    (click)="viewDocument(vendor.gstCertificateUrl)">
-
-                    View
-
-                </button>
-
-                }
-
-            </p>
-
-            <p>
-
-                <strong>PAN Card:</strong>
-
-                {{ vendor.panCard || 'Not Uploaded' }}
-
-                @if(vendor.panCardUrl){
-
-                <button
-                    class="view-btn"
-                    (click)="viewDocument(vendor.panCardUrl)">
-
-                    View
-
-                </button>
-
-                }
-
-            </p>
-
-            <p>
-
-                <strong>Registration Certificate:</strong>
-
-                {{ vendor.registrationCertificate || 'Not Uploaded' }}
-
-                @if(vendor.registrationCertificateUrl){
-
-                <button
-                    class="view-btn"
-                    (click)="viewDocument(vendor.registrationCertificateUrl)">
-
-                    View
-
-                </button>
-
-                }
-
-            </p>
-
-            <p>
-
-                <strong>ISO Certificate:</strong>
-
-                {{ vendor.isoCertificate || 'Not Uploaded' }}
-
-                @if(vendor.isoCertificateUrl){
-
-                <button
-                    class="view-btn"
-                    (click)="viewDocument(vendor.isoCertificateUrl)">
-
-                    View
-
-                </button>
-
-                }
-
-            </p>
-
-            <p>
-
-                <strong>Other Supporting Document:</strong>
-
-                {{ vendor.otherDocument || 'Not Uploaded' }}
-
-                @if(vendor.otherDocumentUrl){
-
-                <button
-                    class="view-btn"
-                    (click)="viewDocument(vendor.otherDocumentUrl)">
-
-                    View
-
-                </button>
-
-                }
-
-            </p>
-
-        </div>
-
-    </div>
-
-    <!-- Vendor Status -->
-
-    <div class="details-card">
-
-        <h2>📊 Vendor Status</h2>
-
-        <div class="details-grid">
-
-            <p><strong>Status:</strong> {{ vendor.status }}</p>
-
-            <p><strong>Approval Status:</strong> {{ vendor.approvalStatus }}</p>
-
-        </div>
-
-    </div>
-
-    <div class="action-buttons">
-
-        <button routerLink="/vendors">
-
-            ← Back to Vendor List
-
-        </button>
-
-    </div>
-
     } @else {
-
-    <h2>Vendor not found.</h2>
-
+        <app-card>
+            <div class="empty-state">
+                <span class="material-symbols-outlined empty-icon">error</span>
+                <h2>Vendor not found</h2>
+                <p>The vendor you are looking for does not exist or has been removed.</p>
+                <app-button variant="primary" routerLink="/vendors" style="margin-top: 16px;">
+                    Back to Vendors
+                </app-button>
+            </div>
+        </app-card>
     }
-
 </div>

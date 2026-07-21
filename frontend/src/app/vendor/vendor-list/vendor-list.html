@@ -1,294 +1,213 @@
 <div class="vendor-page">
-
     <div class="header">
-
         <div>
-
             <h1>Vendor Management</h1>
             <p>Manage all registered vendors</p>
-
         </div>
-
-        <button
-            class="add-btn"
+        <app-button
+            variant="primary"
+            iconLeft="add"
             routerLink="/vendors/add">
-
-            + Add Vendor
-
-        </button>
-
+            Add Vendor
+        </app-button>
     </div>
 
     <!-- Dashboard Statistics -->
-
     <div class="stats-container">
-
-        <div class="stat-card">
-
-            <h3>Total Vendors</h3>
-
+        <div class="vrip-stat-card border-primary">
+            <div class="stat-header">
+                <h3>Total Vendors</h3>
+                <span class="material-symbols-outlined text-primary-600">groups</span>
+            </div>
             <h2>{{ totalVendors }}</h2>
-
         </div>
 
-        <div class="stat-card active-card">
-
-            <h3>Active</h3>
-
+        <div class="vrip-stat-card border-success">
+            <div class="stat-header">
+                <h3>Active</h3>
+                <span class="material-symbols-outlined text-success-600">check_circle</span>
+            </div>
             <h2>{{ activeVendors }}</h2>
-
         </div>
 
-        <div class="stat-card pending-card">
-
-            <h3>Pending</h3>
-
+        <div class="vrip-stat-card border-warning">
+            <div class="stat-header">
+                <h3>Pending</h3>
+                <span class="material-symbols-outlined text-warning-600">pending</span>
+            </div>
             <h2>{{ pendingVendors }}</h2>
-
         </div>
 
-        <div class="stat-card suspended-card">
-
-            <h3>Suspended</h3>
-
+        <div class="vrip-stat-card border-orange">
+            <div class="stat-header">
+                <h3>Suspended</h3>
+                <span class="material-symbols-outlined text-orange-600">pause_circle</span>
+            </div>
             <h2>{{ suspendedVendors }}</h2>
-
         </div>
 
-        <div class="stat-card rejected-card">
-
-            <h3>Rejected</h3>
-
+        <div class="vrip-stat-card border-danger">
+            <div class="stat-header">
+                <h3>Rejected</h3>
+                <span class="material-symbols-outlined text-danger-600">cancel</span>
+            </div>
             <h2>{{ rejectedVendors }}</h2>
+        </div>
+    </div>
 
+    <app-card>
+        <div class="search-bar">
+            <div style="flex: 1; max-width: 400px;">
+                <app-input
+                    placeholder="Search by company, contact person or category..."
+                    iconLeft="search"
+                    [(ngModel)]="searchText"
+                    (input)="filterVendors()">
+                </app-input>
+            </div>
+
+            <select
+                class="vrip-select"
+                [(ngModel)]="selectedCategory"
+                (change)="filterVendors()">
+                <option value="All">All Categories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="IT Vendors">IT Vendors</option>
+                <option value="Service Providers">Service Providers</option>
+                <option value="Logistics Partners">Logistics Partners</option>
+                <option value="Maintenance Vendors">Maintenance Vendors</option>
+                <option value="Raw Material Suppliers">Raw Material Suppliers</option>
+                <option value="Equipment Vendors">Equipment Vendors</option>
+            </select>
+
+            <select
+                class="vrip-select"
+                [(ngModel)]="selectedStatus"
+                (change)="filterVendors()">
+                <option value="All">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Pending">Pending</option>
+                <option value="Suspended">Suspended</option>
+                <option value="Rejected">Rejected</option>
+            </select>
         </div>
 
-    </div>
-
-    <div class="search-bar">
-
-        <input
-            type="text"
-            placeholder="Search by company, contact person or category..."
-            [(ngModel)]="searchText"
-            (input)="filterVendors()">
-
-        <select
-            [(ngModel)]="selectedCategory"
-            (change)="filterVendors()">
-
-            <option value="All">All Categories</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Manufacturing">Manufacturing</option>
-            <option value="IT Vendors">IT Vendors</option>
-            <option value="Service Providers">Service Providers</option>
-            <option value="Logistics Partners">Logistics Partners</option>
-            <option value="Maintenance Vendors">Maintenance Vendors</option>
-            <option value="Raw Material Suppliers">Raw Material Suppliers</option>
-            <option value="Equipment Vendors">Equipment Vendors</option>
-
-        </select>
-
-        <select
-            [(ngModel)]="selectedStatus"
-            (change)="filterVendors()">
-
-            <option value="All">All Status</option>
-            <option value="Active">Active</option>
-            <option value="Pending">Pending</option>
-            <option value="Suspended">Suspended</option>
-            <option value="Rejected">Rejected</option>
-
-        </select>
-
-    </div>
-
-    <table>
-
-        <thead>
-
-            <tr>
-
-                <th>Vendor ID</th>
-
-                <th
-                    style="cursor:pointer;"
-                    (click)="sortData()">
-
-                    Company Name {{ sortAscending ? '▲' : '▼' }}
-
-                </th>
-
-                <th>Category</th>
-
-                <th>Contact Person</th>
-
-                <th>Email</th>
-
-                <th>Phone</th>
-
-                <th>Status</th>
-
-                <th>Approval</th>
-
-                <th>Actions</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            <tr *ngFor="let vendor of paginatedVendors">
-
-                <td>{{ vendor.id }}</td>
-
-                <td>{{ vendor.companyName }}</td>
-
-                <td>{{ vendor.category }}</td>
-
-                <td>{{ vendor.contactPerson }}</td>
-
-                <td>{{ vendor.email }}</td>
-
-                <td>{{ vendor.phone }}</td>
-
-                <td>
-
-                    <span
-                        [class.active]="vendor.status === 'Active'"
-                        [class.pending]="vendor.status === 'Pending'"
-                        [class.rejected]="vendor.status === 'Rejected'"
-                        [class.suspended]="vendor.status === 'Suspended'">
-
-                        {{ vendor.status }}
-
-                    </span>
-
-                    <div
-                        *ngIf="vendor.approvalStatus === 'Approved'"
-                        style="margin-top:10px;">
-
-                        <button
-                            *ngIf="vendor.status === 'Active'"
-                            class="suspend-btn"
-                            (click)="suspendVendor(vendor.id)">
-
-                            Suspend
-
-                        </button>
-
-                        <button
-                            *ngIf="vendor.status === 'Suspended'"
-                            class="activate-btn"
-                            (click)="activateVendor(vendor.id)">
-
-                            Activate
-
-                        </button>
-
-                    </div>
-
-                </td>
-
-                <td>
-
-                    <span
-                        [class.approved]="vendor.approvalStatus === 'Approved'"
-                        [class.pending]="vendor.approvalStatus === 'Pending'"
-                        [class.rejected]="vendor.approvalStatus === 'Rejected'">
-
-                        {{ vendor.approvalStatus }}
-
-                    </span>
-
-                    <div
-                        *ngIf="vendor.approvalStatus === 'Pending'"
-                        style="margin-top:10px; display:flex; gap:8px;">
-
-                        <button
-                            class="approve-btn"
-                            (click)="approveVendor(vendor.id)">
-
-                            Approve
-
-                        </button>
-
-                        <button
-                            class="reject-btn"
-                            (click)="rejectVendor(vendor.id)">
-
-                            Reject
-
-                        </button>
-
-                    </div>
-
-                </td>
-
-                <td>
-
-                    <button
-                        [routerLink]="['/vendors', vendor.id]">
-
-                        View
-
-                    </button>
-
-                    <button
-                        [routerLink]="['/vendors/edit', vendor.id]">
-
-                        Edit
-
-                    </button>
-
-                    <button
-                        class="delete"
-                        (click)="deleteVendor(vendor.id)">
-
-                        Delete
-
-                    </button>
-
-                </td>
-
-            </tr>
-
-        </tbody>
-
-    </table>
-
-    <div
-        style="
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            gap:20px;
-            margin-top:20px;
-        ">
-
-        <button
-            (click)="previousPage()"
-            [disabled]="currentPage === 1">
-
-            Previous
-
-        </button>
-
-        <span>
-
-            Page {{ currentPage }} of {{ totalPages }}
-
-        </span>
-
-        <button
-            (click)="nextPage()"
-            [disabled]="currentPage === totalPages">
-
-            Next
-
-        </button>
-
-    </div>
-
+        <div class="vrip-table-wrapper">
+            <table class="vrip-table">
+                <thead>
+                    <tr>
+                        <th>Vendor ID</th>
+                        <th style="cursor:pointer;" (click)="sortData()">
+                            Company Name <span class="material-symbols-outlined sort-icon">{{ sortAscending ? 'arrow_upward' : 'arrow_downward' }}</span>
+                        </th>
+                        <th>Category</th>
+                        <th>Contact Person</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Approval</th>
+                        <th class="vrip-table-actions-th">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let vendor of paginatedVendors" class="vrip-table-row">
+                        <td><span class="text-sm font-medium">#{{ vendor.id }}</span></td>
+                        <td><div class="font-semibold">{{ vendor.companyName }}</div></td>
+                        <td>{{ vendor.category }}</td>
+                        <td>{{ vendor.contactPerson }}</td>
+                        <td>{{ vendor.email }}</td>
+                        <td>{{ vendor.phone }}</td>
+                        <td>
+                            <app-badge
+                                [variant]="vendor.status === 'Active' ? 'success' : vendor.status === 'Pending' ? 'warning' : vendor.status === 'Rejected' ? 'danger' : 'default'">
+                                {{ vendor.status }}
+                            </app-badge>
+
+                            <div *ngIf="vendor.approvalStatus === 'Approved'" style="margin-top:8px;">
+                                <app-button
+                                    *ngIf="vendor.status === 'Active'"
+                                    variant="warning"
+                                    size="sm"
+                                    (click)="suspendVendor(vendor.id)">
+                                    Suspend
+                                </app-button>
+                                <app-button
+                                    *ngIf="vendor.status === 'Suspended'"
+                                    variant="primary"
+                                    size="sm"
+                                    (click)="activateVendor(vendor.id)">
+                                    Activate
+                                </app-button>
+                            </div>
+                        </td>
+                        <td>
+                            <app-badge
+                                [variant]="vendor.approvalStatus === 'Approved' ? 'primary' : vendor.approvalStatus === 'Pending' ? 'warning' : 'danger'">
+                                {{ vendor.approvalStatus }}
+                            </app-badge>
+
+                            <div *ngIf="vendor.approvalStatus === 'Pending'" style="margin-top:8px; display:flex; gap:8px;">
+                                <app-button
+                                    variant="success"
+                                    size="sm"
+                                    (click)="approveVendor(vendor.id)">
+                                    Approve
+                                </app-button>
+                                <app-button
+                                    variant="danger"
+                                    size="sm"
+                                    (click)="rejectVendor(vendor.id)">
+                                    Reject
+                                </app-button>
+                            </div>
+                        </td>
+                        <td class="vrip-table-actions-td">
+                            <div class="action-buttons">
+                                <app-button
+                                    variant="outline"
+                                    size="sm"
+                                    iconLeft="visibility"
+                                    [routerLink]="['/vendors', vendor.id]">
+                                </app-button>
+                                <app-button
+                                    variant="outline"
+                                    size="sm"
+                                    iconLeft="edit"
+                                    [routerLink]="['/vendors/edit', vendor.id]">
+                                </app-button>
+                                <app-button
+                                    variant="danger"
+                                    size="sm"
+                                    iconLeft="delete"
+                                    (click)="deleteVendor(vendor.id)">
+                                </app-button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="paginatedVendors.length === 0">
+                        <td colspan="9" class="vrip-table-empty">
+                            <div class="empty-state">
+                                <span class="material-symbols-outlined empty-icon">inbox</span>
+                                <p>No vendors found</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="vrip-table-pagination" style="margin-top: 16px;">
+            <span class="pagination-info">Showing {{ paginatedVendors.length > 0 ? ((currentPage - 1) * itemsPerPage) + 1 : 0 }} to {{ ((currentPage - 1) * itemsPerPage) + paginatedVendors.length }} of {{ filteredVendors.length }} entries</span>
+            <div class="pagination-controls">
+                <button class="pagination-btn" [disabled]="currentPage === 1" (click)="previousPage()">
+                    <span class="material-symbols-outlined">chevron_left</span>
+                </button>
+                <button class="pagination-btn active">{{ currentPage }}</button>
+                <button class="pagination-btn" [disabled]="currentPage === totalPages" (click)="nextPage()">
+                    <span class="material-symbols-outlined">chevron_right</span>
+                </button>
+            </div>
+        </div>
+    </app-card>
 </div>
