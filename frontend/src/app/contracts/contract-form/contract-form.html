@@ -11,43 +11,106 @@
         Loading...
     </div>
 
-</div>
+    <div *ngIf="!loading" style="display: flex; flex-direction: column; gap: 20px;">
+        <app-card>
+            <h3 style="margin: 0 0 16px 0; font-size: 1rem;">Contract Information</h3>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Contract Title *</label>
+                    <input type="text" [(ngModel)]="contract.contract_title" placeholder="e.g. Annual IT Hardware Maintenance Agreement" />
+                </div>
+                <div class="form-group">
+                    <label>Contract Number</label>
+                    <input type="text" [value]="contract.contract_number || 'Auto-generated'" disabled />
+                </div>
+                <div class="form-group">
+                    <label>Vendor *</label>
+                    <select [(ngModel)]="contract.vendor_id" [disabled]="isEdit">
+                        <option [ngValue]="null">Select an approved, active vendor</option>
+                        <option *ngFor="let v of vendors" [ngValue]="v.id">{{ v.companyName }}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Contract Type</label>
+                    <select [(ngModel)]="contract.contract_type">
+                        <option *ngFor="let t of contractTypes" [value]="t">{{ t }}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Procurement Category</label>
+                    <select [(ngModel)]="contract.procurement_category">
+                        <option value="">Not specified</option>
+                        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select [(ngModel)]="contract.status">
+                        <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+                    </select>
+                </div>
+            </div>
+        </app-card>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+        <app-card>
+            <h3 style="margin: 0 0 16px 0; font-size: 1rem;">Duration &amp; Value</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Start Date *</label>
+                    <input type="date" [(ngModel)]="contract.start_date" />
+                </div>
+                <div class="form-group">
+                    <label>End Date *</label>
+                    <input type="date" [(ngModel)]="contract.end_date" />
+                </div>
+                <div class="form-group">
+                    <label>Contract Value (₹) *</label>
+                    <input type="number" min="0" step="0.01" [(ngModel)]="contract.contract_value" placeholder="0.00" />
+                </div>
+                <div class="form-group">
+                    <label>Payment Terms</label>
+                    <select [(ngModel)]="contract.payment_terms">
+                        <option *ngFor="let p of paymentTermOptions" [value]="p">{{ p }}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Responsible Manager</label>
+                    <input type="text" [(ngModel)]="contract.responsible_manager" placeholder="e.g. Procurement Manager" />
+                </div>
+            </div>
+        </app-card>
+
+        <app-card>
+            <h3 style="margin: 0 0 16px 0; font-size: 1rem;">Terms &amp; Documentation</h3>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Service Level Agreement (SLA)</label>
+                    <textarea rows="3" [(ngModel)]="contract.sla_details"
+                              placeholder="Response times, uptime commitments, delivery windows..."></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <label>Warranty Details</label>
+                    <textarea rows="3" [(ngModel)]="contract.warranty_details"
+                              placeholder="Warranty period, coverage, replacement terms..."></textarea>
+                </div>
+                <div class="form-group full-width" *ngIf="!isEdit">
+                    <label>Signed Contract Document (PDF, JPG or PNG — max 10 MB)</label>
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)" />
+                    <small *ngIf="fileError" style="color: #991b1b;">{{ fileError }}</small>
+                </div>
+            </div>
+        </app-card>
+
+        <div *ngIf="errorMsg"
+             style="padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+            {{ errorMsg }}
+        </div>
+
+        <div class="form-actions">
+            <app-button variant="outline" (onClick)="cancel()">Cancel</app-button>
+            <app-button variant="primary" iconLeft="save" [disabled]="saving" (onClick)="save()">
+                {{ saving ? 'Saving...' : (isEdit ? 'Update Contract' : 'Create Contract') }}
+            </app-button>
+        </div>
+    </div>
 </div>

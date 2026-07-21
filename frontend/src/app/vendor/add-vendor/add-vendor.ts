@@ -28,6 +28,7 @@ import { InputComponent } from '../../ui/input/input';
   styleUrls: ['./add-vendor.css']
 })
 export class AddVendor {
+
   vendor: Vendor = {
 
     id: 0,
@@ -96,6 +97,7 @@ export class AddVendor {
     approvalStatus: 'Pending'
 
   };
+
   constructor(
 
     private vendorService: VendorService,
@@ -103,12 +105,16 @@ export class AddVendor {
     private router: Router
 
   ) {}
+
   readonly categories = VENDOR_CATEGORIES;
   readonly documentSlots = VENDOR_DOCUMENT_SLOTS;
+
   private selectedFiles = new Map<string, File>();
+
   errorMsg = '';
   fileError = '';
   saving = false;
+
   onFileSelected(event: Event, documentType: string): void {
 
     const input = event.target as HTMLInputElement;
@@ -128,25 +134,100 @@ export class AddVendor {
     this.selectedFiles.set(documentType, file);
 
   }
+
   selectedFileName(documentType: string): string {
     return this.selectedFiles.get(documentType)?.name || '';
   }
-}
 
-const PLACEHOLDER_ADD_VENDOR_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderAddVendor(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_ADD_VENDOR_ROWS;
+  removeFile(documentType: string): void {
+    this.selectedFiles.delete(documentType);
   }
-  return rows.filter((row) => !!row);
+
+  saveVendor(): void {
+
+    this.errorMsg = '';
+
+    const missing = this.validate();
+    if (missing) {
+      this.errorMsg = missing;
+      return;
+    }
+
+    this.saving = true;
+
+    this.vendorService.addVendor(this.vendor).subscribe({
+      next: (created) => {
+        this.uploadSelectedDocuments(created?.id);
+      },
+      error: (error) => {
+        this.saving = false;
+
+        this.errorMsg = error.error?.detail || 'The vendor could not be saved. Please try again.';
+      }
+    });
+
+  }
+
+  private uploadSelectedDocuments(vendorId?: number): void {
+
+    const uploads = Array.from(this.selectedFiles.entries());
+
+    if (!vendorId || uploads.length === 0) {
+      this.saving = false;
+      this.router.navigate(['/vendors']);
+      return;
+    }
+
+    forkJoin(
+      uploads.map(([documentType, file]) =>
+        this.vendorService.uploadDocument(vendorId, documentType, file).pipe(
+          catchError(() => of({ failed: documentType }))
+        )
+      )
+    ).subscribe(results => {
+      this.saving = false;
+      const failed = results
+        .filter((r: any) => r && r.failed)
+        .map((r: any) => r.failed);
+
+      if (failed.length > 0) {
+        this.errorMsg =
+          `The vendor was saved, but these documents could not be uploaded: ${failed.join(', ')}. ` +
+          `You can attach them from the Edit Vendor page.`;
+        return;
+      }
+
+      this.router.navigate(['/vendors']);
+    });
+
+  }
+
+  private validate(): string {
+    const v = this.vendor;
+    if (!v.companyName?.trim()) return 'Company Name is required.';
+    if (!v.category?.trim()) return 'Vendor Category is required.';
+    if (!v.contactPerson?.trim()) return 'Contact Person Name is required.';
+    if (!v.email?.trim()) return 'Email Address is required.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email)) return 'Enter a valid email address.';
+    if (!v.phone?.trim()) return 'Phone Number is required.';
+    if (!/^\d{10}$/.test(v.phone.replace(/\D/g, '').slice(-10))) return 'Enter a valid 10-digit phone number.';
+    if (v.pincode && !/^\d{6}$/.test(v.pincode)) return 'Pincode must be 6 digits.';
+    if (v.gst && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9A-Z]{3}$/i.test(v.gst)) {
+      return 'GST Number format is invalid (example: 27AABCT1234F1Z5).';
+    }
+    if (v.pan && !/^[A-Z]{5}[0-9]{4}[A-Z]$/i.test(v.pan)) {
+      return 'PAN Number format is invalid (example: AABCT1234F).';
+    }
+    if (v.ifscCode && !/^[A-Z]{4}0[A-Z0-9]{6}$/i.test(v.ifscCode)) {
+      return 'IFSC Code format is invalid (example: HDFC0001234).';
+    }
+    return '';
+  }
+
+  cancel(): void {
+
+    this.router.navigate(['/vendors']);
+
+  }
+
 }
