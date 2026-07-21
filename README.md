@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 15 Jul - Improve milestone timeline in the order tracking screen
 - 16 Jul - Extend the procurement request screen with priority selection
 - 17 Jul - Flesh out the vendor assignment screen with reliability hints
 - 18 Jul - Add the admin dashboard screen with user counts
 - 19 Jul - Improve reliability hints in the vendor assignment screen
 - 20 Jul - Extend the purchase order screen with status chips
+- 21 Jul - Add the supply chain dashboard screen with delivery status tiles
