@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import date
+
 from app.database.connection import get_db
 from app.schemas.contract import ContractCreate, ContractUpdate, ContractResponse
 from app.schemas.certification import CertificationCreate, CertificationUpdate, CertificationResponse
@@ -15,6 +16,7 @@ from app.models.user import User
 
 router = APIRouter(prefix="/contracts", tags=["Contracts & Compliance"])
 
+
 @router.post("/", response_model=ContractResponse, status_code=201)
 def create_contract(
     data: ContractCreate,
@@ -22,6 +24,7 @@ def create_contract(
     current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER]))
 ):
     return contract_service.create_contract(db, data)
+
 
 @router.post("/upload", response_model=ContractResponse, status_code=201)
 async def create_contract_with_file(
@@ -57,6 +60,7 @@ async def create_contract_with_file(
     )
     return contract_service.create_contract(db, c_data, file=file)
 
+
 @router.get("/", response_model=List[ContractResponse])
 def list_contracts(
     db: Session = Depends(get_db),
@@ -71,6 +75,7 @@ def list_contracts(
         return []
     return contract_service.get_all_contracts(db)
 
+
 @router.get("/expiring", response_model=List[ContractResponse])
 def list_expiring_contracts(
     days: int = Query(90),
@@ -80,6 +85,7 @@ def list_expiring_contracts(
     contracts = contract_service.get_expiring_contracts(db, days_threshold=days)
     return restrict_to_vendor(db, current_user, contracts, "contracts")
 
+
 @router.get("/expiring-certifications", response_model=List[CertificationResponse])
 def list_expiring_certifications(
     days: int = Query(90),
@@ -88,6 +94,7 @@ def list_expiring_certifications(
 ):
     certs = contract_service.get_expiring_certifications(db, days_threshold=days)
     return restrict_to_vendor(db, current_user, certs, "certifications")
+
 
 @router.get("/{contract_id}", response_model=ContractResponse)
 def get_contract(
@@ -100,6 +107,7 @@ def get_contract(
         raise HTTPException(status_code=404, detail="Contract not found")
     assert_owns(db, current_user, c.vendor_id, "contracts")
     return c
+
 
 @router.get("/{contract_id}/document")
 def download_contract_document(
@@ -121,6 +129,7 @@ def download_contract_document(
 
     return FileResponse(path=c.document_path, filename=c.document_name or "contract.pdf")
 
+
 @router.put("/{contract_id}", response_model=ContractResponse)
 def update_contract(
     contract_id: int,
@@ -129,6 +138,7 @@ def update_contract(
     current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER]))
 ):
     return contract_service.update_contract(db, contract_id, data)
+
 
 @router.post("/{contract_id}/renew", response_model=ContractResponse)
 def renew_contract(
@@ -140,6 +150,7 @@ def renew_contract(
 ):
     return contract_service.renew_contract(db, contract_id, new_end_date, new_value)
 
+
 @router.delete("/{contract_id}")
 def delete_contract(
     contract_id: int,
@@ -147,6 +158,7 @@ def delete_contract(
     current_user: User = Depends(role_required([Roles.ADMIN]))
 ):
     return contract_service.delete_contract(db, contract_id)
+
 
 @router.post("/certifications", response_model=CertificationResponse, status_code=201)
 def add_certification(
@@ -156,6 +168,7 @@ def add_certification(
 ):
     assert_owns(db, current_user, data.vendor_id, "certifications")
     return contract_service.add_certification(db, data)
+
 
 @router.post("/certifications/upload", response_model=CertificationResponse, status_code=201)
 async def add_certification_with_file(
@@ -181,111 +194,106 @@ async def add_certification_with_file(
     return contract_service.add_certification(db, data, file=file)
 
 
-def _pending_contract_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+@router.get("/certifications/{vendor_id}", response_model=List[CertificationResponse])
+def get_certifications(
+    vendor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    assert_owns(db, current_user, vendor_id, "certifications")
+    return contract_service.get_vendor_certifications(db, vendor_id)
 
 
-def _pending_contract_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+@router.put("/certifications/detail/{cert_id}", response_model=CertificationResponse)
+async def update_certification(
+    cert_id: int,
+    certification_name: Optional[str] = Form(None),
+    certificate_number: Optional[str] = Form(None),
+    issuing_authority: Optional[str] = Form(None),
+    issue_date: Optional[date] = Form(None),
+    expiry_date: Optional[date] = Form(None),
+    file: Optional[UploadFile] = File(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER, Roles.VENDOR]))
+):
+    cert = contract_service.get_certification(db, cert_id)
+    if not cert:
+        raise HTTPException(status_code=404, detail="Certification not found")
+    assert_owns(db, current_user, cert.vendor_id, "certifications")
+
+    data = CertificationUpdate(
+        certification_name=certification_name,
+        certificate_number=certificate_number,
+        issuing_authority=issuing_authority,
+        issue_date=issue_date,
+        expiry_date=expiry_date,
+    )
+    return contract_service.update_certification(db, cert_id, data, file=file)
 
 
-def _pending_contract_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+@router.get("/certifications/detail/{cert_id}/document")
+def download_certificate(
+    cert_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    import os
+
+    cert = contract_service.get_certification(db, cert_id)
+    if not cert:
+        raise HTTPException(status_code=404, detail="Certification not found")
+    assert_owns(db, current_user, cert.vendor_id, "certifications")
+
+    if not cert.file_path:
+        raise HTTPException(status_code=404, detail="No certificate file has been uploaded")
+    if not os.path.exists(cert.file_path):
+        raise HTTPException(status_code=404, detail="The stored certificate is no longer available on the server")
+
+    return FileResponse(path=cert.file_path, filename=cert.file_name or "certificate.pdf")
 
 
-def _pending_contract_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+@router.delete("/certifications/{cert_id}")
+def delete_certification(
+    cert_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER]))
+):
+    return contract_service.delete_certification(db, cert_id)
 
 
-def _pending_contract_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+@router.post("/compliance", response_model=ComplianceRecordResponse, status_code=201)
+def record_compliance(
+    data: ComplianceRecordCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER, Roles.AUDITOR]))
+):
+    return contract_service.record_compliance(db, data)
 
 
-def _pending_contract_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+@router.get("/compliance/dashboard")
+def get_compliance_dashboard(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required(INTERNAL_ROLES))
+):
+    return contract_service.get_compliance_dashboard(db)
 
 
-def _pending_contract_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+@router.get("/compliance/{vendor_id}", response_model=List[ComplianceRecordResponse])
+def get_vendor_compliance(
+    vendor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    assert_owns(db, current_user, vendor_id, "compliance records")
+    return contract_service.get_vendor_compliance(db, vendor_id)
 
 
-def _pending_contract_totals_4(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
-
-
-def _pending_contract_rows_5(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
-
-
-def _pending_contract_totals_5(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+@router.put("/compliance/{id}", response_model=ComplianceRecordResponse)
+def update_compliance_status(
+    id: int,
+    status: str,
+    remarks: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER, Roles.AUDITOR]))
+):
+    return contract_service.update_compliance_status(db, id, status, current_user.name, remarks)
