@@ -1,0 +1,69 @@
+<!-- Auditor Dashboard -->
+<div class="dash-header">
+  <h1 class="dash-title">Audit & Compliance</h1>
+  <p class="dash-subtitle">Monitor system-wide compliance, logs, and audit reports.</p>
+</div>
+
+<!-- KPI Grid -->
+<div class="dash-kpi-grid">
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Compliance Score</h4>
+      <div class="dash-kpi-icon icon-success"><span class="material-symbols-outlined">fact_check</span></div>
+    </div>
+    <p class="dash-kpi-value">96%</p>
+    <div class="dash-kpi-trend trend-up">
+      <span class="material-symbols-outlined">trending_up</span> +2% this quarter
+    </div>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Pending Audits</h4>
+      <div class="dash-kpi-icon icon-warning"><span class="material-symbols-outlined">pending_actions</span></div>
+    </div>
+    <p class="dash-kpi-value">4</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Flagged Issues</h4>
+      <div class="dash-kpi-icon icon-danger"><span class="material-symbols-outlined">flag</span></div>
+    </div>
+    <p class="dash-kpi-value">2</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Reports Generated</h4>
+      <div class="dash-kpi-icon icon-brand"><span class="material-symbols-outlined">assessment</span></div>
+    </div>
+    <p class="dash-kpi-value">45</p>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Quick Actions</h2>
+  </div>
+  <div class="dash-actions-grid">
+    <a routerLink="/auditor/reports" class="dash-action-card">
+      <div class="dash-action-icon icon-brand"><span class="material-symbols-outlined">assessment</span></div>
+      <div class="dash-action-text"><h3>Audit Reports</h3><p>View and generate formal audit documents</p></div>
+    </a>
+    <a routerLink="/auditor/compliance" class="dash-action-card">
+      <div class="dash-action-icon icon-success"><span class="material-symbols-outlined">fact_check</span></div>
+      <div class="dash-action-text"><h3>Compliance Check</h3><p>Review vendor regulatory compliance</p></div>
+    </a>
+    <a routerLink="/auditor/audit-logs" class="dash-action-card">
+      <div class="dash-action-icon icon-info"><span class="material-symbols-outlined">history</span></div>
+      <div class="dash-action-text"><h3>System Logs</h3><p>Trace all critical system activities</p></div>
+    </a>
+  </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Recent Audit Activity</h2>
+  </div>
+  <app-table [columns]="columns" [data]="recentActivities"></app-table>
+</div>

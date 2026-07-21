@@ -1,0 +1,86 @@
+@import "../procurement-approval/procurement-approval.css";
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--vrip-space-2);
+}
+
+.items-table th, .items-table td {
+    padding: var(--vrip-space-3);
+    border-bottom: 1px solid var(--vrip-slate-200);
+    text-align: left;
+}
+
+.items-table th {
+    background-color: var(--vrip-slate-50);
+    font-size: 0.875rem;
+    color: var(--vrip-slate-600);
+    font-weight: 600;
+}
+
+.items-table .text-right {
+    text-align: right;
+}
+
+.items-table tfoot td {
+    padding: var(--vrip-space-2) var(--vrip-space-3);
+    color: var(--vrip-slate-700);
+}
+
+.items-table .total-row td {
+    font-size: 1.125rem;
+    color: var(--vrip-slate-900);
+    border-top: 2px solid var(--vrip-slate-200);
+    padding-top: var(--vrip-space-3);
+}
+
+.link-styled {
+    color: var(--vrip-primary-600);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.link-styled:hover {
+    text-decoration: underline;
+}
+
+.mt-6 {
+    margin-top: var(--vrip-space-6);
+}
+
+.mt-2 {
+    margin-top: var(--vrip-space-2);
+}
+
+.print-show {
+    display: none;
+}
+
+/* Print Styles */
+@media print {
+    .print-hide {
+        display: none !important;
+    }
+    .print-show {
+        display: block !important;
+    }
+    .po-details-container {
+        padding: 0;
+    }
+    .details-grid {
+        display: block;
+    }
+    .print-header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+    }
+    app-card {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        margin-bottom: 20px;
+        break-inside: avoid;
+    }
+}

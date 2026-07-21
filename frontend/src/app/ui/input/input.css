@@ -1,0 +1,100 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   INPUT v2.0 — Form Controls
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.vrip-input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--v-5);
+}
+
+.vrip-input-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--v-text-primary);
+  margin-bottom: var(--v-2);
+}
+
+.vrip-input-required {
+  color: var(--v-danger);
+  margin-left: 2px;
+}
+
+.vrip-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.vrip-input-field {
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--v-3);
+  font-size: 0.875rem;
+  font-family: var(--v-font);
+  color: var(--v-text-primary);
+  background: var(--v-bg-card);
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-md);
+  transition: all var(--v-duration) var(--v-ease);
+  outline: none;
+}
+
+.vrip-input-field:hover:not(:disabled):not(:focus) {
+  border-color: var(--v-border-hover);
+}
+
+.vrip-input-field:focus {
+  border-color: var(--v-brand);
+  box-shadow: var(--v-shadow-focus);
+}
+
+.vrip-input-field:disabled {
+  background: var(--v-bg-inset);
+  color: var(--v-text-tertiary);
+  cursor: not-allowed;
+}
+
+.vrip-input-field::placeholder {
+  color: var(--v-text-tertiary);
+}
+
+.vrip-input-field.has-icon-left  { padding-left: 40px; }
+.vrip-input-field.has-icon-right { padding-right: 40px; }
+
+.vrip-input-icon-left,
+.vrip-input-icon-right {
+  position: absolute;
+  color: var(--v-text-tertiary);
+  font-size: 18px;
+  pointer-events: none;
+  transition: color var(--v-duration) var(--v-ease);
+}
+.vrip-input-icon-left  { left: 12px; }
+.vrip-input-icon-right { right: 12px; }
+
+.vrip-input-field:focus ~ .vrip-input-icon-left,
+.vrip-input-field:focus ~ .vrip-input-icon-right {
+  color: var(--v-brand);
+}
+
+.vrip-input-hint {
+  font-size: 0.75rem;
+  color: var(--v-text-tertiary);
+  margin-top: var(--v-1);
+}
+
+.vrip-input-error {
+  font-size: 0.75rem;
+  color: var(--v-danger);
+  margin-top: var(--v-1);
+  font-weight: 500;
+}
+
+.vrip-input-group.has-error .vrip-input-field {
+  border-color: var(--v-danger);
+}
+
+.vrip-input-group.has-error .vrip-input-field:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}

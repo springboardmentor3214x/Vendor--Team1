@@ -1,0 +1,126 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   BUTTON v2.0 — Premium Button System
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.vrip-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--v-2);
+  font-family: var(--v-font);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  letter-spacing: var(--v-tracking-normal);
+  border: 1px solid transparent;
+  border-radius: var(--v-radius-md);
+  cursor: pointer;
+  outline: none;
+  white-space: nowrap;
+  transition: all var(--v-duration) var(--v-ease);
+  position: relative;
+  line-height: 1;
+}
+
+.vrip-button:focus-visible {
+  box-shadow: var(--v-shadow-focus);
+}
+
+.vrip-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Sizes ────────────────────────────────────────────────────────────── */
+.vrip-btn-sm  { height: 32px; padding: 0 12px; font-size: 0.75rem; border-radius: var(--v-radius-sm); }
+.vrip-btn-md  { height: 36px; padding: 0 14px; }
+.vrip-btn-lg  { height: 40px; padding: 0 18px; font-size: 0.875rem; }
+.vrip-btn-icon-only { width: 36px; height: 36px; padding: 0; }
+
+/* ── Primary ──────────────────────────────────────────────────────────── */
+.vrip-btn-primary {
+  background: var(--v-brand);
+  color: var(--v-text-inverse);
+  box-shadow: var(--v-shadow-xs), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.vrip-btn-primary:hover {
+  background: var(--v-brand-hover);
+  box-shadow: var(--v-shadow-sm), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.vrip-btn-primary:active {
+  background: #4338CA;
+}
+
+/* ── Secondary ────────────────────────────────────────────────────────── */
+.vrip-btn-secondary {
+  background: var(--v-bg-card);
+  color: var(--v-text-primary);
+  border-color: var(--v-border);
+  box-shadow: var(--v-shadow-xs);
+}
+.vrip-btn-secondary:hover {
+  background: var(--v-bg-inset);
+  border-color: var(--v-border-hover);
+}
+
+/* ── Outline ──────────────────────────────────────────────────────────── */
+.vrip-btn-outline {
+  background: transparent;
+  color: var(--v-text-secondary);
+  border-color: var(--v-border);
+}
+.vrip-btn-outline:hover {
+  background: var(--v-bg-inset);
+  color: var(--v-text-primary);
+  border-color: var(--v-border-hover);
+}
+
+/* ── Ghost ────────────────────────────────────────────────────────────── */
+.vrip-btn-ghost {
+  background: transparent;
+  color: var(--v-text-secondary);
+}
+.vrip-btn-ghost:hover {
+  background: var(--v-bg-inset);
+  color: var(--v-text-primary);
+}
+
+/* ── Danger ───────────────────────────────────────────────────────────── */
+.vrip-btn-danger {
+  background: var(--v-danger);
+  color: var(--v-text-inverse);
+  box-shadow: var(--v-shadow-xs);
+}
+.vrip-btn-danger:hover {
+  background: #B91C1C;
+}
+
+/* ── Success ──────────────────────────────────────────────────────────── */
+.vrip-btn-success {
+  background: var(--v-success);
+  color: var(--v-text-inverse);
+  box-shadow: var(--v-shadow-xs);
+}
+.vrip-btn-success:hover {
+  background: #047857;
+}
+
+/* ── Text (Link-like) ─────────────────────────────────────────────────── */
+.vrip-btn-text {
+  background: transparent;
+  color: var(--v-brand);
+  padding: 0;
+  height: auto;
+}
+.vrip-btn-text:hover {
+  color: var(--v-brand-hover);
+}
+
+/* ── Icons ────────────────────────────────────────────────────────────── */
+.vrip-button .material-symbols-outlined {
+  font-size: 16px;
+  font-variation-settings: 'wght' 500, 'opsz' 20;
+}
+
+/* ── Spinner ──────────────────────────────────────────────────────────── */
+.spinner { animation: v-spin 0.7s linear infinite; }

@@ -1,0 +1,40 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   BADGE v2.0 — Status Indicators
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.vrip-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: var(--v-radius-full);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+.vrip-badge .material-symbols-outlined {
+  font-size: 14px;
+}
+
+/* Filled Variants */
+.vrip-badge-success { background: var(--v-success-light); color: var(--v-success); }
+.vrip-badge-warning { background: var(--v-warning-light); color: var(--v-warning); }
+.vrip-badge-danger  { background: var(--v-danger-light);  color: var(--v-danger); }
+.vrip-badge-info    { background: var(--v-info-light);    color: var(--v-info); }
+.vrip-badge-neutral, .vrip-badge-default { background: var(--v-bg-inset);      color: var(--v-text-secondary); }
+.vrip-badge-primary { background: var(--v-brand-light);   color: var(--v-brand); }
+
+/* Sizes */
+.vrip-badge-sm { padding: 1px 7px; font-size: 0.625rem; }
+.vrip-badge-md { padding: 2px 10px; font-size: 0.6875rem; }
+.vrip-badge-lg { padding: 4px 14px; font-size: 0.75rem; }
+
+/* Outline Variants */
+.vrip-badge-outline-success { background: transparent; border: 1px solid var(--v-success); color: var(--v-success); }
+.vrip-badge-outline-warning { background: transparent; border: 1px solid var(--v-warning); color: var(--v-warning); }
+.vrip-badge-outline-danger  { background: transparent; border: 1px solid var(--v-danger);  color: var(--v-danger); }
+.vrip-badge-outline-info    { background: transparent; border: 1px solid var(--v-info);    color: var(--v-info); }
+.vrip-badge-outline-neutral { background: transparent; border: 1px solid var(--v-border);  color: var(--v-text-secondary); }

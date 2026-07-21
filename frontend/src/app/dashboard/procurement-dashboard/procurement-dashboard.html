@@ -1,0 +1,66 @@
+<!-- Procurement Dashboard -->
+<div class="dash-header">
+  <h1 class="dash-title">Procurement Hub</h1>
+  <p class="dash-subtitle">Manage purchase requests, vendor assignments, and order tracking.</p>
+</div>
+
+<!-- KPI Grid -->
+<div class="dash-kpi-grid">
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Open Requests</h4>
+      <div class="dash-kpi-icon icon-brand"><span class="material-symbols-outlined">pending_actions</span></div>
+    </div>
+    <p class="dash-kpi-value">24</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Active POs</h4>
+      <div class="dash-kpi-icon icon-info"><span class="material-symbols-outlined">receipt_long</span></div>
+    </div>
+    <p class="dash-kpi-value">18</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Awaiting Approval</h4>
+      <div class="dash-kpi-icon icon-warning"><span class="material-symbols-outlined">hourglass_top</span></div>
+    </div>
+    <p class="dash-kpi-value">6</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Vendors Assigned</h4>
+      <div class="dash-kpi-icon icon-success"><span class="material-symbols-outlined">handshake</span></div>
+    </div>
+    <p class="dash-kpi-value">42</p>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Quick Actions</h2>
+  </div>
+  <div class="dash-actions-grid">
+    <a routerLink="/procurement/requests" class="dash-action-card">
+      <div class="dash-action-icon icon-brand"><span class="material-symbols-outlined">inventory</span></div>
+      <div class="dash-action-text"><h3>Purchase Requests</h3><p>View and approve department requests</p></div>
+    </a>
+    <a routerLink="/vendors" class="dash-action-card">
+      <div class="dash-action-icon icon-info"><span class="material-symbols-outlined">domain</span></div>
+      <div class="dash-action-text"><h3>Vendor Directory</h3><p>Browse and assign suppliers</p></div>
+    </a>
+    <a routerLink="/procurement/invoice-management" class="dash-action-card">
+      <div class="dash-action-icon icon-success"><span class="material-symbols-outlined">receipt_long</span></div>
+      <div class="dash-action-text"><h3>Invoice Management</h3><p>Process and verify vendor invoices</p></div>
+    </a>
+  </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Recent Activity</h2>
+  </div>
+  <app-table [columns]="columns" [data]="recentActivities"></app-table>
+</div>

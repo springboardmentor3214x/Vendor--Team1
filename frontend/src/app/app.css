@@ -1,0 +1,13 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   APP SHELL — Layout Wrapper
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.content {
+  margin-left: var(--v-sidebar-w);
+  padding-top: calc(var(--v-navbar-h) + var(--v-8));
+  padding-left: var(--v-8);
+  padding-right: var(--v-8);
+  padding-bottom: var(--v-12);
+  min-height: 100vh;
+  background-color: var(--v-bg-body);
+}

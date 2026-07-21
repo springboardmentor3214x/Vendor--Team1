@@ -1,0 +1,94 @@
+/* Dashboard cards — uses .dash-kpi classes from parent dashboard.css */
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--v-5);
+}
+
+.vrip-stat-card {
+  background: var(--v-bg-card);
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-lg);
+  padding: var(--v-5);
+  box-shadow: var(--v-shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--v-3);
+  transition: box-shadow var(--v-duration) var(--v-ease), border-color var(--v-duration) var(--v-ease);
+  position: relative;
+  overflow: hidden;
+}
+
+.vrip-stat-card:hover {
+  box-shadow: var(--v-shadow-md);
+  border-color: var(--v-border-hover);
+}
+
+/* Accent top bar */
+.vrip-stat-card.border-primary::before,
+.vrip-stat-card.border-success::before,
+.vrip-stat-card.border-warning::before,
+.vrip-stat-card.border-danger::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.vrip-stat-card.border-primary::before { background: var(--v-brand); }
+.vrip-stat-card.border-success::before { background: var(--v-success); }
+.vrip-stat-card.border-warning::before { background: var(--v-warning); }
+.vrip-stat-card.border-danger::before  { background: var(--v-danger); }
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-header h3 {
+  color: var(--v-text-secondary);
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.stat-header .material-symbols-outlined {
+  font-size: 20px;
+  font-variation-settings: 'wght' 400, 'opsz' 20;
+}
+
+.vrip-stat-card h1,
+.vrip-page-title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--v-text-primary);
+  letter-spacing: var(--v-tracking-tight);
+  line-height: 1;
+}
+
+.vrip-stat-card p {
+  margin: 0;
+  font-weight: 500;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icon-sm { font-size: 14px; }
+
+/* Color classes */
+.text-primary-600 { color: var(--v-brand); }
+.text-success-600 { color: var(--v-success); }
+.text-warning-600 { color: var(--v-warning); }
+.text-danger-600  { color: var(--v-danger); }
+.text-success { color: var(--v-success); }
+.text-warning { color: var(--v-warning); }
+.text-danger  { color: var(--v-danger); }
+
+@media(max-width: 1100px) { .cards-grid { grid-template-columns: repeat(2, 1fr); } }
+@media(max-width: 640px)  { .cards-grid { grid-template-columns: 1fr; } }

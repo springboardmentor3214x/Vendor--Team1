@@ -1,0 +1,85 @@
+.vendor-page {
+  /* Using global container width and margins */
+}
+
+/* Page Header */
+.vrip-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--v-8);
+}
+
+.vrip-page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--v-text-primary);
+  margin: 0 0 var(--v-1);
+  letter-spacing: var(--v-tracking-tight);
+}
+
+.vrip-page-subtitle {
+  font-size: 0.875rem;
+  color: var(--v-text-secondary);
+  margin: 0;
+}
+
+/* Stats (Reuse dashboard cards css via HTML classes) */
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--v-5);
+  margin-bottom: var(--v-8);
+}
+
+@media (max-width: 1200px) {
+  .stats-container { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .stats-container { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .stats-container { grid-template-columns: 1fr; }
+}
+
+/* Search Bar */
+.search-bar {
+  display: flex;
+  gap: var(--v-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--v-6);
+}
+
+.vrip-select {
+  height: 40px;
+  padding: 0 var(--v-3);
+  font-size: 0.875rem;
+  font-family: var(--v-font);
+  color: var(--v-text-primary);
+  background-color: var(--v-bg-card);
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-md);
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 0.65rem auto;
+  min-width: 200px;
+  transition: all var(--v-duration) var(--v-ease);
+}
+
+.vrip-select:focus {
+  border-color: var(--v-brand);
+  box-shadow: var(--v-shadow-focus);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.font-semibold { font-weight: 600; }
+.font-medium { font-weight: 500; }
+.text-sm { font-size: 0.75rem; color: var(--v-text-secondary); }

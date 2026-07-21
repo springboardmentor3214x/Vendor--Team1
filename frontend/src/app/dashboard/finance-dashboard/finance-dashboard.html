@@ -1,0 +1,69 @@
+<!-- Finance Dashboard -->
+<div class="dash-header">
+  <h1 class="dash-title">Finance Center</h1>
+  <p class="dash-subtitle">Track payments, invoices, and financial compliance.</p>
+</div>
+
+<!-- KPI Grid -->
+<div class="dash-kpi-grid">
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Pending Payments</h4>
+      <div class="dash-kpi-icon icon-warning"><span class="material-symbols-outlined">payments</span></div>
+    </div>
+    <p class="dash-kpi-value">₹4.2M</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Invoices Processed</h4>
+      <div class="dash-kpi-icon icon-success"><span class="material-symbols-outlined">receipt_long</span></div>
+    </div>
+    <p class="dash-kpi-value">128</p>
+    <div class="dash-kpi-trend trend-up">
+      <span class="material-symbols-outlined">trending_up</span> +12% this month
+    </div>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Overdue Invoices</h4>
+      <div class="dash-kpi-icon icon-danger"><span class="material-symbols-outlined">warning</span></div>
+    </div>
+    <p class="dash-kpi-value">3</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Total Spend (YTD)</h4>
+      <div class="dash-kpi-icon icon-brand"><span class="material-symbols-outlined">account_balance</span></div>
+    </div>
+    <p class="dash-kpi-value">₹12.5M</p>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Quick Actions</h2>
+  </div>
+  <div class="dash-actions-grid">
+    <a routerLink="/procurement/invoice-management" class="dash-action-card">
+      <div class="dash-action-icon icon-info"><span class="material-symbols-outlined">receipt_long</span></div>
+      <div class="dash-action-text"><h3>Invoice Management</h3><p>Review and approve vendor invoices</p></div>
+    </a>
+    <a routerLink="/finance/payment-details" class="dash-action-card">
+      <div class="dash-action-icon icon-success"><span class="material-symbols-outlined">payments</span></div>
+      <div class="dash-action-text"><h3>Payment Details</h3><p>Process payments and view history</p></div>
+    </a>
+    <a routerLink="/finance/purchase-orders" class="dash-action-card">
+      <div class="dash-action-icon icon-brand"><span class="material-symbols-outlined">shopping_cart</span></div>
+      <div class="dash-action-text"><h3>Purchase Orders</h3><p>Financial overview of active POs</p></div>
+    </a>
+  </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Recent Transactions</h2>
+  </div>
+  <app-table [columns]="columns" [data]="recentActivities"></app-table>
+</div>

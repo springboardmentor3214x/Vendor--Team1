@@ -1,0 +1,11 @@
+<span
+  class="vrip-badge"
+  [ngClass]="[
+    'vrip-badge-' + variant,
+    'vrip-badge-' + size
+  ]">
+  <span class="material-symbols-outlined vrip-badge-icon" *ngIf="icon">{{ icon }}</span>
+  <span class="vrip-badge-content">
+    <ng-content></ng-content>
+  </span>
+</span>

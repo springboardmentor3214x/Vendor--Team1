@@ -1,0 +1,139 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   NAVBAR v2.0 — Top Bar
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.vrip-navbar {
+  height: var(--v-navbar-h);
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: var(--v-sidebar-w);
+  background: var(--v-bg-navbar);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--v-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--v-8);
+  z-index: 90;
+}
+
+.vrip-navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.vrip-navbar-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--v-text-primary);
+  letter-spacing: var(--v-tracking-tight);
+}
+
+.vrip-navbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--v-2);
+}
+
+.vrip-navbar-search {
+  margin-right: var(--v-4);
+}
+
+/* Icon Buttons */
+.vrip-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--v-radius-md);
+  background: transparent;
+  border: none;
+  color: var(--v-text-secondary);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all var(--v-duration) var(--v-ease);
+  position: relative;
+}
+
+.vrip-icon-btn:hover {
+  background-color: var(--v-bg-inset);
+  color: var(--v-text-primary);
+}
+
+.vrip-icon-btn .material-symbols-outlined {
+  font-size: 20px;
+  font-variation-settings: 'wght' 400, 'opsz' 20;
+}
+
+.vrip-notification-dot {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 7px;
+  height: 7px;
+  background: var(--v-danger);
+  border-radius: 50%;
+  border: 1.5px solid var(--v-bg-navbar);
+}
+
+.vrip-divider-vertical {
+  width: 1px;
+  height: 20px;
+  background: var(--v-border);
+  margin: 0 var(--v-2);
+}
+
+/* Profile */
+.vrip-profile-menu {
+  display: flex;
+  align-items: center;
+  gap: var(--v-2);
+  cursor: pointer;
+  padding: 4px 8px 4px 4px;
+  border-radius: var(--v-radius-md);
+  transition: all var(--v-duration) var(--v-ease);
+  border: none;
+}
+
+.vrip-profile-menu:hover {
+  background-color: var(--v-bg-inset);
+}
+
+.vrip-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--v-radius-md);
+  background: linear-gradient(135deg, var(--v-brand) 0%, #818CF8 100%);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.vrip-profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.vrip-profile-info h4 {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--v-text-primary);
+  line-height: 1;
+}
+
+.vrip-profile-info p {
+  display: none;
+}
+
+.vrip-dropdown-icon {
+  color: var(--v-text-tertiary);
+  font-size: 18px;
+}

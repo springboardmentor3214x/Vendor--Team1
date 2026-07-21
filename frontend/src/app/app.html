@@ -1,0 +1,15 @@
+@if(router.url !== '/login' && router.url !== '/register' && router.url !== '/forgot-password') {
+
+    <app-sidebar></app-sidebar>
+
+    <app-navbar></app-navbar>
+
+    <main class="content">
+        <router-outlet></router-outlet>
+    </main>
+
+} @else {
+
+    <router-outlet></router-outlet>
+
+}

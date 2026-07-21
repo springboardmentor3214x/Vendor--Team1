@@ -1,0 +1,127 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   SIDEBAR v2.0 — Enterprise Navigation
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.sidebar {
+  width: var(--v-sidebar-w);
+  background: var(--v-bg-sidebar);
+  border-right: 1px solid var(--v-border);
+  position: fixed;
+  inset: 0 auto 0 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow: hidden;
+}
+
+/* ── Logo ─────────────────────────────────────────────────────────────── */
+.logo {
+  padding: var(--v-6) var(--v-5);
+  display: flex;
+  align-items: center;
+  gap: var(--v-3);
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--v-radius-md);
+  background: linear-gradient(135deg, var(--v-brand) 0%, #818CF8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-icon .material-symbols-outlined {
+  font-size: 20px;
+  color: white;
+  font-variation-settings: 'wght' 500;
+}
+
+.logo-text h2 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--v-text-primary);
+  letter-spacing: var(--v-tracking-tight);
+  margin: 0;
+  line-height: 1;
+}
+
+.logo-text p {
+  font-size: 0.6875rem;
+  color: var(--v-text-tertiary);
+  margin: 2px 0 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Nav Group ────────────────────────────────────────────────────────── */
+.sidebar-nav {
+  flex: 1;
+  padding: var(--v-2) var(--v-3);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-nav::-webkit-scrollbar { width: 3px; }
+.sidebar-nav::-webkit-scrollbar-thumb { background: transparent; border-radius: 10px; }
+.sidebar-nav:hover::-webkit-scrollbar-thumb { background: var(--v-border); }
+
+/* ── Nav Links ────────────────────────────────────────────────────────── */
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: var(--v-3);
+  padding: 9px var(--v-3);
+  color: var(--v-text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.8125rem;
+  border-radius: var(--v-radius-md);
+  transition: all var(--v-duration) var(--v-ease);
+  position: relative;
+}
+
+.sidebar-nav a .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--v-text-tertiary);
+  transition: color var(--v-duration) var(--v-ease);
+  font-variation-settings: 'wght' 400, 'opsz' 20;
+}
+
+.sidebar-nav a:hover {
+  background-color: var(--v-bg-inset);
+  color: var(--v-text-primary);
+}
+
+.sidebar-nav a:hover .material-symbols-outlined {
+  color: var(--v-text-secondary);
+}
+
+/* Active state */
+.sidebar-nav a.active {
+  background-color: var(--v-brand-light);
+  color: var(--v-brand);
+  font-weight: 600;
+}
+
+.sidebar-nav a.active .material-symbols-outlined {
+  color: var(--v-brand);
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'opsz' 20;
+}
+
+/* ── Separator ────────────────────────────────────────────────────────── */
+.nav-separator {
+  height: 1px !important;
+  background: var(--v-border) !important;
+  margin: var(--v-3) var(--v-3) !important;
+  padding: 0 !important;
+  border: none !important;
+  pointer-events: none;
+  display: block !important;
+}

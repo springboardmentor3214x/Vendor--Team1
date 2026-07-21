@@ -1,0 +1,77 @@
+<!-- Admin Dashboard -->
+<div class="dash-header">
+  <h1 class="dash-title">Overview</h1>
+  <p class="dash-subtitle">Your enterprise vendor operations at a glance.</p>
+</div>
+
+<!-- KPI Stats -->
+<app-dashboard-cards></app-dashboard-cards>
+
+<!-- Quick Actions -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Quick Actions</h2>
+  </div>
+  <div class="dash-actions-grid">
+
+    <a routerLink="/vendors" class="dash-action-card">
+      <div class="dash-action-icon icon-brand">
+        <span class="material-symbols-outlined">storefront</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>Vendor Directory</h3>
+        <p>Browse and manage all registered vendors</p>
+      </div>
+    </a>
+
+    <a routerLink="/procurement/requests" class="dash-action-card">
+      <div class="dash-action-icon icon-info">
+        <span class="material-symbols-outlined">shopping_cart</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>Procurement</h3>
+        <p>Purchase requests, orders, and tracking</p>
+      </div>
+    </a>
+
+    <a routerLink="/admin/user-management" class="dash-action-card">
+      <div class="dash-action-icon icon-success">
+        <span class="material-symbols-outlined">group</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>User Management</h3>
+        <p>Manage user accounts and permissions</p>
+      </div>
+    </a>
+
+    <a routerLink="/admin/analytics" class="dash-action-card">
+      <div class="dash-action-icon icon-warning">
+        <span class="material-symbols-outlined">analytics</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>Analytics</h3>
+        <p>Platform-wide insights and reports</p>
+      </div>
+    </a>
+
+    <a routerLink="/admin/reports" class="dash-action-card">
+      <div class="dash-action-icon icon-danger">
+        <span class="material-symbols-outlined">description</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>Reports</h3>
+        <p>Generate compliance and performance reports</p>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Recent Vendors</h2>
+    <a routerLink="/vendors" class="vrip-button vrip-btn-ghost vrip-btn-sm">View all</a>
+  </div>
+  <app-table [columns]="columns" [data]="recentVendors"></app-table>
+</div>

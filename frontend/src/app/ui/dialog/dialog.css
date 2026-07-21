@@ -1,0 +1,110 @@
+.vrip-dialog-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.vrip-dialog {
+  background: var(--vrip-glass-bg);
+  backdrop-filter: var(--vrip-glass-blur-heavy);
+  -webkit-backdrop-filter: var(--vrip-glass-blur-heavy);
+  border: 1px solid var(--vrip-glass-border);
+  box-shadow: var(--vrip-shadow-floating);
+  border-radius: var(--vrip-radius-xl);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+/* Reflection */
+.vrip-dialog::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.1), rgba(255,255,255,0.8), rgba(255,255,255,0.1));
+  z-index: 2;
+  pointer-events: none;
+}
+
+.vrip-dialog-header {
+  padding: 24px 32px 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  position: relative;
+  z-index: 1;
+}
+
+.vrip-dialog-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--vrip-neutral-900);
+  letter-spacing: -0.02em;
+}
+
+.vrip-dialog-close {
+  background: rgba(0,0,0,0.05);
+  border: none;
+  cursor: pointer;
+  color: var(--vrip-neutral-500);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.vrip-dialog-close:hover {
+  background: rgba(0,0,0,0.1);
+  color: var(--vrip-neutral-900);
+  transform: scale(1.05);
+}
+
+.vrip-dialog-body {
+  padding: 24px 32px;
+  overflow-y: auto;
+  font-family: var(--vrip-font-family);
+  color: var(--vrip-neutral-700);
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+}
+
+.vrip-dialog-footer {
+  padding: 16px 32px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: rgba(255,255,255,0.4);
+  border-top: 1px solid rgba(0,0,0,0.06);
+  position: relative;
+  z-index: 1;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
