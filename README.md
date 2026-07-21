@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 15 Jul - Rework certification expiry in the compliance management screen
 - 16 Jul - Expand contract with compliance clauses
 - 17 Jul - Rework issuing authority details in certification
 - 18 Jul - Handle empty responses from the auditor dashboard screen in the integrated flow
 - 19 Jul - Correct the dashboard cards screen field names surfaced during integration testing
 - 20 Jul - Correct the notifications screen field names surfaced during integration testing
+- 21 Jul - Smooth out the supply chain dashboard screen loading states found during testing
