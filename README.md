@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 15 Jul - Extend the vendor details screen with reliability score panel
 - 16 Jul - Flesh out the button component with disabled styling
 - 17 Jul - Refine status filter in the contract list screen
 - 18 Jul - Add the core API services with HTTP service methods
 - 19 Jul - Create the core API services with HTTP service methods
 - 20 Jul - Refine document list in the vendor details screen
+- 21 Jul - Add the reports screen with report filters
