@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Q
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing import List, Optional
+
 from app.database.connection import get_db
 from app.schemas.communication import CommunicationCreate, CommunicationResponse
 from app.schemas.discussion import DiscussionCreate, DiscussionResponse
@@ -15,6 +16,7 @@ from app.models.user import User
 
 router = APIRouter(prefix="/communications", tags=["Communication & Audit"])
 
+
 def assert_can_access_message(db: Session, current_user: User, msg):
     vendor_id = get_vendor_id_for_user(db, current_user)
     if vendor_id is None:
@@ -27,6 +29,7 @@ def assert_can_access_message(db: Session, current_user: User, msg):
 
     raise HTTPException(status_code=403, detail="You can only access your own messages")
 
+
 def assert_can_access_file(db: Session, current_user: User, shared_file):
     vendor_id = get_vendor_id_for_user(db, current_user)
     if vendor_id is None:
@@ -34,6 +37,7 @@ def assert_can_access_file(db: Session, current_user: User, shared_file):
     if shared_file.vendor_id == vendor_id:
         return
     raise HTTPException(status_code=403, detail="You can only access your own shared files")
+
 
 def enforce_sender_vendor(db: Session, current_user: User, data: CommunicationCreate):
     own_vendor_id = get_vendor_id_for_user(db, current_user)
@@ -44,6 +48,7 @@ def enforce_sender_vendor(db: Session, current_user: User, data: CommunicationCr
     data.vendor_id = own_vendor_id
     return data
 
+
 @router.post("/messages", response_model=CommunicationResponse, status_code=201)
 def send_message(
     data: CommunicationCreate,
@@ -52,6 +57,7 @@ def send_message(
 ):
     data = enforce_sender_vendor(db, current_user, data)
     return communication_service.send_message(db, data, current_user.id, current_user.name)
+
 
 @router.post("/messages/upload", response_model=CommunicationResponse, status_code=201)
 async def send_message_with_file(
@@ -79,6 +85,7 @@ async def send_message_with_file(
     )
     data = enforce_sender_vendor(db, current_user, data)
     return communication_service.send_message(db, data, current_user.id, current_user.name, file=file)
+
 
 @router.get("/messages", response_model=List[CommunicationResponse])
 def get_conversations(
@@ -112,10 +119,12 @@ def get_conversations(
         receiver_id=receiver_id
     )
 
+
 class MarkReadRequest(BaseModel):
     message_ids: Optional[List[int]] = None
     vendor_id: Optional[int] = None
     discussion_id: Optional[int] = None
+
 
 @router.post("/messages/mark-read")
 def mark_messages_read(
@@ -133,6 +142,7 @@ def mark_messages_read(
         user_name=current_user.name
     )
 
+
 @router.get("/messages/unread-count")
 def unread_message_count(
     db: Session = Depends(get_db),
@@ -146,6 +156,7 @@ def unread_message_count(
         vendor_id = vendor.id if vendor else None
     return {"unread_count": communication_service.get_unread_message_count(db, current_user.id, vendor_id)}
 
+
 @router.post("/discussions", response_model=DiscussionResponse, status_code=201)
 def create_discussion(
     data: DiscussionCreate,
@@ -153,6 +164,7 @@ def create_discussion(
     current_user: User = Depends(get_current_user)
 ):
     return communication_service.create_discussion(db, data, current_user.name, user_id=current_user.id)
+
 
 @router.get("/discussions", response_model=List[DiscussionResponse])
 def list_discussions(
@@ -167,113 +179,103 @@ def list_discussions(
     return communication_service.get_discussions(db, vendor_id, po_id)
 
 
-def _pending_communication_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
+@router.post("/files/upload", response_model=SharedFileResponse, status_code=201)
+async def upload_file(
+    file: UploadFile = File(...),
+    vendor_id: Optional[int] = Form(None),
+    procurement_id: Optional[int] = Form(None),
+    po_id: Optional[int] = Form(None),
+    contract_id: Optional[int] = Form(None),
+    discussion_id: Optional[int] = Form(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return communication_service.upload_shared_file(
+        db, current_user.name, file, vendor_id, procurement_id, po_id, contract_id, discussion_id,
+        user_id=current_user.id
+    )
 
 
-def _pending_communication_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+@router.get("/files", response_model=List[SharedFileResponse])
+def list_files(
+    vendor_id: Optional[int] = Query(None),
+    po_id: Optional[int] = Query(None),
+    contract_id: Optional[int] = Query(None),
+    procurement_id: Optional[int] = Query(None),
+    discussion_id: Optional[int] = Query(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role == Roles.VENDOR and not vendor_id:
+        from app.models.vendor import Vendor
+        from sqlalchemy import func
+        vendor = db.query(Vendor).filter(func.lower(Vendor.email) == current_user.email.lower()).first()
+        if not vendor:
+            return []
+        vendor_id = vendor.id
+
+    return communication_service.get_shared_files(
+        db, vendor_id, po_id, contract_id,
+        procurement_id=procurement_id, discussion_id=discussion_id
+    )
 
 
-def _pending_communication_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
+@router.get("/messages/{message_id}/attachment")
+def download_message_attachment(
+    message_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    from fastapi.responses import FileResponse
+    from app.models.communication import Communication
+    import os
+    import mimetypes
+
+    msg = db.query(Communication).filter(Communication.id == message_id).first()
+    if not msg or not msg.file_path:
+        raise HTTPException(status_code=404, detail="This message has no attachment")
+    assert_can_access_message(db, current_user, msg)
+    if not os.path.exists(msg.file_path):
+        raise HTTPException(status_code=404, detail="The attached file is no longer available on the server")
+
+    communication_service.log_activity(
+        db, current_user.name, "File Downloaded", "Communication",
+        f"Message #{msg.id}", user_id=current_user.id, details=f"Filename: {msg.file_name}"
+    )
+
+    media_type = mimetypes.guess_type(msg.file_name or "")[0] or "application/octet-stream"
+    return FileResponse(path=msg.file_path, filename=msg.file_name, media_type=media_type)
 
 
-def _pending_communication_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+@router.get("/files/{file_id}/download")
+def download_file(
+    file_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    from fastapi.responses import FileResponse
+    from app.models.shared_file import SharedFile
+    import os
+
+    sf = db.query(SharedFile).filter(SharedFile.id == file_id).first()
+    if not sf:
+        raise HTTPException(status_code=404, detail="File not found")
+    assert_can_access_file(db, current_user, sf)
+    if not os.path.exists(sf.file_path):
+        raise HTTPException(status_code=404, detail="The stored file is no longer available on the server")
+
+    communication_service.log_activity(
+        db, current_user.name, "File Downloaded", "Communication",
+        f"File #{sf.id}", user_id=current_user.id, details=f"Filename: {sf.file_name}"
+    )
+    return FileResponse(path=sf.file_path, filename=sf.file_name, media_type=sf.file_type or "application/octet-stream")
 
 
-def _pending_communication_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_communication_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_communication_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_communication_totals_4(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_communication_rows_5(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_communication_totals_5(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_communication_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
+@router.get("/activity-logs", response_model=List[ActivityLogResponse])
+def list_activity_logs(
+    module: Optional[str] = Query(None),
+    limit: int = Query(100, ge=1, le=1000),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.AUDITOR]))
+):
+    return communication_service.get_activity_logs(db, limit=limit, module_name=module)

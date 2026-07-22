@@ -16,43 +16,103 @@
         </div>
     </div>
 
-</div>
+    <div class="details-grid">
+        <div class="main-column">
+            <app-card title="Request Information" icon="info">
+                <div class="info-grid">
+                    <div class="info-group">
+                        <label>Request Title</label>
+                        <p>{{ request.request_title || request.item_name }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Department</label>
+                        <p>{{ request.department || 'General' }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Requested By</label>
+                        <p>{{ request.requested_by || 'Department User' }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Created Date</label>
+                        <p>{{ request.created_at ? (request.created_at | date:'medium') : 'Recent' }}</p>
+                    </div>
+                </div>
+            </app-card>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+            <app-card title="Product & Requirements" icon="inventory_2">
+                <div class="info-grid">
+                    <div class="info-group">
+                        <label>Product / Item Name</label>
+                        <p>{{ request.item_name }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Category</label>
+                        <p>{{ request.category || 'General' }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Quantity Required</label>
+                        <p>{{ request.quantity }} {{ request.unit_of_measurement || 'Units' }}</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Required Delivery Date</label>
+                        <p>{{ request.expected_delivery_date ? (request.expected_delivery_date | date:'mediumDate') : 'TBD' }}</p>
+                    </div>
+                </div>
+                <div class="info-group full-width mt-4">
+                    <label>Business Justification</label>
+                    <div class="justification-box">
+                        {{ request.business_justification || 'No justification provided.' }}
+                    </div>
+                </div>
+            </app-card>
+
+            <app-card title="Approval Remarks" icon="comment">
+                <div class="info-group full-width">
+                    <label>Remarks / Notes for Department</label>
+                    <textarea class="vrip-textarea" rows="3" [(ngModel)]="remarks" placeholder="Enter remarks for approval, rejection, or modification request..."></textarea>
+                </div>
+            </app-card>
+        </div>
+
+        <div class="side-column">
+            <app-card title="Status & Budget" icon="analytics">
+                <div class="status-box">
+                    <label>Current Status</label>
+                    <app-badge [variant]="getBadgeVariant(request.status)">
+                        {{ request.status }}
+                    </app-badge>
+                </div>
+
+                <div class="status-box mt-4">
+                    <label>Priority Level</label>
+                    <app-badge [variant]="getBadgeVariant(request.priority)">
+                        {{ request.priority || 'Medium' }}
+                    </app-badge>
+                </div>
+
+                <div class="finance-box mt-4">
+                    <label>Estimated Budget</label>
+                    <h2>₹{{ (request.total_price || (request.unit_price * request.quantity)) | number:'1.2-2' }}</h2>
+                </div>
+            </app-card>
+
+            <app-card title="Approval Actions" icon="gavel">
+                <div class="action-panel">
+                    <p class="action-hint">Review request justification. Approving makes this request eligible for Vendor Assignment.</p>
+
+                    <app-button variant="success" class="full-width-btn" iconLeft="check_circle" [disabled]="isProcessing" (onClick)="approveRequest()">
+                        Approve Request
+                    </app-button>
+
+                    <app-button variant="danger" class="full-width-btn" iconLeft="cancel" [disabled]="isProcessing" (onClick)="rejectRequest()">
+                        Reject Request
+                    </app-button>
+
+                    <app-button variant="outline" class="full-width-btn" iconLeft="edit_document" [disabled]="isProcessing" (onClick)="sendBack()">
+                        Send Back for Modification
+                    </app-button>
+                </div>
+            </app-card>
+        </div>
+    </div>
 </div>

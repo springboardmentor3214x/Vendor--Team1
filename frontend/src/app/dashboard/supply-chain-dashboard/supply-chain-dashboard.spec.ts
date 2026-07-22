@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Input } from './input';
+import { SupplyChainDashboard } from './supply-chain-dashboard';
 
-describe('Input', () => {
-  let component: Input;
-  let fixture: ComponentFixture<Input>;
+describe('SupplyChainDashboard', () => {
+  let component: SupplyChainDashboard;
+  let fixture: ComponentFixture<SupplyChainDashboard>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Input],
+      imports: [SupplyChainDashboard],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Input);
+    fixture = TestBed.createComponent(SupplyChainDashboard);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

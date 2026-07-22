@@ -7,36 +7,245 @@
     </div>
 
     @if(vendor){
-</div>
+    <div class="form-layout">
 
-<div class="placeholder-panel">
-  <p>Sample rows shown until the API is ready.</p>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">business</span> Company Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Company Name *</label>
+                    <app-input [(ngModel)]="vendor.companyName"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Vendor Category *</label>
+                    <select class="vrip-select" [(ngModel)]="vendor.category">
+
+                        <option *ngIf="isLegacyCategory" [value]="vendor.category">
+                            {{ vendor.category }} (needs updating)
+                        </option>
+                        <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+                    </select>
+                    <small *ngIf="isLegacyCategory" style="font-size: 0.75rem; color: var(--v-warning, #b45309);">
+                        This category is no longer supported — please select a current one.
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label>Company Registration Number</label>
+                    <app-input [(ngModel)]="vendor.companyRegistrationNumber"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">person</span> Contact Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Contact Person *</label>
+                    <app-input [(ngModel)]="vendor.contactPerson"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Designation</label>
+                    <app-input [(ngModel)]="vendor.designation"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <app-input [(ngModel)]="vendor.email"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <app-input [(ngModel)]="vendor.phone"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Alternate Phone</label>
+                    <app-input [(ngModel)]="vendor.alternatePhone"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">receipt_long</span> Tax Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>GST Number *</label>
+                    <app-input [(ngModel)]="vendor.gst"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>PAN Number *</label>
+                    <app-input [(ngModel)]="vendor.pan"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">location_on</span> Address Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Address Line 1</label>
+                    <app-input [(ngModel)]="vendor.addressLine1"></app-input>
+                </div>
+                <div class="form-group full-width">
+                    <label>Address Line 2</label>
+                    <app-input [(ngModel)]="vendor.addressLine2"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>City</label>
+                    <app-input [(ngModel)]="vendor.city"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>State</label>
+                    <app-input [(ngModel)]="vendor.state"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Country</label>
+                    <app-input [(ngModel)]="vendor.country"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Pincode</label>
+                    <app-input [(ngModel)]="vendor.pincode"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">public</span> Business Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Website</label>
+                    <app-input [(ngModel)]="vendor.website"></app-input>
+                </div>
+                <div class="form-group full-width">
+                    <label>Description</label>
+                    <textarea class="vrip-textarea" [(ngModel)]="vendor.description"></textarea>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">account_balance</span> Banking Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Bank Account Number</label>
+                    <app-input [(ngModel)]="vendor.bankAccountNumber"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>IFSC Code</label>
+                    <app-input [(ngModel)]="vendor.ifscCode"></app-input>
+                </div>
+                <div class="form-group full-width">
+                    <label>Payment Terms</label>
+                    <app-input [(ngModel)]="vendor.paymentTerms"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">verified</span> Status & Approval</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Vendor Status</label>
+                    <select class="vrip-select" [(ngModel)]="vendor.status">
+                        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+
+                    <label>Approval Status</label>
+                    <app-input [value]="vendor.approvalStatus" [disabled]="true"></app-input>
+                    <small style="font-size: 0.75rem; color: var(--v-text-secondary);">
+                        Changed through the Approve / Reject actions.
+                    </small>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">folder</span> Vendor Documents</h2>
+            </div>
+            <p style="margin-bottom: 12px; font-size: 0.8125rem; color: var(--v-text-secondary);">
+                PDF, JPG or PNG up to 10 MB. Uploading a document replaces the existing file for that type.
+            </p>
+
+            <div *ngIf="documentMsg"
+                 style="margin-bottom: 12px; padding: 10px 14px; border-radius: 6px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46;">
+                {{ documentMsg }}
+            </div>
+            <div *ngIf="documentError"
+                 style="margin-bottom: 12px; padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+                {{ documentError }}
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group" *ngFor="let slot of documentSlots">
+                    <label>{{ slot.label }}</label>
+                    <div class="file-upload-container">
+                        <label class="file-btn">
+                            <span class="material-symbols-outlined">upload_file</span>
+                            {{ existingDocument(slot.type) ? 'Replace File' : 'Choose File' }}
+                            <input type="file" accept=".pdf,.jpg,.jpeg,.png" style="display: none;"
+                                   [disabled]="uploadingType === slot.type"
+                                   (change)="onFileSelected($event, slot.type)">
+                        </label>
+                        <div class="file-selected-info" *ngIf="existingDocument(slot.type) as doc">
+                            <span class="file-name">
+                                <span class="material-symbols-outlined">draft</span>
+                                {{ doc.file_name }}
+                            </span>
+                            <app-button type="button" variant="outline" size="sm"
+                                        (click)="viewDocument(doc)">View</app-button>
+                            <app-button type="button" variant="danger" size="sm"
+                                        (click)="deleteDocument(doc)">Remove</app-button>
+                        </div>
+                        <span *ngIf="uploadingType === slot.type"
+                              style="font-size: 0.75rem; color: var(--v-text-secondary);">Uploading…</span>
+                    </div>
+                </div>
+            </div>
+        </app-card>
+
+        <div *ngIf="errorMsg"
+             style="padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+            {{ errorMsg }}
+        </div>
+
+        <div class="form-actions">
+            <app-button variant="outline" (click)="cancel()">Cancel</app-button>
+            <app-button
+                *ngIf="vendor.status === 'Rejected' || vendor.approvalStatus === 'Rejected' || vendor.approvalStatus === 'Pending'"
+                variant="success"
+                iconLeft="check_circle"
+                (click)="approveVendor()">
+                Approve Vendor
+            </app-button>
+            <app-button variant="primary" iconLeft="save" [disabled]="saving" (click)="updateVendor()">
+                {{ saving ? 'Updating...' : 'Update Vendor' }}
+            </app-button>
+        </div>
+    </div>
+    } @else {
+        <app-card>
+            <div class="empty-state">
+                <span class="material-symbols-outlined empty-icon">error</span>
+                <h2>Vendor not found</h2>
+                <p>The vendor you are trying to edit does not exist.</p>
+                <app-button variant="primary" routerLink="/vendors" style="margin-top: 16px;">
+                    Back to Vendors
+                </app-button>
+            </div>
+        </app-card>
+    }
 </div>
