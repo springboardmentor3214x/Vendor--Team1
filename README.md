@@ -42,15 +42,15 @@ src/app/
 ## Milestone status
 
 - [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
-- [ ] Milestone 2 (24 Jul 2026) - Vendor and procurement management
+- [x] Milestone 2 (24 Jul 2026) - Vendor and procurement management
 - [ ] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
 - [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 16 Jul - Flesh out the button component with disabled styling
 - 17 Jul - Refine status filter in the contract list screen
 - 18 Jul - Add the core API services with HTTP service methods
 - 19 Jul - Create the core API services with HTTP service methods
 - 20 Jul - Refine document list in the vendor details screen
 - 21 Jul - Add the reports screen with report filters
+- 22 Jul - Create the vendor analytics screen with category breakdown chart
