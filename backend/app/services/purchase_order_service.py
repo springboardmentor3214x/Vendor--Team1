@@ -4,12 +4,14 @@ from sqlalchemy import func
 from fastapi import HTTPException
 from datetime import datetime
 from typing import Optional
+
 from app.models.purchase_order import PurchaseOrder
 from app.models.procurement import Procurement
 from app.models.order_tracking import OrderTracking
 from app.models.vendor import Vendor
 from app.schemas.purchase_order import PurchaseOrderCreate, PurchaseOrderUpdate
 from app.services.procurement_service import record_status_history
+
 
 def generate_po_number(db: Session) -> str:
     year = datetime.utcnow().year
@@ -30,6 +32,7 @@ def generate_po_number(db: Session) -> str:
     while db.query(PurchaseOrder).filter(PurchaseOrder.po_number == f"{prefix}{next_seq:04d}").first():
         next_seq += 1
     return f"{prefix}{next_seq:04d}"
+
 
 def create_purchase_order(db: Session, data: PurchaseOrderCreate, approved_by: str = "Procurement Manager"):
     vendor = db.query(Vendor).filter(Vendor.id == data.vendor_id).first()
@@ -99,86 +102,67 @@ def create_purchase_order(db: Session, data: PurchaseOrderCreate, approved_by: s
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
+
 def get_all_purchase_orders(db: Session):
     return db.query(PurchaseOrder).order_by(PurchaseOrder.po_date.desc()).all()
+
 
 def get_purchase_order(db: Session, po_id: int):
     return db.query(PurchaseOrder).filter(PurchaseOrder.id == po_id).first()
 
 
-def _pending_purchase_order_service_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def get_purchase_orders_by_vendor(db: Session, vendor_id: int):
+    return db.query(PurchaseOrder).filter(PurchaseOrder.vendor_id == vendor_id).order_by(PurchaseOrder.po_date.desc()).all()
 
 
-def _pending_purchase_order_service_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+PO_TRANSITIONS = {
+    "Issued": ["In Transit", "Delivered", "Cancelled"],
+    "In Transit": ["Delivered", "Cancelled"],
+    "Delivered": ["Completed"],
+    "Completed": [],
+    "Cancelled": [],
+}
 
 
-def _pending_purchase_order_service_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def update_purchase_order_status(db: Session, po_id: int, status: str, user_name: str = "User"):
+    po = get_purchase_order(db, po_id)
+    if not po:
+        return None
+    if po.status != status:
+        allowed = PO_TRANSITIONS.get(po.status, [])
+        if status not in allowed:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Cannot change PO status from '{po.status}' to '{status}'. Allowed transitions: {allowed or 'none (terminal state)'}"
+            )
+        po.status = status
 
+        proc = db.query(Procurement).filter(Procurement.id == po.procurement_id).first()
+        if proc:
+            proc.status = status
 
-def _pending_purchase_order_service_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+        tracking = db.query(OrderTracking).filter(OrderTracking.po_id == po.id).first()
+        if tracking:
+            if status == "In Transit":
+                tracking.delivery_status = "In Transit"
+                if not tracking.dispatch_date:
+                    tracking.dispatch_date = datetime.utcnow()
+            elif status == "Delivered":
+                tracking.delivery_status = "Delivered"
+                if not tracking.actual_delivery_date:
+                    tracking.actual_delivery_date = datetime.utcnow()
 
+        db.commit()
+        db.refresh(po)
+        if proc:
+            record_status_history(db, proc.id, status, user_name, f"PO #{po.po_number} status updated to {status}", po_id=po.id)
 
-def _pending_purchase_order_service_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+        if status in ("Delivered", "Completed"):
+            from app.services.vendor_service import update_vendor_scores
+            try:
+                update_vendor_scores(db, po.vendor_id)
+            except Exception as e:
+                db.rollback()
+                print(f"Failed to refresh vendor scores after PO {status}: {e}")
 
-
-def _pending_purchase_order_service_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
-
-
-def _pending_purchase_order_service_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+    return po
