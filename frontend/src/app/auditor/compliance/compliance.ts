@@ -13,6 +13,8 @@ import { Table } from '../../ui/table/table';
   styleUrls: ['./compliance.css']
 })
 export class Compliance {
+  download() { alert("Downloaded compliance document"); }
+
   vendors = [
     { name: 'TechCorp Solutions', category: 'IT Equipment', iso: true, gdpr: true, status: 'Compliant' },
     { name: 'Apex Suppliers Ltd.', category: 'Raw Materials', iso: false, gdpr: true, status: 'Non-Compliant' },

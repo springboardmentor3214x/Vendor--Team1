@@ -41,6 +41,12 @@ import { VendorCommunication } from './vendor-portal/vendor-communication/vendor
 import { VendorPerformance } from './supply-chain/vendor-performance/vendor-performance';
 import { VendorPerformanceDetails } from './supply-chain/vendor-performance-details/vendor-performance-details';
 import { VendorReliability } from './supply-chain/vendor-reliability/vendor-reliability';
+import { DeliveryPerformance } from './supply-chain/delivery-performance/delivery-performance';
+import { ProductQuality } from './supply-chain/product-quality/product-quality';
+import { CommunicationTracking } from './supply-chain/communication-tracking/communication-tracking';
+import { ServiceRating } from './supply-chain/service-rating/service-rating';
+import { PerformanceHistory } from './supply-chain/performance-history/performance-history';
+import { VendorRanking } from './supply-chain/vendor-ranking/vendor-ranking';
 import { PaymentDetails } from './finance/payment-details/payment-details';
 import { FinancePurchaseOrders } from './finance/finance-purchase-orders/finance-purchase-orders';
 import { AuditorReports } from './auditor/auditor-reports/auditor-reports';
@@ -245,6 +251,12 @@ export const routes: Routes = [
 
   // -------------------- Supply Chain (New) --------------------
   { path: 'supply-chain/vendor-performance', component: VendorPerformance, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/delivery-performance', component: DeliveryPerformance, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/product-quality', component: ProductQuality, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/communication-tracking', component: CommunicationTracking, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/service-rating', component: ServiceRating, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/performance-history', component: PerformanceHistory, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/vendor-ranking', component: VendorRanking, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
   { path: 'supply-chain/vendor-performance/:id', component: VendorPerformanceDetails, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
   { path: 'supply-chain/vendor-reliability', component: VendorReliability, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
 

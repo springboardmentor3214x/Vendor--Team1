@@ -13,6 +13,10 @@ import { Table } from '../../ui/table/table';
   styleUrls: ['./finance-purchase-orders.css']
 })
 export class FinancePurchaseOrders {
+  filter() { alert("Filter applied"); }
+  export() { alert("Exported CSV"); }
+  viewPO() { alert("Viewing PO Details"); }
+
   orders = [
     { poNumber: 'PO-2023-1001', dept: 'IT Infrastructure', vendor: 'TechCorp', budgetCode: 'BGT-IT-23', amount: 15400, status: 'Approved' },
     { poNumber: 'PO-2023-1002', dept: 'Marketing', vendor: 'DesignStudio', budgetCode: 'BGT-MKT-23', amount: 8500, status: 'Pending Review' },

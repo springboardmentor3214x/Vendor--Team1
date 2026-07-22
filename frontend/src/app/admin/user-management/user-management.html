@@ -4,7 +4,7 @@
             <h1>User Management</h1>
             <p>Manage system users, roles, and permissions.</p>
         </div>
-        <app-button variant="primary" iconLeft="add">Add New User</app-button>
+        <app-button variant="primary" iconLeft="add" (onClick)="addUser()">Add New User</app-button>
     </div>
 
     <app-card [noPadding]="true">
@@ -38,8 +38,8 @@
                         </span>
                     </td>
                     <td style="text-align: right;">
-                        <app-button variant="ghost"><span class="material-symbols-outlined">edit</span></app-button>
-                        <app-button variant="ghost"><span class="material-symbols-outlined">delete</span></app-button>
+                        <app-button variant="ghost" (onClick)="editUser(user)">Edit</app-button>
+                        <app-button variant="ghost" (onClick)="deleteUser(user)" class="text-danger">Delete</app-button>
                     </td>
                 </tr>
             </ng-container>

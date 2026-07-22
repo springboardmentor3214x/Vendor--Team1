@@ -1,0 +1,54 @@
+<div class="page-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1>Vendor Ranking</h1>
+            <p style="color: var(--text-secondary); margin-top: 4px;">Top performing vendors based on aggregated performance metrics.</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <app-button variant="outline" size="sm" iconLeft="category">Category Filter</app-button>
+            <app-button variant="outline" size="sm" iconLeft="download">Export Ranking</app-button>
+        </div>
+    </div>
+
+    <app-card [noPadding]="true">
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>Rank</th>
+                    <th>Vendor Name</th>
+                    <th>Category</th>
+                    <th>Overall Score</th>
+                    <th>Delivery Score</th>
+                    <th>Quality Score</th>
+                    <th>Comm. Score</th>
+                    <th>Service Rating</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let vendor of rankings" [ngStyle]="{'background': vendor.rank <= 3 ? 'rgba(255, 204, 0, 0.05)' : 'transparent'}">
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px; font-weight: 700;">
+                            <span *ngIf="vendor.rank === 1" class="material-symbols-outlined" style="color: #ffcc00; font-variation-settings: 'FILL' 1;">emoji_events</span>
+                            <span *ngIf="vendor.rank === 2" class="material-symbols-outlined" style="color: #c0c0c0; font-variation-settings: 'FILL' 1;">emoji_events</span>
+                            <span *ngIf="vendor.rank === 3" class="material-symbols-outlined" style="color: #cd7f32; font-variation-settings: 'FILL' 1;">emoji_events</span>
+                            <span *ngIf="vendor.rank > 3" style="width: 24px; text-align: center;">#{{ vendor.rank }}</span>
+                            <span *ngIf="vendor.rank <= 3">{{ vendor.rank }}</span>
+                        </div>
+                    </td>
+                    <td><strong>{{ vendor.vendorName }}</strong></td>
+                    <td><span class="vrip-badge">{{ vendor.category }}</span></td>
+                    <td><strong style="font-size: 1.1rem; color: #3b82f6;">{{ vendor.overallScore | number:'1.1-1' }}</strong></td>
+                    <td>{{ vendor.deliveryScore }}</td>
+                    <td>{{ vendor.qualityScore }}</td>
+                    <td>{{ vendor.commScore }}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 4px; font-weight: 600;">
+                            <span class="material-symbols-outlined" style="color: #ffcc00; font-size: 16px; font-variation-settings: 'FILL' 1;">star</span>
+                            {{ vendor.serviceRating | number:'1.1-1' }}
+                        </div>
+                    </td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
+</div>

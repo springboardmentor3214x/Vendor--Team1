@@ -32,6 +32,8 @@ export interface InvoiceMock {
   styleUrls: ['./invoice-management.css'],
 })
 export class InvoiceManagement implements OnInit {
+  exportCSV() { alert("All invoices exported!"); }
+
   columns: TableColumn[] = [
     { key: 'invoiceNumber', label: 'Invoice Number' },
     { key: 'poNumber', label: 'PO Number' },
@@ -43,7 +45,11 @@ export class InvoiceManagement implements OnInit {
     { key: 'actions', label: 'Actions' }
   ];
 
-  invoices: InvoiceMock[] = [];
+  invoices: InvoiceMock[] = [
+    { id: 1, invoiceNumber: 'INV-1001', poNumber: 'PO-2001', vendorName: 'Global Logistics', amount: 5000, issueDate: '2026-07-01', dueDate: '2026-07-31', status: 'Paid' },
+    { id: 2, invoiceNumber: 'INV-1002', poNumber: 'PO-2002', vendorName: 'TechCorp Solutions', amount: 12500, issueDate: '2026-07-10', dueDate: '2026-08-10', status: 'Pending Approval' },
+    { id: 3, invoiceNumber: 'INV-1003', poNumber: 'PO-2003', vendorName: 'Office Depot', amount: 450, issueDate: '2026-07-15', dueDate: '2026-08-15', status: 'Rejected' }
+  ];
 
   constructor(private invoiceService: InvoiceService) {}
 

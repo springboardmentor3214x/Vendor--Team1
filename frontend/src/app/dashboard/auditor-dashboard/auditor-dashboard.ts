@@ -39,4 +39,6 @@ export class AuditorDashboard {
     if (status.includes('Flagged')) return 'primary';
     return 'default';
   }
+
+  refresh() { alert("Data refreshed!"); }
 }

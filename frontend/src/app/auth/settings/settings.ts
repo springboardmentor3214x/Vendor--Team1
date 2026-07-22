@@ -12,4 +12,5 @@ import { Table } from '../../ui/table/table';
   templateUrl: './settings.html',
   styleUrls: ['./settings.css']
 })
-export class Settings {}
+export class Settings {
+  saveChanges() { alert("Settings saved successfully!"); }}

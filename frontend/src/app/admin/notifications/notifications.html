@@ -4,7 +4,7 @@
             <h1>Notifications</h1>
             <p>System alerts and administrative updates.</p>
         </div>
-        <app-button variant="outline" iconLeft="done_all">Mark All as Read</app-button>
+        <app-button variant="outline" iconLeft="done_all" (onClick)="markAllRead()">Mark All as Read</app-button>
     </div>
 
     <app-card [noPadding]="true">

@@ -13,6 +13,9 @@ import { Table } from '../../ui/table/table';
   styleUrls: ['./payment-details.css']
 })
 export class PaymentDetails {
+  transfer() { alert("Transfer initiated"); }
+  receipt() { alert("Receipt downloaded"); }
+
   payments = [
     { id: 'TXN-88492', invoice: 'INV-2023-001', vendor: 'TechCorp Solutions', amount: 15400, date: 'Oct 16, 2023', status: 'Completed' },
     { id: 'TXN-88493', invoice: 'INV-2023-088', vendor: 'Global Logistics', amount: 4200, date: 'Oct 18, 2023', status: 'Pending' },

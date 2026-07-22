@@ -4,7 +4,7 @@
             <h1>Payment Details</h1>
             <p>Track pending and completed financial transactions.</p>
         </div>
-        <app-button variant="primary" iconLeft="account_balance">Initiate Transfer</app-button>
+        <app-button variant="primary" iconLeft="account_balance" (onClick)="transfer()">Initiate Transfer</app-button>
     </div>
 
     <app-card [noPadding]="true">
@@ -35,7 +35,7 @@
                         </span>
                     </td>
                     <td style="text-align: right;">
-                        <app-button variant="ghost" [disabled]="payment.status !== 'Completed'"><span class="material-symbols-outlined">receipt</span></app-button>
+                        <app-button variant="ghost" [disabled]="payment.status !== 'Completed'" (onClick)="receipt()"><span class="material-symbols-outlined">receipt</span></app-button>
                     </td>
                 </tr>
             </ng-container>

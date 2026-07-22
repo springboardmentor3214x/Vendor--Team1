@@ -4,7 +4,7 @@
             <h1>Supply Chain Dashboard</h1>
             <p>Monitor shipments, inventory, and logistics operations.</p>
         </div>
-        <app-button variant="primary" iconLeft="refresh">
+        <app-button variant="primary" iconLeft="refresh" (onClick)="refresh()">
             Refresh
         </app-button>
     </div>
@@ -54,29 +54,29 @@
             <h2>Quick Actions</h2>
         </div>
         <div class="actions-grid">
-            <div class="action-card">
-                <div class="icon bg-indigo-100 text-indigo-600"><span class="material-symbols-outlined">inventory_2</span></div>
-                <h3>Inventory Management</h3>
-                <p>Track stock levels and reorder points.</p>
-            </div>
+            <a class="action-card" routerLink="/supply-chain/vendor-ranking">
+                <div class="icon bg-indigo-100 text-indigo-600"><span class="material-symbols-outlined">format_list_numbered</span></div>
+                <h3>Vendor Ranking</h3>
+                <p>View top performing vendors.</p>
+            </a>
 
-            <div class="action-card">
+            <a class="action-card" routerLink="/supply-chain/delivery-performance">
                 <div class="icon bg-emerald-100 text-emerald-600"><span class="material-symbols-outlined">local_shipping</span></div>
                 <h3>Track Shipments</h3>
                 <p>Monitor incoming and outgoing logistics.</p>
-            </div>
+            </a>
             
-            <div class="action-card">
+            <a class="action-card" routerLink="/supply-chain/product-quality">
                 <div class="icon bg-amber-100 text-amber-600"><span class="material-symbols-outlined">verified</span></div>
                 <h3>Quality Control</h3>
                 <p>Review supplier material quality.</p>
-            </div>
+            </a>
 
-            <div class="action-card">
+            <a class="action-card" routerLink="/supply-chain/vendor-performance">
                 <div class="icon bg-slate-100 text-slate-500"><span class="material-symbols-outlined">analytics</span></div>
-                <h3>Supply Analytics</h3>
-                <p>View supply chain performance metrics.</p>
-            </div>
+                <h3>VP Dashboard</h3>
+                <p>View vendor performance metrics.</p>
+            </a>
         </div>
     </div>
 

@@ -12,7 +12,8 @@
   <div class="vrip-table-wrapper">
     <table class="vrip-table">
       <thead>
-        <tr>
+        <ng-content select="[table-header]"></ng-content>
+        <tr *ngIf="columns && columns.length > 0">
           <th *ngFor="let col of columns" [style.width]="col.width || 'auto'">
             {{ col.label }}
             <span class="material-symbols-outlined sort-icon" *ngIf="col.sortable">unfold_more</span>
@@ -21,6 +22,7 @@
         </tr>
       </thead>
       <tbody>
+        <ng-content select="[table-body]"></ng-content>
         <tr *ngFor="let item of data" class="vrip-table-row">
           <td *ngFor="let col of columns">
             <ng-container *ngIf="!col.template">
@@ -34,7 +36,7 @@
             <ng-content select="[row-actions]"></ng-content>
           </td>
         </tr>
-        <tr *ngIf="data.length === 0">
+        <tr *ngIf="data && data.length === 0 && (!columns || columns.length > 0)">
           <td [attr.colspan]="columns.length + (hasActionsCol ? 1 : 0)" class="vrip-table-empty">
             <div class="empty-state">
               <span class="material-symbols-outlined empty-icon">inbox</span>

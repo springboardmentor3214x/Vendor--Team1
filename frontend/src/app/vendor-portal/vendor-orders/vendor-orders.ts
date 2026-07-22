@@ -13,6 +13,9 @@ import { Table } from '../../ui/table/table';
   styleUrls: ['./vendor-orders.css']
 })
 export class VendorOrders {
+  filter() { alert("Filter applied"); }
+  updateStatus(o: any) { alert("Status updated for " + o.id); }
+
   orders = [
     { poNumber: 'PO-2023-1001', date: '2023-10-15', amount: 15400, deadline: '2023-11-01', status: 'In Transit' },
     { poNumber: 'PO-2023-0984', date: '2023-09-28', amount: 4200, deadline: '2023-10-10', status: 'Delivered' },

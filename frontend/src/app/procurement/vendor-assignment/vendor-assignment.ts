@@ -43,7 +43,11 @@ export class VendorAssignment implements OnInit {
     { key: 'actions', label: 'Actions' }
   ];
 
-  vendors: ApprovedVendorMock[] = [];
+  vendors: ApprovedVendorMock[] = [
+    { id: 1, name: 'Global Logistics', category: 'Shipping', contactPerson: 'John', reliabilityScore: 98, deliveryRating: 4.8, status: 'Active' },
+    { id: 2, name: 'TechCorp Solutions', category: 'IT', contactPerson: 'Sarah', reliabilityScore: 95, deliveryRating: 4.5, status: 'Active' },
+    { id: 3, name: 'Office Depot', category: 'Supplies', contactPerson: 'Mike', reliabilityScore: 88, deliveryRating: 3.9, status: 'Inactive' }
+  ];
 
   constructor(
     private route: ActivatedRoute, 

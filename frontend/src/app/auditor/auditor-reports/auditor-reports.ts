@@ -13,6 +13,9 @@ import { Table } from '../../ui/table/table';
   styleUrls: ['./auditor-reports.css']
 })
 export class AuditorReports {
+  newReport() { alert("Create new report"); }
+  viewDetails() { alert("Viewing report details"); }
+
   reports = [
     { title: 'Q3 Financial Procurement Audit', type: 'Financial', date: 'Oct 01, 2023', status: 'Completed' },
     { title: 'ISO Vendor Compliance Check', type: 'Compliance', date: 'Oct 15, 2023', status: 'In Progress' },

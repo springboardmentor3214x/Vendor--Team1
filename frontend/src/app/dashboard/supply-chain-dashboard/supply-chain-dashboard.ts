@@ -38,4 +38,6 @@ export class SupplyChainDashboard {
     if (status.includes('Warning') || status.includes('Progress')) return 'warning';
     return 'default';
   }
+
+  refresh() { alert("Data refreshed!"); }
 }

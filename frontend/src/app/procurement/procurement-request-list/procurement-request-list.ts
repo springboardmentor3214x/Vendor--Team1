@@ -47,7 +47,11 @@ export class ProcurementRequestList implements OnInit {
     { key: 'actions', label: 'Actions' }
   ];
 
-  requests: ProcurementRequestMock[] = [];
+  requests: ProcurementRequestMock[] = [
+    { id: 1, requestNumber: 'PR-9001', title: 'New Laptops for Engineering Team', department: 'IT', requestedBy: 'Alice', vendor: 'TechCorp', priority: 'High', budget: 15000, status: 'Approved', createdDate: '2026-07-05' },
+    { id: 2, requestNumber: 'PR-9002', title: 'Office Chairs and Desks', department: 'HR', requestedBy: 'Bob', vendor: 'Office Depot', priority: 'Medium', budget: 3500, status: 'Pending', createdDate: '2026-07-12' },
+    { id: 3, requestNumber: 'PR-9003', title: 'Server Maintenance Contract', department: 'IT', requestedBy: 'Alice', vendor: 'IT Serve', priority: 'Critical', budget: 50000, status: 'Rejected', createdDate: '2026-07-16' }
+  ];
   
   constructor(private procurementService: ProcurementService) {}
 
@@ -150,5 +154,9 @@ export class ProcurementRequestList implements OnInit {
         }
       });
     }
+  }
+
+  editRequest(r: any): void {
+    alert("Editing request: " + r.requestNumber);
   }
 }

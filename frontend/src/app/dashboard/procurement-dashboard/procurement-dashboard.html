@@ -4,7 +4,7 @@
             <h1>Procurement Dashboard</h1>
             <p>Overview of procurement requests, purchase orders, and vendor sourcing.</p>
         </div>
-        <app-button variant="primary" iconLeft="refresh">
+        <app-button variant="primary" iconLeft="refresh" (onClick)="refresh()">
             Refresh
         </app-button>
     </div>
@@ -54,7 +54,7 @@
             <h2>Quick Actions</h2>
         </div>
         <div class="actions-grid">
-            <a class="action-card" routerLink="/procurement/request">
+            <a class="action-card" routerLink="/procurement-request">
                 <div class="icon bg-indigo-100 text-indigo-600"><span class="material-symbols-outlined">add_circle</span></div>
                 <h3>New Request</h3>
                 <p>Create a new procurement request.</p>
@@ -66,7 +66,7 @@
                 <p>View and process purchase orders.</p>
             </div>
             
-            <a class="action-card" routerLink="/vendors/list">
+            <a class="action-card" routerLink="/vendors">
                 <div class="icon bg-amber-100 text-amber-600"><span class="material-symbols-outlined">storefront</span></div>
                 <h3>Vendor Directory</h3>
                 <p>Browse and evaluate vendors.</p>

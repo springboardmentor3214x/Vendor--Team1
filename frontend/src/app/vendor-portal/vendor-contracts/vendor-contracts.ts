@@ -13,6 +13,9 @@ import { Table } from '../../ui/table/table';
   styleUrls: ['./vendor-contracts.css']
 })
 export class VendorContracts {
+  upload() { alert("Contract uploaded"); }
+  download() { alert("Contract downloaded"); }
+
   contracts = [
     { name: 'Master Service Agreement.pdf', date: 'Jan 15, 2023', expiry: 'Jan 14, 2025', status: 'Active' },
     { name: 'Non-Disclosure Agreement.pdf', date: 'Jan 10, 2023', expiry: 'Perpetual', status: 'Active' },
