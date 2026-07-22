@@ -38,15 +38,15 @@ the permission checks enforced on every endpoint.
 ## Milestone status
 
 - [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
-- [ ] Milestone 2 (24 Jul 2026) - Vendor and procurement management
+- [x] Milestone 2 (24 Jul 2026) - Vendor and procurement management
 - [ ] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
 - [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 16 Jul - Expand contract with compliance clauses
 - 17 Jul - Rework issuing authority details in certification
 - 18 Jul - Handle empty responses from the auditor dashboard screen in the integrated flow
 - 19 Jul - Correct the dashboard cards screen field names surfaced during integration testing
 - 20 Jul - Correct the notifications screen field names surfaced during integration testing
 - 21 Jul - Smooth out the supply chain dashboard screen loading states found during testing
+- 22 Jul - Create the vendor dashboard screen with clickable KPI cards
