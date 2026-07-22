@@ -42,15 +42,15 @@ src/app/
 ## Milestone status
 
 - [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
-- [ ] Milestone 2 (24 Jul 2026) - Vendor and procurement management
+- [x] Milestone 2 (24 Jul 2026) - Vendor and procurement management
 - [ ] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
 - [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 16 Jul - Extend the procurement request screen with priority selection
 - 17 Jul - Flesh out the vendor assignment screen with reliability hints
 - 18 Jul - Add the admin dashboard screen with user counts
 - 19 Jul - Improve reliability hints in the vendor assignment screen
 - 20 Jul - Extend the purchase order screen with status chips
 - 21 Jul - Add the supply chain dashboard screen with delivery status tiles
+- 22 Jul - Create the supply chain dashboard screen with delivery status tiles
