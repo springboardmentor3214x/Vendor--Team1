@@ -44,15 +44,15 @@ Finance Officer and Auditor, each with its own permission set.
 ## Milestone status
 
 - [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
-- [ ] Milestone 2 (24 Jul 2026) - Vendor and procurement management
+- [x] Milestone 2 (24 Jul 2026) - Vendor and procurement management
 - [ ] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
 - [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 16 Jul - Refine expected versus actual dates in order tracking
 - 17 Jul - Extend invoice with payment tracking fields
 - 18 Jul - Extend invoice with tax and net amount split
 - 19 Jul - Refine status history tracking in procurement
 - 20 Jul - Tighten expected versus actual dates in order tracking
 - 21 Jul - Expand purchase order with delivery schedule fields
+- 22 Jul - Add quality evaluation model with defect rate capture
