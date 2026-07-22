@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from typing import List, Optional
 import os
+
 from app.database.connection import get_db
 from app.schemas.invoice import (
     InvoiceCreate,
@@ -21,6 +22,7 @@ from app.utils.uploads import (
 
 router = APIRouter(prefix="/invoices", tags=["Invoices"])
 
+
 def resolve_invoice_vendor(db: Session, current_user: User, po_id: int, vendor_id: Optional[int]) -> Optional[int]:
     if current_user.role != Roles.VENDOR:
         return vendor_id
@@ -38,6 +40,7 @@ def resolve_invoice_vendor(db: Session, current_user: User, po_id: int, vendor_i
         raise HTTPException(status_code=403, detail="You can only raise invoices against your own purchase orders")
 
     return vendor.id
+
 
 @router.post("/upload", response_model=InvoiceResponse, status_code=201)
 async def upload_invoice(
@@ -80,6 +83,7 @@ async def upload_invoice(
 
     return invoice_service.create_invoice(db, inv_data, file_name=file_name, file_path=file_path)
 
+
 @router.post("/", response_model=InvoiceResponse, status_code=201)
 def create_invoice_json(
     data: InvoiceCreate,
@@ -88,6 +92,7 @@ def create_invoice_json(
 ):
     data.vendor_id = resolve_invoice_vendor(db, current_user, data.po_id, data.vendor_id)
     return invoice_service.create_invoice(db, data)
+
 
 @router.get("/", response_model=List[InvoiceResponse])
 def list_invoices(
@@ -100,79 +105,45 @@ def list_invoices(
     return invoice_service.get_all_invoices(db)
 
 
-def _pending_invoice_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+@router.get("/{invoice_id}", response_model=InvoiceResponse)
+def get_invoice(
+    invoice_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    inv = invoice_service.get_invoice(db, invoice_id)
+    if not inv:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    if current_user.role == Roles.VENDOR:
+        vendor = invoice_service.get_vendor_for_user(db, current_user)
+        if not vendor or inv.vendor_id != vendor.id:
+            raise HTTPException(status_code=403, detail="You can only view your own invoices")
+    return inv
 
 
-def _pending_invoice_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+@router.post("/{invoice_id}/verify", response_model=InvoiceResponse)
+def verify_invoice_status(
+    invoice_id: int,
+    request: InvoiceVerifyRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.FINANCE_OFFICER]))
+):
+    inv = invoice_service.verify_invoice(db, invoice_id, request, current_user.name)
+    if not inv:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    return inv
 
 
-def _pending_invoice_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
-
-
-def _pending_invoice_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
-
-
-def _pending_invoice_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
-
-
-def _pending_invoice_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
-
-
-def _pending_invoice_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+@router.post("/{invoice_id}/payment-status", response_model=InvoiceResponse)
+def update_invoice_payment_status(
+    invoice_id: int,
+    request: InvoicePaymentStatusRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.FINANCE_OFFICER]))
+):
+    inv = invoice_service.update_payment_status(
+        db, invoice_id, request, current_user.name
+    )
+    if not inv:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    return inv
