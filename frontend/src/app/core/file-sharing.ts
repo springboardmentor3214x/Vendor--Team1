@@ -46,17 +46,19 @@ export const FILE_SHARING = {
 };
 
 const PLACEHOLDER_FILE_SHARING_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
+  { id: 1, name: 'Delta Logistics', status: 'Under Review' },
+  { id: 2, name: 'Ashcroft Maintenance', status: 'Inactive' },
+  { id: 3, name: 'Harborline Equipment', status: 'Active' },
+  { id: 4, name: 'Vertex Services', status: 'Pending Approval' },
+  { id: 5, name: 'Ironvale Supplies', status: 'Under Review' },
+  { id: 6, name: 'Copperfield Freight', status: 'Inactive' },
+  { id: 7, name: 'Northwind Steel', status: 'Active' },
 ];
 
 function usePlaceholderFileSharing(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_FILE_SHARING_ROWS;
-  }
-  return rows.filter((row) => !!row);
+  const source = rows && rows.length ? rows : PLACEHOLDER_FILE_SHARING_ROWS;
+  return source.map((row) => ({
+    ...row,
+    status: row.status || 'Pending',
+  }));
 }
