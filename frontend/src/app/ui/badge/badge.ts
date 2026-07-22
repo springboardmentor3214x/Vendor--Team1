@@ -10,4 +10,6 @@ import { CommonModule } from '@angular/common';
 })
 export class Badge {
   @Input() variant: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' = 'default';
+  @Input() size: 'sm' | 'md' | 'lg' = 'md';
+  @Input() icon?: string;
 }

@@ -25,36 +25,75 @@
             </div>
         </app-card>
     </div>
-</div>
 
-<div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-  </div>
+    <app-card style="margin-bottom: 24px;">
+        <h3 style="margin: 0 0 16px 0; font-size: 1rem; font-weight: 600; color: var(--text-primary);">Report Filters</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; align-items: end;">
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 0.8125rem; font-weight: 500; color: var(--text-secondary);">From Date</label>
+                <input type="date" class="vrip-select" [(ngModel)]="startDate"
+                       style="width: 100%; padding: 9px 12px; border-radius: 6px; border: 1px solid var(--border-color);" />
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 0.8125rem; font-weight: 500; color: var(--text-secondary);">To Date</label>
+                <input type="date" class="vrip-select" [(ngModel)]="endDate"
+                       style="width: 100%; padding: 9px 12px; border-radius: 6px; border: 1px solid var(--border-color);" />
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 0.8125rem; font-weight: 500; color: var(--text-secondary);">Vendor Category</label>
+                <select class="vrip-select" [(ngModel)]="filterCategory"
+                        style="width: 100%; padding: 9px 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+                    <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+                </select>
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 0.8125rem; font-weight: 500; color: var(--text-secondary);">Department</label>
+                <select class="vrip-select" [(ngModel)]="filterDepartment"
+                        style="width: 100%; padding: 9px 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+                    <option *ngFor="let d of departments" [value]="d">{{ d }}</option>
+                </select>
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 0.8125rem; font-weight: 500; color: var(--text-secondary);">Status</label>
+                <input type="text" class="vrip-select" [(ngModel)]="filterStatus" placeholder="All"
+                       style="width: 100%; padding: 9px 12px; border-radius: 6px; border: 1px solid var(--border-color);" />
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <app-button variant="primary" size="sm" iconLeft="filter_alt" (onClick)="applyFilters()">Apply</app-button>
+                <app-button variant="outline" size="sm" iconLeft="restart_alt" (onClick)="resetFilters()">Reset</app-button>
+            </div>
+        </div>
+    </app-card>
+
+    <app-card>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
+            <h3 style="margin: 0; font-size: 1.125rem; font-weight: 600; color: var(--text-primary);">
+                Report Live Preview: <span style="color: var(--vrip-primary-600);">{{ selectedReportTitle }}</span>
+            </h3>
+            <div style="display: flex; gap: 8px;">
+                <app-button variant="outline" size="sm" iconLeft="picture_as_pdf" (onClick)="downloadPDF()">Download PDF</app-button>
+                <app-button variant="outline" size="sm" iconLeft="download" (onClick)="downloadCSV()">Download Excel</app-button>
+            </div>
+        </div>
+
+        <div *ngIf="errorMsg"
+             style="margin-bottom: 12px; padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+            {{ errorMsg }}
+        </div>
+
+        <div *ngIf="isLoading" style="padding: 40px; text-align: center; color: var(--text-secondary);">
+            Loading report preview data...
+        </div>
+
+        <div *ngIf="!isLoading && previewData.length === 0 && !errorMsg"
+             style="padding: 40px; text-align: center; color: var(--text-secondary);">
+            No records match the selected filters.
+        </div>
+
+        <app-table
+            *ngIf="!isLoading && previewData.length > 0"
+            [columns]="previewColumns"
+            [data]="previewData">
+        </app-table>
+    </app-card>
 </div>
