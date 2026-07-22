@@ -10,3 +10,4 @@ class Discussion(Base):
     procurement_id = Column(Integer, ForeignKey("procurements.id"), nullable=True)
     po_id = Column(Integer, ForeignKey("purchase_orders.id"), nullable=True)
     contract_id = Column(Integer, ForeignKey("contracts.id"), nullable=True)
+    created_by = Column(String(100), nullable=False)
