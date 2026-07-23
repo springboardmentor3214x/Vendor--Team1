@@ -137,4 +137,24 @@ export class InvoiceManagement implements OnInit {
   downloadInvoice(id: number): void {
     alert('Downloading invoice PDF...');
   }
+
+  uploadInvoice(): void {
+    alert('Invoice upload dialog opened. (Mock)');
+  }
+
+  verifyInvoice(id: number): void {
+    const invoice = this.invoices.find(inv => inv.id === id);
+    if (invoice && confirm(`Verify invoice ${invoice.invoiceNumber}?`)) {
+        invoice.status = 'Pending Approval';
+        alert('Invoice verified successfully.');
+    }
+  }
+
+  rejectInvoice(id: number): void {
+    const invoice = this.invoices.find(inv => inv.id === id);
+    if (invoice && confirm(`Reject invoice ${invoice.invoiceNumber}?`)) {
+        invoice.status = 'Rejected';
+        alert('Invoice rejected.');
+    }
+  }
 }

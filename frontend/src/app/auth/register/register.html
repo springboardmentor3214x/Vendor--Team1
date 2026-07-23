@@ -1,140 +1,84 @@
-<div class="login-page">
-    <div class="left-panel">
-        <div class="branding">
-            <div class="branding-logo">
-                <span class="material-symbols-outlined branding-icon">dashboard_customize</span>
-                <h1>VRIP</h1>
-            </div>
-            <h2>Vendor Reliability<br>Intelligence Platform</h2>
-            <p>Join our platform to streamline procurement, enhance vendor relationships, and optimize your supply chain.</p>
-        </div>
+<div class="v-mesh-bg"></div>
+
+<div class="auth-page">
+  <div class="auth-box" style="max-width: 520px;">
+
+    <div class="auth-brand">
+      <div class="auth-brand-mark">
+        <span class="material-symbols-outlined">deployed_code</span>
+      </div>
+      <h1>Create your account</h1>
+      <p>Get started with the Vendor Reliability Platform</p>
     </div>
 
-    <div class="right-panel">
-        <div class="login-container">
-            <app-card [noPadding]="true">
-                <div class="login-card-content">
-                    <div class="login-header">
-                        <h1>Create Account</h1>
-                        <p>Fill in the details below to get started.</p>
-                    </div>
+    <div class="auth-card">
+      <form (ngSubmit)="register()" class="auth-form">
 
-                    <form (ngSubmit)="register()">
-
-                        <app-input
-                            label="Full Name *"
-                            type="text"
-                            placeholder="Full Name"
-                            [(ngModel)]="user.fullName"
-                            name="fullName"
-                            [required]="true"
-                        ></app-input>
-
-                        <div class="form-group mt-3">
-                            <label class="vrip-input-label">Select Role *</label>
-                            <select [(ngModel)]="user.role" name="role" class="vrip-select" required>
-                                <option value="Administrator">Administrator</option>
-                                <option value="Procurement Manager">Procurement Manager</option>
-                                <option value="Supply Chain Manager">Supply Chain Manager</option>
-                                <option value="Vendor">Vendor</option>
-                                <option value="Finance Officer">Finance Officer</option>
-                                <option value="Auditor">Auditor</option>
-                            </select>
-                        </div>
-
-                        <div class="form-row mt-3">
-                            <app-input
-                                *ngIf="user.role !== 'Vendor'"
-                                label="Employee ID *"
-                                type="text"
-                                placeholder="Employee ID"
-                                [(ngModel)]="user.employeeId"
-                                name="employeeId"
-                                [required]="true"
-                            ></app-input>
-
-                            <app-input
-                                *ngIf="user.role === 'Vendor'"
-                                label="Company Name *"
-                                type="text"
-                                placeholder="Company Name"
-                                [(ngModel)]="user.companyName"
-                                name="companyName"
-                                [required]="true"
-                            ></app-input>
-
-                            <app-input
-                                label="Mobile Number *"
-                                type="text"
-                                placeholder="10-digit mobile"
-                                [(ngModel)]="user.mobile"
-                                name="mobile"
-                                [required]="true"
-                            ></app-input>
-                        </div>
-
-                        <div class="mt-3">
-                            <app-input
-                                label="Email Address *"
-                                type="email"
-                                placeholder="Enter your email"
-                                iconLeft="mail"
-                                [(ngModel)]="user.email"
-                                name="email"
-                                [required]="true"
-                            ></app-input>
-                        </div>
-
-                        <div class="form-row mt-3">
-                            <app-input
-                                label="Password *"
-                                type="password"
-                                placeholder="Enter password"
-                                iconLeft="lock"
-                                [(ngModel)]="user.password"
-                                name="password"
-                                [required]="true"
-                            ></app-input>
-
-                            <app-input
-                                label="Confirm Password *"
-                                type="password"
-                                placeholder="Confirm password"
-                                iconLeft="lock"
-                                [(ngModel)]="user.confirmPassword"
-                                name="confirmPassword"
-                                [required]="true"
-                            ></app-input>
-                        </div>
-
-                        <div class="options mt-4">
-                            <label class="remember-me">
-                                <input type="checkbox" name="acceptTerms" required>
-                                <span>I accept the <a href="javascript:void(0)">Terms and Conditions</a></span>
-                            </label>
-                        </div>
-
-                        <div class="mt-4">
-                            <app-button
-                                type="submit"
-                                variant="primary"
-                                [block]="true"
-                                [loading]="loading">
-                                {{ loading ? 'Creating Account...' : 'REGISTER' }}
-                            </app-button>
-                        </div>
-                    </form>
-
-                    <div class="divider">
-                        <span>OR</span>
-                    </div>
-
-                    <p class="register-text">
-                        Already have an account?
-                        <a routerLink="/login">Sign In</a>
-                    </p>
-                </div>
-            </app-card>
+        <div class="auth-row">
+          <div class="auth-field">
+            <label class="auth-label">Full Name</label>
+            <input type="text" class="auth-input" placeholder="Jane Doe" [(ngModel)]="user.fullName" name="fullName" required>
+          </div>
+          <div class="auth-field">
+            <label class="auth-label">Role</label>
+            <select class="auth-input" [(ngModel)]="user.role" name="role" required>
+              <option value="Administrator">Administrator</option>
+              <option value="Procurement Manager">Procurement Manager</option>
+              <option value="Supply Chain Manager">Supply Chain Manager</option>
+              <option value="Vendor">Vendor</option>
+              <option value="Finance Officer">Finance Officer</option>
+              <option value="Auditor">Auditor</option>
+            </select>
+          </div>
         </div>
+
+        <div class="auth-row">
+          <div class="auth-field" *ngIf="user.role !== 'Vendor'">
+            <label class="auth-label">Employee ID</label>
+            <input type="text" class="auth-input" placeholder="EMP-001" [(ngModel)]="user.employeeId" name="employeeId" required>
+          </div>
+          <div class="auth-field" *ngIf="user.role === 'Vendor'">
+            <label class="auth-label">Company Name</label>
+            <input type="text" class="auth-input" placeholder="Acme Corp" [(ngModel)]="user.companyName" name="companyName" required>
+          </div>
+          <div class="auth-field">
+            <label class="auth-label">Mobile Number</label>
+            <input type="text" class="auth-input" placeholder="10-digit number" [(ngModel)]="user.mobile" name="mobile" required>
+          </div>
+        </div>
+
+        <div class="auth-field">
+          <label class="auth-label">Email Address</label>
+          <input type="email" class="auth-input" placeholder="jane@company.com" [(ngModel)]="user.email" name="email" required>
+        </div>
+
+        <div class="auth-row">
+          <div class="auth-field">
+            <label class="auth-label">Password</label>
+            <input type="password" class="auth-input" placeholder="Min 8 characters" [(ngModel)]="user.password" name="password" required>
+          </div>
+          <div class="auth-field">
+            <label class="auth-label">Confirm Password</label>
+            <input type="password" class="auth-input" placeholder="Repeat password" [(ngModel)]="user.confirmPassword" name="confirmPassword" required>
+          </div>
+        </div>
+
+        <label class="auth-check">
+          <input type="checkbox" name="acceptTerms" required>
+          <span>I accept the <a href="javascript:void(0)" class="auth-link">Terms and Conditions</a></span>
+        </label>
+
+        <button type="submit" class="auth-submit" [disabled]="loading">
+          <span class="material-symbols-outlined v-spinner" *ngIf="loading" style="font-size:18px;">progress_activity</span>
+          {{ loading ? 'Creating account…' : 'Create account' }}
+        </button>
+
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a routerLink="/login" class="auth-link">Sign in</a>
+      </div>
     </div>
+
+  </div>
 </div>

@@ -1,15 +1,15 @@
 <div class="approval-container" *ngIf="request">
-    <div class="page-header">
+    <div class="page-vrip-page-header">
         <div>
-            <div class="header-breadcrumb">
+            <div class="vrip-page-header-breadcrumb">
                 <a routerLink="/procurement/requests">Procurement Requests</a>
                 <span class="material-symbols-outlined icon-sm">chevron_right</span>
                 <span>Approval</span>
             </div>
-            <h1>Approve Request: {{ request.requestNumber }}</h1>
+            <h1 class="vrip-page-title">Approve Request: {{ request.requestNumber }}</h1>
             <p>Review the details below and take appropriate action on this procurement request.</p>
         </div>
-        <div class="header-actions">
+        <div class="vrip-page-header-actions">
             <app-button variant="outline" iconLeft="arrow_back" routerLink="/procurement/requests">
                 Back to List
             </app-button>

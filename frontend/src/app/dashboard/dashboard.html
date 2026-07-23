@@ -1,99 +1,77 @@
-<div class="dashboard">
-    <div class="dashboard-header">
-        <div>
-            <h1>Dashboard</h1>
-            <p>Welcome to Vendor Reliability Intelligence Platform</p>
-        </div>
-        <app-button variant="primary" iconLeft="refresh" (onClick)="refresh()">
-            Refresh
-        </app-button>
-    </div>
+<!-- Admin Dashboard -->
+<div class="dash-header">
+  <h1 class="dash-title">Overview</h1>
+  <p class="dash-subtitle">Your enterprise vendor operations at a glance.</p>
+</div>
 
-    <!-- Statistics -->
-    <app-dashboard-cards></app-dashboard-cards>
+<!-- KPI Stats -->
+<app-dashboard-cards></app-dashboard-cards>
 
-    <!-- Business Modules -->
-    <div class="modules-section">
-        <div class="section-header">
-            <h2>Business Modules</h2>
-        </div>
-        <div class="modules-grid">
-            <a routerLink="/vendors" class="module-card">
-                <div class="module-icon bg-primary-100 text-primary-600">
-                    <span class="material-symbols-outlined">groups</span>
-                </div>
-                <h3>Vendor Management</h3>
-                <p>Manage vendors, approvals and vendor profiles.</p>
-            </a>
+<!-- Quick Actions -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Quick Actions</h2>
+  </div>
+  <div class="dash-actions-grid">
 
-            <a routerLink="/procurement-dashboard" class="module-card">
-                <div class="module-icon bg-indigo-100 text-indigo-600">
-                    <span class="material-symbols-outlined">shopping_cart</span>
-                </div>
-                <h3>Procurement Management</h3>
-                <p>Create procurement requests and purchase orders.</p>
-            </a>
+    <a routerLink="/vendors" class="dash-action-card">
+      <div class="dash-action-icon icon-brand">
+        <span class="material-symbols-outlined">storefront</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>Vendor Directory</h3>
+        <p>Browse and manage all registered vendors</p>
+      </div>
+    </a>
 
-            <a routerLink="/supply-chain-dashboard" class="module-card">
-                <div class="module-icon bg-emerald-100 text-emerald-600">
-                    <span class="material-symbols-outlined">local_shipping</span>
-                </div>
-                <h3>Supply Chain</h3>
-                <p>Track deliveries and logistics.</p>
-            </a>
+    <a routerLink="/procurement/requests" class="dash-action-card">
+      <div class="dash-action-icon icon-info">
+        <span class="material-symbols-outlined">shopping_cart</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>Procurement</h3>
+        <p>Purchase requests, orders, and tracking</p>
+      </div>
+    </a>
 
-            <a routerLink="/finance-dashboard" class="module-card">
-                <div class="module-icon bg-amber-100 text-amber-600">
-                    <span class="material-symbols-outlined">account_balance_wallet</span>
-                </div>
-                <h3>Finance</h3>
-                <p>Verify invoices and approve payments.</p>
-            </a>
+    <a routerLink="/admin/user-management" class="dash-action-card">
+      <div class="dash-action-icon icon-success">
+        <span class="material-symbols-outlined">group</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>User Management</h3>
+        <p>Manage user accounts and permissions</p>
+      </div>
+    </a>
 
-            <div class="module-card disabled">
-                <div class="module-icon bg-slate-100 text-slate-500">
-                    <span class="material-symbols-outlined">analytics</span>
-                </div>
-                <h3>Analytics</h3>
-                <p>Coming in Module 4.</p>
-            </div>
-        </div>
-    </div>
+    <a routerLink="/admin/analytics" class="dash-action-card">
+      <div class="dash-action-icon icon-warning">
+        <span class="material-symbols-outlined">analytics</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>Analytics</h3>
+        <p>Platform-wide insights and reports</p>
+      </div>
+    </a>
 
-    <!-- Recent Vendors -->
-    <div class="recent-vendors">
-        <div class="section-header">
-            <h2>Recent Vendors</h2>
-        </div>
-        
-        <div class="table-container">
-            <app-table 
-                [columns]="columns" 
-                [data]="recentVendors"
-                [hasToolbar]="false"
-                [pagination]="false"
-                [searchable]="false">
-                
-                <ng-template let-row>
-                    <td>
-                        <div class="vendor-name">{{ row.name }}</div>
-                    </td>
-                    <td>
-                        <span class="category-text">{{ row.category }}</span>
-                    </td>
-                    <td>
-                        <div class="rating-badge">
-                            {{ row.rating }}
-                        </div>
-                    </td>
-                    <td>
-                        <app-badge [variant]="getBadgeVariant(row.status)">
-                            {{ row.status }}
-                        </app-badge>
-                    </td>
-                </ng-template>
-                
-            </app-table>
-        </div>
-    </div>
+    <a routerLink="/admin/reports" class="dash-action-card">
+      <div class="dash-action-icon icon-danger">
+        <span class="material-symbols-outlined">description</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>Reports</h3>
+        <p>Generate compliance and performance reports</p>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Recent Vendors</h2>
+    <a routerLink="/vendors" class="vrip-button vrip-btn-ghost vrip-btn-sm">View all</a>
+  </div>
+  <app-table [columns]="columns" [data]="recentVendors"></app-table>
 </div>

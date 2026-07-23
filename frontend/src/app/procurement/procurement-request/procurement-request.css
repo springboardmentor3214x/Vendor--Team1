@@ -1,16 +1,6 @@
-.form-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: var(--vrip-space-6);
-  font-family: var(--vrip-font-family);
-}
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--vrip-space-6);
-}
+
+
 
 .header h1 {
   margin: 0;

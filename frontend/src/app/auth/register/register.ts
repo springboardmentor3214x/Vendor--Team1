@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Card } from '../../ui/card/card';
 import { Button } from '../../ui/button/button';
 import { InputComponent } from '../../ui/input/input';
+import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
   selector: 'app-register',
@@ -12,10 +13,7 @@ import { InputComponent } from '../../ui/input/input';
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule,
-    Card,
-    Button,
-    InputComponent
+    RouterModule
   ],
   templateUrl: './register.html',
   styleUrls: ['./register.css']
@@ -23,6 +21,8 @@ import { InputComponent } from '../../ui/input/input';
 export class Register {
   loading = false;
   
+  constructor(private router: Router, public themeService: ThemeService) {}
+
   user = {
 
     fullName: '',
@@ -42,8 +42,6 @@ export class Register {
     role: 'Vendor'
 
   };
-
-  constructor(private router: Router) {}
 
   get isVendor(): boolean {
 

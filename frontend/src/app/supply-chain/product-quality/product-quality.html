@@ -1,7 +1,7 @@
 <div class="page-container">
-    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+    <div class="page-vrip-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
         <div>
-            <h1>Product Quality Evaluation</h1>
+            <h1 class="vrip-page-title">Product Quality Evaluation</h1>
             <p style="color: var(--text-secondary); margin-top: 4px;">Monitor and evaluate the quality of received items from vendors.</p>
         </div>
         <app-button variant="primary" size="md" iconLeft="add">New Evaluation</app-button>
@@ -14,6 +14,10 @@
                     <th>PO Number</th>
                     <th>Vendor Name</th>
                     <th>Inspection Date</th>
+                    <th>Material</th>
+                    <th>Packaging</th>
+                    <th>Quantity</th>
+                    <th>Compliance</th>
                     <th>Overall Rating</th>
                     <th>Defects</th>
                     <th>Remarks</th>
@@ -24,6 +28,10 @@
                     <td><strong>{{ eval.poNumber }}</strong></td>
                     <td>{{ eval.vendorName }}</td>
                     <td>{{ eval.inspectionDate | date:'mediumDate' }}</td>
+                    <td>{{ eval.materialQuality }}/5</td>
+                    <td>{{ eval.packagingQuality }}/5</td>
+                    <td>{{ eval.quantityAccuracy }}/5</td>
+                    <td>{{ eval.specCompliance }}/5</td>
                     <td>
                         <div style="display: flex; color: #ffcc00; font-size: 18px;">
                             <span class="material-symbols-outlined" *ngFor="let star of [1,2,3,4,5]" [ngStyle]="{'font-variation-settings': star <= eval.overallRating ? '&quot;FILL&quot; 1' : '&quot;FILL&quot; 0'}">star</span>

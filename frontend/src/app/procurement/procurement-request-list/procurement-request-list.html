@@ -1,15 +1,15 @@
 <div class="procurement-list-container">
-    <div class="page-header">
+    <div class="page-vrip-page-header">
         <div>
-            <h1>Procurement Requests</h1>
-            <p>Manage and track all departmental procurement requests.</p>
+            <h1 class="vrip-page-title">Procurement Requests</h1>
+            <p class="vrip-page-subtitle">Manage and track all departmental procurement requests.</p>
         </div>
         <app-button variant="primary" iconLeft="add" routerLink="/procurement-request">
             New Request
         </app-button>
     </div>
 
-    <div class="table-container">
+    <div class="vrip-table-container">
         <app-table 
             [columns]="columns" 
             [data]="requests"

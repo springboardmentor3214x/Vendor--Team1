@@ -1,9 +1,12 @@
 <div class="invoice-container">
-    <div class="page-header">
+    <div class="page-vrip-page-header">
         <div>
-            <h1>Invoice Management</h1>
-            <p>Manage and process payments for procurement invoices.</p>
+            <h1 class="vrip-page-title">Invoice Management</h1>
+            <p class="vrip-page-subtitle">Manage and process payments for procurement invoices.</p>
         </div>
+        <app-button variant="primary" iconLeft="upload_file" (onClick)="uploadInvoice()">
+            Upload Invoice
+        </app-button>
         <app-button variant="outline" iconLeft="download" (onClick)="exportCSV()">
             Export Report
         </app-button>
@@ -16,7 +19,7 @@
                 <h3>Total Invoices</h3>
                 <span class="material-symbols-outlined text-primary-600">receipt_long</span>
             </div>
-            <h1>3</h1>
+            <h1 class="vrip-page-title">3</h1>
             <p class="text-primary">All time</p>
         </div>
         <div class="vrip-stat-card border-warning">
@@ -24,7 +27,7 @@
                 <h3>Pending Approval</h3>
                 <span class="material-symbols-outlined text-warning-600">pending_actions</span>
             </div>
-            <h1>1</h1>
+            <h1 class="vrip-page-title">1</h1>
             <p class="text-warning">₹50,000 Total</p>
         </div>
         <div class="vrip-stat-card border-danger">
@@ -32,7 +35,7 @@
                 <h3>Overdue</h3>
                 <span class="material-symbols-outlined text-danger-600">warning</span>
             </div>
-            <h1>1</h1>
+            <h1 class="vrip-page-title">1</h1>
             <p class="text-danger">Action Required</p>
         </div>
         <div class="vrip-stat-card border-success">
@@ -40,12 +43,12 @@
                 <h3>Paid</h3>
                 <span class="material-symbols-outlined text-success-600">check_circle</span>
             </div>
-            <h1>1</h1>
+            <h1 class="vrip-page-title">1</h1>
             <p class="text-success">₹2,50,000 Total</p>
         </div>
     </div>
 
-    <div class="table-container">
+    <div class="vrip-table-container">
         <app-table 
             [columns]="columns" 
             [data]="invoices"
@@ -79,8 +82,14 @@
                 </td>
                 <td>
                     <div class="action-buttons">
-                        <app-button variant="success" size="sm" iconLeft="payments" (onClick)="processPayment(row.id)" *ngIf="row.status !== 'Paid'" title="Process Payment">
+                        <app-button variant="success" size="sm" iconLeft="payments" (onClick)="processPayment(row.id)" *ngIf="row.status === 'Pending Approval'" title="Approve Payment">
                             Pay
+                        </app-button>
+                        <app-button variant="primary" size="sm" iconLeft="verified" (onClick)="verifyInvoice(row.id)" *ngIf="row.status === 'Pending'" title="Verify Invoice">
+                            Verify
+                        </app-button>
+                        <app-button variant="danger" size="sm" iconLeft="cancel" (onClick)="rejectInvoice(row.id)" *ngIf="row.status === 'Pending' || row.status === 'Pending Approval'" title="Reject Invoice">
+                            Reject
                         </app-button>
                         <app-button variant="outline" size="sm" iconLeft="download" (onClick)="downloadInvoice(row.id)" title="Download Invoice">
                             PDF

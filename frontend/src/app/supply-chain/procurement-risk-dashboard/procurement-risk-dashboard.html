@@ -1,0 +1,77 @@
+<div class="page-container">
+    <div class="page-vrip-page-header" style="margin-bottom: var(--vrip-space-6);">
+        <h1 class="vrip-page-title">Procurement Risk Dashboard</h1>
+        <p>Identify and mitigate vendor-related risks before assigning purchase orders.</p>
+    </div>
+
+    <!-- High Risk Section -->
+    <div style="margin-bottom: var(--vrip-space-6);">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+            <span class="material-symbols-outlined" style="color: #ff3b30; font-size: 28px;">error</span>
+            <h2 style="margin: 0; color: #ff3b30;">Critical / High Risk Vendors</h2>
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 16px;">Vendors in this category require immediate attention. Assigning new POs without additional approval may lead to procurement failures.</p>
+        
+        <app-card [noPadding]="true" style="border: 1px solid rgba(255, 59, 48, 0.3);">
+            <app-table>
+                <ng-container table-header>
+                    <tr>
+                        <th>Vendor</th>
+                        <th>Category</th>
+                        <th>Risk Factor</th>
+                        <th>Identified Issue</th>
+                        <th>Action Required</th>
+                    </tr>
+                </ng-container>
+                <ng-container table-body>
+                    <tr *ngFor="let vendor of highRiskVendors" style="background: rgba(255, 59, 48, 0.02);">
+                        <td><strong>{{ vendor.name }}</strong></td>
+                        <td>{{ vendor.category }}</td>
+                        <td>
+                            <span class="vrip-badge" [ngStyle]="getBadgeClass('High')">Score: {{ vendor.riskScore }}/100</span>
+                        </td>
+                        <td style="max-width: 300px; line-height: 1.4;">{{ vendor.issue }}</td>
+                        <td><strong style="color: #ff3b30;">{{ vendor.actionRequired }}</strong></td>
+                    </tr>
+                    <tr *ngIf="highRiskVendors.length === 0">
+                        <td colspan="5" style="text-align: center; padding: 24px; color: var(--text-secondary);">No high-risk vendors identified.</td>
+                    </tr>
+                </ng-container>
+            </app-table>
+        </app-card>
+    </div>
+
+    <!-- Medium Risk Section -->
+    <div style="margin-bottom: var(--vrip-space-6);">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+            <span class="material-symbols-outlined" style="color: #ffcc00; font-size: 28px;">warning</span>
+            <h2 style="margin: 0; color: #d4a000;">Monitor / Medium Risk Vendors</h2>
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 16px;">Vendors showing minor inconsistencies. Safe to proceed, but should be monitored for declining trends.</p>
+        
+        <app-card [noPadding]="true">
+            <app-table>
+                <ng-container table-header>
+                    <tr>
+                        <th>Vendor</th>
+                        <th>Category</th>
+                        <th>Risk Factor</th>
+                        <th>Identified Issue</th>
+                        <th>Action Required</th>
+                    </tr>
+                </ng-container>
+                <ng-container table-body>
+                    <tr *ngFor="let vendor of mediumRiskVendors">
+                        <td><strong>{{ vendor.name }}</strong></td>
+                        <td>{{ vendor.category }}</td>
+                        <td>
+                            <span class="vrip-badge" [ngStyle]="getBadgeClass('Medium')">Score: {{ vendor.riskScore }}/100</span>
+                        </td>
+                        <td style="max-width: 300px; line-height: 1.4;">{{ vendor.issue }}</td>
+                        <td><strong>{{ vendor.actionRequired }}</strong></td>
+                    </tr>
+                </ng-container>
+            </app-table>
+        </app-card>
+    </div>
+</div>

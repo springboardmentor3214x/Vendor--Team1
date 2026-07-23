@@ -1,0 +1,87 @@
+<div class="page-container">
+    <div class="page-vrip-page-header" style="margin-bottom: var(--vrip-space-6);">
+        <h1 class="vrip-page-title">Procurement Recommendations</h1>
+        <p>Intelligent decision-support system to recommend the most suitable suppliers based on Category and Reliability Score.</p>
+    </div>
+
+    <!-- Configuration/Filters -->
+    <app-card style="margin-bottom: var(--vrip-space-6);">
+        <h3 style="margin-top: 0; margin-bottom: 16px;">Configure Requirements</h3>
+        <div style="display: flex; gap: var(--vrip-space-4); align-items: flex-end;">
+            <div style="flex: 1;">
+                <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 6px; color: var(--vrip-gray-700);">Product/Service Category</label>
+                <select style="width: 100%; padding: 10px 12px; border: 1px solid var(--vrip-gray-300); border-radius: var(--vrip-radius-md); background: white;">
+                    <option *ngFor="let category of categories" [value]="category" [selected]="category === selectedCategory">{{ category }}</option>
+                </select>
+            </div>
+            <div style="flex: 1;">
+                <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 6px; color: var(--vrip-gray-700);">Minimum Score Requirement</label>
+                <select style="width: 100%; padding: 10px 12px; border: 1px solid var(--vrip-gray-300); border-radius: var(--vrip-radius-md); background: white;">
+                    <option value="90">90% and above</option>
+                    <option value="80">80% and above</option>
+                    <option value="70">70% and above</option>
+                </select>
+            </div>
+            <div>
+                <app-button variant="primary">Generate Recommendations</app-button>
+            </div>
+        </div>
+    </app-card>
+
+    <!-- Top Recommendation -->
+    <div style="margin-bottom: var(--vrip-space-6);">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--vrip-space-4);">Top Recommendation for {{ selectedCategory }}</h2>
+        <app-card style="border: 2px solid #34c759; position: relative;">
+            <div style="position: absolute; top: -12px; right: 24px; background: #34c759; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; gap: 4px;">
+                <span class="material-symbols-outlined" style="font-size: 14px;">workspace_premium</span> Best Match
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 style="margin: 0 0 8px 0; color: #34c759;">{{ recommendations[0].name }}</h2>
+                    <p style="color: var(--text-secondary); margin: 0; font-size: 0.875rem;">This vendor offers the lowest procurement risk and the highest historical reliability score for this category.</p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #34c759;">{{ recommendations[0].match }}%</div>
+                    <div style="font-size: 0.875rem; color: var(--text-secondary);">Match Confidence</div>
+                </div>
+            </div>
+            <div style="margin-top: 24px; display: flex; gap: 16px;">
+                <app-button variant="primary" routerLink="/procurement/purchase-order/create">Create Purchase Order</app-button>
+                <app-button variant="secondary" [routerLink]="['/supply-chain/reliability-score-details', 1]">View Full Details</app-button>
+            </div>
+        </app-card>
+    </div>
+
+    <!-- Alternatives List -->
+    <div>
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--vrip-space-4);">All Evaluated Suppliers</h2>
+        <app-card [noPadding]="true">
+            <app-table>
+                <ng-container table-header>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Vendor Name</th>
+                        <th>Reliability Score</th>
+                        <th>Risk Level</th>
+                        <th>Recommendation Status</th>
+                        <th>Action</th>
+                    </tr>
+                </ng-container>
+                <ng-container table-body>
+                    <tr *ngFor="let vendor of recommendations">
+                        <td><strong>#{{ vendor.rank }}</strong></td>
+                        <td>{{ vendor.name }}</td>
+                        <td>{{ vendor.score }}%</td>
+                        <td>{{ vendor.risk }}</td>
+                        <td>
+                            <strong [ngStyle]="getMatchClass(vendor.match)">{{ vendor.status }}</strong>
+                        </td>
+                        <td>
+                            <app-button variant="secondary">Select Vendor</app-button>
+                        </td>
+                    </tr>
+                </ng-container>
+            </app-table>
+        </app-card>
+    </div>
+</div>

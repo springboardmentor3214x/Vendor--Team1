@@ -1,81 +1,87 @@
-<div class="login-page">
-    <div class="left-panel">
-        <div class="branding">
-            <div class="branding-logo">
-                <span class="material-symbols-outlined branding-icon">dashboard_customize</span>
-                <h1>VRIP</h1>
-            </div>
-            <h2>Vendor Reliability<br>Intelligence Platform</h2>
-            <p>AI-powered platform for evaluating vendors, monitoring procurement performance and managing enterprise supplier relationships.</p>
+<div class="v-mesh-bg"></div>
+
+<div class="auth-page">
+  <div class="auth-split-container">
+    
+    <!-- Left Side: App Details -->
+    <div class="auth-info-pane">
+      <div class="auth-brand-mark auth-brand-mark-lg">
+        <span class="material-symbols-outlined">deployed_code</span>
+      </div>
+      <h1 class="auth-hero-title">Vendor Reliability Intelligence Platform</h1>
+      <p class="auth-hero-subtitle">Enterprise-grade procurement, performance tracking, and vendor lifecycle management in one unified platform.</p>
+      
+      <div class="auth-features">
+        <div class="auth-feature-item">
+          <span class="material-symbols-outlined">verified</span>
+          <div>
+            <h4>Intelligent Scoring</h4>
+            <p>Automatically evaluate vendors based on historical data.</p>
+          </div>
         </div>
+        <div class="auth-feature-item">
+          <span class="material-symbols-outlined">monitoring</span>
+          <div>
+            <h4>Real-time Analytics</h4>
+            <p>Track delivery, quality, and compliance metrics.</p>
+          </div>
+        </div>
+        <div class="auth-feature-item">
+          <span class="material-symbols-outlined">account_tree</span>
+          <div>
+            <h4>Seamless Workflows</h4>
+            <p>Manage purchase orders, invoices, and communication.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="right-panel">
-        <div class="login-container">
-            <app-card [noPadding]="true">
-                <div class="login-card-content">
-                    <div class="login-header">
-                        <h1>Welcome Back 👋</h1>
-                        <p>Sign in to continue to your dashboard.</p>
-                    </div>
+    <!-- Right Side: Login Box -->
+    <div class="auth-form-pane">
+      <div class="auth-brand">
+        <h1>Welcome back</h1>
+        <p>Sign in to your account</p>
+      </div>
 
-                    <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login()">
-                        <app-input
-                            label="Email Address"
-                            type="email"
-                            placeholder="Enter your email"
-                            iconLeft="mail"
-                            formControlName="email"
-                            [error]="(loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')) ? 'Email is required.' : 
-                                    (loginForm.get('email')?.touched && loginForm.get('email')?.hasError('email')) ? 'Enter a valid email address.' : undefined"
-                        ></app-input>
-
-                        <app-input
-                            label="Password"
-                            [type]="hidePassword ? 'password' : 'text'"
-                            placeholder="Enter your password"
-                            iconLeft="lock"
-                            formControlName="password"
-                            [error]="(loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')) ? 'Password is required.' : 
-                                    (loginForm.get('password')?.touched && loginForm.get('password')?.hasError('minlength')) ? 'Password must be at least 8 characters.' : undefined"
-                        ></app-input>
-
-                        <div class="password-toggle" (click)="togglePassword()">
-                            {{ hidePassword ? 'Show Password' : 'Hide Password' }}
-                        </div>
-
-                        <div class="options">
-                            <label class="remember-me">
-                                <input type="checkbox" formControlName="rememberMe">
-                                <span>Remember Me</span>
-                            </label>
-                            <a routerLink="/forgot-password" class="forgot-password">Forgot Password?</a>
-                        </div>
-
-                        <div class="error-box" *ngIf="errorMessage">
-                            <span class="material-symbols-outlined">error</span>
-                            {{ errorMessage }}
-                        </div>
-
-                        <app-button
-                            type="submit"
-                            variant="primary"
-                            [block]="true"
-                            [loading]="loading">
-                            {{ loading ? 'Signing In...' : 'LOGIN' }}
-                        </app-button>
-                    </form>
-
-                    <div class="divider">
-                        <span>OR</span>
-                    </div>
-
-                    <p class="register-text">
-                        Don't have an account?
-                        <a routerLink="/register">Create Account</a>
-                    </p>
-                </div>
-            </app-card>
+      <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="login()">
+        <div class="auth-field">
+          <label class="auth-label">Email address</label>
+          <input type="email" class="auth-input" placeholder="you@company.com" formControlName="email" autocomplete="email">
         </div>
+
+        <div class="auth-field">
+          <div class="auth-label-row">
+            <label class="auth-label">Password</label>
+            <a routerLink="/forgot-password" class="auth-link" style="font-size: 0.75rem;">Forgot?</a>
+          </div>
+          <div class="auth-input-wrap">
+            <input [type]="hidePassword ? 'password' : 'text'" class="auth-input" formControlName="password" autocomplete="current-password" style="padding-right: 40px;">
+            <button type="button" class="auth-input-icon" (click)="togglePassword()">
+              <span class="material-symbols-outlined">{{ hidePassword ? 'visibility_off' : 'visibility' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <label class="auth-check">
+          <input type="checkbox" formControlName="rememberMe">
+          <span>Remember this device</span>
+        </label>
+
+        <div class="auth-error" *ngIf="errorMessage">
+          <span class="material-symbols-outlined">error</span>
+          {{ errorMessage }}
+        </div>
+
+        <button class="auth-submit" type="submit" [disabled]="loading">
+          <span class="material-symbols-outlined v-spinner" *ngIf="loading" style="font-size:18px;">progress_activity</span>
+          {{ loading ? 'Signing in…' : 'Sign in' }}
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account? <a routerLink="/register" class="auth-link">Create one</a>
+      </div>
     </div>
+
+  </div>
 </div>

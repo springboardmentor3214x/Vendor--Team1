@@ -1,15 +1,15 @@
-<div class="po-details-container" *ngIf="po">
-    <div class="page-header print-hide">
+<div class="po-vrip-container" *ngIf="po">
+    <div class="page-vrip-page-header print-hide">
         <div>
-            <div class="header-breadcrumb">
+            <div class="vrip-page-header-breadcrumb">
                 <a routerLink="/dashboard">Dashboard</a>
                 <span class="material-symbols-outlined icon-sm">chevron_right</span>
                 <span>Purchase Order Details</span>
             </div>
-            <h1>Purchase Order: {{ po.poNumber }}</h1>
+            <h1 class="vrip-page-title">Purchase Order: {{ po.poNumber }}</h1>
             <p>Created on {{ po.createdDate }} • Approved by {{ po.approvedBy }}</p>
         </div>
-        <div class="header-actions">
+        <div class="vrip-page-header-actions">
             <app-button variant="outline" iconLeft="print" (onClick)="printPO()">
                 Print
             </app-button>
@@ -20,8 +20,8 @@
     </div>
 
     <!-- Print Header -->
-    <div class="print-show print-header">
-        <h1>PURCHASE ORDER</h1>
+    <div class="print-show print-vrip-page-header">
+        <h1 class="vrip-page-title">PURCHASE ORDER</h1>
         <p>PO Number: {{ po.poNumber }}</p>
         <p>Date: {{ po.createdDate }}</p>
     </div>
@@ -46,7 +46,7 @@
             </app-card>
 
             <app-card title="Order Items" icon="inventory_2">
-                <table class="items-table">
+                <table class="items-vrip-table">
                     <thead>
                         <tr>
                             <th>Item Description</th>

@@ -1,18 +1,6 @@
-.details-container {
-  display: flex;
-  flex-direction: column;
-  gap: var(--vrip-space-6);
-  padding: var(--vrip-space-6);
-  font-family: var(--vrip-font-family);
-  max-width: 1400px;
-  margin: 0 auto;
-}
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+
+
 
 .header h1 {
   margin: 0;
@@ -206,11 +194,7 @@
 }
 
 @media(max-width: 600px) {
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--vrip-space-4);
-  }
+  
   .info-grid {
     grid-template-columns: 1fr;
   }

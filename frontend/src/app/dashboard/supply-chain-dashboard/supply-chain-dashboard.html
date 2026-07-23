@@ -1,113 +1,72 @@
-<div class="vendor-dashboard">
-    <div class="dashboard-header">
-        <div>
-            <h1>Supply Chain Dashboard</h1>
-            <p>Monitor shipments, inventory, and logistics operations.</p>
-        </div>
-        <app-button variant="primary" iconLeft="refresh" (onClick)="refresh()">
-            Refresh
-        </app-button>
+<!-- Supply Chain Dashboard -->
+<div class="dash-header">
+  <h1 class="dash-title">Supply Chain Overview</h1>
+  <p class="dash-subtitle">Monitor vendor performance, reliability scores, and operational metrics.</p>
+</div>
+
+<!-- KPI Grid -->
+<div class="dash-kpi-grid">
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Avg Reliability Score</h4>
+      <div class="dash-kpi-icon icon-success"><span class="material-symbols-outlined">verified</span></div>
     </div>
-
-    <!-- Statistics Cards -->
-    <div class="cards-grid">
-        <div class="vrip-stat-card border-primary">
-            <div class="stat-header">
-                <h3>Active Shipments</h3>
-                <span class="material-symbols-outlined text-primary-600">local_shipping</span>
-            </div>
-            <h1>84</h1>
-            <p class="text-primary"><span class="material-symbols-outlined icon-sm">sync</span> 12 In Transit</p>
-        </div>
-
-        <div class="vrip-stat-card border-success">
-            <div class="stat-header">
-                <h3>On-Time Delivery</h3>
-                <span class="material-symbols-outlined text-success-600">timer</span>
-            </div>
-            <h1>94.2%</h1>
-            <p class="text-success"><span class="material-symbols-outlined icon-sm">trending_up</span> +2.1% this month</p>
-        </div>
-
-        <div class="vrip-stat-card border-warning">
-            <div class="stat-header">
-                <h3>Low Inventory</h3>
-                <span class="material-symbols-outlined text-warning-600">warning</span>
-            </div>
-            <h1>12 Items</h1>
-            <p class="text-warning"><span class="material-symbols-outlined icon-sm">priority_high</span> Action required</p>
-        </div>
-
-        <div class="vrip-stat-card border-purple">
-            <div class="stat-header">
-                <h3>Warehouse Capacity</h3>
-                <span class="material-symbols-outlined text-purple-600">warehouse</span>
-            </div>
-            <h1>76%</h1>
-            <p class="text-primary"><span class="material-symbols-outlined icon-sm">info</span> Optimal operating capacity</p>
-        </div>
+    <p class="dash-kpi-value">84%</p>
+    <div class="dash-kpi-trend trend-up">
+      <span class="material-symbols-outlined">trending_up</span> +1.5% this month
     </div>
-
-    <!-- Quick Actions -->
-    <div class="quick-actions">
-        <div class="section-header">
-            <h2>Quick Actions</h2>
-        </div>
-        <div class="actions-grid">
-            <a class="action-card" routerLink="/supply-chain/vendor-ranking">
-                <div class="icon bg-indigo-100 text-indigo-600"><span class="material-symbols-outlined">format_list_numbered</span></div>
-                <h3>Vendor Ranking</h3>
-                <p>View top performing vendors.</p>
-            </a>
-
-            <a class="action-card" routerLink="/supply-chain/delivery-performance">
-                <div class="icon bg-emerald-100 text-emerald-600"><span class="material-symbols-outlined">local_shipping</span></div>
-                <h3>Track Shipments</h3>
-                <p>Monitor incoming and outgoing logistics.</p>
-            </a>
-            
-            <a class="action-card" routerLink="/supply-chain/product-quality">
-                <div class="icon bg-amber-100 text-amber-600"><span class="material-symbols-outlined">verified</span></div>
-                <h3>Quality Control</h3>
-                <p>Review supplier material quality.</p>
-            </a>
-
-            <a class="action-card" routerLink="/supply-chain/vendor-performance">
-                <div class="icon bg-slate-100 text-slate-500"><span class="material-symbols-outlined">analytics</span></div>
-                <h3>VP Dashboard</h3>
-                <p>View vendor performance metrics.</p>
-            </a>
-        </div>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">On-Time Delivery</h4>
+      <div class="dash-kpi-icon icon-info"><span class="material-symbols-outlined">local_shipping</span></div>
     </div>
-
-    <!-- Recent Activities -->
-    <div class="recent-activities">
-        <div class="section-header">
-            <h2>Recent Activities</h2>
-        </div>
-        <div class="table-container">
-            <app-table 
-                [columns]="columns" 
-                [data]="recentActivities"
-                [hasToolbar]="false"
-                [pagination]="false"
-                [searchable]="false">
-                
-                <ng-template let-row>
-                    <td>
-                        <div class="date-text">{{ row.date }}</div>
-                    </td>
-                    <td>
-                        <div class="activity-text">{{ row.activity }}</div>
-                    </td>
-                    <td>
-                        <app-badge [variant]="getBadgeVariant(row.status)">
-                            {{ row.status }}
-                        </app-badge>
-                    </td>
-                </ng-template>
-                
-            </app-table>
-        </div>
+    <p class="dash-kpi-value">92%</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Defect Rate</h4>
+      <div class="dash-kpi-icon icon-warning"><span class="material-symbols-outlined">bug_report</span></div>
     </div>
+    <p class="dash-kpi-value">2.4%</p>
+    <div class="dash-kpi-trend trend-down">
+      <span class="material-symbols-outlined">trending_down</span> -0.3% this month
+    </div>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">At-Risk Vendors</h4>
+      <div class="dash-kpi-icon icon-danger"><span class="material-symbols-outlined">warning</span></div>
+    </div>
+    <p class="dash-kpi-value">7</p>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Quick Actions</h2>
+  </div>
+  <div class="dash-actions-grid">
+    <a routerLink="/supply-chain/vendor-reliability" class="dash-action-card">
+      <div class="dash-action-icon icon-success"><span class="material-symbols-outlined">verified_user</span></div>
+      <div class="dash-action-text"><h3>Vendor Reliability</h3><p>Analyze vendor trust scores and risks</p></div>
+    </a>
+    <a routerLink="/supply-chain/vendor-performance" class="dash-action-card">
+      <div class="dash-action-icon icon-brand"><span class="material-symbols-outlined">monitoring</span></div>
+      <div class="dash-action-text"><h3>Performance Dashboard</h3><p>Detailed metrics across all suppliers</p></div>
+    </a>
+    <a routerLink="/supply-chain/vendor-ranking" class="dash-action-card">
+      <div class="dash-action-icon icon-warning"><span class="material-symbols-outlined">format_list_numbered</span></div>
+      <div class="dash-action-text"><h3>Vendor Ranking</h3><p>Top performing and underperforming vendors</p></div>
+    </a>
+  </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Recent Activity</h2>
+  </div>
+  <app-table [columns]="columns" [data]="recentActivities"></app-table>
 </div>

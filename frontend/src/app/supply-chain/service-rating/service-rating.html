@@ -1,7 +1,7 @@
 <div class="page-container">
-    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+    <div class="page-vrip-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
         <div>
-            <h1>Service Rating</h1>
+            <h1 class="vrip-page-title">Service Rating</h1>
             <p style="color: var(--text-secondary); margin-top: 4px;">Provide and review overall service ratings for vendors after procurement cycles.</p>
         </div>
         <app-button variant="primary" size="md" iconLeft="star_rate">Submit Rating</app-button>
@@ -17,6 +17,8 @@
                     <th>Support</th>
                     <th>Docs Quality</th>
                     <th>Flexibility</th>
+                    <th>Communication</th>
+                    <th>Issue Res.</th>
                     <th>Overall Rating</th>
                     <th>Comments</th>
                 </tr>
@@ -29,6 +31,8 @@
                     <td>{{ rating.customerSupport }}/5</td>
                     <td>{{ rating.documentationQuality }}/5</td>
                     <td>{{ rating.flexibility }}/5</td>
+                    <td>{{ rating.communicationEffectiveness }}/5</td>
+                    <td>{{ rating.issueResolution }}/5</td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 4px; font-weight: 600;">
                             <span class="material-symbols-outlined" style="color: #ffcc00; font-size: 18px; font-variation-settings: 'FILL' 1;">star</span>

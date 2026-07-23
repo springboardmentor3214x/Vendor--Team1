@@ -1,22 +1,22 @@
 <div class="assignment-container">
-    <div class="page-header">
+    <div class="page-vrip-page-header">
         <div>
-            <div class="header-breadcrumb">
+            <div class="vrip-page-header-breadcrumb">
                 <a routerLink="/procurement/requests">Procurement Requests</a>
                 <span class="material-symbols-outlined icon-sm">chevron_right</span>
                 <span>Assign Vendor</span>
             </div>
-            <h1>Assign Vendor for PR-102{{ requestId || 4 }}</h1>
+            <h1 class="vrip-page-title">Assign Vendor for PR-102{{ requestId || 4 }}</h1>
             <p>Select an approved vendor from the list below to fulfill this procurement request.</p>
         </div>
-        <div class="header-actions">
+        <div class="vrip-page-header-actions">
             <app-button variant="outline" iconLeft="arrow_back" routerLink="/procurement/requests">
                 Back to List
             </app-button>
         </div>
     </div>
 
-    <div class="table-container">
+    <div class="vrip-table-container">
         <app-table 
             [columns]="columns" 
             [data]="vendors"

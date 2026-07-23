@@ -14,6 +14,7 @@ interface RankingRecord {
   qualityScore: number;
   commScore: number;
   serviceRating: number;
+  riskLevel: string;
   trend: 'Up' | 'Down' | 'Stable';
 }
 
@@ -29,11 +30,11 @@ export class VendorRanking implements OnInit {
 
   ngOnInit() {
     const rawData = [
-      { vendorName: 'TechCorp Solutions', category: 'IT Equipment', overallScore: 94.5, deliveryScore: 95, qualityScore: 98, commScore: 90, serviceRating: 4.8, trend: 'Up' },
-      { vendorName: 'Global Logistics Inc.', category: 'Services', overallScore: 88.2, deliveryScore: 85, qualityScore: 92, commScore: 88, serviceRating: 4.5, trend: 'Stable' },
-      { vendorName: 'Prime Raw Materials', category: 'Raw Materials', overallScore: 78.4, deliveryScore: 70, qualityScore: 85, commScore: 75, serviceRating: 3.5, trend: 'Down' },
-      { vendorName: 'Office Depot', category: 'Office Supplies', overallScore: 85.0, deliveryScore: 88, qualityScore: 84, commScore: 82, serviceRating: 4.0, trend: 'Stable' },
-      { vendorName: 'Industrial Metals', category: 'Raw Materials', overallScore: 91.0, deliveryScore: 90, qualityScore: 94, commScore: 89, serviceRating: 4.6, trend: 'Up' }
+      { vendorName: 'TechCorp Solutions', category: 'IT Equipment', overallScore: 94.5, deliveryScore: 95, qualityScore: 98, commScore: 90, serviceRating: 4.8, riskLevel: 'Low', trend: 'Up' },
+      { vendorName: 'Global Logistics Inc.', category: 'Services', overallScore: 88.2, deliveryScore: 85, qualityScore: 92, commScore: 88, serviceRating: 4.5, riskLevel: 'Medium', trend: 'Stable' },
+      { vendorName: 'Prime Raw Materials', category: 'Raw Materials', overallScore: 78.4, deliveryScore: 70, qualityScore: 85, commScore: 75, serviceRating: 3.5, riskLevel: 'High', trend: 'Down' },
+      { vendorName: 'Office Depot', category: 'Office Supplies', overallScore: 85.0, deliveryScore: 88, qualityScore: 84, commScore: 82, serviceRating: 4.0, riskLevel: 'Low', trend: 'Stable' },
+      { vendorName: 'Industrial Metals', category: 'Raw Materials', overallScore: 91.0, deliveryScore: 90, qualityScore: 94, commScore: 89, serviceRating: 4.6, riskLevel: 'Medium', trend: 'Up' }
     ];
 
     // Sort descending by overallScore
@@ -45,5 +46,14 @@ export class VendorRanking implements OnInit {
       rank: index + 1,
       trend: data.trend as 'Up' | 'Down' | 'Stable'
     }));
+  }
+
+  getBadgeClass(risk: string): any {
+    switch (risk) {
+      case 'Low': return { 'background': 'rgba(52, 199, 89, 0.1)', 'color': '#34c759' };
+      case 'High': return { 'background': 'rgba(255, 59, 48, 0.1)', 'color': '#ff3b30' };
+      case 'Medium': return { 'background': 'rgba(255, 204, 0, 0.1)', 'color': '#d4a000' };
+      default: return {};
+    }
   }
 }

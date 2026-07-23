@@ -1,6 +1,13 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   APP SHELL — Layout Wrapper
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 .content {
-  margin-left: 280px; /* Leave space for floating sidebar */
-  min-height: calc(100vh - 100px); /* Leave space for floating navbar */
-  padding-top: 100px; /* Offset for absolute floating navbar */
-  background-color: transparent; /* Rely on body mesh background */
+  margin-left: var(--v-sidebar-w);
+  padding-top: calc(var(--v-navbar-h) + var(--v-8));
+  padding-left: var(--v-8);
+  padding-right: var(--v-8);
+  padding-bottom: var(--v-12);
+  min-height: 100vh;
+  background-color: var(--v-bg-body);
 }

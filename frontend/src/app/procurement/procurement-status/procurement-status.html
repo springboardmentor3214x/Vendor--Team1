@@ -1,15 +1,15 @@
 <div class="status-container">
-    <div class="page-header">
+    <div class="page-vrip-page-header">
         <div>
-            <div class="header-breadcrumb">
+            <div class="vrip-page-header-breadcrumb">
                 <a [routerLink]="['/procurement/purchase-order', poId]">Purchase Order</a>
                 <span class="material-symbols-outlined icon-sm">chevron_right</span>
                 <span>Update Status</span>
             </div>
-            <h1>Lifecycle Status: PO-84{{ poId || 92 }}</h1>
+            <h1 class="vrip-page-title">Lifecycle Status: PO-84{{ poId || 92 }}</h1>
             <p>Track and manage the overall lifecycle of this procurement.</p>
         </div>
-        <div class="header-actions">
+        <div class="vrip-page-header-actions">
             <app-button variant="outline" iconLeft="arrow_back" [routerLink]="['/procurement/purchase-order', poId]">
                 Back to PO
             </app-button>
@@ -52,7 +52,7 @@
             <app-card title="Status History" icon="history">
                 <div class="history-list">
                     <div class="history-item" *ngFor="let record of history">
-                        <div class="history-header">
+                        <div class="history-vrip-page-header">
                             <strong>{{ record.status }}</strong>
                             <span class="history-date">{{ record.updatedAt }}</span>
                         </div>

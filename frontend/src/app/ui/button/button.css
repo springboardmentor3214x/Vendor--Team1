@@ -1,168 +1,126 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   BUTTON v2.0 — Premium Button System
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 .vrip-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--vrip-font-family);
-  font-weight: 600;
-  border: none;
+  gap: var(--v-2);
+  font-family: var(--v-font);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  letter-spacing: var(--v-tracking-normal);
+  border: 1px solid transparent;
+  border-radius: var(--v-radius-md);
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
-  gap: var(--vrip-space-2);
-  white-space: nowrap;
   outline: none;
-  border-radius: var(--vrip-radius-full);
+  white-space: nowrap;
+  transition: all var(--v-duration) var(--v-ease);
+  position: relative;
+  line-height: 1;
 }
 
 .vrip-button:focus-visible {
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8), 0 0 0 5px var(--vrip-primary-400);
+  box-shadow: var(--v-shadow-focus);
 }
 
 .vrip-button:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
-  transform: none !important;
+  pointer-events: none;
 }
 
-.vrip-button:active:not(:disabled) {
-  transform: scale(0.96);
+/* ── Sizes ────────────────────────────────────────────────────────────── */
+.vrip-btn-sm  { height: 32px; padding: 0 12px; font-size: 0.75rem; border-radius: var(--v-radius-sm); }
+.vrip-btn-md  { height: 36px; padding: 0 14px; }
+.vrip-btn-lg  { height: 40px; padding: 0 18px; font-size: 0.875rem; }
+.vrip-btn-icon-only { width: 36px; height: 36px; padding: 0; }
+
+/* ── Primary ──────────────────────────────────────────────────────────── */
+.vrip-btn-primary {
+  background: var(--v-brand);
+  color: var(--v-text-inverse);
+  box-shadow: var(--v-shadow-xs), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.vrip-btn-primary:hover {
+  background: var(--v-brand-hover);
+  box-shadow: var(--v-shadow-sm), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.vrip-btn-primary:active {
+  background: #4338CA;
 }
 
-/* Variants */
-.vrip-button-primary {
-  background: linear-gradient(135deg, var(--vrip-primary-400), var(--vrip-primary-600));
-  color: white;
-  box-shadow: 0 4px 12px rgba(59, 108, 255, 0.25);
-  border: 1px solid rgba(255,255,255,0.1);
+/* ── Secondary ────────────────────────────────────────────────────────── */
+.vrip-btn-secondary {
+  background: var(--v-bg-card);
+  color: var(--v-text-primary);
+  border-color: var(--v-border);
+  box-shadow: var(--v-shadow-xs);
+}
+.vrip-btn-secondary:hover {
+  background: var(--v-bg-inset);
+  border-color: var(--v-border-hover);
 }
 
-.vrip-button-primary:hover:not(:disabled) {
-  box-shadow: 0 6px 16px rgba(59, 108, 255, 0.35);
-  transform: translateY(-1px);
-  filter: brightness(1.05);
+/* ── Outline ──────────────────────────────────────────────────────────── */
+.vrip-btn-outline {
+  background: transparent;
+  color: var(--v-text-secondary);
+  border-color: var(--v-border);
+}
+.vrip-btn-outline:hover {
+  background: var(--v-bg-inset);
+  color: var(--v-text-primary);
+  border-color: var(--v-border-hover);
 }
 
-.vrip-button-secondary {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: var(--vrip-glass-blur);
-  -webkit-backdrop-filter: var(--vrip-glass-blur);
-  color: var(--vrip-neutral-800);
-  border: 1px solid var(--vrip-glass-border);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+/* ── Ghost ────────────────────────────────────────────────────────────── */
+.vrip-btn-ghost {
+  background: transparent;
+  color: var(--v-text-secondary);
+}
+.vrip-btn-ghost:hover {
+  background: var(--v-bg-inset);
+  color: var(--v-text-primary);
 }
 
-.vrip-button-secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: var(--vrip-glass-border-highlight);
-  transform: translateY(-1px);
+/* ── Danger ───────────────────────────────────────────────────────────── */
+.vrip-btn-danger {
+  background: var(--v-danger);
+  color: var(--v-text-inverse);
+  box-shadow: var(--v-shadow-xs);
+}
+.vrip-btn-danger:hover {
+  background: #B91C1C;
 }
 
-.vrip-button-outline {
-  background-color: transparent;
-  color: var(--vrip-primary-600);
-  border: 1.5px solid var(--vrip-primary-400);
+/* ── Success ──────────────────────────────────────────────────────────── */
+.vrip-btn-success {
+  background: var(--v-success);
+  color: var(--v-text-inverse);
+  box-shadow: var(--v-shadow-xs);
+}
+.vrip-btn-success:hover {
+  background: #047857;
 }
 
-.vrip-button-outline:hover:not(:disabled) {
-  background-color: var(--vrip-primary-50);
-  border-color: var(--vrip-primary-600);
-  transform: translateY(-1px);
-}
-
-.vrip-button-ghost {
-  background-color: transparent;
-  color: var(--vrip-neutral-600);
-  border: 1px solid transparent;
-}
-
-.vrip-button-ghost:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.5);
-  color: var(--vrip-neutral-900);
-}
-
-.vrip-button-danger {
-  background: linear-gradient(135deg, #ff453a, #ff3b30); /* Apple Red */
-  color: white;
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.25);
-}
-
-.vrip-button-danger:hover:not(:disabled) {
-  filter: brightness(1.05);
-  box-shadow: 0 6px 16px rgba(255, 59, 48, 0.35);
-  transform: translateY(-1px);
-}
-
-.vrip-button-success {
-  background: linear-gradient(135deg, #32d74b, #28cd41); /* Apple Green */
-  color: white;
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 4px 12px rgba(40, 205, 65, 0.25);
-}
-
-.vrip-button-success:hover:not(:disabled) {
-  filter: brightness(1.05);
-  box-shadow: 0 6px 16px rgba(40, 205, 65, 0.35);
-  transform: translateY(-1px);
-}
-
-.vrip-button-warning {
-  background: linear-gradient(135deg, #ffd60a, #ffcc00); /* Apple Yellow */
-  color: #714a00;
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 4px 12px rgba(255, 204, 0, 0.25);
-}
-
-.vrip-button-warning:hover:not(:disabled) {
-  filter: brightness(1.05);
-  box-shadow: 0 6px 16px rgba(255, 204, 0, 0.35);
-  transform: translateY(-1px);
-}
-
-/* Sizes */
-.vrip-button-sm {
-  height: 32px;
-  padding: 0 var(--vrip-space-4);
-  font-size: 0.8rem;
-}
-
-.vrip-button-md {
-  height: 40px;
-  padding: 0 var(--vrip-space-5);
-  font-size: 0.9rem;
-}
-
-.vrip-button-lg {
-  height: 48px;
-  padding: 0 var(--vrip-space-8);
-  font-size: 1rem;
-}
-
-/* Modifiers */
-.vrip-button-block {
-  width: 100%;
-  display: flex;
-}
-
-.vrip-button-icon-only {
+/* ── Text (Link-like) ─────────────────────────────────────────────────── */
+.vrip-btn-text {
+  background: transparent;
+  color: var(--v-brand);
   padding: 0;
-  width: 40px;
+  height: auto;
+}
+.vrip-btn-text:hover {
+  color: var(--v-brand-hover);
 }
 
-.vrip-button-icon-only.vrip-button-sm {
-  width: 32px;
+/* ── Icons ────────────────────────────────────────────────────────────── */
+.vrip-button .material-symbols-outlined {
+  font-size: 16px;
+  font-variation-settings: 'wght' 500, 'opsz' 20;
 }
 
-.vrip-button-icon-only.vrip-button-lg {
-  width: 48px;
-}
-
-/* Animations */
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.vrip-button-spinner {
-  animation: spin 1s linear infinite;
-  font-size: 1.25rem;
-}
+/* ── Spinner ──────────────────────────────────────────────────────────── */
+.spinner { animation: v-spin 0.7s linear infinite; }
