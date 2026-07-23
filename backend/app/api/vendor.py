@@ -12,6 +12,27 @@ from app.models.user import User
 router = APIRouter(prefix="/vendors", tags=["Vendors"])
 
 
+@router.get("/stats")
+def vendor_stats(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Return KPI counts for the dashboard (total, approved, pending, high risk, etc.)"""
+    return vendor_service.get_vendor_stats(db)
+
+
+@router.get("/recent", response_model=List[VendorResponse])
+def recent_vendors(
+    limit: int = Query(5, ge=1, le=20),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Return the most recently added vendors for the dashboard table."""
+    return vendor_service.get_recent_vendors(db, limit)
+
+
+
+
 @router.post("/", response_model=VendorResponse, status_code=201)
 def add_vendor(
     vendor: VendorCreate,

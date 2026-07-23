@@ -126,3 +126,34 @@ def update_vendor_scores(db: Session, vendor_id: int):
     db.commit()
     db.refresh(vendor)
     return vendor
+
+
+# High-risk threshold: approved vendors whose reliability_score is below this
+HIGH_RISK_THRESHOLD = 3.0
+
+
+def get_vendor_stats(db: Session) -> dict:
+    """Return dashboard KPI counts derived from the database."""
+    all_vendors = db.query(Vendor).all()
+    total = len(all_vendors)
+    approved = sum(1 for v in all_vendors if v.approval_status == "Approved")
+    pending = sum(1 for v in all_vendors if v.approval_status == "Pending")
+    suspended = sum(1 for v in all_vendors if v.status == "Inactive")
+    rejected = sum(1 for v in all_vendors if v.approval_status == "Rejected")
+    high_risk = sum(
+        1 for v in all_vendors
+        if v.approval_status == "Approved" and v.reliability_score < HIGH_RISK_THRESHOLD
+    )
+    return {
+        "total": total,
+        "approved": approved,
+        "pending_review": pending,
+        "suspended": suspended,
+        "rejected": rejected,
+        "high_risk": high_risk,
+    }
+
+
+def get_recent_vendors(db: Session, limit: int = 5):
+    """Return the most recently added vendors (highest id first)."""
+    return db.query(Vendor).order_by(Vendor.id.desc()).limit(limit).all()

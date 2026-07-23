@@ -156,8 +156,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--v-3) var(--v-5);
+  padding: var(--v-4) var(--v-5);
   border-top: 1px solid var(--v-border);
+  background: var(--v-bg-inset);
 }
 
 .pagination-info {
@@ -167,41 +168,51 @@
 
 .pagination-controls {
   display: flex;
-  gap: var(--v-1);
+  align-items: center;
+  gap: var(--v-2);
 }
 
 .pagination-btn {
-  width: 30px;
-  height: 30px;
-  display: flex;
+  min-width: 36px;
+  height: 36px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--v-radius-sm);
+  padding: 0 var(--v-2);
+  border-radius: var(--v-radius-md);
   border: 1px solid var(--v-border);
   background: var(--v-bg-card);
   color: var(--v-text-secondary);
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 500;
+  font-family: var(--v-font);
   transition: all var(--v-duration) var(--v-ease);
+  line-height: 1;
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background: var(--v-bg-inset);
-  border-color: var(--v-border-hover);
+  background: var(--v-brand);
+  border-color: var(--v-brand);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
 }
 
 .pagination-btn.active {
   background: var(--v-brand);
   border-color: var(--v-brand);
-  color: white;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
 }
 
 .pagination-btn:disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: not-allowed;
+  pointer-events: none;
 }
 
 .pagination-btn .material-symbols-outlined {
-  font-size: 16px;
-}
+  font-size: 18px;
+  line-height: 1;
+}

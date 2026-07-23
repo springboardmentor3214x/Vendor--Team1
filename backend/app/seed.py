@@ -79,7 +79,7 @@ DEFAULT_VENDORS = [
         "email": "rajesh@techsupply.in",
         "phone": "9112345678",
         "address": "Sector 62, Noida, Uttar Pradesh",
-        "category": "IT Equipment",
+        "category": "IT Vendors",
         "delivery_score": 4.2,
         "quality_score": 4.5,
         "communication_score": 4.0,
@@ -95,7 +95,7 @@ DEFAULT_VENDORS = [
         "email": "priya@officemart.co.in",
         "phone": "9223456789",
         "address": "MG Road, Bangalore, Karnataka",
-        "category": "Office Supplies",
+        "category": "Service Providers",
         "delivery_score": 3.8,
         "quality_score": 4.0,
         "communication_score": 4.2,
@@ -111,7 +111,7 @@ DEFAULT_VENDORS = [
         "email": "amit@cloudinfra.io",
         "phone": "9334567890",
         "address": "HITEC City, Hyderabad, Telangana",
-        "category": "Cloud Services",
+        "category": "Service Providers",
         "delivery_score": 4.7,
         "quality_score": 4.6,
         "communication_score": 4.8,
@@ -127,7 +127,7 @@ DEFAULT_VENDORS = [
         "email": "suresh@buildright.in",
         "phone": "9445678901",
         "address": "Jubilee Hills, Hyderabad, Telangana",
-        "category": "Raw Materials",
+        "category": "Raw Material Suppliers",
         "delivery_score": 3.5,
         "quality_score": 3.8,
         "communication_score": 3.2,
@@ -143,7 +143,7 @@ DEFAULT_VENDORS = [
         "email": "kavitha@greenpack.in",
         "phone": "9556789012",
         "address": "Kochi, Kerala",
-        "category": "Logistics",
+        "category": "Logistics Partners",
         "delivery_score": 0.0,
         "quality_score": 0.0,
         "communication_score": 0.0,
@@ -187,6 +187,9 @@ def seed_database():
             else:
                 existing = db.query(Vendor).filter(Vendor.email == v["email"]).first()
                 vendor_ids[v["company_name"]] = existing.id
+                # Migrate category if it was stored with old value
+                if existing.category != v["category"]:
+                    existing.category = v["category"]
                 
         existing_count = db.query(Procurement).count()
         if existing_count == 0:

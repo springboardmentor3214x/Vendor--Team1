@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 import { DashboardCards } from './dashboard-cards/dashboard-cards';
 import { Table, TableColumn } from '../ui/table/table';
@@ -21,26 +22,45 @@ import { Button } from '../ui/button/button';
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
-export class Dashboard {
-  refresh() { alert("Dashboard refreshed successfully!"); }
+export class Dashboard implements OnInit {
+
   columns: TableColumn[] = [
-    { key: 'name', label: 'Vendor Name' },
+    { key: 'companyName', label: 'Vendor Name' },
     { key: 'category', label: 'Category' },
-    { key: 'rating', label: 'Rating' },
+    { key: 'reliabilityScore', label: 'Reliability' },
     { key: 'status', label: 'Status' }
   ];
 
-  recentVendors = [
-    { name: 'ABC Pvt Ltd', category: 'Electronics', rating: '4.8 ⭐', status: 'Approved' },
-    { name: 'Delta Steel', category: 'Manufacturing', rating: '4.2 ⭐', status: 'Pending' },
-    { name: 'Tech Solutions', category: 'Software', rating: '4.9 ⭐', status: 'Approved' },
-    { name: 'Global Logistics', category: 'Transport', rating: '3.7 ⭐', status: 'High Risk' }
-  ];
+  recentVendors: any[] = [];
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.http.get<any[]>('/vendors/recent?limit=5').subscribe({
+      next: (vendors) => {
+        this.recentVendors = vendors.map(v => ({
+          companyName: v.company_name,
+          category: v.category,
+          reliabilityScore: v.reliability_score
+            ? v.reliability_score.toFixed(1) + ' ⭐'
+            : 'N/A',
+          status: v.status
+        }));
+      },
+      error: () => {
+        // Silently fail — table shows empty state
+      }
+    });
+  }
+
+  refresh() {
+    this.ngOnInit();
+  }
 
   getBadgeVariant(status: string): 'success' | 'warning' | 'danger' | 'default' {
-    switch(status) {
+    switch (status) {
       case 'Approved': return 'success';
-      case 'Pending': return 'warning';
+      case 'Pending':  return 'warning';
       case 'High Risk': return 'danger';
       default: return 'default';
     }
