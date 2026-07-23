@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 17 Jul - Extend invoice with payment tracking fields
 - 18 Jul - Extend invoice with tax and net amount split
 - 19 Jul - Refine status history tracking in procurement
 - 20 Jul - Tighten expected versus actual dates in order tracking
 - 21 Jul - Expand purchase order with delivery schedule fields
 - 22 Jul - Add quality evaluation model with defect rate capture
+- 23 Jul - Extend quality evaluation with defect rate capture
