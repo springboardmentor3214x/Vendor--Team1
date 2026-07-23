@@ -1,0 +1,62 @@
+<div class="page-container">
+    <div class="page-vrip-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1 class="vrip-page-title">Audit Reports</h1>
+            <p>Generate, filter and export compliance, contract, performance and procurement audits.</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <app-button variant="outline" iconLeft="picture_as_pdf" (onClick)="downloadPDF()">Export PDF</app-button>
+            <app-button variant="primary" iconLeft="download" (onClick)="downloadExcel()">Export Excel</app-button>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--vrip-space-6); margin-bottom: 24px;">
+        <app-card *ngFor="let report of reports"
+                  [style.border]="selectedReportType === report.type ? '2px solid var(--vrip-primary-600)' : ''">
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <div style="padding: 10px; background: rgba(59, 130, 246, 0.1); color: var(--vrip-primary-600); border-radius: var(--vrip-radius-md);">
+                    <span class="material-symbols-outlined" style="font-size: 24px;">{{ report.icon }}</span>
+                </div>
+                <div style="flex: 1;">
+                    <h3 style="margin: 0 0 4px 0; font-size: 1.05rem;">{{ report.title }}</h3>
+                    <p style="margin: 0 0 14px 0; color: var(--text-secondary); font-size: 0.8125rem; line-height: 1.5;">{{ report.desc }}</p>
+                    <app-button variant="outline" size="sm" iconLeft="visibility"
+                                (onClick)="previewReport(report.type, report.title)">View Report</app-button>
+                </div>
+            </div>
+        </app-card>
+    </div>
+
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+  </div>
+</div>
