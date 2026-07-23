@@ -1,15 +1,15 @@
 <div class="tracking-container">
-    <div class="page-header print-hide">
+    <div class="page-vrip-page-header print-hide">
         <div>
-            <div class="header-breadcrumb">
+            <div class="vrip-page-header-breadcrumb">
                 <a [routerLink]="['/procurement/purchase-order', poId]">Purchase Order</a>
                 <span class="material-symbols-outlined icon-sm">chevron_right</span>
                 <span>Track Order</span>
             </div>
-            <h1>Track Shipment: PO-84{{ poId || 92 }}</h1>
+            <h1 class="vrip-page-title">Track Shipment: PO-84{{ poId || 92 }}</h1>
             <p>Real-time delivery tracking for your procurement order.</p>
         </div>
-        <div class="header-actions">
+        <div class="vrip-page-header-actions">
             <app-button variant="outline" iconLeft="print" (onClick)="printTracking()">
                 Print Details
             </app-button>
@@ -23,8 +23,8 @@
     </div>
 
     <!-- Print Header -->
-    <div class="print-show print-header">
-        <h1>SHIPMENT TRACKING</h1>
+    <div class="print-show print-vrip-page-header">
+        <h1 class="vrip-page-title">SHIPMENT TRACKING</h1>
         <p>PO Number: PO-84{{ poId || 92 }}</p>
         <p>Tracking #: {{ trackingData.trackingNumber }}</p>
     </div>

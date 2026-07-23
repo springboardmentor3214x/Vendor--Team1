@@ -1,4 +1,4 @@
-<div class="vrip-table-container">
+<div class="vrip-vrip-table-container">
   <div class="vrip-table-toolbar" *ngIf="hasToolbar">
     <div class="vrip-table-search" *ngIf="searchable">
       <span class="material-symbols-outlined vrip-search-icon">search</span>
@@ -29,7 +29,7 @@
               {{ item[col.key] }}
             </ng-container>
             <ng-container *ngIf="col.template">
-              <ng-container *TemplateOutlet="col.template; context: { $implicit: item }"></ng-container>
+              <ng-container *ngTemplateOutlet="col.template; context: { $implicit: item }"></ng-container>
             </ng-container>
           </td>
           <td *ngIf="hasActionsCol" class="vrip-table-actions-td">

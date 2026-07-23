@@ -1,4 +1,4 @@
-<div class="vrip-card">
+<div class="vrip-card" [ngClass]="{'vrip-card-no-padding': noPadding}">
   <div class="vrip-card-header" *ngIf="title || subtitle || hasActions">
     <div class="vrip-card-title-group">
       <h3 class="vrip-card-title" *ngIf="title">{{ title }}</h3>
@@ -8,7 +8,7 @@
       <ng-content select="[card-actions]"></ng-content>
     </div>
   </div>
-  <div class="vrip-card-content" [ngClass]="{'no-padding': noPadding}">
+  <div class="vrip-card-content">
     <ng-content></ng-content>
   </div>
 </div>

@@ -1,113 +1,69 @@
-<div class="vendor-dashboard">
-    <div class="dashboard-header">
-        <div>
-            <h1>Finance Dashboard</h1>
-            <p>Financial overview, invoicing, and budget tracking.</p>
-        </div>
-        <app-button variant="primary" iconLeft="refresh" (onClick)="refresh()">
-            Refresh
-        </app-button>
+<!-- Finance Dashboard -->
+<div class="dash-header">
+  <h1 class="dash-title">Finance Center</h1>
+  <p class="dash-subtitle">Track payments, invoices, and financial compliance.</p>
+</div>
+
+<!-- KPI Grid -->
+<div class="dash-kpi-grid">
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Pending Payments</h4>
+      <div class="dash-kpi-icon icon-warning"><span class="material-symbols-outlined">payments</span></div>
     </div>
-
-    <!-- Statistics Cards -->
-    <div class="cards-grid">
-        <div class="vrip-stat-card border-primary">
-            <div class="stat-header">
-                <h3>Total Expenses</h3>
-                <span class="material-symbols-outlined text-primary-600">account_balance_wallet</span>
-            </div>
-            <h1>₹42.5M</h1>
-            <p class="text-success"><span class="material-symbols-outlined icon-sm">trending_down</span> 5% less than last month</p>
-        </div>
-
-        <div class="vrip-stat-card border-warning">
-            <div class="stat-header">
-                <h3>Pending Invoices</h3>
-                <span class="material-symbols-outlined text-warning-600">receipt_long</span>
-            </div>
-            <h1>45</h1>
-            <p class="text-warning"><span class="material-symbols-outlined icon-sm">pending_actions</span> ₹1.2M pending approval</p>
-        </div>
-
-        <div class="vrip-stat-card border-success">
-            <div class="stat-header">
-                <h3>Processed Payments</h3>
-                <span class="material-symbols-outlined text-success-600">paid</span>
-            </div>
-            <h1>1,248</h1>
-            <p class="text-success"><span class="material-symbols-outlined icon-sm">check_circle</span> All processed this quarter</p>
-        </div>
-
-        <div class="vrip-stat-card border-purple">
-            <div class="stat-header">
-                <h3>Budget Variance</h3>
-                <span class="material-symbols-outlined text-purple-600">pie_chart</span>
-            </div>
-            <h1>+2.4%</h1>
-            <p class="text-primary"><span class="material-symbols-outlined icon-sm">info</span> Within acceptable limits</p>
-        </div>
+    <p class="dash-kpi-value">₹4.2M</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Invoices Processed</h4>
+      <div class="dash-kpi-icon icon-success"><span class="material-symbols-outlined">receipt_long</span></div>
     </div>
-
-    <!-- Quick Actions -->
-    <div class="quick-actions">
-        <div class="section-header">
-            <h2>Quick Actions</h2>
-        </div>
-        <div class="actions-grid">
-            <div class="action-card">
-                <div class="icon bg-indigo-100 text-indigo-600"><span class="material-symbols-outlined">receipt_long</span></div>
-                <h3>Process Invoices</h3>
-                <p>Review and approve pending vendor invoices.</p>
-            </div>
-
-            <div class="action-card">
-                <div class="icon bg-emerald-100 text-emerald-600"><span class="material-symbols-outlined">payments</span></div>
-                <h3>Make Payments</h3>
-                <p>Initiate payments for approved invoices.</p>
-            </div>
-            
-            <div class="action-card">
-                <div class="icon bg-amber-100 text-amber-600"><span class="material-symbols-outlined">request_quote</span></div>
-                <h3>Budget Allocation</h3>
-                <p>Manage departmental budgets.</p>
-            </div>
-
-            <div class="action-card">
-                <div class="icon bg-slate-100 text-slate-500"><span class="material-symbols-outlined">summarize</span></div>
-                <h3>Financial Reports</h3>
-                <p>Generate detailed expense reports.</p>
-            </div>
-        </div>
+    <p class="dash-kpi-value">128</p>
+    <div class="dash-kpi-trend trend-up">
+      <span class="material-symbols-outlined">trending_up</span> +12% this month
     </div>
-
-    <!-- Recent Activities -->
-    <div class="recent-activities">
-        <div class="section-header">
-            <h2>Recent Activities</h2>
-        </div>
-        <div class="table-container">
-            <app-table 
-                [columns]="columns" 
-                [data]="recentActivities"
-                [hasToolbar]="false"
-                [pagination]="false"
-                [searchable]="false">
-                
-                <ng-template let-row>
-                    <td>
-                        <div class="date-text">{{ row.date }}</div>
-                    </td>
-                    <td>
-                        <div class="activity-text">{{ row.activity }}</div>
-                    </td>
-                    <td>
-                        <app-badge [variant]="getBadgeVariant(row.status)">
-                            {{ row.status }}
-                        </app-badge>
-                    </td>
-                </ng-template>
-                
-            </app-table>
-        </div>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Overdue Invoices</h4>
+      <div class="dash-kpi-icon icon-danger"><span class="material-symbols-outlined">warning</span></div>
     </div>
+    <p class="dash-kpi-value">3</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Total Spend (YTD)</h4>
+      <div class="dash-kpi-icon icon-brand"><span class="material-symbols-outlined">account_balance</span></div>
+    </div>
+    <p class="dash-kpi-value">₹12.5M</p>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Quick Actions</h2>
+  </div>
+  <div class="dash-actions-grid">
+    <a routerLink="/procurement/invoice-management" class="dash-action-card">
+      <div class="dash-action-icon icon-info"><span class="material-symbols-outlined">receipt_long</span></div>
+      <div class="dash-action-text"><h3>Invoice Management</h3><p>Review and approve vendor invoices</p></div>
+    </a>
+    <a routerLink="/finance/payment-details" class="dash-action-card">
+      <div class="dash-action-icon icon-success"><span class="material-symbols-outlined">payments</span></div>
+      <div class="dash-action-text"><h3>Payment Details</h3><p>Process payments and view history</p></div>
+    </a>
+    <a routerLink="/finance/purchase-orders" class="dash-action-card">
+      <div class="dash-action-icon icon-brand"><span class="material-symbols-outlined">shopping_cart</span></div>
+      <div class="dash-action-text"><h3>Purchase Orders</h3><p>Financial overview of active POs</p></div>
+    </a>
+  </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Recent Transactions</h2>
+  </div>
+  <app-table [columns]="columns" [data]="recentActivities"></app-table>
 </div>

@@ -1,20 +1,22 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   INPUT v2.0 — Form Controls
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 .vrip-input-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: var(--vrip-space-4);
-  font-family: var(--vrip-font-family);
+  margin-bottom: var(--v-5);
 }
 
 .vrip-input-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--vrip-neutral-700);
-  margin-bottom: var(--vrip-space-2);
-  letter-spacing: -0.01em;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--v-text-primary);
+  margin-bottom: var(--v-2);
 }
 
 .vrip-input-required {
-  color: var(--vrip-danger-text);
+  color: var(--v-danger);
   margin-left: 2px;
 }
 
@@ -26,98 +28,73 @@
 
 .vrip-input-field {
   width: 100%;
-  height: 44px;
-  padding: 0 var(--vrip-space-4);
-  font-size: 0.9rem;
-  font-family: var(--vrip-font-family);
-  color: var(--vrip-neutral-900);
-  background-color: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--vrip-glass-border);
-  border-radius: var(--vrip-radius-lg);
-  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+  height: 40px;
+  padding: 0 var(--v-3);
+  font-size: 0.875rem;
+  font-family: var(--v-font);
+  color: var(--v-text-primary);
+  background: var(--v-bg-card);
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-md);
+  transition: all var(--v-duration) var(--v-ease);
   outline: none;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
 
-.vrip-input-field:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.6);
-  border-color: var(--vrip-glass-border-highlight);
+.vrip-input-field:hover:not(:disabled):not(:focus) {
+  border-color: var(--v-border-hover);
 }
 
 .vrip-input-field:focus {
-  background-color: rgba(255, 255, 255, 0.9);
-  border-color: var(--vrip-primary-400);
-  box-shadow: 0 0 0 4px rgba(59, 108, 255, 0.15), inset 0 1px 2px rgba(0,0,0,0.01);
+  border-color: var(--v-brand);
+  box-shadow: var(--v-shadow-focus);
 }
 
 .vrip-input-field:disabled {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: var(--vrip-neutral-400);
+  background: var(--v-bg-inset);
+  color: var(--v-text-tertiary);
   cursor: not-allowed;
-  border-style: dashed;
 }
 
 .vrip-input-field::placeholder {
-  color: var(--vrip-neutral-400);
-  font-weight: 400;
+  color: var(--v-text-tertiary);
 }
 
-.vrip-input-field.has-icon-left {
-  padding-left: 2.75rem;
-}
-
-.vrip-input-field.has-icon-right {
-  padding-right: 2.75rem;
-}
+.vrip-input-field.has-icon-left  { padding-left: 40px; }
+.vrip-input-field.has-icon-right { padding-right: 40px; }
 
 .vrip-input-icon-left,
 .vrip-input-icon-right {
   position: absolute;
-  color: var(--vrip-neutral-400);
-  font-size: 1.25rem;
+  color: var(--v-text-tertiary);
+  font-size: 18px;
   pointer-events: none;
-  transition: color 0.25s ease;
+  transition: color var(--v-duration) var(--v-ease);
 }
-
-.vrip-input-icon-left {
-  left: 0.85rem;
-}
-
-.vrip-input-icon-right {
-  right: 0.85rem;
-}
+.vrip-input-icon-left  { left: 12px; }
+.vrip-input-icon-right { right: 12px; }
 
 .vrip-input-field:focus ~ .vrip-input-icon-left,
 .vrip-input-field:focus ~ .vrip-input-icon-right {
-  color: var(--vrip-primary-500);
+  color: var(--v-brand);
 }
 
 .vrip-input-hint {
   font-size: 0.75rem;
-  color: var(--vrip-neutral-500);
-  margin-top: var(--vrip-space-2);
+  color: var(--v-text-tertiary);
+  margin-top: var(--v-1);
 }
 
 .vrip-input-error {
   font-size: 0.75rem;
-  color: #ff3b30;
-  margin-top: var(--vrip-space-2);
+  color: var(--v-danger);
+  margin-top: var(--v-1);
   font-weight: 500;
 }
 
 .vrip-input-group.has-error .vrip-input-field {
-  border-color: rgba(255, 59, 48, 0.5);
-  background-color: rgba(255, 59, 48, 0.05);
+  border-color: var(--v-danger);
 }
 
 .vrip-input-group.has-error .vrip-input-field:focus {
-  border-color: #ff3b30;
-  box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.15);
-}
-
-.vrip-input-group.has-error .vrip-input-icon-left,
-.vrip-input-group.has-error .vrip-input-icon-right {
-  color: #ff3b30;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
 }

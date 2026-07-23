@@ -41,6 +41,11 @@ import { VendorCommunication } from './vendor-portal/vendor-communication/vendor
 import { VendorPerformance } from './supply-chain/vendor-performance/vendor-performance';
 import { VendorPerformanceDetails } from './supply-chain/vendor-performance-details/vendor-performance-details';
 import { VendorReliability } from './supply-chain/vendor-reliability/vendor-reliability';
+import { VendorReliabilityDashboard } from './supply-chain/vendor-reliability-dashboard/vendor-reliability-dashboard';
+import { ReliabilityScoreDetails } from './supply-chain/reliability-score-details/reliability-score-details';
+import { ProcurementRiskDashboard } from './supply-chain/procurement-risk-dashboard/procurement-risk-dashboard';
+import { PerformanceTrendAnalysis } from './supply-chain/performance-trend-analysis/performance-trend-analysis';
+import { ProcurementRecommendations } from './supply-chain/procurement-recommendations/procurement-recommendations';
 import { DeliveryPerformance } from './supply-chain/delivery-performance/delivery-performance';
 import { ProductQuality } from './supply-chain/product-quality/product-quality';
 import { CommunicationTracking } from './supply-chain/communication-tracking/communication-tracking';
@@ -157,7 +162,7 @@ export const routes: Routes = [
     path: 'procurement/invoice-management',
     component: InvoiceManagement,
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['Finance Officer'] }
+    data: { roles: ['Finance Officer', 'Procurement Manager'] }
   },
 
   {
@@ -259,6 +264,11 @@ export const routes: Routes = [
   { path: 'supply-chain/vendor-ranking', component: VendorRanking, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
   { path: 'supply-chain/vendor-performance/:id', component: VendorPerformanceDetails, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
   { path: 'supply-chain/vendor-reliability', component: VendorReliability, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/vendor-reliability-dashboard', component: VendorReliabilityDashboard, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/reliability-score-details/:id', component: ReliabilityScoreDetails, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/procurement-risk-dashboard', component: ProcurementRiskDashboard, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/performance-trend-analysis/:id', component: PerformanceTrendAnalysis, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/procurement-recommendations', component: ProcurementRecommendations, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
 
   // -------------------- Finance (New) --------------------
   { path: 'finance/payment-details', component: PaymentDetails, canActivate: [authGuard, roleGuard], data: { roles: ['Finance Officer'] } },

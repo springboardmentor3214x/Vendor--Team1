@@ -15,6 +15,8 @@ export class Button {
   @Input() disabled: boolean = false;
   @Input() loading: boolean = false;
   @Input() icon?: string;
+  @Input() iconLeft?: string;
+  @Input() iconRight?: string;
   @Input() iconOnly: boolean = false;
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
   

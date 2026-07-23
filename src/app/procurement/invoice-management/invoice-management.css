@@ -1,26 +1,47 @@
-@import "../procurement-request-list/procurement-request-list.css";
-@import "../../dashboard/vendor-dashboard/vendor-dashboard.css";
-
 .invoice-container {
-    padding: var(--vrip-space-6);
-    max-width: 1400px;
+    padding: var(--v-6);
+    max-width: var(--v-content-max);
     margin: 0 auto;
-    animation: fadeIn 0.4s ease-out;
+    animation: fadeIn 0.5s var(--v-ease);
 }
 
 .summary-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--vrip-space-6);
-    margin-bottom: var(--vrip-space-6);
+    gap: var(--v-5);
+    margin-bottom: var(--v-6);
+}
+
+@media (max-width: 1100px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+    .summary-grid { grid-template-columns: 1fr; }
+}
+
+/* Let the dashboard-cards handle the actual stat card styling */
+
+.vrip-table-container {
+    background: var(--v-bg-card);
+    border: 1px solid var(--v-border);
+    border-radius: var(--v-radius-lg);
+    box-shadow: var(--v-shadow-card);
+    padding: var(--v-2);
 }
 
 .link-styled {
-    color: var(--vrip-primary-600);
+    color: var(--v-brand);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
+    transition: opacity var(--v-duration);
 }
 
 .link-styled:hover {
     text-decoration: underline;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }

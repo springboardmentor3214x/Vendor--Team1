@@ -9,6 +9,7 @@ import {
 import { Router, RouterModule } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
+import { ThemeService } from '../../core/services/theme.service';
 import { Card } from '../../ui/card/card';
 import { Button } from '../../ui/button/button';
 import { InputComponent } from '../../ui/input/input';
@@ -19,10 +20,7 @@ import { InputComponent } from '../../ui/input/input';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterModule,
-    Card,
-    Button,
-    InputComponent
+    RouterModule
   ],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
@@ -40,7 +38,8 @@ export class Login {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    public themeService: ThemeService
   ) {
 
     this.loginForm = this.fb.group({

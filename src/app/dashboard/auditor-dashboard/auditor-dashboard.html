@@ -1,113 +1,69 @@
-<div class="vendor-dashboard">
-    <div class="dashboard-header">
-        <div>
-            <h1>Auditor Dashboard</h1>
-            <p>Compliance, risk management, and audit tracking.</p>
-        </div>
-        <app-button variant="primary" iconLeft="refresh" (onClick)="refresh()">
-            Refresh
-        </app-button>
+<!-- Auditor Dashboard -->
+<div class="dash-header">
+  <h1 class="dash-title">Audit & Compliance</h1>
+  <p class="dash-subtitle">Monitor system-wide compliance, logs, and audit reports.</p>
+</div>
+
+<!-- KPI Grid -->
+<div class="dash-kpi-grid">
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Compliance Score</h4>
+      <div class="dash-kpi-icon icon-success"><span class="material-symbols-outlined">fact_check</span></div>
     </div>
-
-    <!-- Statistics Cards -->
-    <div class="cards-grid">
-        <div class="vrip-stat-card border-primary">
-            <div class="stat-header">
-                <h3>Open Audits</h3>
-                <span class="material-symbols-outlined text-primary-600">policy</span>
-            </div>
-            <h1>14</h1>
-            <p class="text-primary"><span class="material-symbols-outlined icon-sm">sync</span> 5 require immediate attention</p>
-        </div>
-
-        <div class="vrip-stat-card border-success">
-            <div class="stat-header">
-                <h3>Compliance Score</h3>
-                <span class="material-symbols-outlined text-success-600">verified</span>
-            </div>
-            <h1>98.5%</h1>
-            <p class="text-success"><span class="material-symbols-outlined icon-sm">trending_up</span> Exceeds industry average</p>
-        </div>
-
-        <div class="vrip-stat-card border-warning">
-            <div class="stat-header">
-                <h3>Pending Reviews</h3>
-                <span class="material-symbols-outlined text-warning-600">rate_review</span>
-            </div>
-            <h1>28</h1>
-            <p class="text-warning"><span class="material-symbols-outlined icon-sm">pending_actions</span> In vendor onboarding queue</p>
-        </div>
-
-        <div class="vrip-stat-card border-purple">
-            <div class="stat-header">
-                <h3>Flagged Anomalies</h3>
-                <span class="material-symbols-outlined text-purple-600">report</span>
-            </div>
-            <h1>3</h1>
-            <p class="text-primary"><span class="material-symbols-outlined icon-sm">info</span> Under investigation</p>
-        </div>
+    <p class="dash-kpi-value">96%</p>
+    <div class="dash-kpi-trend trend-up">
+      <span class="material-symbols-outlined">trending_up</span> +2% this quarter
     </div>
-
-    <!-- Quick Actions -->
-    <div class="quick-actions">
-        <div class="section-header">
-            <h2>Quick Actions</h2>
-        </div>
-        <div class="actions-grid">
-            <div class="action-card">
-                <div class="icon bg-indigo-100 text-indigo-600"><span class="material-symbols-outlined">rule</span></div>
-                <h3>Initiate Audit</h3>
-                <p>Start a new compliance or financial audit.</p>
-            </div>
-
-            <div class="action-card">
-                <div class="icon bg-emerald-100 text-emerald-600"><span class="material-symbols-outlined">gavel</span></div>
-                <h3>Review Contracts</h3>
-                <p>Audit vendor terms and agreements.</p>
-            </div>
-            
-            <div class="action-card">
-                <div class="icon bg-amber-100 text-amber-600"><span class="material-symbols-outlined">find_in_page</span></div>
-                <h3>Investigate Flags</h3>
-                <p>Review system-detected anomalies.</p>
-            </div>
-
-            <div class="action-card">
-                <div class="icon bg-slate-100 text-slate-500"><span class="material-symbols-outlined">summarize</span></div>
-                <h3>Audit Reports</h3>
-                <p>Generate and export compliance reports.</p>
-            </div>
-        </div>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Pending Audits</h4>
+      <div class="dash-kpi-icon icon-warning"><span class="material-symbols-outlined">pending_actions</span></div>
     </div>
-
-    <!-- Recent Activities -->
-    <div class="recent-activities">
-        <div class="section-header">
-            <h2>Recent Audit Activities</h2>
-        </div>
-        <div class="table-container">
-            <app-table 
-                [columns]="columns" 
-                [data]="recentActivities"
-                [hasToolbar]="false"
-                [pagination]="false"
-                [searchable]="false">
-                
-                <ng-template let-row>
-                    <td>
-                        <div class="date-text">{{ row.date }}</div>
-                    </td>
-                    <td>
-                        <div class="activity-text">{{ row.activity }}</div>
-                    </td>
-                    <td>
-                        <app-badge [variant]="getBadgeVariant(row.status)">
-                            {{ row.status }}
-                        </app-badge>
-                    </td>
-                </ng-template>
-                
-            </app-table>
-        </div>
+    <p class="dash-kpi-value">4</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Flagged Issues</h4>
+      <div class="dash-kpi-icon icon-danger"><span class="material-symbols-outlined">flag</span></div>
     </div>
+    <p class="dash-kpi-value">2</p>
+  </div>
+  <div class="dash-kpi">
+    <div class="dash-kpi-top">
+      <h4 class="dash-kpi-label">Reports Generated</h4>
+      <div class="dash-kpi-icon icon-brand"><span class="material-symbols-outlined">assessment</span></div>
+    </div>
+    <p class="dash-kpi-value">45</p>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Quick Actions</h2>
+  </div>
+  <div class="dash-actions-grid">
+    <a routerLink="/auditor/reports" class="dash-action-card">
+      <div class="dash-action-icon icon-brand"><span class="material-symbols-outlined">assessment</span></div>
+      <div class="dash-action-text"><h3>Audit Reports</h3><p>View and generate formal audit documents</p></div>
+    </a>
+    <a routerLink="/auditor/compliance" class="dash-action-card">
+      <div class="dash-action-icon icon-success"><span class="material-symbols-outlined">fact_check</span></div>
+      <div class="dash-action-text"><h3>Compliance Check</h3><p>Review vendor regulatory compliance</p></div>
+    </a>
+    <a routerLink="/auditor/audit-logs" class="dash-action-card">
+      <div class="dash-action-icon icon-info"><span class="material-symbols-outlined">history</span></div>
+      <div class="dash-action-text"><h3>System Logs</h3><p>Trace all critical system activities</p></div>
+    </a>
+  </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Recent Audit Activity</h2>
+  </div>
+  <app-table [columns]="columns" [data]="recentActivities"></app-table>
 </div>

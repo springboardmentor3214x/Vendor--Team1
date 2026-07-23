@@ -1,0 +1,136 @@
+<div class="page-container">
+    <div class="page-vrip-page-header" style="margin-bottom: var(--vrip-space-6); display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1 class="vrip-page-title">Vendor Reliability Dashboard</h1>
+            <p>Intelligent insights and automated risk assessment for all suppliers.</p>
+        </div>
+        <div style="display: flex; gap: var(--vrip-space-3);">
+            <app-button variant="secondary">Export Report</app-button>
+            <app-button variant="primary">Refresh Data</app-button>
+        </div>
+    </div>
+
+    <!-- Summary Metrics -->
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--vrip-space-4); margin-bottom: var(--vrip-space-6);">
+        <app-card>
+            <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 8px;">Total Evaluated</div>
+            <div style="font-size: 1.5rem; font-weight: 600;">{{ summary.totalVendors }}</div>
+        </app-card>
+        <app-card>
+            <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 8px;">Avg. Score</div>
+            <div style="font-size: 1.5rem; font-weight: 600; color: #007aff;">{{ summary.averageScore }}%</div>
+        </app-card>
+        <app-card>
+            <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 8px;">High Reliability</div>
+            <div style="font-size: 1.5rem; font-weight: 600; color: #34c759;">{{ summary.highReliability }}</div>
+        </app-card>
+        <app-card>
+            <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 8px;">Medium Reliability</div>
+            <div style="font-size: 1.5rem; font-weight: 600; color: #ffcc00;">{{ summary.mediumReliability }}</div>
+        </app-card>
+        <app-card>
+            <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 8px;">High Risk</div>
+            <div style="font-size: 1.5rem; font-weight: 600; color: #ff3b30;">{{ summary.highRisk }}</div>
+        </app-card>
+    </div>
+
+    <!-- Search and Filters -->
+    <app-card style="margin-bottom: var(--vrip-space-6);">
+        <div style="display: flex; gap: var(--vrip-space-4); align-items: center;">
+            <div style="flex: 1;">
+                <app-input label="Search Vendors" placeholder="Enter vendor name..."></app-input>
+            </div>
+            <div style="flex: 1;">
+                <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 6px; color: var(--vrip-gray-700);">Category</label>
+                <select style="width: 100%; padding: 10px 12px; border: 1px solid var(--vrip-gray-300); border-radius: var(--vrip-radius-md); background: white;">
+                    <option value="">All Categories</option>
+                    <option value="IT">IT Equipment</option>
+                    <option value="Raw">Raw Materials</option>
+                </select>
+            </div>
+            <div style="flex: 1;">
+                <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 6px; color: var(--vrip-gray-700);">Risk Level</label>
+                <select style="width: 100%; padding: 10px 12px; border: 1px solid var(--vrip-gray-300); border-radius: var(--vrip-radius-md); background: white;">
+                    <option value="">All Risk Levels</option>
+                    <option value="Low">Low Risk</option>
+                    <option value="Medium">Medium Risk</option>
+                    <option value="High">High Risk</option>
+                </select>
+            </div>
+            <div style="padding-top: 24px;">
+                <app-button variant="secondary">Apply Filters</app-button>
+            </div>
+        </div>
+    </app-card>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--vrip-space-6); margin-bottom: var(--vrip-space-6);">
+        <!-- Vendor Table -->
+        <app-card [noPadding]="true">
+            <div style="padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0;">Top Vendors Overview</h3>
+                <a routerLink="/supply-chain/vendor-ranking" style="color: var(--vrip-primary); text-decoration: none; font-size: 0.875rem; font-weight: 500;">View Full Ranking &rarr;</a>
+            </div>
+            <app-table>
+                <ng-container table-header>
+                    <tr>
+                        <th>Vendor</th>
+                        <th>Category</th>
+                        <th>Score</th>
+                        <th>Risk</th>
+                        <th>Action</th>
+                    </tr>
+                </ng-container>
+                <ng-container table-body>
+                    <tr *ngFor="let vendor of vendors">
+                        <td><strong>{{ vendor.name }}</strong></td>
+                        <td>{{ vendor.category }}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-weight: 600;">{{ vendor.score }}%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="vrip-badge" [ngStyle]="getBadgeClass(vendor.risk)">
+                                {{ vendor.risk }} Risk
+                            </span>
+                        </td>
+                        <td>
+                            <app-button variant="secondary" [routerLink]="['/supply-chain/reliability-score-details', vendor.id]">Details</app-button>
+                        </td>
+                    </tr>
+                </ng-container>
+            </app-table>
+        </app-card>
+
+        <!-- Insights Sidebar -->
+        <div style="display: flex; flex-direction: column; gap: var(--vrip-space-6);">
+            <app-card>
+                <h3 style="margin-top: 0; margin-bottom: 16px;">Quick Insights</h3>
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <span class="material-symbols-outlined" style="color: #34c759;">trending_up</span>
+                        <div>
+                            <strong style="display: block; font-size: 0.875rem;">Quality Improving</strong>
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">Overall product quality increased by 4% this month.</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <span class="material-symbols-outlined" style="color: #ff3b30;">warning</span>
+                        <div>
+                            <strong style="display: block; font-size: 0.875rem;">Delivery Delays</strong>
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">2 vendors in Raw Materials are showing increased delay patterns.</span>
+                        </div>
+                    </div>
+                </div>
+            </app-card>
+
+            <app-card>
+                <h3 style="margin-top: 0; margin-bottom: 16px;">Quick Actions</h3>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <app-button variant="secondary" routerLink="/supply-chain/procurement-recommendations" style="width: 100%; text-align: left; display: block;">View Recommendations</app-button>
+                    <app-button variant="secondary" routerLink="/supply-chain/procurement-risk-dashboard" style="width: 100%; text-align: left; display: block;">Assess Risks</app-button>
+                </div>
+            </app-card>
+        </div>
+    </div>
+</div>
