@@ -9,3 +9,5 @@ class QualityEvaluation(Base):
     vendor_id = Column(Integer, ForeignKey("vendors.id"), nullable=False)
     inspection_date = Column(DateTime, default=datetime.utcnow)
     material_quality = Column(Integer, nullable=False)
+    packaging_quality = Column(Integer, nullable=False)
+    quantity_accuracy = Column(Integer, nullable=False)
