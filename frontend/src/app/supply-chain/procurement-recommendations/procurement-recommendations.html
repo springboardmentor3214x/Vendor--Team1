@@ -1,0 +1,63 @@
+<div class="page-container">
+    <div class="page-vrip-page-header" style="margin-bottom: var(--vrip-space-6);">
+        <h1 class="vrip-page-title">Procurement Recommendations</h1>
+        <p>Intelligent decision-support system to recommend the most suitable suppliers based on Category and Reliability Score.</p>
+    </div>
+
+    <app-card style="margin-bottom: var(--vrip-space-6);">
+        <h3 style="margin-top: 0; margin-bottom: 16px;">Configure Requirements</h3>
+        <div style="display: flex; gap: var(--vrip-space-4); align-items: flex-end;">
+            <div style="flex: 1;">
+                <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 6px; color: var(--vrip-gray-700);">Product/Service Category</label>
+                <select style="width: 100%; padding: 10px 12px; border: 1px solid var(--vrip-gray-300); border-radius: var(--vrip-radius-md); background: white;">
+                    <option *ngFor="let category of categories" [value]="category" [selected]="category === selectedCategory">{{ category }}</option>
+                </select>
+            </div>
+            <div style="flex: 1;">
+                <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 6px; color: var(--vrip-gray-700);">Minimum Score Requirement</label>
+                <select style="width: 100%; padding: 10px 12px; border: 1px solid var(--vrip-gray-300); border-radius: var(--vrip-radius-md); background: white;">
+                    <option value="90">90% and above</option>
+                    <option value="80">80% and above</option>
+                    <option value="70">70% and above</option>
+                </select>
+            </div>
+            <div>
+                <app-button variant="primary" iconLeft="auto_awesome" (onClick)="loadRecommendations()">
+                    Generate Recommendations
+                </app-button>
+            </div>
+        </div>
+    </app-card>
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+  </div>
+</div>
