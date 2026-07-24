@@ -1,0 +1,58 @@
+<div class="vrip-container">
+    <div class="page-vrip-page-header">
+        <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <a routerLink="/supply-chain/communication-tracking" class="back-link">
+                    <span class="material-symbols-outlined icon-sm">arrow_back</span> Back to Communication Tracking
+                </a>
+            </div>
+            <h1 class="vrip-page-title">Log New Message</h1>
+            <p class="vrip-page-subtitle">Log and monitor a vendor's communication response time.</p>
+        </div>
+    </div>
+
+    <div class="form-layout">
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">forum</span> Communication Details</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>PO Number *</label>
+                    <app-input placeholder="Enter PO Number" [(ngModel)]="message.poNumber"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Vendor Name *</label>
+                    <app-input placeholder="Enter Vendor Name" [(ngModel)]="message.vendorName"></app-input>
+                </div>
+                <div class="form-group full-width">
+                    <label>Message Subject / Topic *</label>
+                    <app-input placeholder="E.g. Clarification on specs" [(ngModel)]="message.subject"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Sent Time *</label>
+                    <app-input type="datetime-local" [(ngModel)]="message.sentTime"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Response Received Time</label>
+                    <app-input type="datetime-local" [(ngModel)]="message.responseTime"></app-input>
+                    <small style="color: var(--v-text-tertiary); margin-top: 4px;">Leave blank if waiting for response</small>
+                </div>
+                <div class="form-group full-width">
+                    <label>Remarks</label>
+                    <textarea class="vrip-textarea" rows="3" placeholder="Additional details about the communication..." [(ngModel)]="message.remarks"></textarea>
+                </div>
+            </div>
+        </app-card>
+
+        <div *ngIf="formError" class="error-box">
+            <span class="material-symbols-outlined">error</span>
+            <span>{{ formError }}</span>
+        </div>
+
+        <div class="form-actions">
+            <app-button variant="outline" (click)="cancel()">Cancel</app-button>
+            <app-button variant="primary" iconLeft="send" (click)="submitMessage()">Log Message</app-button>
+        </div>
+    </div>
+</div>

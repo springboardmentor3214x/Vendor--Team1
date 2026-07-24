@@ -1,0 +1,120 @@
+<div class="vrip-container">
+    <div class="page-vrip-page-header">
+        <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <a routerLink="/supply-chain/product-quality" class="back-link">
+                    <span class="material-symbols-outlined icon-sm">arrow_back</span> Back to Product Quality
+                </a>
+            </div>
+            <h1 class="vrip-page-title">New Product Evaluation</h1>
+            <p class="vrip-page-subtitle">Submit a quality evaluation for received items.</p>
+        </div>
+    </div>
+
+    <div class="form-layout">
+        <!-- Order Details -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">inventory_2</span> Order Details</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>PO Number *</label>
+                    <app-input placeholder="Enter PO Number" [(ngModel)]="evaluation.poNumber"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Vendor Name *</label>
+                    <app-input placeholder="Enter Vendor Name" [(ngModel)]="evaluation.vendorName"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Inspection Date *</label>
+                    <app-input type="date" [(ngModel)]="evaluation.inspectionDate"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Quality Metrics -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">fact_check</span> Quality Metrics</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Material Quality (1-5)</label>
+                    <select class="vrip-select" [(ngModel)]="evaluation.materialQuality">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Packaging Quality (1-5)</label>
+                    <select class="vrip-select" [(ngModel)]="evaluation.packagingQuality">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity Accuracy (1-5)</label>
+                    <select class="vrip-select" [(ngModel)]="evaluation.quantityAccuracy">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Specification Compliance (1-5)</label>
+                    <select class="vrip-select" [(ngModel)]="evaluation.specCompliance">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Product Defects</label>
+                    <select class="vrip-select" [(ngModel)]="evaluation.productDefects">
+                        <option>None</option>
+                        <option>Minor dents on outer packaging</option>
+                        <option>Some items not as sturdy as expected</option>
+                        <option>Major damages</option>
+                        <option>Incorrect items shipped</option>
+                    </select>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Additional Information -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">notes</span> Additional Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Remarks</label>
+                    <textarea class="vrip-textarea" rows="4" placeholder="Any additional comments on the quality..." [(ngModel)]="evaluation.remarks"></textarea>
+                </div>
+            </div>
+        </app-card>
+
+        <!-- Error Message -->
+        <div *ngIf="formError" class="error-box">
+            <span class="material-symbols-outlined">error</span>
+            <span>{{ formError }}</span>
+        </div>
+
+        <!-- Buttons -->
+        <div class="form-actions">
+            <app-button variant="outline" (click)="cancel()">Cancel</app-button>
+            <app-button variant="primary" iconLeft="check_circle" (click)="submitEvaluation()">Submit Evaluation</app-button>
+        </div>
+    </div>
+</div>

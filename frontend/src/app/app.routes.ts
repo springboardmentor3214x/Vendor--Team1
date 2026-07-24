@@ -59,6 +59,11 @@ import { Compliance } from './auditor/compliance/compliance';
 import { AuditLogs } from './auditor/audit-logs/audit-logs';
 import { Settings } from './auth/settings/settings';
 
+// New Supply Chain Actions
+import { NewProductEvaluation } from './supply-chain/new-product-evaluation/new-product-evaluation';
+import { LogCommunicationMessage } from './supply-chain/log-communication-message/log-communication-message';
+import { SubmitServiceRating } from './supply-chain/submit-service-rating/submit-service-rating';
+
 export const routes: Routes = [
 
   {
@@ -115,7 +120,7 @@ export const routes: Routes = [
     component: ProcurementRequest,
     canActivate: [authGuard, roleGuard],
     data: {
-      roles: ['Procurement Manager']
+      roles: ['Procurement Manager', 'Supply Chain Manager']
     }
   },
 
@@ -258,8 +263,11 @@ export const routes: Routes = [
   { path: 'supply-chain/vendor-performance', component: VendorPerformance, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
   { path: 'supply-chain/delivery-performance', component: DeliveryPerformance, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
   { path: 'supply-chain/product-quality', component: ProductQuality, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/product-quality/new', component: NewProductEvaluation, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
   { path: 'supply-chain/communication-tracking', component: CommunicationTracking, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/communication-tracking/new', component: LogCommunicationMessage, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
   { path: 'supply-chain/service-rating', component: ServiceRating, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/service-rating/new', component: SubmitServiceRating, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
   { path: 'supply-chain/performance-history', component: PerformanceHistory, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
   { path: 'supply-chain/vendor-ranking', component: VendorRanking, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
   { path: 'supply-chain/vendor-performance/:id', component: VendorPerformanceDetails, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },

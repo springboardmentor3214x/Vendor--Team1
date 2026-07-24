@@ -1,0 +1,113 @@
+<div class="vrip-container">
+    <div class="page-vrip-page-header">
+        <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <a routerLink="/supply-chain/service-rating" class="back-link">
+                    <span class="material-symbols-outlined icon-sm">arrow_back</span> Back to Service Rating
+                </a>
+            </div>
+            <h1 class="vrip-page-title">Submit Service Rating</h1>
+            <p class="vrip-page-subtitle">Provide an overall service rating for a vendor.</p>
+        </div>
+    </div>
+
+    <div class="form-layout">
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">assignment_ind</span> Vendor Details</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>PO Number *</label>
+                    <app-input placeholder="Enter PO Number" [(ngModel)]="rating.poNumber"></app-input>
+                </div>
+                <div class="form-group">
+                    <label>Vendor Name *</label>
+                    <app-input placeholder="Enter Vendor Name" [(ngModel)]="rating.vendorName"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">star_rate</span> Service Evaluation (1-5)</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Professionalism</label>
+                    <select class="vrip-select" [(ngModel)]="rating.professionalism">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Customer Support</label>
+                    <select class="vrip-select" [(ngModel)]="rating.customerSupport">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Documentation Quality</label>
+                    <select class="vrip-select" [(ngModel)]="rating.documentationQuality">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Flexibility</label>
+                    <select class="vrip-select" [(ngModel)]="rating.flexibility">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Communication</label>
+                    <select class="vrip-select" [(ngModel)]="rating.communication">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Issue Resolution</label>
+                    <select class="vrip-select" [(ngModel)]="rating.issueResolution">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label>Comments</label>
+                    <textarea class="vrip-textarea" rows="3" placeholder="Provide any additional comments about the service..." [(ngModel)]="rating.comments"></textarea>
+                </div>
+            </div>
+        </app-card>
+
+        <div *ngIf="formError" class="error-box">
+            <span class="material-symbols-outlined">error</span>
+            <span>{{ formError }}</span>
+        </div>
+
+        <div class="form-actions">
+            <app-button variant="outline" (click)="cancel()">Cancel</app-button>
+            <app-button variant="primary" iconLeft="star" (click)="submitRating()">Submit Rating</app-button>
+        </div>
+    </div>
+</div>

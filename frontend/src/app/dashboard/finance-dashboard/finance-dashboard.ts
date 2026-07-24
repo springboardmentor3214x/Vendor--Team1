@@ -14,7 +14,6 @@ import { Button } from '../../ui/button/button';
     RouterModule,
     Table,
     Badge,
-    Button
   ],
   templateUrl: './finance-dashboard.html',
   styleUrls: ['./finance-dashboard.css'],
