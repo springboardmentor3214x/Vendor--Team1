@@ -1,0 +1,52 @@
+<div class="page-container">
+    <div style="margin-bottom: var(--vrip-space-4);">
+        <a routerLink="/supply-chain/vendor-reliability-dashboard" style="color: var(--vrip-primary); text-decoration: none; font-size: 0.875rem; font-weight: 500; display: flex; align-items: center; gap: 4px;">
+            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
+            Back to Dashboard
+        </a>
+    </div>
+
+    <div class="page-vrip-page-header" style="margin-bottom: var(--vrip-space-6);">
+        <h1 class="vrip-page-title">Performance Trend Analysis</h1>
+        <p style="font-size: 1.1rem;">Historical Performance for <strong>{{ vendorName }}</strong></p>
+        <div *ngIf="overallTrend" style="display: flex; align-items: center; gap: 12px; margin-top: 8px;">
+            <span class="vrip-badge"
+                  [ngStyle]="{'background': overallTrend === 'Improving' ? 'rgba(52,199,89,0.12)' : overallTrend === 'Declining' ? 'rgba(255,59,48,0.12)' : 'rgba(120,120,128,0.12)',
+                              'color': overallTrend === 'Improving' ? '#34c759' : overallTrend === 'Declining' ? '#ff3b30' : 'var(--text-secondary)'}">
+                {{ overallTrend }}
+            </span>
+            <span *ngIf="currentScore !== null" style="font-size: 0.875rem; color: var(--text-secondary);">
+                Current reliability score: <strong>{{ currentScore }}</strong>/100
+            </span>
+        </div>
+    </div>
+
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+</div>
