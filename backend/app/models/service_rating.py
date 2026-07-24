@@ -1,0 +1,11 @@
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
+from datetime import datetime
+from app.database.base import Base
+
+class ServiceRating(Base):
+    __tablename__ = "service_ratings"
+    id = Column(Integer, primary_key=True, index=True)
+    procurement_id = Column(Integer, ForeignKey("procurements.id"), nullable=False)
+    vendor_id = Column(Integer, ForeignKey("vendors.id"), nullable=False)
+    professionalism = Column(Integer, nullable=False)
+    customer_support = Column(Integer, nullable=False)
