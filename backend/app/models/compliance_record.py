@@ -9,3 +9,4 @@ class ComplianceRecord(Base):
     compliance_type = Column(String(100), nullable=False)
     status = Column(String(50), default="Pending Verification")
     verified_by = Column(String(100), nullable=True)
+    verification_date = Column(Date, nullable=True)
