@@ -1,0 +1,46 @@
+<div class="page-container">
+    <div class="page-vrip-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1 class="vrip-page-title">Procurement Risk Dashboard</h1>
+            <p>Identify and mitigate vendor-related risks before assigning purchase orders.</p>
+        </div>
+        <app-button variant="outline" iconLeft="refresh" (onClick)="loadRiskAssessment()">Refresh</app-button>
+    </div>
+
+    <div *ngIf="errorMsg"
+         style="margin-bottom: 16px; padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+        {{ errorMsg }}
+    </div>
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+  </div>
+</div>
