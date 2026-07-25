@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 19 Jul - Improve reliability hints in the vendor assignment screen
 - 20 Jul - Extend the purchase order screen with status chips
 - 21 Jul - Add the supply chain dashboard screen with delivery status tiles
 - 22 Jul - Create the supply chain dashboard screen with delivery status tiles
 - 23 Jul - Build the vendor performance chart screen with axis formatting
 - 24 Jul - Add the procurement recommendations screen with recommendation cards
+- 25 Jul - Create the product quality screen with defect rate display
