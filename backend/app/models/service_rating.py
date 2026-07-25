@@ -9,3 +9,5 @@ class ServiceRating(Base):
     vendor_id = Column(Integer, ForeignKey("vendors.id"), nullable=False)
     professionalism = Column(Integer, nullable=False)
     customer_support = Column(Integer, nullable=False)
+    documentation_quality = Column(Integer, nullable=False)
+    flexibility = Column(Integer, nullable=False)
