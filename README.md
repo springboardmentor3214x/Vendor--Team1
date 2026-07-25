@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 19 Jul - Create the core API services with HTTP service methods
 - 20 Jul - Refine document list in the vendor details screen
 - 21 Jul - Add the reports screen with report filters
 - 22 Jul - Create the vendor analytics screen with category breakdown chart
 - 23 Jul - Add the auditor reports screen with report filters
 - 24 Jul - Create the auditor reports screen with report filters
+- 25 Jul - Extend the vendor analytics screen with category breakdown chart
