@@ -16,15 +16,33 @@
 
       <div class="vrip-divider-vertical"></div>
 
-      <div class="vrip-profile-menu" routerLink="/profile">
-          <div class="vrip-avatar">
-              {{ avatarInitial }}
+      <div class="vrip-profile-wrapper">
+          <div class="vrip-profile-menu" (click)="toggleMenu($event)">
+              <div class="vrip-avatar">
+                  {{ avatarInitial }}
+              </div>
+              <div class="vrip-profile-info">
+                  <h4>{{ fullName }}</h4>
+                  <p>{{ role || 'User' }}</p>
+              </div>
+              <span class="material-symbols-outlined vrip-dropdown-icon">expand_more</span>
           </div>
-          <div class="vrip-profile-info">
-              <h4>{{ fullName }}</h4>
-              <p>{{ role || 'User' }}</p>
+
+          <div class="vrip-dropdown-menu" *ngIf="isMenuOpen">
+              <a routerLink="/profile" (click)="isMenuOpen = false" class="vrip-dropdown-item">
+                  <span class="material-symbols-outlined">account_circle</span>
+                  <span>My Profile</span>
+              </a>
+              <a routerLink="/settings" (click)="isMenuOpen = false" class="vrip-dropdown-item">
+                  <span class="material-symbols-outlined">settings</span>
+                  <span>Settings</span>
+              </a>
+              <div class="vrip-dropdown-divider"></div>
+              <button (click)="logout()" class="vrip-dropdown-item logout-btn">
+                  <span class="material-symbols-outlined">logout</span>
+                  <span>Logout</span>
+              </button>
           </div>
-          <span class="material-symbols-outlined vrip-dropdown-icon">expand_more</span>
       </div>
 
   </div>

@@ -1,36 +1,78 @@
 <div class="page-container">
-    <div class="page-vrip-page-header" style="margin-bottom: var(--vrip-space-6);">
-        <h1 class="vrip-page-title">User Management</h1>
-        <p>Approve new signups and manage account access.</p>
+    <div class="vrip-page-header" style="margin-bottom: var(--v-6, 24px);">
+        <div>
+            <h1 class="vrip-page-title">User Management</h1>
+            <p class="vrip-page-subtitle">Approve new signups and manage account access.</p>
+        </div>
     </div>
 
     <app-card [noPadding]="true">
-        <app-table>
-            <ng-container table-header>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th style="text-align: right;">Actions</th>
-                </tr>
-            </ng-container>
-            <ng-container table-body>
-                <tr *ngFor="let user of users">
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.role }}</td>
-                    <td>{{ user.status }}</td>
-                    <td style="text-align: right;">
-                        <app-button variant="ghost" *ngIf="user.status === 'Pending Approval'" (onClick)="approveUser(user)">Approve</app-button>
-                        <app-button variant="ghost" (onClick)="blockUser(user)">Block</app-button>
-                        <app-button variant="ghost" (onClick)="deactivateUser(user)">Deactivate</app-button>
-                        <app-button variant="ghost" (onClick)="deleteUser(user)">Delete</app-button>
-                    </td>
-                </tr>
-            </ng-container>
-        </app-table>
+        <div class="vrip-table-wrapper">
+            <table class="vrip-table">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">ID</th>
+                        <th style="min-width: 140px;">Name</th>
+                        <th style="min-width: 200px;">Email</th>
+                        <th style="min-width: 160px;">Role</th>
+                        <th style="width: 110px;">Status</th>
+                        <th style="width: 240px; text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of users" class="vrip-table-row">
+                        <td><span class="user-id-badge">#{{ user.id }}</span></td>
+                        <td><span class="user-name-cell">{{ user.name }}</span></td>
+                        <td><span class="user-email-cell">{{ user.email }}</span></td>
+                        <td>
+                            <span class="role-chip">{{ user.role }}</span>
+                        </td>
+                        <td>
+                            <app-badge [variant]="user.status === 'Active' ? 'success' : user.status === 'Blocked' ? 'danger' : 'warning'">
+                                {{ user.status }}
+                            </app-badge>
+                        </td>
+                        <td style="text-align: right; white-space: nowrap;">
+                            <div class="user-action-buttons">
+                                <app-button
+                                    *ngIf="user.status === 'Pending Approval' || user.status === 'Blocked' || user.status === 'Deactivated'"
+                                    variant="success" size="sm"
+                                    iconLeft="check_circle"
+                                    (onClick)="approveUser(user)">
+                                    Approve
+                                </app-button>
+                                <app-button
+                                    *ngIf="user.status === 'Active'"
+                                    variant="warning" size="sm"
+                                    iconLeft="block"
+                                    (onClick)="blockUser(user)">
+                                    Block
+                                </app-button>
+                                <app-button
+                                    *ngIf="user.status === 'Active'"
+                                    variant="outline" size="sm"
+                                    iconLeft="person_off"
+                                    (onClick)="deactivateUser(user)">
+                                    Deactivate
+                                </app-button>
+                                <app-button
+                                    variant="danger" size="sm"
+                                    iconLeft="delete"
+                                    (onClick)="deleteUser(user)">
+                                </app-button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="users.length === 0">
+                        <td colspan="6" class="vrip-table-empty">
+                            <div class="empty-state">
+                                <span class="material-symbols-outlined empty-icon">people</span>
+                                <p>No users found</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </app-card>
 </div>

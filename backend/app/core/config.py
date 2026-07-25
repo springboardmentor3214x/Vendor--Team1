@@ -12,6 +12,7 @@ if not DATABASE_URL:
 
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 480  # 8 hours
+
 RESET_TOKEN_EXPIRE_MINUTES = 15
 CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:4200").split(",")

@@ -69,12 +69,18 @@
                 </app-button>
             </div>
             
-            <div class="profile-footer" *ngIf="!isEditing">
+            <div class="profile-footer" *ngIf="!isEditing" style="display: flex; gap: 12px; justify-content: flex-end;">
                  <app-button
                     variant="secondary"
                     iconLeft="lock"
                     routerLink="/settings">
                     Change Password
+                </app-button>
+                <app-button
+                    variant="danger"
+                    iconLeft="logout"
+                    (click)="logout()">
+                    Logout
                 </app-button>
             </div>
         </app-card>

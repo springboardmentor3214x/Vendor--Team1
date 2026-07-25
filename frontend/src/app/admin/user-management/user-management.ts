@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Card } from '../../ui/card/card';
 import { Button } from '../../ui/button/button';
-import { Table } from '../../ui/table/table';
+import { Badge } from '../../ui/badge/badge';
 import { UserService } from '../../core/services/user.service';
 
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule, Card, Button, Table],
+  imports: [CommonModule, Card, Button, Badge],
   templateUrl: './user-management.html',
   styleUrls: ['./user-management.css']
 })
@@ -28,6 +28,9 @@ export class UserManagement implements OnInit {
           ...u,
           status: u.account_status || 'Active'
         }));
+      },
+      error: (err) => {
+        console.error('Failed to load users', err);
       }
     });
   }

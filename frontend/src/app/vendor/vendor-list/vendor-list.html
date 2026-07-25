@@ -97,73 +97,57 @@
             <table class="vrip-table">
                 <thead>
                     <tr>
-                        <th>Vendor ID</th>
-                        <th style="cursor:pointer;" (click)="sortData()">
+                        <th style="width: 70px;">ID</th>
+                        <th style="cursor:pointer; min-width: 160px;" (click)="sortData()">
                             Company Name <span class="material-symbols-outlined sort-icon">{{ sortAscending ? 'arrow_upward' : 'arrow_downward' }}</span>
                         </th>
-                        <th>Category</th>
-                        <th>Contact Person</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Status</th>
-                        <th>Approval</th>
-                        <th class="vrip-table-actions-th">Actions</th>
+                        <th style="min-width: 140px;">Category</th>
+                        <th style="min-width: 130px;">Contact</th>
+                        <th style="min-width: 180px;">Email</th>
+                        <th style="min-width: 110px;">Phone</th>
+                        <th style="width: 90px;">Status</th>
+                        <th style="width: 100px;">Approval</th>
+                        <th style="width: 250px; text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let vendor of paginatedVendors" class="vrip-table-row">
-                        <td><span class="text-sm font-medium">#{{ vendor.id }}</span></td>
-                        <td><div class="font-semibold">{{ vendor.companyName }}</div></td>
-                        <td>{{ vendor.category }}</td>
+                        <td><span class="vendor-id-chip">#{{ vendor.id }}</span></td>
+                        <td><div class="vendor-company-title">{{ vendor.companyName }}</div></td>
+                        <td><span class="category-chip">{{ vendor.category }}</span></td>
                         <td>{{ vendor.contactPerson }}</td>
-                        <td>{{ vendor.email }}</td>
+                        <td><span class="vendor-email-text">{{ vendor.email }}</span></td>
                         <td>{{ vendor.phone }}</td>
                         <td>
                             <app-badge
                                 [variant]="vendor.status === 'Active' ? 'success' : vendor.status === 'Pending' ? 'warning' : vendor.status === 'Rejected' ? 'danger' : 'default'">
                                 {{ vendor.status }}
                             </app-badge>
-
-                            <div *ngIf="vendor.approvalStatus === 'Approved'" style="margin-top:8px;">
-                                <app-button
-                                    *ngIf="vendor.status === 'Active'"
-                                    variant="warning"
-                                    size="sm"
-                                    (click)="suspendVendor(vendor.id)">
-                                    Suspend
-                                </app-button>
-                                <app-button
-                                    *ngIf="vendor.status === 'Suspended'"
-                                    variant="primary"
-                                    size="sm"
-                                    (click)="activateVendor(vendor.id)">
-                                    Activate
-                                </app-button>
-                            </div>
                         </td>
                         <td>
                             <app-badge
                                 [variant]="vendor.approvalStatus === 'Approved' ? 'primary' : vendor.approvalStatus === 'Pending' ? 'warning' : 'danger'">
                                 {{ vendor.approvalStatus }}
                             </app-badge>
-
-                            <div *ngIf="vendor.approvalStatus === 'Pending'" style="margin-top:8px; display:flex; gap:8px;">
-                                <app-button
-                                    variant="success"
-                                    size="sm"
-                                    (click)="approveVendor(vendor.id)">
-                                    Approve
-                                </app-button>
-                                <app-button
-                                    variant="danger"
-                                    size="sm"
-                                    (click)="rejectVendor(vendor.id)">
-                                    Reject
-                                </app-button>
-                            </div>
                         </td>
-                        <td class="vrip-table-actions-td">
-                            <div class="action-buttons">
+                        <td style="text-align: right; white-space: nowrap;">
+                            <div class="vendor-action-buttons">
+                                <ng-container *ngIf="vendor.approvalStatus === 'Pending'">
+                                    <app-button variant="success" size="sm" (click)="approveVendor(vendor.id)">Approve</app-button>
+                                    <app-button variant="danger" size="sm" (click)="rejectVendor(vendor.id)">Reject</app-button>
+                                </ng-container>
+                                <app-button
+                                    *ngIf="vendor.approvalStatus === 'Approved' && vendor.status === 'Active'"
+                                    variant="warning" size="sm"
+                                    (click)="suspendVendor(vendor.id)">
+                                    Suspend
+                                </app-button>
+                                <app-button
+                                    *ngIf="vendor.status === 'Suspended' || vendor.status === 'Inactive'"
+                                    variant="primary" size="sm"
+                                    (click)="activateVendor(vendor.id)">
+                                    Activate
+                                </app-button>
                                 <app-button
                                     variant="outline"
                                     size="sm"
