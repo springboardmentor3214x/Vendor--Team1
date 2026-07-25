@@ -34,26 +34,56 @@
   </div>
 </div>
 
-<div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Quick Actions</h2>
   </div>
+  <div class="dash-actions-grid">
+    <a routerLink="/procurement/requests" class="dash-action-card">
+      <div class="dash-action-icon icon-brand"><span class="material-symbols-outlined">inventory</span></div>
+      <div class="dash-action-text"><h3>Purchase Requests</h3><p>View and approve department requests</p></div>
+    </a>
+    <a routerLink="/vendors" class="dash-action-card">
+      <div class="dash-action-icon icon-info"><span class="material-symbols-outlined">domain</span></div>
+      <div class="dash-action-text"><h3>Vendor Directory</h3><p>Browse and assign suppliers</p></div>
+    </a>
+    <a routerLink="/procurement/invoice-management" class="dash-action-card">
+      <div class="dash-action-icon icon-success"><span class="material-symbols-outlined">receipt_long</span></div>
+      <div class="dash-action-text"><h3>Invoice Management</h3><p>Process and verify vendor invoices</p></div>
+    </a>
+  </div>
+</div>
+
+<div class="placeholder-panel">
+  <p>Awaiting the backend endpoint.</p>
   <div class="placeholder-row">
     <span>Orbit IT Systems</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
+    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
   </div>
 </div>
