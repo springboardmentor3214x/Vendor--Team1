@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 19 Jul - Correct the dashboard cards screen field names surfaced during integration testing
 - 20 Jul - Correct the notifications screen field names surfaced during integration testing
 - 21 Jul - Smooth out the supply chain dashboard screen loading states found during testing
 - 22 Jul - Create the vendor dashboard screen with clickable KPI cards
 - 23 Jul - Introduce the vendor performance chart screen with axis formatting
 - 24 Jul - Build the compliance screen with finding details
+- 25 Jul - Settle the procurement risk dashboard screen behaviour between client and server
