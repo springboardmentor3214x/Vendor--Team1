@@ -1,155 +1,91 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-
+import { HttpClient } from '@angular/common/http';
+import { Observable, throwError, catchError, map } from 'rxjs';
 import { LoginRequest } from '../models/login-request';
 import { LoginResponse } from '../models/login-response';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-
+  private readonly API_URL = '';
   private readonly TOKEN_KEY = 'vrip_token';
-
   private readonly ROLE_KEY = 'vrip_role';
-
   private readonly USER_KEY = 'vrip_user';
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   login(request: LoginRequest): Observable<LoginResponse> {
-
-    // -----------------------------
-    // Check registered users first
-    // -----------------------------
-
-    const users = JSON.parse(
-      localStorage.getItem('vrip_registered_users') || '[]'
+    return this.http.post<any>(`${this.API_URL}/auth/login`, {
+      email: request.email,
+      password: request.password
+    }).pipe(
+      map(res => {
+        const response: LoginResponse = {
+          token: res.access_token,
+          role: this.mapRole(res.user.role),
+          fullName: res.user.name,
+          email: res.user.email
+        };
+        this.storeSession(response);
+        return response;
+      }),
+      catchError(err => throwError(() => new Error(
+        err.error?.detail || 'Invalid email or password'
+      )))
     );
+  }
 
-    const registeredUser = users.find(
-      (u: any) =>
-        u.email.toLowerCase() === request.email.toLowerCase() &&
-        u.password === request.password
-    );
+  register(data: any): Observable<any> {
+    return this.http.post(`${this.API_URL}/auth/register`, data);
+  }
 
-    if (registeredUser) {
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.API_URL}/auth/forgot-password`, { email });
+  }
 
-      const response: LoginResponse = {
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.API_URL}/auth/reset-password`, {
+      token, new_password: newPassword
+    });
+  }
 
-        token: 'dummy-jwt-token',
-
-        role: registeredUser.role,
-
-        fullName: registeredUser.fullName,
-
-        email: registeredUser.email
-
-      };
-
-      this.storeSession(response);
-
-      return of(response);
-
-    }
-
-    // -----------------------------
-    // Demo Accounts
-    // -----------------------------
-
-    let role = 'Vendor';
-
-    switch (request.email.toLowerCase()) {
-
-      case 'admin@vrip.com':
-        role = 'Administrator';
-        break;
-
-      case 'procurement@vrip.com':
-        role = 'Procurement Manager';
-        break;
-
-      case 'supply@vrip.com':
-        role = 'Supply Chain Manager';
-        break;
-
-      case 'finance@vrip.com':
-        role = 'Finance Officer';
-        break;
-
-      case 'auditor@vrip.com':
-        role = 'Auditor';
-        break;
-
-      case 'vendor@vrip.com':
-        role = 'Vendor';
-        break;
-
-      default:
-        return throwError(() => new Error('Invalid credentials'));
-
-    }
-
-    const response: LoginResponse = {
-
-      token: 'dummy-jwt-token',
-
-      role,
-
-      fullName: 'Demo User',
-
-      email: request.email
-
+  private mapRole(backendRole: string): string {
+    const roleMap: Record<string, string> = {
+      'Administrator': 'Administrator',
+      'Procurement Manager': 'Procurement Manager',
+      'Supply Chain Manager': 'Supply Chain Manager',
+      'Vendor': 'Vendor',
+      'Finance Officer': 'Finance Officer',
+      'Auditor': 'Auditor'
     };
-
-    this.storeSession(response);
-
-    return of(response);
-
+    return roleMap[backendRole] || backendRole;
   }
 
   private storeSession(response: LoginResponse): void {
-
     localStorage.setItem(this.TOKEN_KEY, response.token);
-
     localStorage.setItem(this.ROLE_KEY, response.role);
-
     localStorage.setItem(this.USER_KEY, JSON.stringify(response));
-
   }
 
   logout(): void {
-
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.ROLE_KEY);
     localStorage.removeItem(this.USER_KEY);
-
   }
 
   getToken(): string | null {
-
     return localStorage.getItem(this.TOKEN_KEY);
-
   }
 
   getUserRole(): string | null {
-
     return localStorage.getItem(this.ROLE_KEY);
-
   }
 
   getCurrentUser(): LoginResponse | null {
-
     const user = localStorage.getItem(this.USER_KEY);
-
     return user ? JSON.parse(user) : null;
-
   }
 
   isLoggedIn(): boolean {
-
     return !!this.getToken();
-
   }
-
 }
