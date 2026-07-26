@@ -5,34 +5,100 @@
 
 <app-dashboard-cards></app-dashboard-cards>
 
-<div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Quick Actions</h2>
   </div>
+  <div class="dash-actions-grid">
+
+    <a routerLink="/vendors" class="dash-action-card">
+      <div class="dash-action-icon icon-brand">
+        <span class="material-symbols-outlined">storefront</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>Vendor Directory</h3>
+        <p>Browse and manage all registered vendors</p>
+      </div>
+    </a>
+
+    <a routerLink="/procurement/requests" class="dash-action-card">
+      <div class="dash-action-icon icon-info">
+        <span class="material-symbols-outlined">shopping_cart</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>Procurement</h3>
+        <p>Purchase requests, orders, and tracking</p>
+      </div>
+    </a>
+
+    <a routerLink="/admin/user-management" class="dash-action-card">
+      <div class="dash-action-icon icon-success">
+        <span class="material-symbols-outlined">group</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>User Management</h3>
+        <p>Manage user accounts and permissions</p>
+      </div>
+    </a>
+
+    <a routerLink="/admin/analytics" class="dash-action-card">
+      <div class="dash-action-icon icon-warning">
+        <span class="material-symbols-outlined">analytics</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>Analytics</h3>
+        <p>Platform-wide insights and reports</p>
+      </div>
+    </a>
+
+    <a routerLink="/admin/reports" class="dash-action-card">
+      <div class="dash-action-icon icon-danger">
+        <span class="material-symbols-outlined">description</span>
+      </div>
+      <div class="dash-action-text">
+        <h3>Reports</h3>
+        <p>Generate compliance and performance reports</p>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<div class="placeholder-panel">
+  <p>Awaiting the backend endpoint.</p>
   <div class="placeholder-row">
     <span>Orbit IT Systems</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Copperfield Freight</span>
+    <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
 </div>
