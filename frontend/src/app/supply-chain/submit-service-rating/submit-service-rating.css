@@ -1,0 +1,49 @@
+.form-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--v-6);
+    max-width: 900px;
+}
+
+.form-section {
+    border-top: 3px solid var(--v-brand);
+}
+
+.section-header {
+    margin-bottom: var(--v-5);
+    padding-bottom: var(--v-3);
+    border-bottom: 1px solid var(--v-border);
+}
+
+.section-header h2 {
+    display: flex;
+    align-items: center;
+    gap: var(--v-2);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--v-text-primary);
+    margin: 0;
+}
+
+.section-header .material-symbols-outlined {
+    font-size: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--v-5);
+}
+
+.placeholder-panel {
+  padding: 10px;
+  border: 1px dashed #c9c9c9;
+  border-radius: 4px;
+  color: #7a7a7a;
+}
+
+.placeholder-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
