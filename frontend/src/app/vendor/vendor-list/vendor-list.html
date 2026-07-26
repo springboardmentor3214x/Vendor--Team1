@@ -93,21 +93,21 @@
             </select>
         </div>
 
-        <div class="vrip-table-wrapper">
-            <table class="vrip-table">
+        <div class="vrip-table-wrapper" style="overflow-x: auto; width: 100%;">
+            <table class="vrip-table" style="min-width: 1100px; width: 100%;">
                 <thead>
                     <tr>
-                        <th style="width: 70px;">ID</th>
-                        <th style="cursor:pointer; min-width: 160px;" (click)="sortData()">
+                        <th style="width: 60px;">ID</th>
+                        <th style="cursor:pointer; min-width: 170px;" (click)="sortData()">
                             Company Name <span class="material-symbols-outlined sort-icon">{{ sortAscending ? 'arrow_upward' : 'arrow_downward' }}</span>
                         </th>
-                        <th style="min-width: 140px;">Category</th>
+                        <th style="min-width: 150px;">Category</th>
                         <th style="min-width: 130px;">Contact</th>
                         <th style="min-width: 180px;">Email</th>
                         <th style="min-width: 110px;">Phone</th>
                         <th style="width: 90px;">Status</th>
                         <th style="width: 100px;">Approval</th>
-                        <th style="width: 250px; text-align: right;">Actions</th>
+                        <th style="width: 220px; text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>

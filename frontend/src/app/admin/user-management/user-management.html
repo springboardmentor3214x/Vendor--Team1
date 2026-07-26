@@ -7,11 +7,11 @@
     </div>
 
     <app-card [noPadding]="true">
-        <div class="vrip-table-wrapper">
-            <table class="vrip-table">
+        <div class="vrip-table-wrapper" style="overflow-x: auto; width: 100%;">
+            <table class="vrip-table" style="min-width: 800px; width: 100%;">
                 <thead>
                     <tr>
-                        <th style="width: 60px;">ID</th>
+                        <th style="width: 70px;">ID</th>
                         <th style="min-width: 140px;">Name</th>
                         <th style="min-width: 200px;">Email</th>
                         <th style="min-width: 160px;">Role</th>
@@ -20,57 +20,79 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let user of users" class="vrip-table-row">
-                        <td><span class="user-id-badge">#{{ user.id }}</span></td>
-                        <td><span class="user-name-cell">{{ user.name }}</span></td>
-                        <td><span class="user-email-cell">{{ user.email }}</span></td>
-                        <td>
-                            <span class="role-chip">{{ user.role }}</span>
-                        </td>
-                        <td>
-                            <app-badge [variant]="user.status === 'Active' ? 'success' : user.status === 'Blocked' ? 'danger' : 'warning'">
-                                {{ user.status }}
-                            </app-badge>
-                        </td>
-                        <td style="text-align: right; white-space: nowrap;">
-                            <div class="user-action-buttons">
-                                <app-button
-                                    *ngIf="user.status === 'Pending Approval' || user.status === 'Blocked' || user.status === 'Deactivated'"
-                                    variant="success" size="sm"
-                                    iconLeft="check_circle"
-                                    (onClick)="approveUser(user)">
-                                    Approve
-                                </app-button>
-                                <app-button
-                                    *ngIf="user.status === 'Active'"
-                                    variant="warning" size="sm"
-                                    iconLeft="block"
-                                    (onClick)="blockUser(user)">
-                                    Block
-                                </app-button>
-                                <app-button
-                                    *ngIf="user.status === 'Active'"
-                                    variant="outline" size="sm"
-                                    iconLeft="person_off"
-                                    (onClick)="deactivateUser(user)">
-                                    Deactivate
-                                </app-button>
-                                <app-button
-                                    variant="danger" size="sm"
-                                    iconLeft="delete"
-                                    (onClick)="deleteUser(user)">
-                                </app-button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr *ngIf="users.length === 0">
+                    <tr *ngIf="loading">
                         <td colspan="6" class="vrip-table-empty">
                             <div class="empty-state">
-                                <span class="material-symbols-outlined empty-icon">people</span>
-                                <p>No users found</p>
+                                <span class="material-symbols-outlined empty-icon spin">sync</span>
+                                <p>Loading users...</p>
                             </div>
                         </td>
                     </tr>
+
+                    <tr *ngIf="!loading && errorMsg">
+                        <td colspan="6" class="vrip-table-empty">
+                            <div class="empty-state">
+                                <span class="material-symbols-outlined empty-icon" style="color: var(--v-danger, #ef4444);">error</span>
+                                <p style="color: var(--v-danger, #ef4444);">{{ errorMsg }}</p>
+                                <app-button variant="outline" size="sm" (onClick)="loadUsers()">Retry</app-button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <ng-container *ngIf="!loading && !errorMsg">
+                        <tr *ngFor="let user of users" class="vrip-table-row">
+                            <td><span class="user-id-badge">#{{ user.id }}</span></td>
+                            <td><span class="user-name-cell">{{ user.name }}</span></td>
+                            <td><span class="user-email-cell">{{ user.email }}</span></td>
+                            <td>
+                                <span class="role-chip">{{ user.role }}</span>
+                            </td>
+                            <td>
+                                <app-badge [variant]="user.status === 'Active' ? 'success' : user.status === 'Blocked' ? 'danger' : 'warning'">
+                                    {{ user.status }}
+                                </app-badge>
+                            </td>
+                            <td style="text-align: right; white-space: nowrap;">
+                                <div class="user-action-buttons">
+                                    <app-button
+                                        *ngIf="user.status === 'Pending Approval' || user.status === 'Blocked' || user.status === 'Deactivated'"
+                                        variant="success" size="sm"
+                                        iconLeft="check_circle"
+                                        (onClick)="approveUser(user)">
+                                        Approve
+                                    </app-button>
+                                    <app-button
+                                        *ngIf="user.status === 'Active'"
+                                        variant="warning" size="sm"
+                                        iconLeft="block"
+                                        (onClick)="blockUser(user)">
+                                        Block
+                                    </app-button>
+                                    <app-button
+                                        *ngIf="user.status === 'Active'"
+                                        variant="outline" size="sm"
+                                        iconLeft="person_off"
+                                        (onClick)="deactivateUser(user)">
+                                        Deactivate
+                                    </app-button>
+                                    <app-button
+                                        variant="danger" size="sm"
+                                        iconLeft="delete"
+                                        (onClick)="deleteUser(user)">
+                                    </app-button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr *ngIf="users.length === 0">
+                            <td colspan="6" class="vrip-table-empty">
+                                <div class="empty-state">
+                                    <span class="material-symbols-outlined empty-icon">people</span>
+                                    <p>No users found</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
                 </tbody>
             </table>
         </div>

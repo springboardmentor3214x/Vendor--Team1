@@ -14,6 +14,8 @@ import { UserService } from '../../core/services/user.service';
 })
 export class UserManagement implements OnInit {
   users: any[] = [];
+  loading: boolean = true;
+  errorMsg: string = '';
 
   constructor(private userService: UserService) {}
 
@@ -22,15 +24,24 @@ export class UserManagement implements OnInit {
   }
 
   loadUsers(): void {
+    this.loading = true;
+    this.errorMsg = '';
     this.userService.getUsers().subscribe({
       next: (data) => {
-        this.users = data.map(u => ({
-          ...u,
-          status: u.account_status || 'Active'
-        }));
+        this.loading = false;
+        if (Array.isArray(data)) {
+          this.users = data.map(u => ({
+            ...u,
+            status: u.account_status || 'Active'
+          }));
+        } else {
+          this.users = [];
+        }
       },
       error: (err) => {
+        this.loading = false;
         console.error('Failed to load users', err);
+        this.errorMsg = err.error?.detail || err.message || 'Failed to load users from server.';
       }
     });
   }
