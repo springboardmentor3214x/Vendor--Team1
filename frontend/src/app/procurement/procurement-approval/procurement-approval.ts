@@ -59,28 +59,26 @@ export class ProcurementApproval implements OnInit {
   loadRequest(id: string): void {
     this.procurementService.getProcurementRequestById(id).subscribe({
       next: (res) => {
-        this.request = res;
-      },
-      error: (err) => {
-        console.error('Error fetching request', err);
-        // Fallback mock data
         this.request = {
-          id: Number(id) || 1,
-          requestNumber: `PR-102${id || 4}`,
-          title: 'Office Supplies Q3',
-          department: 'Administration',
-          requestedBy: 'Alice Smith',
-          itemCategory: 'Stationery',
-          itemName: 'Printing Paper, Pens, Notebooks',
-          quantity: 50,
-          uom: 'Boxes',
-          budget: 50000,
-          requiredDate: '30 Jul 2026',
-          priority: 'Low',
-          justification: 'Quarterly restock of essential office supplies for the admin and HR departments.',
-          status: 'Pending',
-          createdDate: '15 Jul 2026'
+          id: res.id,
+          requestNumber: `PR-${res.id}`,
+          title: res.item_name,
+          department: 'Procurement',
+          requestedBy: 'Procurement Team',
+          itemCategory: 'General',
+          itemName: res.item_name,
+          quantity: res.quantity,
+          uom: 'Units',
+          budget: res.total_price,
+          requiredDate: res.expected_delivery_date,
+          priority: 'Medium',
+          justification: 'Procurement request',
+          status: res.status,
+          createdDate: res.expected_delivery_date
         };
+      },
+      error: () => {
+        this.request = null;
       }
     });
   }
@@ -97,14 +95,19 @@ export class ProcurementApproval implements OnInit {
     if (this.request && this.requestId) {
       this.procurementService.approveRequest(this.requestId, { remarks: this.remarks || 'Approved' }).subscribe({
         next: () => {
-          alert('Request Approved successfully. It is now eligible for Vendor Assignment.');
-          this.router.navigate(['/procurement/requests']);
+          this.procurementService.placeOrder(this.requestId!).subscribe({
+            next: () => {
+              alert('Request approved and purchase order placed.');
+              this.router.navigate(['/procurement/requests']);
+            },
+            error: () => {
+              alert('Approved but order placement failed.');
+              this.router.navigate(['/procurement/requests']);
+            }
+          });
         },
-        error: (err) => {
-          console.error('Error approving', err);
-          // Mock success
-          alert('Request Approved successfully. (Mocked)');
-          this.router.navigate(['/procurement/requests']);
+        error: () => {
+          alert('Could not approve this request.');
         }
       });
     }
@@ -119,11 +122,8 @@ export class ProcurementApproval implements OnInit {
             alert('Request Rejected.');
             this.router.navigate(['/procurement/requests']);
           },
-          error: (err) => {
-            console.error('Error rejecting', err);
-            // Mock success
-            alert('Request Rejected. (Mocked)');
-            this.router.navigate(['/procurement/requests']);
+          error: () => {
+            alert('Could not reject this request.');
           }
         });
       }

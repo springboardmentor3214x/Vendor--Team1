@@ -100,11 +100,8 @@ export class ProcurementRequest {
         alert('Procurement Request Submitted Successfully!');
         this.router.navigate(['/procurement/requests']);
       },
-      error: (err) => {
-        console.error('Error submitting request', err);
-        // Fallback for mock backend
-        alert('Procurement Request Submitted Successfully! (Mocked)');
-        this.router.navigate(['/procurement/requests']);
+      error: () => {
+        alert('Could not submit procurement request.');
       }
     });
   }

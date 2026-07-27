@@ -1,26 +1,52 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Card } from '../../ui/card/card';
 import { Button } from '../../ui/button/button';
-import { InputComponent } from '../../ui/input/input';
 import { Table } from '../../ui/table/table';
+import { UserService } from '../../core/services/user.service';
 
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule, Card, Button, InputComponent, Table],
+  imports: [CommonModule, Card, Button, Table],
   templateUrl: './user-management.html',
   styleUrls: ['./user-management.css']
 })
-export class UserManagement {
-  addUser() { alert("Add user clicked"); }
-  editUser(u: any) { alert("Edit user: " + u.name); }
-  deleteUser(u: any) { if(confirm("Delete " + u.name + "?")) { this.users = this.users.filter(x => x.id !== u.id); } }
+export class UserManagement implements OnInit {
+  users: any[] = [];
 
-  users = [
-    { id: 'USR-001', name: 'Alice Smith', email: 'alice@company.com', role: 'Administrator', status: 'Active' },
-    { id: 'USR-002', name: 'Bob Johnson', email: 'bob@company.com', role: 'Procurement Manager', status: 'Active' },
-    { id: 'USR-003', name: 'Charlie Davis', email: 'charlie@company.com', role: 'Finance Officer', status: 'Inactive' },
-    { id: 'USR-004', name: 'Diana Evans', email: 'diana@supplier.com', role: 'Vendor', status: 'Active' },
-  ];
+  constructor(private userService: UserService) {}
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.userService.getUsers().subscribe({
+      next: (data) => {
+        this.users = data.map(u => ({
+          ...u,
+          status: u.account_status || 'Active'
+        }));
+      }
+    });
+  }
+
+  approveUser(u: any): void {
+    this.userService.approveUser(u.id).subscribe(() => this.loadUsers());
+  }
+
+  blockUser(u: any): void {
+    this.userService.blockUser(u.id).subscribe(() => this.loadUsers());
+  }
+
+  deactivateUser(u: any): void {
+    this.userService.deactivateUser(u.id).subscribe(() => this.loadUsers());
+  }
+
+  deleteUser(u: any): void {
+    if (confirm('Delete ' + u.name + '?')) {
+      this.userService.deleteUser(u.id).subscribe(() => this.loadUsers());
+    }
+  }
 }
