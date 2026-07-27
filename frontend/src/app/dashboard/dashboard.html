@@ -73,5 +73,39 @@
     <h2 class="dash-section-title">Recent Vendors</h2>
     <a routerLink="/vendors" class="vrip-button vrip-btn-ghost vrip-btn-sm">View all</a>
   </div>
-  <app-table [columns]="columns" [data]="recentVendors"></app-table>
+  
+  <app-card [noPadding]="true">
+    <div class="vrip-table-wrapper" style="overflow-x: auto; width: 100%;">
+      <table class="vrip-table" style="width: 100%; min-width: 600px;">
+        <thead>
+          <tr>
+            <th>Vendor Name</th>
+            <th>Category</th>
+            <th>Reliability</th>
+            <th style="text-align: right;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let vendor of recentVendors" class="vrip-table-row">
+            <td><strong style="color: var(--v-text-primary, #111827);">{{ vendor.companyName }}</strong></td>
+            <td><span class="category-chip">{{ vendor.category }}</span></td>
+            <td>{{ vendor.reliabilityScore }}</td>
+            <td style="text-align: right;">
+              <app-badge [variant]="vendor.status === 'Active' ? 'success' : vendor.status === 'Pending' ? 'warning' : 'danger'">
+                {{ vendor.status }}
+              </app-badge>
+            </td>
+          </tr>
+          <tr *ngIf="recentVendors.length === 0">
+            <td colspan="4" class="vrip-table-empty">
+              <div class="empty-state">
+                <span class="material-symbols-outlined empty-icon">inbox</span>
+                <p>No recent vendors found</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </app-card>
 </div>

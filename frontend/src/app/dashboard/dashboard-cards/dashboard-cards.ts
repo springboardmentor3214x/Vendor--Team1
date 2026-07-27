@@ -36,7 +36,16 @@ export class DashboardCards implements OnInit {
   ngOnInit(): void {
     this.http.get<VendorStats>('/vendors/stats').subscribe({
       next: (data) => {
-        this.stats = data;
+        if (data) {
+          this.stats = {
+            total: data.total ?? 0,
+            approved: data.approved ?? 0,
+            pending_review: data.pending_review ?? 0,
+            suspended: data.suspended ?? 0,
+            rejected: data.rejected ?? 0,
+            high_risk: data.high_risk ?? 0
+          };
+        }
         this.loading = false;
       },
       error: () => {

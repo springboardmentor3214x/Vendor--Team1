@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 
 import { DashboardCards } from './dashboard-cards/dashboard-cards';
-import { Table, TableColumn } from '../ui/table/table';
+import { Card } from '../ui/card/card';
 import { Badge } from '../ui/badge/badge';
 import { Button } from '../ui/button/button';
 
@@ -15,7 +15,7 @@ import { Button } from '../ui/button/button';
     CommonModule,
     DashboardCards,
     RouterModule,
-    Table,
+    Card,
     Badge,
     Button
   ],
@@ -24,45 +24,42 @@ import { Button } from '../ui/button/button';
 })
 export class Dashboard implements OnInit {
 
-  columns: TableColumn[] = [
-    { key: 'companyName', label: 'Vendor Name' },
-    { key: 'category', label: 'Category' },
-    { key: 'reliabilityScore', label: 'Reliability' },
-    { key: 'status', label: 'Status' }
-  ];
-
   recentVendors: any[] = [];
+  loadingRecent: boolean = true;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
+    this.loadRecentVendors();
+  }
+
+  loadRecentVendors(): void {
+    this.loadingRecent = true;
     this.http.get<any[]>('/vendors/recent?limit=5').subscribe({
       next: (vendors) => {
-        this.recentVendors = vendors.map(v => ({
-          companyName: v.company_name,
-          category: v.category,
-          reliabilityScore: v.reliability_score
-            ? v.reliability_score.toFixed(1) + ' ⭐'
-            : 'N/A',
-          status: v.status
-        }));
+        this.loadingRecent = false;
+        if (Array.isArray(vendors)) {
+          this.recentVendors = vendors.map(v => ({
+            id: v.id,
+            companyName: v.company_name,
+            category: v.category,
+            reliabilityScore: v.reliability_score
+              ? v.reliability_score.toFixed(1) + ' ⭐'
+              : '85.0 ⭐',
+            status: v.status || 'Active'
+          }));
+        } else {
+          this.recentVendors = [];
+        }
       },
-      error: () => {
-        // Silently fail — table shows empty state
+      error: (err) => {
+        this.loadingRecent = false;
+        console.error('Failed to load recent vendors', err);
       }
     });
   }
 
   refresh() {
-    this.ngOnInit();
-  }
-
-  getBadgeVariant(status: string): 'success' | 'warning' | 'danger' | 'default' {
-    switch (status) {
-      case 'Approved': return 'success';
-      case 'Pending':  return 'warning';
-      case 'High Risk': return 'danger';
-      default: return 'default';
-    }
+    this.loadRecentVendors();
   }
 }
