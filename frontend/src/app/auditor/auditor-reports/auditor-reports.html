@@ -27,36 +27,68 @@
         </app-card>
     </div>
 
+    <app-card style="margin-bottom: 24px;">
+        <h3 style="margin: 0 0 16px 0; font-size: 1rem; font-weight: 600;">Filters</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; align-items: end;">
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 0.8125rem; color: var(--text-secondary);">From Date</label>
+                <input type="date" [(ngModel)]="startDate"
+                       style="width: 100%; padding: 9px 12px; border-radius: 6px; border: 1px solid var(--border-color);" />
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 0.8125rem; color: var(--text-secondary);">To Date</label>
+                <input type="date" [(ngModel)]="endDate"
+                       style="width: 100%; padding: 9px 12px; border-radius: 6px; border: 1px solid var(--border-color);" />
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 0.8125rem; color: var(--text-secondary);">Status</label>
+                <input type="text" [(ngModel)]="filterStatus" placeholder="All"
+                       style="width: 100%; padding: 9px 12px; border-radius: 6px; border: 1px solid var(--border-color);" />
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <app-button variant="primary" size="sm" iconLeft="filter_alt" (onClick)="applyFilters()">Apply</app-button>
+                <app-button variant="outline" size="sm" iconLeft="restart_alt" (onClick)="resetFilters()">Reset</app-button>
+            </div>
+        </div>
+    </app-card>
+
 </div>
 
 <div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
+  <p>Awaiting the backend endpoint.</p>
   <div class="placeholder-row">
     <span>Orbit IT Systems</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Copperfield Freight</span>
+    <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
 </div>
