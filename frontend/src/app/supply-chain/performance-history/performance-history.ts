@@ -19,19 +19,34 @@ export class PerformanceHistory implements OnInit {
   vendorsList: any[] = [];
   selectedVendorId: string = 'all';
   isLoading = true;
+  columns: TableColumn[] = [
+    { key: 'cycleId', label: 'Cycle ID' },
+    { key: 'vendorName', label: 'Vendor Name' },
+    { key: 'poNumber', label: 'PO Number' },
+    { key: 'delivery', label: 'Delivery' },
+    { key: 'quality', label: 'Quality' },
+    { key: 'comm', label: 'Comm.' },
+    { key: 'issues', label: 'Issues (R/Res)' },
+    { key: 'service', label: 'Service' },
+    { key: 'trend', label: 'Trend' }
+  ];
+  constructor(private performanceService: PerformanceService) {}
 }
 
 const PLACEHOLDER_PERFORMANCE_HISTORY_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 5, name: 'Harborline Equipment', status: 'Active' },
-  { id: 6, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 7, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 8, name: 'Copperfield Freight', status: 'Inactive' },
+  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
+  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
+  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
+  { id: 4, name: 'Harborline Equipment', status: 'Active' },
+  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
+  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
+  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
+  { id: 8, name: 'Northwind Steel', status: 'Active' },
 ];
 
 function usePlaceholderPerformanceHistory(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_PERFORMANCE_HISTORY_ROWS;
+  if (!rows || !rows.length) {
+    return PLACEHOLDER_PERFORMANCE_HISTORY_ROWS;
+  }
+  return rows.filter((row) => !!row);
 }
