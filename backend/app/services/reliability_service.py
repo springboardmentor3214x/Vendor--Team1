@@ -127,14 +127,104 @@ def get_vendor_reliability_details(db: Session, vendor_id: int) -> Dict[str, Any
         "full_metrics": metrics
     }
 
+def get_reliability_dashboard(db: Session) -> Dict[str, Any]:
+    all_vendors = db.query(Vendor).filter(Vendor.approval_status == "Approved").all()
+    total_evaluated = len(all_vendors)
+
+    if total_evaluated == 0:
+        return {
+            "total_vendors_evaluated": 0,
+            "average_reliability_score": 0.0,
+            "high_reliability_count": 0,
+            "medium_reliability_count": 0,
+            "high_risk_count": 0,
+            "top_ranked_vendors": [],
+            "risk_distribution": {"Low Risk": 0, "Medium Risk": 0, "High Risk": 0}
+        }
+
+    vendor_details = []
+    for v in all_vendors:
+        details = get_vendor_reliability_details(db, v.id)
+        vendor_details.append(details)
+
+    rated = [v for v in vendor_details if v["evaluated"]]
+    high_rel = sum(1 for v in vendor_details if v["procurement_risk_level"] == "Low Risk")
+    med_rel = sum(1 for v in vendor_details if v["procurement_risk_level"] == "Medium Risk")
+    high_risk = sum(1 for v in vendor_details if v["procurement_risk_level"] == "High Risk")
+    not_rated = sum(1 for v in vendor_details if v["procurement_risk_level"] == NOT_RATED)
+
+    avg_score = round(sum(v["reliability_score"] for v in rated) / len(rated), 2) if rated else 0.0
+
+    vendor_details.sort(key=lambda x: x["reliability_score"], reverse=True)
+    top_ranked = [v for v in vendor_details if v["evaluated"]][:5]
+
+    return {
+        "total_vendors_evaluated": len(rated),
+        "total_approved_vendors": total_evaluated,
+        "average_reliability_score": avg_score,
+        "high_reliability_count": high_rel,
+        "medium_reliability_count": med_rel,
+        "high_risk_count": high_risk,
+        "not_rated_count": not_rated,
+        "top_ranked_vendors": [
+            {
+                "vendor_id": v["vendor_id"],
+                "vendor_name": v["vendor_name"],
+                "company_name": v["company_name"],
+                "category": v["category"],
+                "reliability_score": v["reliability_score"],
+                "risk_level": v["procurement_risk_level"],
+                "recommendation_status": v["recommendation_status"]
+            }
+            for v in top_ranked
+        ],
+        "risk_distribution": {
+            "Low Risk": high_rel,
+            "Medium Risk": med_rel,
+            "High Risk": high_risk,
+            NOT_RATED: not_rated
+        }
+    }
+
+def get_supplier_rankings(db: Session, category: Optional[str] = None) -> List[Dict[str, Any]]:
+    query = db.query(Vendor).filter(Vendor.approval_status == "Approved")
+    if category and category != "All":
+        query = query.filter(Vendor.category == category)
+
+    vendors = query.all()
+    rankings = []
+
+    for v in vendors:
+        details = get_vendor_reliability_details(db, v.id)
+        rankings.append({
+            "vendor_id": v.id,
+            "vendor_name": v.vendor_name,
+            "company_name": v.company_name,
+            "category": v.category,
+            "reliability_score": details["reliability_score"],
+            "procurement_risk_level": details["procurement_risk_level"],
+            "recommendation_status": details["recommendation_status"],
+            "delivery_score": details["reliability_factors"]["delivery_history"]["score"],
+            "quality_score": details["reliability_factors"]["product_quality"]["score"],
+            "communication_score": details["reliability_factors"]["communication_efficiency"]["score"],
+            "service_score": details["reliability_factors"]["service_ratings"]["score"]
+        })
+
+    rankings.sort(key=lambda x: x["reliability_score"], reverse=True)
+    for index, item in enumerate(rankings):
+        item["vendor_rank"] = index + 1
+
+    return rankings
+
 
 def _pending_reliability_service_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -144,6 +234,8 @@ def _pending_reliability_service_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -152,8 +244,9 @@ def _pending_reliability_service_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -163,6 +256,8 @@ def _pending_reliability_service_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -171,8 +266,9 @@ def _pending_reliability_service_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -182,6 +278,8 @@ def _pending_reliability_service_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -190,8 +288,9 @@ def _pending_reliability_service_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -201,6 +300,8 @@ def _pending_reliability_service_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -209,8 +310,9 @@ def _pending_reliability_service_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -220,23 +322,6 @@ def _pending_reliability_service_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-    return totals
-
-
-def _pending_reliability_service_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
-
-
-def _pending_reliability_service_totals_6(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
