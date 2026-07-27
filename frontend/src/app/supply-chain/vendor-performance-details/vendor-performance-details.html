@@ -1,0 +1,46 @@
+<div class="page-container">
+
+    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: var(--vrip-space-6);">
+        <app-button variant="ghost" iconLeft="arrow_back" routerLink="/supply-chain/vendor-performance"></app-button>
+        <div>
+            <h1 style="margin: 0 0 4px 0; font-size: 1.5rem;">{{ vendor.name }}</h1>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="vrip-badge" style="background: var(--vrip-gray-100); color: var(--vrip-gray-700);">{{ vendor.category }}</span>
+                <span style="color: var(--text-secondary); font-size: 0.875rem;">Vendor ID: {{ vendor.id }}</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+  </div>
+</div>
