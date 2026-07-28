@@ -1,0 +1,67 @@
+<div class="page-container">
+    <div class="page-vrip-page-header" style="margin-bottom: var(--vrip-space-6); display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1 class="vrip-page-title">Vendor Reliability Dashboard</h1>
+            <p>Intelligent insights and automated risk assessment for all suppliers.</p>
+        </div>
+        <div style="display: flex; gap: var(--vrip-space-3);">
+            <app-button variant="secondary" iconLeft="download" (onClick)="exportReport()">Export Report</app-button>
+            <app-button variant="primary" iconLeft="refresh" (onClick)="loadData()">Refresh Data</app-button>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--vrip-space-4); margin-bottom: var(--vrip-space-6);">
+        <app-card>
+            <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 8px;">Total Evaluated</div>
+            <div style="font-size: 1.5rem; font-weight: 600;">{{ summary.totalVendors }}</div>
+        </app-card>
+        <app-card>
+            <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 8px;">Avg. Score</div>
+            <div style="font-size: 1.5rem; font-weight: 600; color: #007aff;">{{ summary.averageScore }}%</div>
+        </app-card>
+        <app-card>
+            <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 8px;">High Reliability</div>
+            <div style="font-size: 1.5rem; font-weight: 600; color: #34c759;">{{ summary.highReliability }}</div>
+        </app-card>
+        <app-card>
+            <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 8px;">Medium Reliability</div>
+            <div style="font-size: 1.5rem; font-weight: 600; color: #ffcc00;">{{ summary.mediumReliability }}</div>
+        </app-card>
+        <app-card>
+            <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 8px;">High Risk</div>
+            <div style="font-size: 1.5rem; font-weight: 600; color: #ff3b30;">{{ summary.highRisk }}</div>
+        </app-card>
+    </div>
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ironvale Supplies</span>
+    <span>Under Review</span>
+  </div>
+</div>
