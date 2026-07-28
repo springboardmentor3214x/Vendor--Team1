@@ -1,0 +1,45 @@
+<div class="page-container">
+    <div class="page-vrip-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+        <div>
+            <h1 class="vrip-page-title">Vendor Ranking</h1>
+            <p style="color: var(--text-secondary); margin-top: 4px;">Top performing vendors based on aggregated performance metrics.</p>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <select [(ngModel)]="selectedCategory" (change)="onCategoryChange()"
+                    style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+                <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+            </select>
+            <app-button variant="outline" size="sm" iconLeft="refresh" (onClick)="loadRankings()">Refresh</app-button>
+            <app-button variant="outline" size="sm" iconLeft="download" (onClick)="exportRanking()">Export Ranking</app-button>
+        </div>
+    </div>
+
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Vertex Services</span>
+    <span>Pending Approval</span>
+  </div>
+</div>
