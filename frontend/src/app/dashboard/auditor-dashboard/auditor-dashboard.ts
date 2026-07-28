@@ -26,28 +26,60 @@ export class AuditorDashboard implements OnInit {
     { key: 'activity', label: 'Audit Activity' },
     { key: 'status', label: 'Status' }
   ];
+
   recentActivities: any[] = [];
   isLoading = true;
+
   complianceRate = 100;
   pendingAudits = 0;
   flaggedIssues = 0;
   reportsGenerated = 0;
-}
 
-const PLACEHOLDER_AUDITOR_DASHBOARD_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
+  constructor(
+    private contractService: ContractService,
+    private commService: CommunicationService
+  ) {}
 
-function usePlaceholderAuditorDashboard(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_AUDITOR_DASHBOARD_ROWS;
+  ngOnInit(): void {
+    this.refresh();
   }
-  return rows.filter((row) => !!row);
+
+  refresh() {
+    this.isLoading = true;
+    this.contractService.getComplianceDashboard().subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        if (res) {
+          this.complianceRate = Math.round(res.compliance_rate || 100);
+          this.pendingAudits = res.pending_reviews || 0;
+          this.flaggedIssues = res.non_compliant_count || 0;
+          this.reportsGenerated = res.total_records || 0;
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
+
+    this.commService.getActivityLogs('All', 10).subscribe({
+      next: (logs) => {
+        if (logs && logs.length > 0) {
+          this.recentActivities = logs.map(l => ({
+            date: new Date(l.timestamp).toLocaleDateString(),
+            activity: `${l.user_name || 'Auditor'}: ${l.action} (${l.details || l.module_name})`,
+            status: 'Passed'
+          }));
+        } else {
+          this.recentActivities = [];
+        }
+      }
+    });
+  }
+
+  getBadgeVariant(status: string): 'success' | 'warning' | 'primary' | 'default' {
+    if (status.includes('Passed') || status.includes('Completed')) return 'success';
+    if (status.includes('Pending') || status.includes('Progress')) return 'warning';
+    if (status.includes('Flagged')) return 'primary';
+    return 'default';
+  }
 }
