@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 22 Jul - Create the vendor dashboard screen with clickable KPI cards
 - 23 Jul - Introduce the vendor performance chart screen with axis formatting
 - 24 Jul - Build the compliance screen with finding details
 - 25 Jul - Settle the procurement risk dashboard screen behaviour between client and server
 - 26 Jul - Drop mock-data.ts from the integrated tree
 - 27 Jul - Build the vendor performance screen with score breakdown
+- 28 Jul - Drop sample_data_service.py from the integrated tree
