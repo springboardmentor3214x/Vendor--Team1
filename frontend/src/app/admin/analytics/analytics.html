@@ -35,43 +35,71 @@
         </app-card>
     </div>
 
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px; margin-bottom: 24px;">
+
+        <app-card>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 1.125rem; font-weight: 600;">Spend & Volume by Category (Bar Chart)</h3>
+                <span class="material-symbols-outlined" style="color: var(--vrip-gray-500);">bar_chart</span>
+            </div>
+            <apx-chart
+                *ngIf="categorySpendChart?.series"
+                [series]="categorySpendChart.series"
+                [chart]="categorySpendChart.chart"
+                [xaxis]="categorySpendChart.xaxis"
+                [yaxis]="categorySpendChart.yaxis"
+                [colors]="categorySpendChart.colors"
+                [plotOptions]="categorySpendChart.plotOptions"
+                [dataLabels]="categorySpendChart.dataLabels">
+            </apx-chart>
+        </app-card>
+
+        <app-card>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 1.125rem; font-weight: 600;">Procurement Request Status (Pie / Donut)</h3>
+                <span class="material-symbols-outlined" style="color: var(--vrip-gray-500);">pie_chart</span>
+            </div>
+            <apx-chart
+                *ngIf="orderStatusChart?.series"
+                [series]="orderStatusChart.series"
+                [chart]="orderStatusChart.chart"
+                [labels]="orderStatusChart.labels"
+                [colors]="orderStatusChart.colors"
+                [legend]="orderStatusChart.legend">
+            </apx-chart>
+        </app-card>
+    </div>
+
 </div>
 
 <div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+  <p>Sample rows shown until the API is ready.</p>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Copperfield Freight</span>
     <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
   </div>
 </div>
