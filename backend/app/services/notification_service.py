@@ -158,15 +158,47 @@ def get_unread_count(db: Session, user_id: int, user_role: str = None) -> int:
         Notification.is_read == False
     ).count()
 
+def _safe_create(db: Session, data: NotificationCreate):
+    try:
+        return create_notification(db, data)
+    except Exception as e:
+        db.rollback()
+        print(f"[NOTIFICATION ERROR] {data.notification_type}: {e}")
+        return None
+
+def _find_vendor_user_id(db: Session, vendor) -> int:
+    if not vendor or not vendor.email:
+        return None
+    from sqlalchemy import func as sa_func
+    user = db.query(User).filter(sa_func.lower(User.email) == vendor.email.lower()).first()
+    return user.id if user else None
+
+def notify_vendor_approval_decision(db: Session, vendor, approved: bool):
+    decision = "Approved" if approved else "Rejected"
+    _safe_create(db, NotificationCreate(
+        user_id=_find_vendor_user_id(db, vendor),
+        target_role=None,
+        notification_type="Vendor Approval",
+        title=f"Vendor Registration {decision}",
+        description=(
+            f"Your vendor profile '{vendor.company_name or vendor.vendor_name}' has been {decision.lower()} "
+            f"by {vendor.approved_by or 'the procurement team'}."
+        ),
+        module_name="Vendor",
+        related_record_id=str(vendor.id),
+        priority="Medium",
+        delivery_method="All"
+    ))
+
 
 def _pending_notification_service_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -176,8 +208,6 @@ def _pending_notification_service_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -186,9 +216,9 @@ def _pending_notification_service_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -198,8 +228,6 @@ def _pending_notification_service_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -208,9 +236,9 @@ def _pending_notification_service_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -220,8 +248,6 @@ def _pending_notification_service_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -230,9 +256,9 @@ def _pending_notification_service_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -242,8 +268,6 @@ def _pending_notification_service_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -252,9 +276,9 @@ def _pending_notification_service_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -264,6 +288,16 @@ def _pending_notification_service_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
+
+
+def _pending_notification_service_rows_6(items):
+    rows = []
+    for item in items:
+        rows.append({
+            "id": getattr(item, "id", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
+        })
+    return rows
