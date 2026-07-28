@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 22 Jul - Create the supply chain dashboard screen with delivery status tiles
 - 23 Jul - Build the vendor performance chart screen with axis formatting
 - 24 Jul - Add the procurement recommendations screen with recommendation cards
 - 25 Jul - Create the product quality screen with defect rate display
 - 26 Jul - Add the reliability score details screen with factor breakdown
 - 27 Jul - Add the vendor performance details screen with history timeline
+- 28 Jul - Create the vendor ranking screen with score column
