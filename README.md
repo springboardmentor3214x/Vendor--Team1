@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 22 Jul - Expand discussion with threaded replies
 - 23 Jul - Add performance service with delivery accuracy calculation
 - 24 Jul - Round out compliance record with audit findings
 - 25 Jul - Add reliability service with performance trend analysis
 - 26 Jul - Add analytics endpoints with spend aggregation
 - 27 Jul - Extend reliability with risk level banding
+- 28 Jul - Extend notification with priority levels
