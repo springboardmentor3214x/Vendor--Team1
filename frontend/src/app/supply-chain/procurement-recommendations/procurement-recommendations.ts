@@ -16,28 +16,49 @@ import { ReliabilityService } from '../../core/services/reliability.service';
 export class ProcurementRecommendations implements OnInit {
   categories = ['All', 'IT Vendors', 'Raw Material Suppliers', 'Logistics Partners', 'Service Providers'];
   selectedCategory = 'All';
+
   recommendations: any[] = [];
   isLoading = true;
+
   constructor(private reliabilityService: ReliabilityService) {}
+
   ngOnInit(): void {
     this.loadRecommendations();
   }
-}
 
-const PLACEHOLDER_PROCUREMENT_RECOMMENDATIONS_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderProcurementRecommendations(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_PROCUREMENT_RECOMMENDATIONS_ROWS;
+  onCategoryChange(cat: string): void {
+    this.selectedCategory = cat;
+    this.loadRecommendations();
   }
-  return rows.filter((row) => !!row);
+
+  loadRecommendations(): void {
+    this.isLoading = true;
+    this.reliabilityService.getRecommendations(this.selectedCategory !== 'All' ? this.selectedCategory : undefined).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        if (res) {
+          this.recommendations = res.map((r: any) => ({
+            rank: r.vendor_rank || 1,
+            vendorId: r.vendor_id,
+            reason: r.recommendation_reason || '',
+            suitableForHighPriority: r.suitable_for_high_priority !== false,
+            name: r.company_name || r.vendor_name,
+            score: r.reliability_score || 0,
+            risk: r.procurement_risk_level ? r.procurement_risk_level.replace(' Risk', '') : 'Medium',
+            match: Math.round(r.reliability_score || 0),
+            status: r.recommendation_status || 'Recommended'
+          }));
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  getMatchClass(match: number): any {
+    if (match >= 80) return { 'color': '#34c759', 'font-weight': 'bold' };
+    if (match >= 60) return { 'color': '#ff9500' };
+    return { 'color': '#ff3b30' };
+  }
 }

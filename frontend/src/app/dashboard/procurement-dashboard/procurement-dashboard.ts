@@ -27,22 +27,64 @@ export class ProcurementDashboard implements OnInit {
     { key: 'activity', label: 'Activity' },
     { key: 'status', label: 'Status' }
   ];
+
   recentActivities: any[] = [];
   isLoading = true;
+
   openRequests = 0;
-}
+  activePOs = 0;
+  awaitingApproval = 0;
+  completedOrders = 0;
 
-const PLACEHOLDER_PROCUREMENT_DASHBOARD_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 5, name: 'Harborline Equipment', status: 'Active' },
-  { id: 6, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 7, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 8, name: 'Copperfield Freight', status: 'Inactive' },
-];
+  constructor(
+    private commService: CommunicationService,
+    private analyticsService: AnalyticsService
+  ) {}
 
-function usePlaceholderProcurementDashboard(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_PROCUREMENT_DASHBOARD_ROWS;
+  ngOnInit(): void {
+    this.refresh();
+    this.loadMetrics();
+  }
+
+  loadMetrics() {
+    this.analyticsService.getProcurementManagerDashboard().subscribe({
+      next: (data) => {
+        if (data && data.summary) {
+          this.openRequests = data.summary.total_procurement_requests || 0;
+          this.activePOs = data.summary.active_purchase_orders || 0;
+          this.awaitingApproval = data.summary.pending_approvals || 0;
+          this.completedOrders = data.summary.completed_orders || 0;
+        }
+      }
+    });
+  }
+
+  refresh() {
+    this.isLoading = true;
+    this.commService.getActivityLogs('All', 10).subscribe({
+      next: (logs) => {
+        this.isLoading = false;
+        if (logs && logs.length > 0) {
+          this.recentActivities = logs.map(l => ({
+            date: new Date(l.timestamp).toLocaleDateString(),
+            activity: `${l.user_name || 'System'}: ${l.action} (${l.details || l.module_name})`,
+            status: 'Completed'
+          }));
+        } else {
+          this.recentActivities = [];
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.recentActivities = [];
+      }
+    });
+  }
+
+  getBadgeVariant(status: string): 'success' | 'warning' | 'primary' | 'default' {
+    if (status.includes('Completed')) return 'success';
+    if (status.includes('Pending') || status.includes('Progress')) return 'warning';
+    if (status.includes('Transit')) return 'primary';
+    return 'default';
+  }
 }
