@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 23 Jul - Extend quality evaluation with defect rate capture
 - 24 Jul - Extend risk banding with risk level thresholds
 - 25 Jul - Extend service rating with review comments
 - 26 Jul - Add report service with PDF export
 - 27 Jul - Expand user with account activation
 - 28 Jul - Replace the sample data loader with the seed script
+- 29 Jul - Expand service rating with review comments
