@@ -11,3 +11,5 @@ class ServiceRating(Base):
     customer_support = Column(Integer, nullable=False)
     documentation_quality = Column(Integer, nullable=False)
     flexibility = Column(Integer, nullable=False)
+    communication_effectiveness = Column(Integer, nullable=False)
+    issue_resolution = Column(Integer, nullable=False)
