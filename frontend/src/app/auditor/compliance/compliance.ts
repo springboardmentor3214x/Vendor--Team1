@@ -16,16 +16,36 @@ import { ContractService } from '../../core/services/contract.service';
 export class Compliance implements OnInit {
   isLoading = true;
   vendors: any[] = [];
-}
 
-const PLACEHOLDER_COMPLIANCE_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 5, name: 'Harborline Equipment', status: 'Active' },
-];
+  constructor(private contractService: ContractService) {}
 
-function usePlaceholderCompliance(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_COMPLIANCE_ROWS;
+  ngOnInit(): void {
+    this.loadCompliance();
+  }
+
+  loadCompliance(): void {
+    this.isLoading = true;
+    this.contractService.getComplianceDashboard().subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        if (res && res.expiring_certifications) {
+          this.vendors = res.expiring_certifications.map((c: any) => ({
+            name: c.certification_name || `Vendor #${c.vendor_id}`,
+            category: c.issuing_authority || 'Compliance',
+            iso: true,
+            gdpr: true,
+            status: c.status || 'Compliant'
+          }));
+        } else {
+          this.vendors = [];
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.vendors = [];
+      }
+    });
+  }
+
+  download() { window.print(); }
 }
