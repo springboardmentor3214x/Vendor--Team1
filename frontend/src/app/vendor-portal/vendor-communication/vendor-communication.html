@@ -1,0 +1,34 @@
+<div class="page-container" style="height: calc(100vh - 120px); display: flex; flex-direction: column;">
+    <div class="vrip-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--v-4, 16px);">
+        <div>
+            <h1 class="vrip-page-title">Communication</h1>
+            <p class="vrip-page-subtitle">Direct messaging with the Procurement Team.</p>
+        </div>
+        <app-button variant="outline" size="sm" iconLeft="refresh" (onClick)="loadMessages()">Refresh Chat</app-button>
+    </div>
+
+</div>
+
+<div class="placeholder-panel">
+  <p>Live data is not connected yet.</p>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Delta Logistics</span>
+    <span>Under Review</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Ashcroft Maintenance</span>
+    <span>Inactive</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Harborline Equipment</span>
+    <span>Active</span>
+  </div>
+</div>
