@@ -6,7 +6,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { Card } from '../../ui/card/card';
 import { Button } from '../../ui/button/button';
 import { InputComponent } from '../../ui/input/input';
-import { PurchaseOrderService } from '../../core/services/purchase-order.service';
+import { ProcurementService } from '../../core/services/procurement.service';
 
 export interface PurchaseOrderModel {
   poNumber: string;
@@ -62,7 +62,7 @@ export class PurchaseOrder implements OnInit {
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
-    private poService: PurchaseOrderService
+    private poService: ProcurementService
   ) {}
 
   ngOnInit(): void {
@@ -70,10 +70,14 @@ export class PurchaseOrder implements OnInit {
     const vendorId = this.route.snapshot.queryParamMap.get('vendor');
 
     if (prId) {
-      this.poData.prNumber = `PR-102${prId}`;
-      this.poData.productDetails = 'Office Supplies Q3';
-      this.poData.quantity = 50;
-      this.poData.unitPrice = 1000; // 50 * 1000 = 50,000 budget
+      this.poData.prNumber = `PR-${prId}`;
+      this.poService.getProcurementRequestById(prId).subscribe({
+        next: (res) => {
+          this.poData.productDetails = res.item_name;
+          this.poData.quantity = res.quantity;
+          this.poData.unitPrice = res.unit_price;
+        }
+      });
     }
 
     if (vendorId) {
@@ -101,17 +105,12 @@ export class PurchaseOrder implements OnInit {
     if (!this.validateForm()) return;
 
     this.poData.status = 'Ordered';
-    this.poService.createPurchaseOrder(this.poData).subscribe({
+    this.poService.placeOrder(this.poData.prNumber.replace('PR-', '')).subscribe({
       next: () => {
-        alert(`Purchase Order ${this.poData.poNumber} generated successfully!`);
+        alert(`Purchase order ${this.poData.poNumber} placed.`);
         this.router.navigate(['/procurement/requests']);
       },
-      error: (err) => {
-        console.error('Error generating PO', err);
-        // Mock success
-        alert(`Purchase Order ${this.poData.poNumber} generated successfully! (Mocked)`);
-        this.router.navigate(['/procurement/requests']);
-      }
+      error: () => alert('Could not place purchase order.')
     });
   }
 
