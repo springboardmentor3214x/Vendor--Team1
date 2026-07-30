@@ -10,36 +10,110 @@
             <p class="vrip-page-subtitle">Provide an overall service rating for a vendor.</p>
         </div>
     </div>
-</div>
 
-<div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-  </div>
+    <div class="form-layout">
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">assignment_ind</span> Vendor Details</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Procurement Request / Item *</label>
+                    <select class="vrip-select" [(ngModel)]="rating.procurementId" [disabled]="loadingProcurements">
+                        <option [ngValue]="null">
+                            {{ loadingProcurements ? 'Loading completed orders...' : 'Select a completed order' }}
+                        </option>
+                        <option *ngFor="let p of procurements" [ngValue]="p.id">{{ p.label }}</option>
+                    </select>
+                    <small *ngIf="!loadingProcurements && procurements.length === 0" style="color: var(--text-secondary);">
+                        No delivered or completed orders are available to rate yet.
+                    </small>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">star_rate</span> Service Evaluation (1-5)</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Professionalism</label>
+                    <select class="vrip-select" [(ngModel)]="rating.professionalism">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Customer Support</label>
+                    <select class="vrip-select" [(ngModel)]="rating.customerSupport">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Documentation Quality</label>
+                    <select class="vrip-select" [(ngModel)]="rating.documentationQuality">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Flexibility</label>
+                    <select class="vrip-select" [(ngModel)]="rating.flexibility">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Communication</label>
+                    <select class="vrip-select" [(ngModel)]="rating.communication">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Issue Resolution</label>
+                    <select class="vrip-select" [(ngModel)]="rating.issueResolution">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label>Comments</label>
+                    <textarea class="vrip-textarea" rows="3" placeholder="Provide any additional comments about the service..." [(ngModel)]="rating.comments"></textarea>
+                </div>
+            </div>
+        </app-card>
+
+        <div *ngIf="formError" class="error-box">
+            <span class="material-symbols-outlined">error</span>
+            <span>{{ formError }}</span>
+        </div>
+
+        <div class="form-actions">
+            <app-button variant="outline" (click)="cancel()">Cancel</app-button>
+            <app-button variant="primary" iconLeft="star" [disabled]="submitting" (click)="submitRating()">
+                {{ submitting ? 'Saving...' : 'Submit Rating' }}
+            </app-button>
+        </div>
+    </div>
 </div>
