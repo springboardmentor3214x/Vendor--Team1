@@ -1,0 +1,38 @@
+.user-name {
+  font-weight: 600;
+  font-size: 0.8125rem;
+  color: var(--v-text-primary);
+}
+
+.vendor-id-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--v-text-tertiary);
+  background: var(--v-bg-inset);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.email-cell {
+  font-size: 0.775rem;
+  color: var(--v-text-secondary);
+}
+
+.role-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  background: var(--v-bg-inset);
+  border: 1px solid var(--v-border);
+  color: var(--v-text-secondary);
+  padding: 2px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+}
