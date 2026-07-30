@@ -143,14 +143,136 @@ def get_procurement_overview(db: Session) -> Dict[str, Any]:
         "yearly_growth_percent": growth,
     }
 
+def get_delivery_status_summary(db: Session) -> Dict[str, Any]:
+    from app.models.order_tracking import OrderTracking
+
+    now = datetime.utcnow()
+
+    on_time = db.query(func.count(DeliveryPerformance.id)).filter(
+        DeliveryPerformance.delivery_status.in_(["Delivered On Time", "Delivered Early"])
+    ).scalar() or 0
+    total_recorded = db.query(func.count(DeliveryPerformance.id)).scalar() or 0
+    delayed = total_recorded - on_time
+
+    pending_shipments = db.query(func.count(OrderTracking.id)).filter(
+        OrderTracking.delivery_status == "Awaiting Shipment"
+    ).scalar() or 0
+    in_transit = db.query(func.count(OrderTracking.id)).filter(
+        OrderTracking.delivery_status == "In Transit"
+    ).scalar() or 0
+    delivered = db.query(func.count(PurchaseOrder.id)).filter(
+        PurchaseOrder.status == "Delivered"
+    ).scalar() or 0
+    completed = db.query(func.count(PurchaseOrder.id)).filter(
+        PurchaseOrder.status == "Completed"
+    ).scalar() or 0
+
+    overdue = db.query(func.count(PurchaseOrder.id)).filter(
+        PurchaseOrder.status.in_(ACTIVE_PO_STATUSES),
+        PurchaseOrder.expected_delivery_date < now
+    ).scalar() or 0
+
+    return {
+        "on_time_deliveries": on_time,
+        "delayed_deliveries": delayed,
+        "pending_shipments": pending_shipments,
+        "in_transit": in_transit,
+        "delivered_orders": delivered,
+        "completed_deliveries": completed,
+        "overdue_active_orders": overdue,
+        "on_time_rate": round(on_time / total_recorded * 100, 2) if total_recorded else 0.0,
+    }
+
+def get_vendor_dashboard_analytics(db: Session, vendor_id: int) -> Dict[str, Any]:
+    vendor = db.query(Vendor).filter(Vendor.id == vendor_id).first()
+    if not vendor:
+        return None
+
+    from app.services.performance_service import calculate_vendor_metrics
+    metrics = calculate_vendor_metrics(db, vendor_id)
+
+    total_orders = db.query(PurchaseOrder).filter(PurchaseOrder.vendor_id == vendor_id).count()
+    active_pos = db.query(PurchaseOrder).filter(
+        PurchaseOrder.vendor_id == vendor_id,
+        PurchaseOrder.status.in_(ACTIVE_PO_STATUSES)
+    ).count()
+    completed_pos = db.query(PurchaseOrder).filter(
+        PurchaseOrder.vendor_id == vendor_id,
+        PurchaseOrder.status.in_(COMPLETED_PO_STATUSES)
+    ).count()
+
+    active_contracts = db.query(Contract).filter(Contract.vendor_id == vendor_id, Contract.status == "Active").count()
+    expiring_contracts = db.query(Contract).filter(Contract.vendor_id == vendor_id, Contract.status == "Expiring Soon").count()
+
+    recent_msgs = db.query(Communication).filter(Communication.vendor_id == vendor_id).order_by(Communication.sent_at.desc()).limit(5).all()
+    msg_summary = [
+        {
+            "id": m.id,
+            "sender_name": m.sender_name,
+            "message": m.message[:60],
+            "sent_at": m.sent_at,
+            "is_read": m.is_read
+        }
+        for m in recent_msgs
+    ]
+
+    total_invoiced = db.query(func.sum(Invoice.total_amount)).filter(Invoice.vendor_id == vendor_id).scalar() or 0.0
+    paid_invoiced = db.query(func.sum(Invoice.total_amount)).filter(Invoice.vendor_id == vendor_id, Invoice.payment_status == "Paid").scalar() or 0.0
+
+    return {
+        "vendor_id": vendor.id,
+        "vendor_name": vendor.vendor_name,
+        "company_name": vendor.company_name,
+        "category": vendor.category,
+        "reliability_score": vendor.reliability_score or 0.0,
+        "delivery_score": vendor.delivery_score or 0.0,
+        "quality_score": vendor.quality_score or 0.0,
+        "communication_score": vendor.communication_score or 0.0,
+        "service_score": vendor.service_score or 0.0,
+        "summary": {
+            "total_orders": total_orders,
+            "active_pos": active_pos,
+            "completed_orders": completed_pos,
+            "active_contracts": active_contracts,
+            "expiring_contracts": expiring_contracts,
+            "total_invoiced": float(total_invoiced),
+            "total_paid": float(paid_invoiced)
+        },
+        "performance_metrics": metrics,
+        "recent_communications": msg_summary
+    }
+
+def _vendor_monthly_spend(db: Session, vendor_id: int, months: int = 12) -> List[Dict[str, Any]]:
+    today = date.today()
+    trends = []
+    for i in range(months - 1, -1, -1):
+        target_month = (today.month - i - 1) % 12 + 1
+        target_year = today.year if today.month - i > 0 else today.year - 1
+        month_name = date(target_year, target_month, 1).strftime("%b %Y")
+
+        spend = db.query(func.sum(Procurement.total_price)).filter(
+            Procurement.vendor_id == vendor_id,
+            extract('year', Procurement.created_at) == target_year,
+            extract('month', Procurement.created_at) == target_month
+        ).scalar() or 0.0
+        count = db.query(func.count(Procurement.id)).filter(
+            Procurement.vendor_id == vendor_id,
+            extract('year', Procurement.created_at) == target_year,
+            extract('month', Procurement.created_at) == target_month
+        ).scalar() or 0
+
+        trends.append({"month": month_name, "total_spending": float(spend), "request_count": count})
+    return trends
+
 
 def _pending_analytics_service_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -160,6 +282,8 @@ def _pending_analytics_service_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -168,8 +292,9 @@ def _pending_analytics_service_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -179,6 +304,8 @@ def _pending_analytics_service_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -187,8 +314,9 @@ def _pending_analytics_service_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -198,6 +326,8 @@ def _pending_analytics_service_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -206,8 +336,9 @@ def _pending_analytics_service_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -217,6 +348,8 @@ def _pending_analytics_service_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -225,8 +358,9 @@ def _pending_analytics_service_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -236,23 +370,6 @@ def _pending_analytics_service_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-    return totals
-
-
-def _pending_analytics_service_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
-
-
-def _pending_analytics_service_totals_6(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
