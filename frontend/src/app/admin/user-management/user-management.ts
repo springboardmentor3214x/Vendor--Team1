@@ -46,6 +46,27 @@ export class UserManagement implements OnInit {
     });
   }
 
+  getInitials(name: string): string {
+    if (!name) return 'U';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  }
+
+  getAvatarColorClass(role: string): string {
+    switch (role) {
+      case 'Administrator': return 'avatar-admin';
+      case 'Procurement Manager': return 'avatar-procure';
+      case 'Supply Chain Manager': return 'avatar-supply';
+      case 'Vendor': return 'avatar-vendor';
+      case 'Finance Officer': return 'avatar-finance';
+      case 'Auditor': return 'avatar-auditor';
+      default: return 'avatar-default';
+    }
+  }
+
   approveUser(u: any): void {
     this.userService.approveUser(u.id).subscribe(() => this.loadUsers());
   }

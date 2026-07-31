@@ -12,37 +12,54 @@
                 <thead>
                     <tr>
                         <th style="width: 70px;">ID</th>
-                        <th style="min-width: 140px;">Name</th>
+                        <th style="min-width: 180px;">User</th>
                         <th style="min-width: 200px;">Email</th>
                         <th style="min-width: 160px;">Role</th>
-                        <th style="width: 110px;">Status</th>
-                        <th style="width: 240px; text-align: right;">Actions</th>
+                        <th style="width: 120px;">Status</th>
+                        <th style="width: 220px; text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngIf="loading">
-                        <td colspan="6" class="vrip-table-empty">
-                            <div class="empty-state">
-                                <span class="material-symbols-outlined empty-icon spin">sync</span>
-                                <p>Loading users...</p>
-                            </div>
-                        </td>
-                    </tr>
+                    <!-- Loading Skeleton Rows -->
+                    <ng-container *ngIf="loading">
+                        <tr *ngFor="let _ of [1,2,3,4,5]" class="vrip-table-row">
+                            <td><div class="skeleton-cell" style="width: 30px; height: 16px;"></div></td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="skeleton-cell" style="width: 32px; height: 32px; border-radius: 50%;"></div>
+                                    <div class="skeleton-cell" style="width: 110px; height: 16px;"></div>
+                                </div>
+                            </td>
+                            <td><div class="skeleton-cell" style="width: 160px; height: 16px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 120px; height: 20px; border-radius: 99px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 70px; height: 20px; border-radius: 99px;"></div></td>
+                            <td style="text-align: right;"><div class="skeleton-cell" style="width: 100px; height: 28px; margin-left: auto;"></div></td>
+                        </tr>
+                    </ng-container>
 
+                    <!-- Error State -->
                     <tr *ngIf="!loading && errorMsg">
                         <td colspan="6" class="vrip-table-empty">
                             <div class="empty-state">
                                 <span class="material-symbols-outlined empty-icon" style="color: var(--v-danger, #ef4444);">error</span>
-                                <p style="color: var(--v-danger, #ef4444);">{{ errorMsg }}</p>
+                                <p style="color: var(--v-danger, #ef4444); font-weight: 500;">{{ errorMsg }}</p>
                                 <app-button variant="outline" size="sm" (onClick)="loadUsers()">Retry</app-button>
                             </div>
                         </td>
                     </tr>
 
+                    <!-- Data Rows -->
                     <ng-container *ngIf="!loading && !errorMsg">
                         <tr *ngFor="let user of users" class="vrip-table-row">
                             <td><span class="user-id-badge">#{{ user.id }}</span></td>
-                            <td><span class="user-name-cell">{{ user.name }}</span></td>
+                            <td>
+                                <div class="user-cell-flex">
+                                    <div class="user-avatar-pill" [ngClass]="getAvatarColorClass(user.role)">
+                                        {{ getInitials(user.name) }}
+                                    </div>
+                                    <span class="user-name-cell">{{ user.name }}</span>
+                                </div>
+                            </td>
                             <td><span class="user-email-cell">{{ user.email }}</span></td>
                             <td>
                                 <span class="role-chip">{{ user.role }}</span>
