@@ -7,36 +7,101 @@
         <app-button variant="primary" iconLeft="account_balance" [disabled]="loading || !payablePayments.length" (onClick)="openTransferModal()">Initiate Transfer</app-button>
     </div>
 
+    <app-card [noPadding]="true">
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>Transaction ID</th>
+                    <th>Invoice No.</th>
+                    <th>Vendor</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Receipt</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <ng-container *ngIf="loading">
+                    <tr *ngFor="let _ of [1,2,3,4]">
+                        <td><div class="skeleton-cell" style="width: 90px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 100px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 140px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 80px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 90px;"></div></td>
+                        <td><div class="skeleton-badge"></div></td>
+                        <td style="text-align: right;"><div class="skeleton-button" style="width: 32px; height: 32px; margin-left: auto;"></div></td>
+                    </tr>
+                </ng-container>
+                <ng-container *ngIf="!loading">
+                    <tr *ngFor="let payment of payments">
+                        <td><strong>{{ payment.id }}</strong></td>
+                        <td>{{ payment.invoice }}</td>
+                        <td>{{ payment.vendor }}</td>
+                        <td><strong>{{ payment.amount | currency:'INR':'symbol':'1.2-2' }}</strong></td>
+                        <td>{{ payment.date }}</td>
+                        <td>
+                            <span class="vrip-badge"
+                                  [ngStyle]="{'background': payment.status === 'Paid' ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 149, 0, 0.1)',
+                                              'color': payment.status === 'Paid' ? '#34c759' : '#ff9500'}">
+                                {{ payment.status }}
+                            </span>
+                        </td>
+                        <td style="text-align: right;">
+                            <app-button variant="ghost" [disabled]="payment.status !== 'Paid'" (onClick)="receipt()"><span class="material-symbols-outlined">receipt</span></app-button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="!payments.length">
+                        <td colspan="7">
+                            <div class="payments-empty">
+                                <span class="material-symbols-outlined">receipt_long</span>
+                                <p>{{ loadError || 'No payment transactions yet.' }}</p>
+                                <span class="payments-empty-hint" *ngIf="!loadError">
+                                    Verified invoices appear here once they are ready for transfer.
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
+            </ng-container>
+        </app-table>
+    </app-card>
 </div>
 
 <div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
+  <p>Awaiting the backend endpoint.</p>
   <div class="placeholder-row">
     <span>Orbit IT Systems</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Copperfield Freight</span>
+    <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
 </div>
