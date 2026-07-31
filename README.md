@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 25 Jul - Extend service rating with review comments
 - 26 Jul - Add report service with PDF export
 - 27 Jul - Expand user with account activation
 - 28 Jul - Replace the sample data loader with the seed script
 - 29 Jul - Expand service rating with review comments
 - 30 Jul - Refine review comments in service rating
+- 31 Jul - Refine Excel export in report
