@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 25 Jul - Add reliability service with performance trend analysis
 - 26 Jul - Add analytics endpoints with spend aggregation
 - 27 Jul - Extend reliability with risk level banding
 - 28 Jul - Extend notification with priority levels
 - 29 Jul - Split generic helpers into delivery timing and upload utilities
 - 30 Jul - Add reports endpoints with date range filters
+- 31 Jul - Expand performance with delivery accuracy calculation
