@@ -6,6 +6,7 @@ import os
 import io
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table as RLTable, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -13,6 +14,7 @@ from reportlab.lib import colors
 from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+
 from app.models.vendor import Vendor
 from app.models.procurement import Procurement
 from app.models.purchase_order import PurchaseOrder
@@ -29,6 +31,7 @@ from app.models.service_rating import ServiceRating
 
 RUPEE = "₹"
 
+
 def _as_datetime(value, end_of_day: bool = False):
     if value is None:
         return None
@@ -42,6 +45,7 @@ def _as_datetime(value, end_of_day: bool = False):
     except ValueError:
         return None
 
+
 def _apply_date_range(query, column, start_date, end_date):
     start = _as_datetime(start_date)
     end = _as_datetime(end_date, end_of_day=True)
@@ -51,12 +55,15 @@ def _apply_date_range(query, column, start_date, end_date):
         query = query.filter(column <= end)
     return query
 
+
 def format_currency(amount: Optional[float]) -> str:
     return f"{RUPEE}{float(amount or 0.0):,.2f}"
+
 
 def describe_filters(**filters) -> str:
     applied = [f"{k.replace('_', ' ').title()}: {v}" for k, v in filters.items() if v not in (None, "", "All")]
     return " | ".join(applied) if applied else "None"
+
 
 def get_vendor_performance_report(
     db: Session,
@@ -123,6 +130,7 @@ def get_vendor_performance_report(
         })
     return results
 
+
 def get_procurement_report(
     db: Session,
     department: Optional[str] = None,
@@ -188,6 +196,7 @@ def get_procurement_report(
         "items": items
     }
 
+
 def get_po_report(
     db: Session,
     status: Optional[str] = None,
@@ -224,6 +233,7 @@ def get_po_report(
             )
         })
     return results
+
 
 def get_compliance_report(db: Session, status: Optional[str] = None, start_date=None, end_date=None) -> Dict[str, Any]:
     query = db.query(ComplianceRecord)
@@ -299,6 +309,7 @@ def get_compliance_report(db: Session, status: Optional[str] = None, start_date=
         "missing_documents": missing_documents
     }
 
+
 def get_contract_report(db: Session, status: Optional[str] = None, start_date=None, end_date=None,
                         expiring_within_days: Optional[int] = None) -> List[Dict[str, Any]]:
     query = db.query(Contract)
@@ -330,6 +341,7 @@ def get_contract_report(db: Session, status: Optional[str] = None, start_date=No
         }
         for c in contracts
     ]
+
 
 def get_executive_summary_report(db: Session, start_date=None, end_date=None) -> Dict[str, Any]:
     today = date.today()
@@ -422,111 +434,269 @@ def get_executive_summary_report(db: Session, start_date=None, end_date=None) ->
     }
 
 
-def _pending_report_service_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+_UNICODE_FONT_CANDIDATES = [
+    ("DejaVuSans", "DejaVuSans-Bold",
+     "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"),
+    ("ArialUnicode", "ArialUnicode-Bold",
+     "C:/Windows/Fonts/arial.ttf",
+     "C:/Windows/Fonts/arialbd.ttf"),
+    ("NirmalaUI", "NirmalaUI-Bold",
+     "C:/Windows/Fonts/Nirmala.ttf",
+     "C:/Windows/Fonts/NirmalaB.ttf"),
+]
+
+_pdf_fonts = None
 
 
-def _pending_report_service_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+def _resolve_pdf_fonts():
+    global _pdf_fonts
+    if _pdf_fonts is not None:
+        return _pdf_fonts
+
+    for regular, bold, regular_path, bold_path in _UNICODE_FONT_CANDIDATES:
+        if not os.path.exists(regular_path):
+            continue
+        try:
+            pdfmetrics.registerFont(TTFont(regular, regular_path))
+            bold_name = regular
+            if os.path.exists(bold_path):
+                pdfmetrics.registerFont(TTFont(bold, bold_path))
+                bold_name = bold
+            _pdf_fonts = (regular, bold_name, True)
+            return _pdf_fonts
+        except Exception as e:
+            print(f"[PDF FONT] Could not register {regular_path}: {e}")
+
+    _pdf_fonts = ("Helvetica", "Helvetica-Bold", False)
+    return _pdf_fonts
 
 
-def _pending_report_service_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def _pdf_safe(value: Any, supports_rupee: bool) -> str:
+    text = "" if value is None else str(value)
+    if not supports_rupee:
+        text = text.replace(RUPEE, "Rs. ")
+    return text
 
 
-def _pending_report_service_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+def generate_pdf_report(
+    title: str,
+    headers: List[str],
+    data_rows: List[List[Any]],
+    applied_filters: str = "None"
+) -> bytes:
+    regular_font, bold_font, supports_rupee = _resolve_pdf_fonts()
+
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buffer, pagesize=A4,
+        rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=30,
+        title=title, author="Vendor Reliability Platform"
+    )
+    story = []
+
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        'DocTitle',
+        parent=styles['Heading1'],
+        fontName=bold_font,
+        fontSize=18,
+        textColor=colors.HexColor('#1E293B'),
+        spaceAfter=12
+    )
+    meta_style = ParagraphStyle(
+        'DocMeta',
+        parent=styles['Normal'],
+        fontName=regular_font,
+        fontSize=9,
+        textColor=colors.HexColor('#475569')
+    )
+
+    story.append(Paragraph(f"Vendor Reliability Platform — {title}", title_style))
+    story.append(Paragraph(f"Generated on: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}", meta_style))
+    story.append(Paragraph(f"Applied Filters: {_pdf_safe(applied_filters, supports_rupee)}", meta_style))
+    story.append(Spacer(1, 15))
+
+    table_data = [[_pdf_safe(h, supports_rupee) for h in headers]]
+    table_data += [[_pdf_safe(cell, supports_rupee) for cell in row] for row in data_rows]
+
+    if len(table_data) == 1:
+        story.append(Paragraph("No records match the selected filters.", meta_style))
+    else:
+        t = RLTable(table_data, repeatRows=1)
+        t.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2563EB')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), bold_font),
+            ('FONTNAME', (0, 1), (-1, -1), regular_font),
+            ('FONTSIZE', (0, 0), (-1, -1), 9),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F8FAFC')),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#CBD5E1')),
+        ]))
+        story.append(t)
+
+    def _draw_footer(canvas, document):
+        canvas.saveState()
+        canvas.setFont(regular_font, 8)
+        canvas.setFillColor(colors.HexColor('#64748B'))
+        canvas.drawString(30, 15, "Vendor Reliability Intelligence Platform — Confidential")
+        canvas.drawRightString(A4[0] - 30, 15, f"Page {document.page}")
+        canvas.restoreState()
+
+    doc.build(story, onFirstPage=_draw_footer, onLaterPages=_draw_footer)
+    pdf_data = buffer.getvalue()
+    buffer.close()
+    return pdf_data
 
 
-def _pending_report_service_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def generate_excel_report(title: str, headers: List[str], data_rows: List[List[Any]]) -> bytes:
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = title[:30]
+
+    header_font = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="1E3A8A", end_color="1E3A8A", fill_type="solid")
+    center_align = Alignment(horizontal="center", vertical="center")
+
+    ws.append(headers)
+    for col_num, _ in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col_num)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = center_align
+
+    for row in data_rows:
+        ws.append(row)
+
+    ws.freeze_panes = "A2"
+    if headers:
+        last_col = openpyxl.utils.get_column_letter(len(headers))
+        ws.auto_filter.ref = f"A1:{last_col}{max(len(data_rows) + 1, 1)}"
+
+    for col in ws.columns:
+        max_len = max(len(str(cell.value or '')) for cell in col)
+        col_letter = openpyxl.utils.get_column_letter(col[0].column)
+        ws.column_dimensions[col_letter].width = max(max_len + 4, 12)
+
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    excel_data = buffer.getvalue()
+    buffer.close()
+    return excel_data
 
 
-def _pending_report_service_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+def generate_purchase_order_pdf(db, purchase_order, vendor=None, procurement=None) -> bytes:
+    regular_font, bold_font, supports_rupee = _resolve_pdf_fonts()
 
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buffer, pagesize=A4,
+        rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=30,
+        title=f"Purchase Order {purchase_order.po_number}",
+        author="Vendor Reliability Platform"
+    )
 
-def _pending_report_service_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        'PoTitle', parent=styles['Heading1'], fontName=bold_font,
+        fontSize=18, textColor=colors.HexColor('#1E293B'), spaceAfter=6
+    )
+    meta_style = ParagraphStyle(
+        'PoMeta', parent=styles['Normal'], fontName=regular_font,
+        fontSize=9, textColor=colors.HexColor('#475569')
+    )
+    section_style = ParagraphStyle(
+        'PoSection', parent=styles['Heading2'], fontName=bold_font,
+        fontSize=12, textColor=colors.HexColor('#1E293B'), spaceBefore=14, spaceAfter=6
+    )
 
+    story = [
+        Paragraph("Vendor Reliability Intelligence Platform", meta_style),
+        Paragraph(f"Purchase Order {purchase_order.po_number}", title_style),
+        Paragraph(
+            f"Issued on: {purchase_order.po_date.strftime('%d %b %Y') if purchase_order.po_date else '-'}"
+            f" &nbsp;&nbsp;|&nbsp;&nbsp; Status: {purchase_order.status}",
+            meta_style
+        ),
+        Spacer(1, 6),
+    ]
 
-def _pending_report_service_totals_4(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+    def detail_table(rows):
+        table = RLTable(
+            [[_pdf_safe(label, supports_rupee), _pdf_safe(value, supports_rupee)] for label, value in rows],
+            colWidths=[150, 345]
+        )
+        table.setStyle(TableStyle([
+            ('FONTNAME', (0, 0), (0, -1), bold_font),
+            ('FONTNAME', (1, 0), (1, -1), regular_font),
+            ('FONTSIZE', (0, 0), (-1, -1), 9),
+            ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#475569')),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+            ('GRID', (0, 0), (-1, -1), 0.4, colors.HexColor('#E2E8F0')),
+        ]))
+        return table
 
+    story.append(Paragraph("Vendor", section_style))
+    story.append(detail_table([
+        ("Vendor Name", purchase_order.vendor_name or "-"),
+        ("Contact Person", purchase_order.contact_person or "-"),
+        ("Vendor Address", purchase_order.vendor_address or (vendor.address if vendor else "-") or "-"),
+        ("Category", vendor.category if vendor else "-"),
+    ]))
 
-def _pending_report_service_rows_5(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+    story.append(Paragraph("Procurement Reference", section_style))
+    story.append(detail_table([
+        ("Request Number", procurement.request_number if procurement else "-"),
+        ("Request Title", procurement.request_title if procurement else "-"),
+        ("Department", procurement.department if procurement else "-"),
+    ]))
 
+    story.append(Paragraph("Order Details", section_style))
+    order_table = RLTable(
+        [
+            ["Item", "Quantity", "Unit Price", "Tax", "Total Cost"],
+            [
+                _pdf_safe(purchase_order.item_name, supports_rupee),
+                str(purchase_order.quantity),
+                _pdf_safe(format_currency(purchase_order.unit_price), supports_rupee),
+                _pdf_safe(format_currency(purchase_order.tax_amount), supports_rupee),
+                _pdf_safe(format_currency(purchase_order.total_cost), supports_rupee),
+            ],
+        ],
+        repeatRows=1
+    )
+    order_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2563EB')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('FONTNAME', (0, 0), (-1, 0), bold_font),
+        ('FONTNAME', (0, 1), (-1, -1), regular_font),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#CBD5E1')),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+    ]))
+    story.append(order_table)
 
-def _pending_report_service_totals_5(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+    story.append(Paragraph("Delivery & Payment", section_style))
+    story.append(detail_table([
+        ("Expected Delivery", purchase_order.expected_delivery_date.strftime('%d %b %Y')
+            if purchase_order.expected_delivery_date else "-"),
+        ("Shipping Address", purchase_order.shipping_address or "-"),
+        ("Payment Terms", purchase_order.payment_terms or "-"),
+        ("Approved By", purchase_order.approved_by or "-"),
+    ]))
+
+    def _draw_footer(canvas, document):
+        canvas.saveState()
+        canvas.setFont(regular_font, 8)
+        canvas.setFillColor(colors.HexColor('#64748B'))
+        canvas.drawString(30, 15, "Vendor Reliability Intelligence Platform — Confidential")
+        canvas.drawRightString(A4[0] - 30, 15, f"Page {document.page}")
+        canvas.restoreState()
+
+    doc.build(story, onFirstPage=_draw_footer, onLaterPages=_draw_footer)
+    pdf_data = buffer.getvalue()
+    buffer.close()
+    return pdf_data
