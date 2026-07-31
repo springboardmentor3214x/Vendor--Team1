@@ -33,22 +33,36 @@ export class AuditorReports implements OnInit {
     { type: 'executive-summary', title: 'Executive Summary', desc: 'Organisation-wide totals, reliability distribution, top vendors and monthly trends.', icon: 'insights' }
   ];
   constructor(private reportsService: ReportsService) {}
+  ngOnInit(): void {
+    this.previewReport('compliance', 'Compliance Report');
+  }
+  private rupees(value: number): string {
+    return `₹${(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+  private currentFilters(): ReportFilters {
+    return {
+      startDate: this.startDate || undefined,
+      endDate: this.endDate || undefined,
+      status: this.filterStatus
+    };
+  }
 }
 
 const PLACEHOLDER_AUDITOR_REPORTS_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
+  { id: 1, name: 'Delta Logistics', status: 'Under Review' },
+  { id: 2, name: 'Ashcroft Maintenance', status: 'Inactive' },
+  { id: 3, name: 'Harborline Equipment', status: 'Active' },
+  { id: 4, name: 'Vertex Services', status: 'Pending Approval' },
+  { id: 5, name: 'Ironvale Supplies', status: 'Under Review' },
+  { id: 6, name: 'Copperfield Freight', status: 'Inactive' },
+  { id: 7, name: 'Northwind Steel', status: 'Active' },
+  { id: 8, name: 'Orbit IT Systems', status: 'Pending Approval' },
 ];
 
 function usePlaceholderAuditorReports(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_AUDITOR_REPORTS_ROWS;
-  }
-  return rows.filter((row) => !!row);
+  const source = rows && rows.length ? rows : PLACEHOLDER_AUDITOR_REPORTS_ROWS;
+  return source.map((row) => ({
+    ...row,
+    status: row.status || 'Pending',
+  }));
 }

@@ -26,26 +26,54 @@ interface CommRecord {
 export class CommunicationTracking implements OnInit {
   records: CommRecord[] = [];
   isLoading = true;
+
   constructor(private performanceService: PerformanceService) {}
+
   ngOnInit() {
     this.loadCommRecords();
   }
-}
 
-const PLACEHOLDER_COMMUNICATION_TRACKING_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
+  loadCommRecords() {
+    this.isLoading = true;
+    this.performanceService.getCommunicationRecords(1).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        if (res && res.length > 0) {
+          this.records = res.map((c: any) => {
+            const hrs = c.response_duration_hours || 0;
+            let status: 'Fast' | 'Acceptable' | 'Slow' | 'Unresponsive' = 'Fast';
+            if (hrs > 24) status = 'Unresponsive';
+            else if (hrs > 12) status = 'Slow';
+            else if (hrs > 4) status = 'Acceptable';
 
-function usePlaceholderCommunicationTracking(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_COMMUNICATION_TRACKING_ROWS;
+            return {
+              poNumber: `PO-${1000 + (c.procurement_id || c.id)}`,
+              vendorName: `Vendor #${c.vendor_id}`,
+              sentTime: c.message_sent_time ? new Date(c.message_sent_time).toLocaleString() : 'N/A',
+              responseTime: c.vendor_response_time ? new Date(c.vendor_response_time).toLocaleString() : 'N/A',
+              responseDuration: `${hrs.toFixed(1)} Hrs`,
+              status,
+              remarks: c.remarks || 'Logged'
+            };
+          });
+        } else {
+          this.records = [];
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.records = [];
+      }
+    });
   }
-  return rows.filter((row) => !!row);
+
+  getStatusColor(status: string): string {
+    switch(status) {
+      case 'Fast': return '#34c759';
+      case 'Acceptable': return '#ff9500';
+      case 'Slow': return '#ff3b30';
+      case 'Unresponsive': return '#8e8e93';
+      default: return '#8e8e93';
+    }
+  }
 }
