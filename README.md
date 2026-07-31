@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 25 Jul - Extend the vendor analytics screen with category breakdown chart
 - 26 Jul - Drop mock vendor data now the vendor APIs are wired up
 - 27 Jul - Extend the auditor reports screen with report filters
 - 28 Jul - Add the delivery performance screen with on time percentage
 - 29 Jul - Add the log communication message screen with message form
 - 30 Jul - Add the new product evaluation screen with scoring criteria
+- 31 Jul - Extend the payment details screen with tax split
