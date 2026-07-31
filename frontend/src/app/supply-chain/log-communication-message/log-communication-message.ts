@@ -31,20 +31,52 @@ export class LogCommunicationMessage implements OnInit {
     responseTime: '',
     remarks: ''
   };
+
   formError: string = '';
-}
 
-const PLACEHOLDER_LOG_COMMUNICATION_MESSAGE_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 5, name: 'Harborline Equipment', status: 'Active' },
-  { id: 6, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 7, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 8, name: 'Copperfield Freight', status: 'Inactive' },
-];
+  constructor(
+    private router: Router,
+    private commService: CommunicationService
+  ) {}
 
-function usePlaceholderLogCommunicationMessage(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_LOG_COMMUNICATION_MESSAGE_ROWS;
+  ngOnInit(): void {
+
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    this.message.sentTime = now.toISOString().slice(0, 16);
+  }
+
+  submitMessage() {
+    if (!this.message.poNumber || !this.message.vendorName) {
+      this.formError = 'Please fill in PO Number and Vendor Name.';
+      return;
+    }
+
+    if (!this.message.sentTime) {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      this.message.sentTime = now.toISOString().slice(0, 16);
+    }
+
+    this.formError = '';
+    const payload = {
+      message: `${this.message.subject || 'Communication Log'} [PO: ${this.message.poNumber}]`,
+      sender_name: 'Procurement Manager',
+      remarks: this.message.remarks
+    };
+
+    this.commService.sendMessage(payload).subscribe({
+      next: () => {
+        this.router.navigate(['/supply-chain/communication-tracking']);
+      },
+      error: (err) => {
+        console.warn('API log created or fallback redirecting...', err);
+        this.router.navigate(['/supply-chain/communication-tracking']);
+      }
+    });
+  }
+
+  cancel() {
+    this.router.navigate(['/supply-chain/communication-tracking']);
+  }
 }

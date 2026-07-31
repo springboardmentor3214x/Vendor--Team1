@@ -35,15 +35,49 @@
     gap: var(--v-5);
 }
 
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--v-2);
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--v-text-secondary);
+}
+
+.vrip-select, .vrip-textarea {
+    width: 100%;
+    padding: var(--v-2) var(--v-3);
+    font-size: 0.875rem;
+    font-family: var(--v-font);
+    color: var(--v-text-primary);
+    background-color: var(--v-bg-card);
+    border: 1px solid var(--v-border);
+    border-radius: var(--v-radius-md);
+    outline: none;
+    transition: border-color var(--v-duration) var(--v-ease), box-shadow var(--v-duration) var(--v-ease);
+}
+
 .placeholder-panel {
-  padding: 10px;
-  border: 1px dashed #c9c9c9;
-  border-radius: 4px;
+  padding: 12px;
+  border: 1px dashed #d2d2d2;
+  border-radius: 5px;
   color: #7a7a7a;
 }
 
 .placeholder-row {
   display: flex;
   justify-content: space-between;
-  padding: 4px 0;
+  padding: 5px 0;
+}
+
+.placeholder-row span {
+  font-size: 13px;
+  letter-spacing: 0.2px;
 }
