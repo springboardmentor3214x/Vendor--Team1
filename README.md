@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 25 Jul - Settle the procurement risk dashboard screen behaviour between client and server
 - 26 Jul - Drop mock-data.ts from the integrated tree
 - 27 Jul - Build the vendor performance screen with score breakdown
 - 28 Jul - Drop sample_data_service.py from the integrated tree
 - 29 Jul - Drop helpers.py from the integrated tree
 - 30 Jul - Retest the vendor orders screen after the latest backend changes
+- 31 Jul - Flesh out the payment details screen with tax split
