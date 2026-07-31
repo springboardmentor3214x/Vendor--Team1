@@ -25,36 +25,70 @@
             <div style="font-size: 1.75rem; font-weight: 700;">{{ dashboard.avg_delivery_performance ?? 0 }}%</div>
         </app-card>
     </div>
+
+    <app-card style="margin-bottom: 16px;">
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: end;">
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 0.8125rem; color: var(--text-secondary);">Vendor</label>
+                <select [(ngModel)]="vendorFilter" (change)="applyFilters()"
+                        style="padding: 9px 12px; border-radius: 6px; border: 1px solid var(--border-color); min-width: 220px;">
+                    <option value="All">All Vendors</option>
+                    <option *ngFor="let v of vendorNames" [value]="v">{{ v }}</option>
+                </select>
+            </div>
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 0.8125rem; color: var(--text-secondary);">Delivery Status</label>
+                <select [(ngModel)]="statusFilter" (change)="applyFilters()"
+                        style="padding: 9px 12px; border-radius: 6px; border: 1px solid var(--border-color); min-width: 180px;">
+                    <option value="All">All</option>
+                    <option value="Early">Early</option>
+                    <option value="On Time">On Time</option>
+                    <option value="Delayed">Delayed</option>
+                </select>
+            </div>
+            <div style="color: var(--text-secondary); font-size: 0.875rem; padding-bottom: 10px;">
+                Showing {{ records.length }} of {{ allRecords.length }} records
+            </div>
+        </div>
+    </app-card>
+
 </div>
 
 <div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
+  <p>Awaiting the backend endpoint.</p>
   <div class="placeholder-row">
     <span>Orbit IT Systems</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Copperfield Freight</span>
+    <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
 </div>
