@@ -26,28 +26,60 @@ export class FinanceDashboard implements OnInit {
     { key: 'activity', label: 'Activity' },
     { key: 'status', label: 'Status' }
   ];
+
   recentActivities: any[] = [];
   isLoading = true;
+
   pendingPaymentsCount = 0;
   invoicesProcessedCount = 0;
   overdueCount = 0;
   totalSpend = '₹0';
-}
 
-const PLACEHOLDER_FINANCE_DASHBOARD_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
+  constructor(
+    private invoiceService: InvoiceService,
+    private commService: CommunicationService
+  ) {}
 
-function usePlaceholderFinanceDashboard(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_FINANCE_DASHBOARD_ROWS;
+  ngOnInit(): void {
+    this.refresh();
   }
-  return rows.filter((row) => !!row);
+
+  refresh() {
+    this.isLoading = true;
+    this.invoiceService.getInvoices().subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        if (res && res.length > 0) {
+          this.invoicesProcessedCount = res.length;
+          this.pendingPaymentsCount = res.filter(i => i.payment_status !== 'Paid').length;
+          this.overdueCount = res.filter(i => i.payment_status === 'Overdue').length;
+
+          const sum = res.filter(i => i.payment_status === 'Paid').reduce((acc, i) => acc + (i.total_amount || 0), 0);
+          this.totalSpend = `₹${sum.toLocaleString('en-IN')}`;
+
+          this.recentActivities = res.slice(0, 5).map(i => ({
+            date: i.issue_date ? new Date(i.issue_date).toLocaleDateString() : new Date().toLocaleDateString(),
+            activity: `Invoice #${i.invoice_number || i.id} for $${(i.total_amount || 0).toLocaleString()} (${i.vendor_name || 'Vendor'})`,
+            status: i.payment_status || 'Pending'
+          }));
+        } else {
+          this.invoicesProcessedCount = 0;
+          this.pendingPaymentsCount = 0;
+          this.overdueCount = 0;
+          this.totalSpend = '₹0';
+          this.recentActivities = [];
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.recentActivities = [];
+      }
+    });
+  }
+
+  getBadgeVariant(status: string): 'success' | 'warning' | 'primary' | 'default' {
+    if (status.includes('Completed') || status.includes('Paid')) return 'success';
+    if (status.includes('Pending') || status.includes('Review')) return 'warning';
+    return 'default';
+  }
 }
