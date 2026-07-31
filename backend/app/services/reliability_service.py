@@ -216,15 +216,56 @@ def get_supplier_rankings(db: Session, category: Optional[str] = None) -> List[D
 
     return rankings
 
+def get_procurement_risk_assessment(db: Session) -> Dict[str, Any]:
+    vendors = db.query(Vendor).filter(Vendor.approval_status == "Approved").all()
+    low_risk, med_risk, high_risk, not_rated = [], [], [], []
+
+    for v in vendors:
+        details = get_vendor_reliability_details(db, v.id)
+        item = {
+            "vendor_id": v.id,
+            "vendor_name": v.vendor_name,
+            "company_name": v.company_name,
+            "category": v.category,
+            "reliability_score": details["reliability_score"],
+            "risk_level": details["procurement_risk_level"],
+            "warning_message": details["warning_message"]
+        }
+        level = details["procurement_risk_level"]
+        if level == "Low Risk":
+            low_risk.append(item)
+        elif level == "Medium Risk":
+            med_risk.append(item)
+        elif level == NOT_RATED:
+            not_rated.append(item)
+        else:
+            high_risk.append(item)
+
+    return {
+        "total_vendors": len(vendors),
+        "low_risk_count": len(low_risk),
+        "medium_risk_count": len(med_risk),
+        "high_risk_count": len(high_risk),
+        "not_rated_count": len(not_rated),
+        "low_risk_vendors": low_risk,
+        "medium_risk_vendors": med_risk,
+        "high_risk_vendors": high_risk,
+        "not_rated_vendors": not_rated,
+        "high_risk_approval_required": True
+    }
+
+def _month_key(value) -> Optional[str]:
+    return value.strftime("%Y-%m") if value else None
+
 
 def _pending_reliability_service_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -234,8 +275,6 @@ def _pending_reliability_service_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -244,9 +283,9 @@ def _pending_reliability_service_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -256,8 +295,6 @@ def _pending_reliability_service_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -266,9 +303,9 @@ def _pending_reliability_service_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -278,8 +315,6 @@ def _pending_reliability_service_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -288,9 +323,9 @@ def _pending_reliability_service_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -300,8 +335,6 @@ def _pending_reliability_service_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -310,9 +343,9 @@ def _pending_reliability_service_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -322,6 +355,16 @@ def _pending_reliability_service_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
+
+
+def _pending_reliability_service_rows_6(items):
+    rows = []
+    for item in items:
+        rows.append({
+            "id": getattr(item, "id", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
+        })
+    return rows
