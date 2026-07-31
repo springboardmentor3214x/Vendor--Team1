@@ -27,32 +27,63 @@ export class SupplyChainDashboard implements OnInit {
     { key: 'activity', label: 'Activity' },
     { key: 'status', label: 'Status' }
   ];
+
   recentActivities: any[] = [];
   isLoading = true;
+
   avgReliabilityScore = 0;
   onTimeDelivery = 0;
   defectRate = 0;
   atRiskVendors = 0;
+
   constructor(
     private commService: CommunicationService,
     private reliabilityService: ReliabilityService
   ) {}
-}
 
-const PLACEHOLDER_SUPPLY_CHAIN_DASHBOARD_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderSupplyChainDashboard(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_SUPPLY_CHAIN_DASHBOARD_ROWS;
+  ngOnInit(): void {
+    this.refresh();
+    this.loadMetrics();
   }
-  return rows.filter((row) => !!row);
+
+  loadMetrics() {
+    this.reliabilityService.getDashboard().subscribe({
+      next: (res) => {
+        if (res) {
+          this.avgReliabilityScore = Math.round(res.average_reliability_score || 0);
+          this.atRiskVendors = res.high_risk_count || 0;
+          this.onTimeDelivery = Math.round(res.average_reliability_score || 0);
+          this.defectRate = res.average_reliability_score ? Math.max(0, Math.round(100 - res.average_reliability_score)) : 0;
+        }
+      }
+    });
+  }
+
+  refresh() {
+    this.isLoading = true;
+    this.commService.getActivityLogs('All', 10).subscribe({
+      next: (logs) => {
+        this.isLoading = false;
+        if (logs && logs.length > 0) {
+          this.recentActivities = logs.map(l => ({
+            date: new Date(l.timestamp).toLocaleDateString(),
+            activity: `${l.user_name || 'System'}: ${l.action} (${l.details || l.module_name})`,
+            status: 'Completed'
+          }));
+        } else {
+          this.recentActivities = [];
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.recentActivities = [];
+      }
+    });
+  }
+
+  getBadgeVariant(status: string): 'success' | 'warning' | 'primary' | 'default' {
+    if (status.includes('Completed') || status.includes('Delivered')) return 'success';
+    if (status.includes('Warning') || status.includes('Progress')) return 'warning';
+    return 'default';
+  }
 }
