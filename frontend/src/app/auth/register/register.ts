@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ThemeService } from '../../core/services/theme.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -18,7 +19,11 @@ import { ThemeService } from '../../core/services/theme.service';
 export class Register {
   loading = false;
   
-  constructor(private router: Router, public themeService: ThemeService) {}
+  constructor(
+    private router: Router,
+    public themeService: ThemeService,
+    private authService: AuthService
+  ) {}
 
   user = {
     fullName: '',
@@ -89,32 +94,25 @@ export class Register {
       return;
     }
 
-    const users = JSON.parse(
-      localStorage.getItem('vrip_registered_users') || '[]'
-    );
-
-    const emailExists = users.some(
-      (u: any) => u.email.toLowerCase() === this.user.email.toLowerCase()
-    );
-
-    if (emailExists) {
-      alert('Email already registered');
-      return;
-    }
-
-    users.push({
-      fullName: this.user.fullName,
-      email: this.user.email,
+    const payload = {
+      name: this.user.fullName.trim(),
+      email: this.user.email.trim(),
+      mobile_number: this.user.mobile.trim(),
       password: this.user.password,
       role: this.user.role
+    };
+
+    this.loading = true;
+    this.authService.register(payload).subscribe({
+      next: () => {
+        this.loading = false;
+        alert('Registration Successful');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        this.loading = false;
+        alert(err.error?.detail || err.message || 'Registration failed');
+      }
     });
-
-    localStorage.setItem(
-      'vrip_registered_users',
-      JSON.stringify(users)
-    );
-
-    alert('Registration Successful');
-    this.router.navigate(['/login']);
   }
 }

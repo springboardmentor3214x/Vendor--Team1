@@ -21,7 +21,7 @@ def register_user(db: Session, user_data: UserCreate):
         mobile_number=user_data.mobile_number,
         password=hashed,
         role=user_data.role,
-        account_status="Pending Approval"
+        account_status="Active"
     )
 
     try:
