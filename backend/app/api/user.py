@@ -12,7 +12,15 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.get("/me", response_model=UserResponse)
-def get_profile(current_user: User = Depends(get_current_user)):
+def get_profile(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if not current_user.mobile_number and current_user.role == Roles.VENDOR:
+        from app.models.vendor import Vendor
+        vendor = db.query(Vendor).filter(Vendor.email == current_user.email).first()
+        if vendor and vendor.phone:
+            current_user.mobile_number = vendor.phone
     return current_user
 
 

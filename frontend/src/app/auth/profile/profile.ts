@@ -44,6 +44,7 @@ export class Profile implements OnInit {
     if (currentUser) {
       this.user.fullName = currentUser.fullName || '';
       this.user.email = currentUser.email || '';
+      this.user.mobile = (currentUser as any).mobileNumber || (currentUser as any).mobile || '';
       this.user.role = currentUser.role || this.authService.getUserRole() || '';
     }
 
@@ -51,7 +52,7 @@ export class Profile implements OnInit {
       next: (data) => {
         this.user.fullName = data.name || this.user.fullName;
         this.user.email    = data.email || this.user.email;
-        this.user.mobile   = data.mobile_number || '';
+        this.user.mobile   = data.mobile_number || data.phone || this.user.mobile;
         this.user.role     = data.role || this.user.role;
       },
       error: () => {}

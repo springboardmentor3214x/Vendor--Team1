@@ -23,7 +23,8 @@ export class AuthService {
           token: res.access_token,
           role: this.mapRole(res.user.role),
           fullName: res.user.name,
-          email: res.user.email
+          email: res.user.email,
+          mobileNumber: res.user.mobile_number
         };
         this.storeSession(response, !!request.rememberMe);
         return response;

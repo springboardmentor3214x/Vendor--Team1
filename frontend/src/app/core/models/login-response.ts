@@ -8,4 +8,6 @@ export interface LoginResponse {
 
   email: string;
 
+  mobileNumber?: string;
+
 }
