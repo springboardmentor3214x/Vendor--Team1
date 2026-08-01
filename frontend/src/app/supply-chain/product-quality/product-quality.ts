@@ -29,23 +29,39 @@ interface QualityEvaluationRecord {
 export class ProductQuality implements OnInit {
   evaluations: QualityEvaluationRecord[] = [];
   isLoading = true;
+
   constructor(private performanceService: PerformanceService) {}
-}
 
-const PLACEHOLDER_PRODUCT_QUALITY_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderProductQuality(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_PRODUCT_QUALITY_ROWS;
+  ngOnInit() {
+    this.loadQualityRecords();
   }
-  return rows.filter((row) => !!row);
+
+  loadQualityRecords() {
+    this.isLoading = true;
+    this.performanceService.getQualityRecords(1).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        if (res && res.length > 0) {
+          this.evaluations = res.map((q: any) => ({
+            poNumber: `PO-${1000 + (q.procurement_id || q.id)}`,
+            vendorName: `Vendor #${q.vendor_id}`,
+            inspectionDate: q.created_at ? new Date(q.created_at).toLocaleDateString() : 'N/A',
+            materialQuality: q.material_quality || 5,
+            packagingQuality: q.packaging_quality || 5,
+            quantityAccuracy: q.quantity_accuracy || 5,
+            specCompliance: q.specification_compliance || 5,
+            productDefects: q.defect_count ? `${q.defect_count} defect(s)` : 'None',
+            overallRating: q.overall_rating || 5,
+            remarks: q.remarks || 'Inspected'
+          }));
+        } else {
+          this.evaluations = [];
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.evaluations = [];
+      }
+    });
+  }
 }
