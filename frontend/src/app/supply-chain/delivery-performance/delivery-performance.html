@@ -52,43 +52,50 @@
         </div>
     </app-card>
 
-</div>
+    <div *ngIf="errorMsg"
+         style="margin-bottom: 16px; padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+        {{ errorMsg }}
+    </div>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+    <app-card [noPadding]="true">
+        <div *ngIf="isLoading" style="padding: 40px; text-align: center; color: var(--text-secondary);">
+            Loading delivery records...
+        </div>
+
+        <app-table *ngIf="!isLoading">
+            <ng-container table-header>
+                <tr>
+                    <th>Request #</th>
+                    <th>Vendor Name</th>
+                    <th>Expected Date</th>
+                    <th>Actual Date</th>
+                    <th>Delay (Days)</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let record of records">
+                    <td><strong>PR #{{ record.procurementId }}</strong></td>
+                    <td>{{ record.vendorName }}</td>
+                    <td>{{ record.expectedDate }}</td>
+                    <td>{{ record.actualDate }}</td>
+                    <td [ngStyle]="{'color': record.delayDays > 0 ? '#ff3b30' : 'inherit', 'font-weight': record.delayDays > 0 ? '600' : 'normal'}">
+                        {{ record.delayDays }}
+                    </td>
+                    <td>
+                        <span class="vrip-badge" [ngStyle]="{'background': getStatusColor(record.status) + '20', 'color': getStatusColor(record.status)}">
+                            {{ record.status }}
+                        </span>
+                    </td>
+                    <td style="color: var(--text-secondary);">{{ record.remarks }}</td>
+                </tr>
+                <tr *ngIf="records.length === 0">
+                    <td colspan="7" style="padding: 32px; text-align: center; color: var(--text-secondary);">
+                        No delivery records match the current filters.
+                    </td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
 </div>
