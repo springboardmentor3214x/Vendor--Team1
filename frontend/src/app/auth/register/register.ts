@@ -98,6 +98,7 @@ export class Register {
       name: this.user.fullName.trim(),
       email: this.user.email.trim(),
       mobile_number: this.user.mobile.trim(),
+      company_name: this.user.companyName.trim(),
       password: this.user.password,
       role: this.user.role
     };

@@ -26,6 +26,24 @@ def register_user(db: Session, user_data: UserCreate):
 
     try:
         db.add(new_user)
+        db.flush()
+
+        if user_data.role == Roles.VENDOR and user_data.company_name:
+            from app.models.vendor import Vendor
+            existing_vendor = db.query(Vendor).filter(Vendor.email == user_data.email).first()
+            if not existing_vendor:
+                new_vendor = Vendor(
+                    vendor_name=user_data.name,
+                    company_name=user_data.company_name,
+                    contact_person=user_data.name,
+                    email=user_data.email,
+                    phone=user_data.mobile_number or "0000000000",
+                    category="General Equipment",
+                    status="Active",
+                    approval_status="Approved"
+                )
+                db.add(new_vendor)
+
         db.commit()
         db.refresh(new_user)
         return new_user
