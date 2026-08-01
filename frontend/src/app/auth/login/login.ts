@@ -135,12 +135,9 @@ export class Login {
 
       },
 
-      error: () => {
-
+      error: (err) => {
         this.loading = false;
-
-        this.errorMessage = 'Invalid email or password';
-
+        this.errorMessage = err.message || err.error?.detail || 'Invalid email or password';
       }
 
     });

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -16,7 +16,7 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './register.html',
   styleUrls: ['./register.css']
 })
-export class Register {
+export class Register implements OnInit {
   loading = false;
   
   constructor(
@@ -24,6 +24,14 @@ export class Register {
     public themeService: ThemeService,
     private authService: AuthService
   ) {}
+
+  ngOnInit(): void {
+    try {
+      localStorage.removeItem('vrip_registered_users');
+    } catch (e) {
+      // Ignore storage errors
+    }
+  }
 
   user = {
     fullName: '',
