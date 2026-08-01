@@ -52,43 +52,39 @@
         </div>
     </app-card>
 
-</div>
+    <div *ngIf="summaryCards.length > 0"
+         style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <app-card *ngFor="let card of summaryCards">
+            <div style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 6px;">{{ card.label }}</div>
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">{{ card.value }}</div>
+        </app-card>
+    </div>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+    <app-card>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
+            <h3 style="margin: 0; font-size: 1.125rem; font-weight: 600;">
+                {{ selectedReportTitle }}
+            </h3>
+        </div>
+
+        <div *ngIf="errorMsg"
+             style="margin-bottom: 12px; padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+            {{ errorMsg }}
+        </div>
+
+        <div *ngIf="isLoading" style="padding: 40px; text-align: center; color: var(--text-secondary);">
+            Loading report data...
+        </div>
+
+        <div *ngIf="!isLoading && previewData.length === 0 && !errorMsg"
+             style="padding: 40px; text-align: center; color: var(--text-secondary);">
+            No records match the selected filters.
+        </div>
+
+        <app-table
+            *ngIf="!isLoading && previewData.length > 0"
+            [columns]="previewColumns"
+            [data]="previewData">
+        </app-table>
+    </app-card>
 </div>
