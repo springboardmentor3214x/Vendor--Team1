@@ -27,6 +27,11 @@ def record_delivery(db: Session, data: DeliveryPerformanceCreate):
     db.add(record)
     db.commit()
     db.refresh(record)
+    try:
+        from app.services.vendor_service import update_vendor_scores
+        update_vendor_scores(db, data.vendor_id)
+    except Exception:
+        pass
     return record
 
 
@@ -54,6 +59,11 @@ def record_quality(db: Session, data: QualityEvaluationCreate):
     db.add(record)
     db.commit()
     db.refresh(record)
+    try:
+        from app.services.vendor_service import update_vendor_scores
+        update_vendor_scores(db, data.vendor_id)
+    except Exception:
+        pass
     return record
 
 
@@ -82,6 +92,11 @@ def record_communication(db: Session, data: CommunicationLogCreate):
     db.add(record)
     db.commit()
     db.refresh(record)
+    try:
+        from app.services.vendor_service import update_vendor_scores
+        update_vendor_scores(db, data.vendor_id)
+    except Exception:
+        pass
     return record
 
 
@@ -111,6 +126,11 @@ def submit_service_rating(db: Session, data: ServiceRatingCreate):
     db.add(record)
     db.commit()
     db.refresh(record)
+    try:
+        from app.services.vendor_service import update_vendor_scores
+        update_vendor_scores(db, data.vendor_id)
+    except Exception:
+        pass
     return record
 
 
