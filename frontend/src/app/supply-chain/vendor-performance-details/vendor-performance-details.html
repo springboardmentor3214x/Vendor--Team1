@@ -15,43 +15,38 @@
          style="margin-bottom: 16px; padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
         {{ errorMsg }}
     </div>
+
+    <div *ngIf="isLoading" style="padding: 24px; color: var(--text-secondary);">Loading performance data…</div>
 </div>
 
 <div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+  <p>Sample rows shown until the API is ready.</p>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Copperfield Freight</span>
     <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
   </div>
 </div>
