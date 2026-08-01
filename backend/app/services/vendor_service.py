@@ -52,6 +52,13 @@ def delete_vendor(db: Session, vendor_id: int):
     return vendor
 
 
+def sync_user_status_by_email(db: Session, email: str, status: str):
+    from app.models.user import User
+    user = db.query(User).filter(User.email == email).first()
+    if user:
+        user.account_status = status
+
+
 def approve_vendor(db: Session, vendor_id: int, approved_by: str):
     vendor = get_vendor(db, vendor_id)
     if not vendor:
@@ -59,6 +66,7 @@ def approve_vendor(db: Session, vendor_id: int, approved_by: str):
     vendor.approval_status = "Approved"
     vendor.status = "Active"
     vendor.approved_by = approved_by
+    sync_user_status_by_email(db, vendor.email, "Active")
     db.commit()
     db.refresh(vendor)
     return vendor
@@ -71,6 +79,7 @@ def reject_vendor(db: Session, vendor_id: int, approved_by: str):
     vendor.approval_status = "Rejected"
     vendor.status = "Rejected"
     vendor.approved_by = approved_by
+    sync_user_status_by_email(db, vendor.email, "Rejected")
     db.commit()
     db.refresh(vendor)
     return vendor
@@ -81,6 +90,7 @@ def block_vendor(db: Session, vendor_id: int):
     if not vendor:
         return None
     vendor.status = "Blocked"
+    sync_user_status_by_email(db, vendor.email, "Blocked")
     db.commit()
     db.refresh(vendor)
     return vendor
@@ -91,6 +101,7 @@ def deactivate_vendor(db: Session, vendor_id: int):
     if not vendor:
         return None
     vendor.status = "Inactive"
+    sync_user_status_by_email(db, vendor.email, "Deactivated")
     db.commit()
     db.refresh(vendor)
     return vendor
@@ -103,6 +114,7 @@ def activate_vendor(db: Session, vendor_id: int):
     if vendor.approval_status != "Approved":
         return None
     vendor.status = "Active"
+    sync_user_status_by_email(db, vendor.email, "Active")
     db.commit()
     db.refresh(vendor)
     return vendor

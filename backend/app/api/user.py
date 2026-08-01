@@ -24,6 +24,15 @@ def list_users(
     return db.query(User).all()
 
 
+def sync_vendor_status_by_email(db: Session, email: str, status: str, approval_status: str = None):
+    from app.models.vendor import Vendor
+    vendor = db.query(Vendor).filter(Vendor.email == email).first()
+    if vendor:
+        vendor.status = status
+        if approval_status:
+            vendor.approval_status = approval_status
+
+
 @router.post("/{user_id}/approve")
 def approve_user(
     user_id: int,
@@ -34,8 +43,24 @@ def approve_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     user.account_status = "Active"
+    sync_vendor_status_by_email(db, user.email, "Active", "Approved")
     db.commit()
     return {"message": "User approved"}
+
+
+@router.post("/{user_id}/reject")
+def reject_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN]))
+):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user.account_status = "Rejected"
+    sync_vendor_status_by_email(db, user.email, "Rejected", "Rejected")
+    db.commit()
+    return {"message": "User rejected"}
 
 
 @router.post("/{user_id}/block")
@@ -48,6 +73,7 @@ def block_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     user.account_status = "Blocked"
+    sync_vendor_status_by_email(db, user.email, "Blocked", "Rejected")
     db.commit()
     return {"message": "User blocked"}
 
@@ -62,6 +88,7 @@ def deactivate_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     user.account_status = "Deactivated"
+    sync_vendor_status_by_email(db, user.email, "Inactive")
     db.commit()
     return {"message": "User deactivated"}
 
