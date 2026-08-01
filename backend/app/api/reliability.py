@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
+
 from app.database.connection import get_db
 from app.services import reliability_service
 from app.core.dependencies import get_current_user, role_required
@@ -10,12 +11,14 @@ from app.models.user import User
 
 router = APIRouter(prefix="/reliability", tags=["Vendor Reliability"])
 
+
 @router.get("/dashboard")
 def get_dashboard(
     db: Session = Depends(get_db),
     current_user: User = Depends(role_required(INTERNAL_ROLES))
 ):
     return reliability_service.get_reliability_dashboard(db)
+
 
 @router.get("/details/{vendor_id}")
 def get_details(
@@ -30,39 +33,40 @@ def get_details(
     return details
 
 
-def _pending_reliability_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
+@router.get("/rankings")
+def get_rankings(
+    category: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required(INTERNAL_ROLES))
+):
+    return reliability_service.get_supplier_rankings(db, category=category)
 
 
-def _pending_reliability_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+@router.get("/risk-assessment")
+def get_risk_assessment(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER, Roles.SUPPLY_CHAIN_MANAGER, Roles.AUDITOR]))
+):
+    return reliability_service.get_procurement_risk_assessment(db)
 
 
-def _pending_reliability_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
+@router.get("/trends/{vendor_id}")
+def get_trends(
+    vendor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    assert_owns(db, current_user, vendor_id, "performance trends")
+    trends = reliability_service.get_performance_trends(db, vendor_id)
+    if not trends:
+        raise HTTPException(status_code=404, detail="Vendor trends not found")
+    return trends
 
 
-def _pending_reliability_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+@router.get("/recommendations")
+def get_recommendations(
+    category: Optional[str] = Query(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN, Roles.PROCUREMENT_MANAGER, Roles.SUPPLY_CHAIN_MANAGER]))
+):
+    return reliability_service.get_procurement_recommendations(db, category=category)
