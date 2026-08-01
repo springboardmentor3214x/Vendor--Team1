@@ -21,7 +21,7 @@ def register_user(db: Session, user_data: UserCreate):
         mobile_number=user_data.mobile_number,
         password=hashed,
         role=user_data.role,
-        account_status="Active"
+        account_status="Pending Approval"
     )
 
     try:
@@ -39,8 +39,8 @@ def register_user(db: Session, user_data: UserCreate):
                     email=user_data.email,
                     phone=user_data.mobile_number or "0000000000",
                     category="General Equipment",
-                    status="Active",
-                    approval_status="Approved"
+                    status="Pending Approval",
+                    approval_status="Pending"
                 )
                 db.add(new_vendor)
 
