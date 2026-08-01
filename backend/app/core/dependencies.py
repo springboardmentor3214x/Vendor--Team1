@@ -31,6 +31,33 @@ def get_current_user(
             detail="User not found"
         )
 
+    if user.account_status == "Pending Approval":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Account waiting for admin approval"
+        )
+
+    if user.account_status == "Rejected":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Your account application has been rejected"
+        )
+
+    if user.account_status in ("Blocked", "Deactivated", "Inactive"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Your account is not active"
+        )
+
+    if user.role == "Vendor":
+        from app.models.vendor import Vendor
+        vendor = db.query(Vendor).filter(Vendor.email == user.email).first()
+        if vendor and (vendor.approval_status == "Rejected" or vendor.status in ("Rejected", "Blocked", "Inactive", "Deactivated")):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Your vendor account has been rejected or disabled"
+            )
+
     return user
 
 

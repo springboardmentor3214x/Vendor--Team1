@@ -184,7 +184,7 @@ DEFAULT_VENDOR_USERS = [
     for vendor in DEFAULT_VENDORS
 ]
 
-def seed_database(reset: bool = True):
+def seed_database(reset: bool = False):
     if reset:
         Base.metadata.drop_all(bind=engine)
 
@@ -559,4 +559,4 @@ def seed_database(reset: bool = True):
 
 
 if __name__ == "__main__":
-    seed_database(reset=True)
+    seed_database()

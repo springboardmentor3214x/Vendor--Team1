@@ -56,10 +56,25 @@ def login_user(db: Session, email: str, password: str):
     user = db.query(User).filter(User.email == email).first()
     if not user or not verify_password(password, user.password):
         return None
+
     if user.account_status == "Pending Approval":
         raise HTTPException(status_code=403, detail="Account waiting for admin approval")
-    if user.account_status in ("Blocked", "Deactivated"):
-        raise HTTPException(status_code=403, detail="Account is not active")
+
+    if user.account_status == "Rejected":
+        raise HTTPException(status_code=403, detail="Your account application has been rejected")
+
+    if user.account_status in ("Blocked", "Deactivated", "Inactive"):
+        raise HTTPException(status_code=403, detail="Your account is disabled or inactive")
+
+    if user.role == Roles.VENDOR:
+        from app.models.vendor import Vendor
+        vendor = db.query(Vendor).filter(Vendor.email == user.email).first()
+        if vendor:
+            if vendor.approval_status == "Rejected" or vendor.status == "Rejected":
+                raise HTTPException(status_code=403, detail="Your vendor account application has been rejected")
+            if vendor.status in ("Blocked", "Inactive", "Deactivated"):
+                raise HTTPException(status_code=403, detail="Your vendor account is disabled or inactive")
+
     return user
 
 
