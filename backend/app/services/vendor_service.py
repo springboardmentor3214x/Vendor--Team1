@@ -129,7 +129,8 @@ def update_vendor_scores(db: Session, vendor_id: int):
 
 
 # High-risk threshold: approved vendors whose reliability_score is below this
-HIGH_RISK_THRESHOLD = 3.0
+HIGH_RISK_THRESHOLD = 60.0
+
 
 
 def get_vendor_stats(db: Session) -> dict:

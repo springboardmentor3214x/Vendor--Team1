@@ -39,15 +39,17 @@ export class Dashboard implements OnInit {
       next: (vendors) => {
         this.loadingRecent = false;
         if (Array.isArray(vendors)) {
-          this.recentVendors = vendors.map(v => ({
-            id: v.id,
-            companyName: v.company_name,
-            category: v.category,
-            reliabilityScore: v.reliability_score
-              ? v.reliability_score.toFixed(1) + ' ⭐'
-              : '85.0 ⭐',
-            status: v.status || 'Active'
-          }));
+          this.recentVendors = vendors.map(v => {
+            const score = v.reliability_score || 0;
+            const starScore = score > 5.0 ? (score / 20).toFixed(1) : score.toFixed(1);
+            return {
+              id: v.id,
+              companyName: v.company_name,
+              category: v.category,
+              reliabilityScore: starScore + ' ⭐',
+              status: v.status || 'Active'
+            };
+          });
         } else {
           this.recentVendors = [];
         }
