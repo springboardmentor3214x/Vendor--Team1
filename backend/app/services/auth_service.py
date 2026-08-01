@@ -35,9 +35,9 @@ def register_user(db: Session, user_data: UserCreate):
                 new_vendor = Vendor(
                     vendor_name=user_data.name,
                     company_name=user_data.company_name,
-                    contact_person=user_data.name,
                     email=user_data.email,
                     phone=user_data.mobile_number or "0000000000",
+                    address="N/A",
                     category="General Equipment",
                     status="Pending Approval",
                     approval_status="Pending"
