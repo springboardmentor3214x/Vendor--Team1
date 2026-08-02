@@ -41,14 +41,46 @@ def vendor_rankings(
 ):
     return performance_service.generate_vendor_rankings(db)
 
+@router.get("/history/{vendor_id}")
+def vendor_history(
+    vendor_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    assert_owns(db, current_user, vendor_id, "performance data")
+    return performance_service.get_vendor_performance_history(db, vendor_id)
+
+@router.post("/delivery", response_model=DeliveryPerformanceResponse, status_code=201)
+def record_delivery(
+    data: DeliveryPerformanceCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required(EVALUATOR_ROLES))
+):
+    return performance_service.record_delivery(db, data)
+
+@router.get("/delivery/{vendor_id}", response_model=List[DeliveryPerformanceResponse])
+def get_delivery(vendor_id: int, db: Session = Depends(get_db),
+                 current_user: User = Depends(get_current_user)):
+    assert_owns(db, current_user, vendor_id, "delivery records")
+    return performance_service.get_delivery_records(db, vendor_id)
+
+@router.post("/quality", response_model=QualityEvaluationResponse, status_code=201)
+def record_quality(
+    data: QualityEvaluationCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required(EVALUATOR_ROLES))
+):
+    return performance_service.record_quality(db, data)
+
 
 def _pending_performance_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -58,6 +90,8 @@ def _pending_performance_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -66,8 +100,9 @@ def _pending_performance_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -77,6 +112,8 @@ def _pending_performance_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -85,15 +122,8 @@ def _pending_performance_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
-
-
-def _pending_performance_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
