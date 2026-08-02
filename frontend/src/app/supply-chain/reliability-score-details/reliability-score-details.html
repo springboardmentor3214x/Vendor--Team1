@@ -17,24 +17,32 @@
         </div>
     </div>
 
-</div>
+    <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--vrip-space-4);">Score Breakdown</h2>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--vrip-space-5); margin-bottom: var(--vrip-space-6);">
+        <app-card *ngFor="let metric of metrics" style="display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-outlined" [ngStyle]="{'color': metric.color}">{{ metric.icon }}</span>
+                    <span style="font-weight: 500;">{{ metric.label }}</span>
+                </div>
+                <div style="font-size: 1.25rem; font-weight: 600;" [ngStyle]="{'color': metric.color}">{{ metric.score }}%</div>
+            </div>
 
-<div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-  </div>
+            <div style="width: 100%; height: 8px; background: var(--vrip-gray-200); border-radius: 4px; overflow: hidden; margin-top: auto;">
+                <div [ngStyle]="{'width': metric.score + '%', 'height': '100%', 'background': metric.color}"></div>
+            </div>
+        </app-card>
+    </div>
+
+    <app-card>
+        <h3 style="margin-top: 0; margin-bottom: 16px;">System Recommendation</h3>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+            Based on the calculated Vendor Reliability Score of <strong>{{ overallScore }}%</strong>, this vendor is considered <strong>Highly Dependable</strong>.
+            They have consistently performed well across all major categories, especially in Product Quality (98%) and Contract Compliance (96%).
+            It is recommended to prioritize this vendor for future high-value purchase orders in the IT Equipment category.
+        </p>
+        <div style="margin-top: 24px;">
+            <app-button variant="primary" routerLink="/supply-chain/procurement-recommendations">View Procurement Recommendations</app-button>
+        </div>
+    </app-card>
 </div>
