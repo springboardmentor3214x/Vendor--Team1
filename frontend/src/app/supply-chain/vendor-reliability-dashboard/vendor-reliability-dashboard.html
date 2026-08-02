@@ -32,36 +32,74 @@
             <div style="font-size: 1.5rem; font-weight: 600; color: #ff3b30;">{{ summary.highRisk }}</div>
         </app-card>
     </div>
+
+    <app-card style="margin-bottom: var(--vrip-space-6);">
+        <div style="display: flex; gap: var(--vrip-space-4); align-items: center;">
+            <div style="flex: 1;">
+                <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 6px; color: var(--vrip-gray-700);">Search Vendors</label>
+                <input type="text" placeholder="Enter vendor name..." [(ngModel)]="searchText" (input)="applyFilters()"
+                       style="width: 100%; padding: 10px 12px; border: 1px solid var(--vrip-gray-300); border-radius: var(--vrip-radius-md); background: white;" />
+            </div>
+            <div style="flex: 1;">
+                <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 6px; color: var(--vrip-gray-700);">Category</label>
+                <select [(ngModel)]="categoryFilter" (change)="applyFilters()"
+                        style="width: 100%; padding: 10px 12px; border: 1px solid var(--vrip-gray-300); border-radius: var(--vrip-radius-md); background: white;">
+                    <option value="">All Categories</option>
+                    <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+                </select>
+            </div>
+            <div style="flex: 1;">
+                <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 6px; color: var(--vrip-gray-700);">Risk Level</label>
+                <select [(ngModel)]="riskFilter" (change)="applyFilters()"
+                        style="width: 100%; padding: 10px 12px; border: 1px solid var(--vrip-gray-300); border-radius: var(--vrip-radius-md); background: white;">
+                    <option value="">All Risk Levels</option>
+                    <option value="Low">Low Risk</option>
+                    <option value="Medium">Medium Risk</option>
+                    <option value="High">High Risk</option>
+                </select>
+            </div>
+            <div style="padding-top: 24px;">
+                <app-button variant="secondary" iconLeft="restart_alt" (onClick)="resetFilters()">Reset Filters</app-button>
+            </div>
+        </div>
+    </app-card>
 </div>
 
 <div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
+  <p>Awaiting the backend endpoint.</p>
   <div class="placeholder-row">
     <span>Orbit IT Systems</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Copperfield Freight</span>
+    <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
 </div>

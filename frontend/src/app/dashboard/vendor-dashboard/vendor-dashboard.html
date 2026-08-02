@@ -53,41 +53,54 @@
   </ng-container>
 </div>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
+<div class="dash-section" style="margin-bottom: 32px;">
+  <div class="dash-section-header" style="margin-bottom: 16px;">
+    <h2 class="dash-section-title">Quick Actions</h2>
   </div>
+  <div class="dash-actions-grid">
+    <a routerLink="/vendor-portal/orders" class="dash-action-card">
+      <div class="dash-action-icon icon-info"><span class="material-symbols-outlined">inventory_2</span></div>
+      <div class="dash-action-text"><h3>Purchase Orders</h3><p>Review and acknowledge new orders</p></div>
+    </a>
+    <a routerLink="/vendor-portal/contracts" class="dash-action-card">
+      <div class="dash-action-icon icon-success"><span class="material-symbols-outlined">history_edu</span></div>
+      <div class="dash-action-text"><h3>Contracts</h3><p>Sign and manage your agreements</p></div>
+    </a>
+    <a routerLink="/vendor-portal/communication" class="dash-action-card">
+      <div class="dash-action-icon icon-brand"><span class="material-symbols-outlined">forum</span></div>
+      <div class="dash-action-text"><h3>Communication</h3><p>Message procurement teams directly</p></div>
+    </a>
+  </div>
+</div>
+
+<div class="placeholder-panel">
+  <p>Sample rows shown until the API is ready.</p>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Copperfield Freight</span>
     <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
   </div>
 </div>
