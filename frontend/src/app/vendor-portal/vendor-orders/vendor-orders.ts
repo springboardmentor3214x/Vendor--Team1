@@ -16,13 +16,16 @@ export class VendorOrders implements OnInit {
   orders: any[] = [];
   loading: boolean = true;
   errorMsg: string = '';
+
   constructor(
     private procurementService: ProcurementService,
     private cdr: ChangeDetectorRef
   ) {}
+
   ngOnInit(): void {
     this.loadOrders();
   }
+
   loadOrders(): void {
     this.loading = true;
     this.errorMsg = '';
@@ -57,22 +60,27 @@ export class VendorOrders implements OnInit {
       }
     });
   }
-}
 
-const PLACEHOLDER_VENDOR_ORDERS_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderVendorOrders(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_VENDOR_ORDERS_ROWS;
+  dispatchOrder(order: any): void {
+    this.procurementService.dispatchRequest(order.id).subscribe({
+      next: () => this.loadOrders(),
+      error: (err: any) => alert('Failed to dispatch: ' + (err.error?.detail || err.message))
+    });
   }
-  return rows.filter((row) => !!row);
+
+  getBadgeVariant(status: string): 'primary' | 'danger' | 'success' | 'warning' | 'default' | 'info' {
+    switch (status) {
+      case 'Delivered':
+      case 'Completed':
+        return 'success';
+      case 'Dispatched':
+      case 'Order Placed':
+      case 'Approved':
+        return 'info';
+      case 'Pending':
+        return 'warning';
+      default:
+        return 'default';
+    }
+  }
 }
