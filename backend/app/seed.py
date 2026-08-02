@@ -341,15 +341,67 @@ DEFAULT_VENDORS = [
     },
 ]
 
+PROCUREMENT_PLAN = [
+    ("IT Laptop Fleet Refresh", "IT Department", "Rajesh Kumar", "Dell Laptops (Latitude 5540)",
+     "IT Equipment", "TechSupply India Pvt Ltd", 25, 72000.0, "High", "Completed", "Approved", 380, 355, -2),
+    ("Ergonomic Workstation Setup", "Operations", "Priya Sharma", "Office Chairs (Ergonomic)",
+     "Furniture", "OfficeMart Solutions", 50, 8500.0, "Medium", "Completed", "Approved", 340, 315, 3),
+    ("AWS Cloud Hosting Subscription", "IT Department", "Amit Patel", "AWS Cloud Credits (Annual)",
+     "Cloud Services", "CloudInfra Services", 1, 500000.0, "Critical", "Completed", "Approved", 300, 285, 0),
+    ("Construction Material Supply - Phase 1", "Logistics", "Suresh Reddy", "Steel Rods (TMT 500D)",
+     "Raw Materials", "BuildRight Materials", 200, 4500.0, "High", "Completed", "Approved", 270, 245, 4),
+    ("Core Network Infrastructure Update", "IT Department", "Rajesh Kumar", "Networking Switches (Cisco)",
+     "IT Equipment", "TechSupply India Pvt Ltd", 10, 35000.0, "High", "Delivered", "Approved", 230, 205, 0),
+    ("Office Stationery Restock Q3", "Administration", "Anita Desai", "Printer Paper (A4, 5000 sheets)",
+     "Office Supplies", "OfficeMart Solutions", 100, 350.0, "Low", "Completed", "Approved", 200, 180, 0),
+    ("Azure DevOps Licensing", "IT Department", "Amit Patel", "Azure DevOps Licenses",
+     "Software Licenses", "CloudInfra Services", 30, 12000.0, "Medium", "Delivered", "Approved", 175, 155, -1),
+    ("Reception & Meeting Room Furniture", "Administration", "Anita Desai", "Office Furniture (Modular)",
+     "Furniture", "OfficeMart Solutions", 20, 24000.0, "Medium", "Delivered", "Approved", 150, 128, -1),
+    ("Perimeter Security Upgrade", "Operations", "Mohan Iyer", "Security Cameras (IP, 4K)",
+     "IT Equipment", "TechSupply India Pvt Ltd", 40, 15500.0, "High", "Completed", "Approved", 130, 108, 1),
+    ("Data Centre Server Expansion", "IT Department", "Rajesh Kumar", "Server Hardware (Rack Mount)",
+     "IT Equipment", "TechSupply India Pvt Ltd", 6, 285000.0, "Critical", "Delivered", "Approved", 105, 82, 0),
+    ("Civil Foundation Materials", "Logistics", "Suresh Reddy", "Cement Bags (OPC 53 Grade)",
+     "Raw Materials", "BuildRight Materials", 500, 380.0, "Medium", "Delivered", "Approved", 85, 62, 6),
+    ("Warehouse Packaging Materials", "Logistics", "Mohan Iyer", "Packaging Materials (Recycled)",
+     "Packaging", "OfficeMart Solutions", 300, 220.0, "Low", "Completed", "Approved", 70, 50, 2),
+    ("Enterprise Endpoint Security Rollout", "IT Department", "Vikram Shah", "Endpoint Security Licenses",
+     "Software Licenses", "Global Vendor Solutions", 250, 3200.0, "High", "Completed", "Approved", 320, 300, -1),
+    ("Managed Print Services Hardware", "Administration", "Anita Desai", "Multifunction Printers",
+     "IT Equipment", "Global Vendor Solutions", 18, 62000.0, "Medium", "Completed", "Approved", 240, 218, 0),
+    ("Conference Room AV Upgrade", "Operations", "Mohan Iyer", "Video Conferencing Systems",
+     "IT Equipment", "Global Vendor Solutions", 12, 145000.0, "Medium", "Delivered", "Approved", 115, 95, 0),
+    ("Site Safety Equipment", "Operations", "Mohan Iyer", "Safety Equipment (Helmets & Vests)",
+     "Safety", "BuildRight Materials", 120, 950.0, "High", "Ordered", "Approved", 32, 8, None),
+    ("Facility Cleaning Supplies", "Administration", "Anita Desai", "Cleaning Supplies (Industrial)",
+     "Consumables", "OfficeMart Solutions", 150, 480.0, "Low", "Ordered", "Approved", 45, 12, None),
+    ("Annual Conference Merchandise", "Marketing", "Neha Kapoor", "Branded Merchandise Kits",
+     "Marketing", "OfficeMart Solutions", 500, 640.0, "Medium", "Ordered", "Approved", 25, 15, None),
+    ("Finance Team Workstation Upgrade", "Finance", "Vikram Shah", "Dell Laptops (Latitude 5540)",
+     "IT Equipment", "TechSupply India Pvt Ltd", 12, 72000.0, "Medium", "Approved", "Approved", 18, 30, None),
+    ("HR Onboarding Kits", "Human Resources", "Neha Kapoor", "Office Furniture (Modular)",
+     "Furniture", "OfficeMart Solutions", 15, 24000.0, "Medium", "Pending", "Pending", 9, 45, None),
+    ("Cloud Backup & DR Subscription", "IT Department", "Amit Patel", "AWS Cloud Credits (Annual)",
+     "Cloud Services", "CloudInfra Services", 1, 320000.0, "High", "Pending", "Pending", 4, 60, None),
+]
+
+EXTRA_PROCUREMENTS = [
+    ("Bulk Aggregate Purchase", "Logistics", "Suresh Reddy", "Construction Aggregates",
+     "Raw Materials", "BuildRight Materials", 800, 290.0, "Low", "Cancelled", "Rejected", 60, 30),
+    ("Marketing Collateral Redesign", "Marketing", "Neha Kapoor", "Printed Brochures",
+     "Marketing", "OfficeMart Solutions", 2000, 45.0, "Low", "Modification Required", "Modification Required", 11, 40),
+]
+
 
 def _pending_seed_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -359,8 +411,6 @@ def _pending_seed_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -369,9 +419,9 @@ def _pending_seed_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -381,8 +431,6 @@ def _pending_seed_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -391,9 +439,9 @@ def _pending_seed_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -403,8 +451,6 @@ def _pending_seed_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -413,9 +459,9 @@ def _pending_seed_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -425,8 +471,6 @@ def _pending_seed_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -435,9 +479,9 @@ def _pending_seed_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -447,6 +491,16 @@ def _pending_seed_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
+
+
+def _pending_seed_rows_6(items):
+    rows = []
+    for item in items:
+        rows.append({
+            "id": getattr(item, "id", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
+        })
+    return rows
