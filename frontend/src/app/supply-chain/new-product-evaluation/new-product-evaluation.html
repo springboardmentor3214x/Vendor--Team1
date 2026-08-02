@@ -10,36 +10,108 @@
             <p class="vrip-page-subtitle">Submit a quality evaluation for received items.</p>
         </div>
     </div>
-</div>
 
-<div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-  </div>
+    <div class="form-layout">
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">inventory_2</span> Order Details</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Procurement Request / Item *</label>
+                    <select class="vrip-select" [(ngModel)]="evaluation.procurementId" [disabled]="loadingProcurements">
+                        <option [ngValue]="null">
+                            {{ loadingProcurements ? 'Loading delivered orders...' : 'Select a delivered order' }}
+                        </option>
+                        <option *ngFor="let p of procurements" [ngValue]="p.id">{{ p.label }}</option>
+                    </select>
+                    <small *ngIf="!loadingProcurements && procurements.length === 0" style="color: var(--text-secondary);">
+                        No delivered or completed orders are available to evaluate yet.
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label>Inspection Date *</label>
+                    <app-input type="date" [(ngModel)]="evaluation.inspectionDate"></app-input>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">fact_check</span> Quality Metrics</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Material Quality (1-5)</label>
+                    <select class="vrip-select" [(ngModel)]="evaluation.materialQuality">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Packaging Quality (1-5)</label>
+                    <select class="vrip-select" [(ngModel)]="evaluation.packagingQuality">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity Accuracy (1-5)</label>
+                    <select class="vrip-select" [(ngModel)]="evaluation.quantityAccuracy">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Specification Compliance (1-5)</label>
+                    <select class="vrip-select" [(ngModel)]="evaluation.specCompliance">
+                        <option [value]="1">1 - Poor</option>
+                        <option [value]="2">2 - Fair</option>
+                        <option [value]="3">3 - Good</option>
+                        <option [value]="4">4 - Very Good</option>
+                        <option [value]="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Defect Count</label>
+                    <input type="number" min="0" class="vrip-select" [(ngModel)]="evaluation.defectCount"
+                           style="width: 100%; padding: 9px 12px; border-radius: 6px; border: 1px solid var(--border-color);" />
+                </div>
+            </div>
+        </app-card>
+
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">notes</span> Additional Information</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Remarks</label>
+                    <textarea class="vrip-textarea" rows="4" placeholder="Any additional comments on the quality..." [(ngModel)]="evaluation.remarks"></textarea>
+                </div>
+            </div>
+        </app-card>
+
+        <div *ngIf="formError" class="error-box">
+            <span class="material-symbols-outlined">error</span>
+            <span>{{ formError }}</span>
+        </div>
+
+        <div class="form-actions">
+            <app-button variant="outline" (click)="cancel()">Cancel</app-button>
+            <app-button variant="primary" iconLeft="check_circle" [disabled]="submitting" (click)="submitEvaluation()">
+                {{ submitting ? 'Saving...' : 'Submit Evaluation' }}
+            </app-button>
+        </div>
+    </div>
 </div>
