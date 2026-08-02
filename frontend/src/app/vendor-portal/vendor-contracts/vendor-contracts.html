@@ -1,31 +1,74 @@
 <div class="page-container">
-    <div class="page-vrip-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+    <div class="vrip-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--v-6, 24px);">
         <div>
-            <h1 class="vrip-page-title">Contracts</h1>
-            <p>Manage your legal agreements and documentation.</p>
+            <h1 class="vrip-page-title">Contracts & Agreements</h1>
+            <p class="vrip-page-subtitle">Manage legal agreements, terms, and documentation.</p>
         </div>
-        <app-button variant="primary" iconLeft="upload_file" (onClick)="upload()">Upload Document</app-button>
+        <div style="display: flex; gap: 10px;">
+            <app-button variant="outline" iconLeft="refresh" (onClick)="loadContracts()">Refresh</app-button>
+            <app-button variant="primary" iconLeft="upload_file" (onClick)="upload()">Upload Contract</app-button>
+        </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: var(--vrip-space-6);">
-        <app-card *ngFor="let contract of contracts">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-                <div style="display: flex; gap: 12px; align-items: center;">
-                    <span class="material-symbols-outlined" style="font-size: 32px; color: #ff3b30;">picture_as_pdf</span>
-                    <div>
-                        <h3 style="margin: 0 0 4px 0; font-size: 1rem;">{{ contract.name }}</h3>
-                        <span style="font-size: 0.75rem; color: var(--text-secondary);">Uploaded: {{ contract.date }}</span>
+    <!-- Contract Cards Grid -->
+    <div *ngIf="loading" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+        <div *ngFor="let _ of [1,2,3]" class="vrip-stat-card" style="min-height: 160px; justify-content: space-between;">
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <div class="skeleton-cell" style="width: 40px; height: 40px; border-radius: 8px;"></div>
+                <div style="flex: 1;">
+                    <div class="skeleton-cell" style="width: 140px; height: 18px; margin-bottom: 6px;"></div>
+                    <div class="skeleton-cell" style="width: 90px; height: 14px;"></div>
+                </div>
+            </div>
+            <div class="skeleton-cell" style="width: 100%; height: 24px;"></div>
+        </div>
+    </div>
+
+    <div *ngIf="!loading && errorMsg" style="padding: 30px; text-align: center; background: white; border-radius: 12px; border: 1px solid var(--v-border);">
+        <span class="material-symbols-outlined" style="font-size: 36px; color: var(--v-danger); margin-bottom: 8px;">error</span>
+        <p style="color: var(--v-danger); font-weight: 500; margin-bottom: 12px;">{{ errorMsg }}</p>
+        <app-button variant="outline" size="sm" (onClick)="loadContracts()">Retry</app-button>
+    </div>
+
+    <div *ngIf="!loading && !errorMsg">
+        <div *ngIf="contracts.length > 0" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px;">
+            <div *ngFor="let contract of contracts" class="vrip-stat-card" style="display: flex; flex-direction: column; justify-content: space-between; gap: 16px;">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <div style="width: 42px; height: 42px; border-radius: 8px; background: var(--v-brand-light, #ebe9fe); display: flex; align-items: center; justify-content: center; color: var(--v-brand, #635bff);">
+                            <span class="material-symbols-outlined">description</span>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 0.95rem; font-weight: 600; color: var(--v-text-primary); text-transform: none; letter-spacing: normal;">{{ contract.title }}</h3>
+                            <span style="font-size: 0.775rem; color: var(--v-text-secondary);">{{ contract.vendorName }}</span>
+                        </div>
+                    </div>
+                    <app-badge [variant]="getBadgeVariant(contract.status)">
+                        {{ contract.status }}
+                    </app-badge>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.8125rem; color: var(--v-text-secondary); background: var(--v-bg-inset, #f8fafc); padding: 12px; border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Value:</span>
+                        <strong style="color: var(--v-text-primary);">${{ contract.value | number:'1.2-2' }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Valid:</span>
+                        <span>{{ contract.startDate }} – {{ contract.endDate }}</span>
                     </div>
                 </div>
-                <span class="vrip-badge" [ngStyle]="{'background': contract.status === 'Active' ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 59, 48, 0.1)', 'color': contract.status === 'Active' ? '#34c759' : '#ff3b30'}">
-                    {{ contract.status }}
-                </span>
+
+                <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                    <app-button variant="outline" size="sm" iconLeft="download">Download</app-button>
+                </div>
             </div>
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 16px;">
-                <span style="font-size: 0.875rem; color: var(--text-secondary);">Valid till: {{ contract.expiry }}</span>
-                <app-button variant="outline" size="sm" iconLeft="download" (onClick)="download()">Download</app-button>
-            </div>
-        </app-card>
+        </div>
+
+        <div *ngIf="contracts.length === 0" style="padding: 40px; text-align: center; background: white; border-radius: 12px; border: 1px solid var(--v-border);">
+            <span class="material-symbols-outlined" style="font-size: 42px; color: var(--v-text-tertiary); margin-bottom: 8px;">description</span>
+            <p style="color: var(--v-text-secondary); font-weight: 500;">No contracts uploaded yet.</p>
+            <app-button variant="primary" size="sm" style="margin-top: 12px;" (onClick)="upload()">Upload First Contract</app-button>
+        </div>
     </div>
 </div>

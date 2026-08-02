@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from typing import Optional

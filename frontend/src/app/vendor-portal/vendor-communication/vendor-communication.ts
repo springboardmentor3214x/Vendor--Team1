@@ -1,24 +1,66 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { Card } from '../../ui/card/card';
 import { Button } from '../../ui/button/button';
-import { InputComponent } from '../../ui/input/input';
-import { Table } from '../../ui/table/table';
 
 @Component({
   selector: 'app-vendor-communication',
   standalone: true,
-  imports: [CommonModule, Card, Button, InputComponent, Table, FormsModule],
+  imports: [CommonModule, FormsModule, Card, Button],
   templateUrl: './vendor-communication.html',
   styleUrls: ['./vendor-communication.css']
 })
-export class VendorCommunication {
-  newMessage = "";
-  messages: any[] = [
-    { sender: 'Vendor', content: 'Can we get an extension on the delivery deadline for PO-1024?', timestamp: '10:30 AM', isVendor: true },
-    { sender: 'Procurement Manager', content: 'Let me check with the production team and get back to you.', timestamp: '11:15 AM', isVendor: false }
-  ];
-  newChat() { alert("New chat started"); }
-  sendMessage() { if(this.newMessage) { this.messages.push({id: 3, sender: "You", role: "Vendor", content: this.newMessage, time: "Just now", isSelf: true }); this.newMessage = ""; } }
+export class VendorCommunication implements OnInit {
+  messages: any[] = [];
+  newMessage: string = '';
+  loading: boolean = true;
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.loadMessages();
+  }
+
+  loadMessages(): void {
+    this.loading = true;
+    this.http.get<any[]>('/communications/').subscribe({
+      next: (data) => {
+        this.loading = false;
+        if (Array.isArray(data)) {
+          this.messages = data.map(m => ({
+            id: m.id,
+            sender: m.sender || m.sender_name || 'User',
+            content: m.message || m.content || '',
+            timestamp: m.sent_at ? new Date(m.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now',
+            isSelf: m.sender === 'Vendor' || m.sender === 'Vendor User'
+          }));
+        } else {
+          this.messages = [];
+        }
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error('Failed to load messages', err);
+      }
+    });
+  }
+
+  sendMessage(): void {
+    if (!this.newMessage.trim()) return;
+    const content = this.newMessage.trim();
+    this.newMessage = '';
+
+    const payload = {
+      vendor_id: 1,
+      sender: 'Vendor User',
+      message: content
+    };
+
+    this.http.post('/communications/', payload).subscribe({
+      next: () => this.loadMessages(),
+      error: (err) => alert('Failed to send message: ' + (err.error?.detail || err.message))
+    });
+  }
 }

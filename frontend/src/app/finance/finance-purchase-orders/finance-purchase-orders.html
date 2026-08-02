@@ -1,47 +1,85 @@
 <div class="page-container">
-    <div class="page-vrip-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--vrip-space-6);">
+    <div class="vrip-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--v-6, 24px);">
         <div>
-            <h1 class="vrip-page-title">Financial Purchase Orders</h1>
-            <p>Review and approve POs for budget alignment.</p>
+            <h1 class="vrip-page-title">Finance Purchase Orders</h1>
+            <p class="vrip-page-subtitle">Track financial commitments, budgets, and PO approvals.</p>
         </div>
-        <div style="display: flex; gap: 8px;">
-            <app-button variant="outline" iconLeft="filter_list" (onClick)="filter()">Filter</app-button>
-            <app-button variant="primary" iconLeft="download" (onClick)="export()">Export Report</app-button>
-        </div>
+        <app-button variant="outline" iconLeft="refresh" (onClick)="loadOrders()">Refresh</app-button>
     </div>
 
     <app-card [noPadding]="true">
-        <app-table>
-            <ng-container table-header>
-                <tr>
-                    <th>PO Number</th>
-                    <th>Department</th>
-                    <th>Vendor</th>
-                    <th>Budget Code</th>
-                    <th>Total Amount</th>
-                    <th>Finance Status</th>
-                    <th style="text-align: right;">Action</th>
-                </tr>
-            </ng-container>
-            <ng-container table-body>
-                <tr *ngFor="let order of orders">
-                    <td><strong>{{ order.poNumber }}</strong></td>
-                    <td>{{ order.dept }}</td>
-                    <td>{{ order.vendor }}</td>
-                    <td><code>{{ order.budgetCode }}</code></td>
-                    <td>{{ order.amount | currency:'USD':'symbol':'1.2-2' }}</td>
-                    <td>
-                        <span class="vrip-badge" 
-                              [ngStyle]="{'background': order.status === 'Approved' ? 'rgba(52, 199, 89, 0.1)' : 'rgba(59, 130, 246, 0.1)', 
-                                          'color': order.status === 'Approved' ? '#34c759' : '#3b82f6'}">
-                            {{ order.status }}
-                        </span>
-                    </td>
-                    <td style="text-align: right;">
-                        <app-button variant="outline" size="sm" (onClick)="viewPO()">Review</app-button>
-                    </td>
-                </tr>
-            </ng-container>
-        </app-table>
+        <div class="vrip-table-wrapper" style="overflow-x: auto; width: 100%;">
+            <table class="vrip-table" style="min-width: 800px; width: 100%;">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">PO Number</th>
+                        <th style="min-width: 180px;">Item Description</th>
+                        <th style="width: 110px;">Quantity</th>
+                        <th style="width: 140px;">Total Amount</th>
+                        <th style="width: 130px;">Status</th>
+                        <th style="width: 150px; text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loading Skeleton -->
+                    <ng-container *ngIf="loading">
+                        <tr *ngFor="let _ of [1,2,3,4]" class="vrip-table-row">
+                            <td><div class="skeleton-cell" style="width: 90px; height: 16px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 140px; height: 16px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 60px; height: 16px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 90px; height: 16px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 80px; height: 20px; border-radius: 99px;"></div></td>
+                            <td style="text-align: right;"><div class="skeleton-cell" style="width: 90px; height: 28px; margin-left: auto;"></div></td>
+                        </tr>
+                    </ng-container>
+
+                    <!-- Error State -->
+                    <tr *ngIf="!loading && errorMsg">
+                        <td colspan="6" class="vrip-table-empty">
+                            <div class="empty-state">
+                                <span class="material-symbols-outlined empty-icon" style="color: var(--v-danger, #ef4444);">error</span>
+                                <p style="color: var(--v-danger, #ef4444); font-weight: 500;">{{ errorMsg }}</p>
+                                <app-button variant="outline" size="sm" (onClick)="loadOrders()">Retry</app-button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Data Rows -->
+                    <ng-container *ngIf="!loading && !errorMsg">
+                        <tr *ngFor="let order of orders" class="vrip-table-row">
+                            <td><strong>{{ order.poNumber }}</strong></td>
+                            <td><span style="font-weight: 500;">{{ order.itemName }}</span></td>
+                            <td>{{ order.quantity }} units</td>
+                            <td><strong>${{ order.amount | number:'1.2-2' }}</strong></td>
+                            <td>
+                                <app-badge [variant]="getBadgeVariant(order.status)">
+                                    {{ order.status }}
+                                </app-badge>
+                            </td>
+                            <td style="text-align: right; white-space: nowrap;">
+                                <app-button
+                                    *ngIf="order.status === 'Delivered'"
+                                    variant="success" size="sm" iconLeft="check_circle"
+                                    (onClick)="completePO(order)">
+                                    Complete Payment
+                                </app-button>
+                                <span *ngIf="order.status !== 'Delivered'" class="v-muted" style="font-size: 0.75rem;">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr *ngIf="orders.length === 0">
+                            <td colspan="6" class="vrip-table-empty">
+                                <div class="empty-state">
+                                    <span class="material-symbols-outlined empty-icon">receipt_long</span>
+                                    <p>No purchase orders found.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
     </app-card>
 </div>
