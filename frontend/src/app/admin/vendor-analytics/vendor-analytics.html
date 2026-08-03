@@ -26,36 +26,45 @@
         <span class="material-symbols-outlined" style="font-size: 3rem; opacity: 0.5;">insights</span>
         <p style="margin-top: 12px;">Select a vendor above to view their analytics.</p>
     </div>
+
+    <div *ngIf="loading" style="text-align: center; padding: 48px; color: var(--text-secondary);">Loading vendor analytics…</div>
 </div>
 
 <div class="placeholder-panel">
-  <p>Sample rows shown until the API is ready.</p>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-  </div>
+  <p>Live data is not connected yet.</p>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Copperfield Freight</span>
     <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Northwind Steel</span>
     <span>Active</span>
+    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Orbit IT Systems</span>
+    <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
 </div>

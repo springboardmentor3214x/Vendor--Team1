@@ -393,15 +393,47 @@ EXTRA_PROCUREMENTS = [
      "Marketing", "OfficeMart Solutions", 2000, 45.0, "Low", "Modification Required", "Modification Required", 11, 40),
 ]
 
+VENDOR_PROFILE = {
+    "CloudInfra Services": {
+        "quality": (5, 5, 5, 5), "defects": 0, "rating": 5.0, "response_hours": 1.5,
+        "service": (5, 5, 5, 4, 5, 5), "service_rating": 4.8,
+        "quality_note": "Flawless provisioning; all entitlements activated ahead of schedule.",
+        "service_note": "Outstanding partner — proactive updates and rapid escalation handling.",
+    },
+    "Global Vendor Solutions": {
+        "quality": (5, 4, 5, 5), "defects": 0, "rating": 4.6, "response_hours": 2.5,
+        "service": (5, 4, 5, 4, 4, 5), "service_rating": 4.5,
+        "quality_note": "Complete consignment received in specification with sealed packaging.",
+        "service_note": "Dependable delivery partner with clear documentation.",
+    },
+    "TechSupply India Pvt Ltd": {
+        "quality": (5, 4, 5, 4), "defects": 1, "rating": 4.4, "response_hours": 3.0,
+        "service": (4, 4, 5, 4, 4, 4), "service_rating": 4.2,
+        "quality_note": "All units functional; one carton showed minor transit scuffing.",
+        "service_note": "Reliable IT hardware vendor with competitive pricing and good paperwork.",
+    },
+    "OfficeMart Solutions": {
+        "quality": (4, 3, 5, 4), "defects": 2, "rating": 3.8, "response_hours": 6.0,
+        "service": (4, 3, 4, 4, 3, 4), "service_rating": 3.7,
+        "quality_note": "Acceptable quality; two items required on-site adjustment after delivery.",
+        "service_note": "Decent service overall — response times could be faster during peak periods.",
+    },
+    "BuildRight Materials": {
+        "quality": (4, 3, 4, 3), "defects": 3, "rating": 3.2, "response_hours": 18.0,
+        "service": (3, 3, 3, 3, 2, 3), "service_rating": 2.9,
+        "quality_note": "Material grade verified, but consignment arrived short and required a top-up load.",
+        "service_note": "Frequent schedule slippage and slow responses to written queries.",
+    },
+}
+
 
 def _pending_seed_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -411,6 +443,10 @@ def _pending_seed_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -419,9 +455,8 @@ def _pending_seed_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -431,6 +466,10 @@ def _pending_seed_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -439,9 +478,8 @@ def _pending_seed_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -451,6 +489,10 @@ def _pending_seed_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -459,9 +501,8 @@ def _pending_seed_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -471,6 +512,10 @@ def _pending_seed_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -479,9 +524,8 @@ def _pending_seed_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -491,16 +535,8 @@ def _pending_seed_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
-
-
-def _pending_seed_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
