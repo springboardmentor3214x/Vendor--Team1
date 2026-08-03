@@ -28,22 +28,77 @@ export class DeliveryPerformance implements OnInit {
   vendorFilter = 'All';
   statusFilter = 'All';
   vendorNames: string[] = [];
+  constructor(
+    private performanceService: PerformanceService,
+    private vendorService: VendorService
+  ) {}
+  ngOnInit(): void {
+    this.performanceService.getDashboardStats().subscribe({
+      next: (data) => this.dashboard = data || {},
+      error: () => this.dashboard = {}
+    });
+    this.loadDeliveryRecords();
+  }
+  loadDeliveryRecords(): void {
+    this.isLoading = true;
+    this.errorMsg = '';
+
+    this.vendorService.loadVendors().subscribe({
+      next: (vendors) => {
+        const approved = (vendors || []).filter(v => v.approvalStatus === 'Approved');
+        this.vendorNames = approved.map(v => v.companyName).sort();
+
+        if (approved.length === 0) {
+          this.isLoading = false;
+          this.allRecords = [];
+          this.records = [];
+          return;
+        }
+
+        forkJoin(
+          approved.map(v =>
+            this.performanceService.getDeliveryRecords(v.id).pipe(
+              map(rows => (rows || []).map(r => this.toRow(r, v.companyName))),
+              catchError(() => of([] as any[]))
+            )
+          )
+        ).subscribe({
+          next: (grouped) => {
+            this.isLoading = false;
+            this.allRecords = grouped
+              .flat()
+              .sort((a, b) => (b.actualDateRaw || '').localeCompare(a.actualDateRaw || ''));
+            this.applyFilters();
+          },
+          error: () => {
+            this.isLoading = false;
+            this.errorMsg = 'Could not load delivery records.';
+          }
+        });
+      },
+      error: () => {
+        this.isLoading = false;
+        this.errorMsg = 'Could not load vendors.';
+      }
+    });
+  }
 }
 
 const PLACEHOLDER_DELIVERY_PERFORMANCE_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
+  { id: 1, name: 'Delta Logistics', status: 'Under Review' },
+  { id: 2, name: 'Ashcroft Maintenance', status: 'Inactive' },
+  { id: 3, name: 'Harborline Equipment', status: 'Active' },
+  { id: 4, name: 'Vertex Services', status: 'Pending Approval' },
+  { id: 5, name: 'Ironvale Supplies', status: 'Under Review' },
+  { id: 6, name: 'Copperfield Freight', status: 'Inactive' },
+  { id: 7, name: 'Northwind Steel', status: 'Active' },
+  { id: 8, name: 'Orbit IT Systems', status: 'Pending Approval' },
 ];
 
 function usePlaceholderDeliveryPerformance(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_DELIVERY_PERFORMANCE_ROWS;
-  }
-  return rows.filter((row) => !!row);
+  const source = rows && rows.length ? rows : PLACEHOLDER_DELIVERY_PERFORMANCE_ROWS;
+  return source.map((row) => ({
+    ...row,
+    status: row.status || 'Pending',
+  }));
 }
