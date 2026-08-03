@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 28 Jul - Create the vendor ranking screen with score column
 - 29 Jul - Add the vendor communication screen with message thread
 - 30 Jul - Add the vendor orders screen with delivery dates
 - 31 Jul - Rework invoice totals in the finance dashboard screen
 - 01 Aug - Extend the procurement risk dashboard screen with risk level tiles
 - 02 Aug - Extend the vendor performance screen with score breakdown
+- 03 Aug - Extend the admin dashboard screen with user counts
