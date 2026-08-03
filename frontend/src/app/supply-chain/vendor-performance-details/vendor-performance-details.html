@@ -17,36 +17,161 @@
     </div>
 
     <div *ngIf="isLoading" style="padding: 24px; color: var(--text-secondary);">Loading performance data…</div>
-</div>
 
-<div class="placeholder-panel">
-  <p>Sample rows shown until the API is ready.</p>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
+    <div *ngIf="!isLoading && !errorMsg">
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--vrip-space-4); margin-bottom: var(--vrip-space-6);">
+            <app-card>
+                <h3 style="margin-top: 0; margin-bottom: 8px; color: var(--text-secondary); font-size: 0.875rem;">Overall Score</h3>
+                <div style="font-size: 2rem; font-weight: 700;">{{ metrics.overall_performance_score }}<span style="font-size: 1rem; color: var(--text-secondary);">/100</span></div>
+            </app-card>
+            <app-card>
+                <h3 style="margin-top: 0; margin-bottom: 8px; color: var(--text-secondary); font-size: 0.875rem;">Delivery Score</h3>
+                <div style="font-size: 2rem; font-weight: 700;">{{ metrics.delivery_score }}</div>
+                <div style="color: var(--text-secondary); font-size: 0.75rem;">{{ metrics.on_time_rate }}% on time</div>
+            </app-card>
+            <app-card>
+                <h3 style="margin-top: 0; margin-bottom: 8px; color: var(--text-secondary); font-size: 0.875rem;">Quality Score</h3>
+                <div style="font-size: 2rem; font-weight: 700;">{{ metrics.quality_score }}</div>
+                <div style="color: var(--text-secondary); font-size: 0.75rem;">Avg rating {{ metrics.avg_quality_rating }}/5</div>
+            </app-card>
+            <app-card>
+                <h3 style="margin-top: 0; margin-bottom: 8px; color: var(--text-secondary); font-size: 0.875rem;">Service Score</h3>
+                <div style="font-size: 2rem; font-weight: 700;">{{ metrics.service_score }}</div>
+                <div style="color: var(--text-secondary); font-size: 0.75rem;">Avg rating {{ metrics.avg_service_rating }}/5</div>
+            </app-card>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--vrip-space-6); margin-bottom: var(--vrip-space-6);">
+
+            <app-card>
+                <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 1.125rem;">Delivery Performance</h3>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Total deliveries</span><strong>{{ metrics.total_deliveries }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>On time</span><strong style="color: #34c759;">{{ metrics.on_time_deliveries }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Early</span><strong>{{ metrics.early_deliveries }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Delayed</span><strong style="color: #ff3b30;">{{ metrics.delayed_deliveries }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Average delay</span><strong>{{ metrics.avg_delay_days | number:'1.0-2' }} days</strong>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.875rem;">
+                            <span>On-time rate</span><strong>{{ metrics.on_time_rate }}%</strong>
+                        </div>
+                        <div style="width: 100%; height: 8px; background: var(--vrip-gray-200); border-radius: 4px; overflow: hidden;">
+                            <div [ngStyle]="{'width': metrics.on_time_rate + '%', 'background': '#3b82f6', 'height': '100%'}"></div>
+                        </div>
+                    </div>
+                </div>
+            </app-card>
+
+            <div style="display: flex; flex-direction: column; gap: var(--vrip-space-6);">
+                <app-card>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 style="margin: 0; font-size: 1.125rem;">Quality &amp; Service Rating</h3>
+                        <div style="display: flex; color: #ffcc00; font-size: 24px;">
+                            <span class="material-symbols-outlined" *ngFor="let star of [1,2,3,4,5]" [ngStyle]="{'font-variation-settings': star <= vendor.rating ? '&quot;FILL&quot; 1' : '&quot;FILL&quot; 0'}">star</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.875rem;">
+                            <span>Product Quality Score</span>
+                            <strong>{{ metrics.avg_quality_rating }} / 5.0</strong>
+                        </div>
+                        <div style="width: 100%; height: 8px; background: var(--vrip-gray-200); border-radius: 4px; overflow: hidden;">
+                            <div [ngStyle]="{'width': (metrics.avg_quality_rating/5*100) + '%', 'background': '#34c759', 'height': '100%'}"></div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 12px; font-size: 0.875rem; color: var(--text-secondary);">
+                        Defect rate: {{ metrics.defect_rate }} per evaluation
+                    </div>
+                </app-card>
+
+                <app-card>
+                    <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 1.125rem;">Communication Tracking</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--vrip-gray-50); border-radius: 8px; margin-bottom: 8px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="material-symbols-outlined" style="color: #3b82f6;">forum</span>
+                            <span style="font-weight: 500;">Avg Response Time</span>
+                        </div>
+                        <strong>{{ metrics.avg_response_hours | number:'1.0-2' }} Hours</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--vrip-gray-50); border-radius: 8px; margin-bottom: 8px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="material-symbols-outlined" style="color: #8b5cf6;">mark_email_read</span>
+                            <span style="font-weight: 500;">Response Rate</span>
+                        </div>
+                        <strong>{{ metrics.response_rate }}%</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--vrip-gray-50); border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="material-symbols-outlined" style="color: #ff9500;">build</span>
+                            <span style="font-weight: 500;">Issue Resolution Rating</span>
+                        </div>
+                        <strong>{{ metrics.avg_issue_resolution }} / 5.0</strong>
+                    </div>
+                </app-card>
+            </div>
+        </div>
+
+        <app-card [noPadding]="true">
+            <div style="padding: 20px 24px; border-bottom: 1px solid var(--border-color);">
+                <h3 style="margin: 0; font-size: 1.125rem;">Performance History</h3>
+            </div>
+            <app-table>
+                <ng-container table-header>
+                    <tr>
+                        <th>PO Number</th>
+                        <th>Request</th>
+                        <th>Item</th>
+                        <th>Date</th>
+                        <th>Delivery Status</th>
+                        <th>Quality</th>
+                        <th>Service Rating</th>
+                    </tr>
+                </ng-container>
+                <ng-container table-body>
+                    <tr *ngFor="let row of history">
+                        <td><strong>{{ row.poNumber }}</strong></td>
+                        <td>{{ row.requestNumber }}</td>
+                        <td>{{ row.itemName }}</td>
+                        <td>{{ row.date ? (row.date | date:'dd MMM yyyy') : '—' }}</td>
+                        <td>
+                            <span class="vrip-badge"
+                                  [ngStyle]="{'background': isOnTime(row.deliveryStatus) ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 59, 48, 0.1)',
+                                              'color': isOnTime(row.deliveryStatus) ? '#34c759' : '#ff3b30'}">
+                                {{ row.deliveryStatus }}
+                            </span>
+                            <span *ngIf="row.delayDays" style="font-size: 0.75rem; color: var(--text-secondary); margin-left: 6px;">
+                                +{{ row.delayDays }}d
+                            </span>
+                        </td>
+                        <td>
+                            <span *ngIf="row.qualityRating !== null"><strong>{{ row.qualityRating }}</strong>/5</span>
+                            <span *ngIf="row.qualityRating === null" style="color: var(--text-secondary);">Not evaluated</span>
+                        </td>
+                        <td>
+                            <div *ngIf="row.serviceRating !== null" style="display: flex; color: #ffcc00; font-size: 16px;">
+                                <span class="material-symbols-outlined" *ngFor="let star of [1,2,3,4,5]" [ngStyle]="{'font-variation-settings': star <= stars(row.serviceRating) ? '&quot;FILL&quot; 1' : '&quot;FILL&quot; 0'}">star</span>
+                            </div>
+                            <span *ngIf="row.serviceRating === null" style="color: var(--text-secondary);">Not rated</span>
+                        </td>
+                    </tr>
+                    <tr *ngIf="history.length === 0">
+                        <td colspan="7" style="text-align: center; padding: 24px; color: var(--text-secondary);">
+                            No performance records have been captured for this vendor yet.
+                        </td>
+                    </tr>
+                </ng-container>
+            </app-table>
+        </app-card>
+    </div>
 </div>
