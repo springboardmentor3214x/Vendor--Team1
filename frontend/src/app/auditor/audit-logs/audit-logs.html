@@ -16,32 +16,56 @@
         </div>
     </div>
 
-</div>
+    <div *ngIf="errorMsg"
+         style="margin-bottom: 16px; padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+        {{ errorMsg }}
+    </div>
 
-<div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-  </div>
+    <app-card [noPadding]="true">
+        <div style="padding: 12px 20px; border-bottom: 1px solid var(--border-color); font-size: 0.875rem; color: var(--text-secondary);">
+            Showing {{ logs.length }} log entr{{ logs.length === 1 ? 'y' : 'ies' }}
+        </div>
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Module</th>
+                    <th>Action</th>
+                    <th>Related Record</th>
+                    <th>IP Address</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <ng-container *ngIf="loading">
+                    <tr *ngFor="let _ of [1,2,3,4]">
+                        <td><div class="skeleton-cell" style="width: 140px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 110px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 90px;"></div></td>
+                        <td><div class="skeleton-badge"></div></td>
+                        <td><div class="skeleton-cell" style="width: 130px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 100px;"></div></td>
+                    </tr>
+                </ng-container>
+                <ng-container *ngIf="!loading">
+                    <tr *ngFor="let log of logs">
+                        <td style="font-size: 0.875rem; color: var(--text-secondary); white-space: nowrap;">{{ log.timestamp }}</td>
+                        <td>
+                            <div style="font-weight: 500;">{{ log.user }}</div>
+                            <div *ngIf="log.details" style="font-size: 0.75rem; color: var(--text-secondary);">{{ log.details }}</div>
+                        </td>
+                        <td>{{ log.module }}</td>
+                        <td><span class="vrip-badge" style="background: var(--vrip-gray-100); color: var(--text-primary);">{{ log.action }}</span></td>
+                        <td>{{ log.entity }}</td>
+                        <td style="font-family: monospace; font-size: 0.875rem; color: var(--text-secondary);">{{ log.ip }}</td>
+                    </tr>
+                    <tr *ngIf="logs.length === 0">
+                        <td colspan="6" style="padding: 32px; text-align: center; color: var(--text-secondary);">
+                            No activity logs match the current filters.
+                        </td>
+                    </tr>
+                </ng-container>
+            </ng-container>
+        </app-table>
+    </app-card>
 </div>
