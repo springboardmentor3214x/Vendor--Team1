@@ -4,36 +4,102 @@
         <p>Assess and mitigate risks associated with your suppliers.</p>
     </div>
 
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--vrip-space-6); margin-bottom: var(--vrip-space-6);">
+        <app-card>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h3 style="margin: 0;">Risk Distribution</h3>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.875rem;">
+                        <span>Low Risk Vendors</span>
+                        <strong>65%</strong>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: var(--vrip-gray-200); border-radius: 4px; overflow: hidden;">
+                        <div style="width: 65%; height: 100%; background: #34c759;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.875rem;">
+                        <span>Medium Risk Vendors</span>
+                        <strong>25%</strong>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: var(--vrip-gray-200); border-radius: 4px; overflow: hidden;">
+                        <div style="width: 25%; height: 100%; background: #ffcc00;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.875rem;">
+                        <span>High Risk Vendors</span>
+                        <strong>10%</strong>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: var(--vrip-gray-200); border-radius: 4px; overflow: hidden;">
+                        <div style="width: 10%; height: 100%; background: #ff3b30;"></div>
+                    </div>
+                </div>
+            </div>
+        </app-card>
+
+        <app-card [noPadding]="true">
+             <div style="padding: 20px 24px; border-bottom: 1px solid var(--border-color);">
+                <h3 style="margin: 0;">High Risk Alerts</h3>
+            </div>
+            <div style="padding: 0;">
+                <div style="padding: 16px 24px; border-bottom: 1px solid var(--border-color); display: flex; gap: 16px; align-items: center;">
+                    <span class="material-symbols-outlined" style="color: #ff3b30;">warning</span>
+                    <div>
+                        <strong style="display: block;">Apex Suppliers Ltd.</strong>
+                        <span style="font-size: 0.875rem; color: var(--text-secondary);">Financial instability detected in Q3 report.</span>
+                    </div>
+                </div>
+                <div style="padding: 16px 24px; display: flex; gap: 16px; align-items: center;">
+                    <span class="material-symbols-outlined" style="color: #ffcc00;">warning</span>
+                    <div>
+                        <strong style="display: block;">Global Parts Co.</strong>
+                        <span style="font-size: 0.875rem; color: var(--text-secondary);">3 consecutive delayed shipments in EU region.</span>
+                    </div>
+                </div>
+            </div>
+        </app-card>
+    </div>
+
 </div>
 
 <div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
+  <p>Awaiting the backend endpoint.</p>
   <div class="placeholder-row">
     <span>Orbit IT Systems</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
+    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
+    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Copperfield Freight</span>
+    <span>Inactive</span>
+    <span class="placeholder-tag">pending</span>
   </div>
 </div>
