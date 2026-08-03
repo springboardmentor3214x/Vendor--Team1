@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 28 Jul - Replace the sample data loader with the seed script
 - 29 Jul - Expand service rating with review comments
 - 30 Jul - Refine review comments in service rating
 - 31 Jul - Refine Excel export in report
 - 01 Aug - Refine issue resolution timing in delivery performance
 - 02 Aug - Round out the application setup with CORS configuration
+- 03 Aug - Broaden the application setup with CORS configuration
