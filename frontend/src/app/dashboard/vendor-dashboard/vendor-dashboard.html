@@ -1,47 +1,51 @@
 <!-- Vendor Dashboard -->
-<div class="dash-header">
+<div class="dash-header" style="margin-bottom: 24px;">
   <h1 class="dash-title">Vendor Portal</h1>
-  <p class="dash-subtitle">Manage your orders, contracts, and communications.</p>
+  <p class="dash-subtitle">Manage your assigned orders, legal contracts, and communications.</p>
 </div>
 
 <!-- KPI Grid -->
-<div class="dash-kpi-grid">
-  <div class="dash-kpi">
-    <div class="dash-kpi-top">
-      <h4 class="dash-kpi-label">Reliability Score</h4>
-      <div class="dash-kpi-icon icon-brand"><span class="material-symbols-outlined">verified</span></div>
+<div class="dash-kpi-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px;">
+  <div class="vrip-stat-card border-primary" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px;">
+    <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Reliability Rating</h3>
+      <span class="material-symbols-outlined text-primary-600" style="font-size: 20px;">verified</span>
     </div>
-    <p class="dash-kpi-value">98%</p>
-    <div class="dash-kpi-trend trend-up">
-      <span class="material-symbols-outlined">trending_up</span> +2.1% this month
-    </div>
+    <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ reliabilityScore }}</h2>
+    <span class="v-muted" style="font-size: 0.725rem;">Performance score</span>
   </div>
-  <div class="dash-kpi">
-    <div class="dash-kpi-top">
-      <h4 class="dash-kpi-label">Active Orders</h4>
-      <div class="dash-kpi-icon icon-info"><span class="material-symbols-outlined">local_shipping</span></div>
+
+  <div class="vrip-stat-card border-success" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px;">
+    <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Active Orders</h3>
+      <span class="material-symbols-outlined text-success-600" style="font-size: 20px;">local_shipping</span>
     </div>
-    <p class="dash-kpi-value">12</p>
+    <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ activeOrdersCount }}</h2>
+    <span class="v-muted" style="font-size: 0.725rem;">Orders requiring action</span>
   </div>
-  <div class="dash-kpi">
-    <div class="dash-kpi-top">
-      <h4 class="dash-kpi-label">Messages</h4>
-      <div class="dash-kpi-icon icon-warning"><span class="material-symbols-outlined">chat</span></div>
+
+  <div class="vrip-stat-card border-warning" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px;">
+    <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Messages</h3>
+      <span class="material-symbols-outlined text-warning-600" style="font-size: 20px;">chat</span>
     </div>
-    <p class="dash-kpi-value">3</p>
+    <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ unreadMessagesCount }}</h2>
+    <span class="v-muted" style="font-size: 0.725rem;">Support communications</span>
   </div>
-  <div class="dash-kpi">
-    <div class="dash-kpi-top">
-      <h4 class="dash-kpi-label">Pending Contracts</h4>
-      <div class="dash-kpi-icon icon-danger"><span class="material-symbols-outlined">description</span></div>
+
+  <div class="vrip-stat-card border-danger" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px;">
+    <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Pending Contracts</h3>
+      <span class="material-symbols-outlined text-danger-600" style="font-size: 20px;">description</span>
     </div>
-    <p class="dash-kpi-value">1</p>
+    <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ pendingContractsCount }}</h2>
+    <span class="v-muted" style="font-size: 0.725rem;">Legal documents</span>
   </div>
 </div>
 
 <!-- Quick Actions -->
-<div class="dash-section">
-  <div class="dash-section-header">
+<div class="dash-section" style="margin-bottom: 32px;">
+  <div class="dash-section-header" style="margin-bottom: 16px;">
     <h2 class="dash-section-title">Quick Actions</h2>
   </div>
   <div class="dash-actions-grid">
@@ -62,8 +66,40 @@
 
 <!-- Recent Activity -->
 <div class="dash-section">
-  <div class="dash-section-header">
+  <div class="dash-section-header" style="margin-bottom: 16px;">
     <h2 class="dash-section-title">Recent Activity</h2>
   </div>
-  <app-table [columns]="columns" [data]="recentActivities"></app-table>
+  <app-card [noPadding]="true">
+    <div class="vrip-table-wrapper">
+      <table class="vrip-table" style="width: 100%;">
+        <thead>
+          <tr>
+            <th style="width: 140px;">Date</th>
+            <th>Activity</th>
+            <th style="width: 140px;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of recentActivities" class="vrip-table-row">
+            <td>{{ item.date }}</td>
+            <td><strong style="font-size: 0.8125rem;">{{ item.activity }}</strong></td>
+            <td>
+              <app-badge [variant]="getBadgeVariant(item.status)">
+                {{ item.status }}
+              </app-badge>
+            </td>
+          </tr>
+
+          <tr *ngIf="recentActivities.length === 0">
+            <td colspan="3" class="vrip-table-empty">
+              <div class="empty-state">
+                <span class="material-symbols-outlined empty-icon">history</span>
+                <p>No recent activity found.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </app-card>
 </div>
