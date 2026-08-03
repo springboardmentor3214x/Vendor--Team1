@@ -45,43 +45,72 @@
         {{ errorMsg }}
     </div>
 
-</div>
+    <div style="margin-bottom: var(--vrip-space-6);">
+        <app-card>
+            <div id="chart">
+                <apx-chart
+                    *ngIf="chartOptions"
+                    [series]="chartOptions.series"
+                    [chart]="chartOptions.chart"
+                    [xaxis]="chartOptions.xaxis"
+                    [yaxis]="chartOptions.yaxis"
+                    [dataLabels]="chartOptions.dataLabels"
+                    [grid]="chartOptions.grid"
+                    [stroke]="chartOptions.stroke"
+                    [title]="chartOptions.title"
+                    [colors]="chartOptions.colors"
+                    [legend]="chartOptions.legend"
+                ></apx-chart>
+            </div>
+        </app-card>
+    </div>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+    <app-card [noPadding]="true">
+        <div style="padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; font-size: 1.125rem;">Top Ranked Vendors</h3>
+            <app-button variant="outline" size="sm" iconLeft="open_in_new" routerLink="/supply-chain/vendor-ranking">View All Rankings</app-button>
+        </div>
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>Vendor Name</th>
+                    <th>Category</th>
+                    <th>Service Rating</th>
+                    <th>On-Time %</th>
+                    <th>Quality Score</th>
+                    <th style="text-align: right;">Action</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let vendor of topVendors">
+                    <td><strong>{{ vendor.name }}</strong></td>
+                    <td><span class="vrip-badge">{{ vendor.category }}</span></td>
+                    <td>
+                        <div style="display: flex; color: #ffcc00; font-size: 18px;">
+                            <span class="material-symbols-outlined" *ngFor="let star of [1,2,3,4,5]" [ngStyle]="{'font-variation-settings': star <= vendor.rating ? '&quot;FILL&quot; 1' : '&quot;FILL&quot; 0'}">star</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="flex: 1; height: 6px; background: var(--vrip-gray-200); border-radius: 3px; overflow: hidden; min-width: 60px;">
+                                <div [ngStyle]="{'width': vendor.onTime, 'background': '#34c759', 'height': '100%'}"></div>
+                            </div>
+                            <span style="font-size: 0.875rem; width: 40px;">{{ vendor.onTime }}</span>
+                        </div>
+                    </td>
+                    <td><strong>{{ vendor.qualityScore }}/5.0</strong></td>
+                    <td style="text-align: right;">
+                        <a [routerLink]="['/supply-chain/vendor-performance', vendor.id]">
+                            <app-button variant="ghost" size="sm">View Details</app-button>
+                        </a>
+                    </td>
+                </tr>
+                <tr *ngIf="!isLoading && topVendors.length === 0">
+                    <td colspan="6" style="text-align: center; padding: 24px; color: var(--text-secondary);">
+                        No approved vendors have been ranked yet.
+                    </td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
 </div>
