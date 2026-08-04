@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 29 Jul - Add the log communication message screen with message form
 - 30 Jul - Add the new product evaluation screen with scoring criteria
 - 31 Jul - Extend the payment details screen with tax split
 - 01 Aug - Expand the core API services with HTTP service methods
 - 02 Aug - Refine scoring criteria in the new product evaluation screen
 - 03 Aug - Round out the vendor analytics screen with category breakdown chart
+- 04 Aug - Refine category breakdown chart in the vendor analytics screen
