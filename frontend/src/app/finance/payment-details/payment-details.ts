@@ -18,21 +18,86 @@ export class PaymentDetails implements OnInit {
   loading: boolean = false;
   payments: any[] = [];
   loadError: string = '';
+
   showTransferModal: boolean = false;
   selectedPaymentId: number | null = null;
-}
+  transferRemarks: string = '';
+  submitting: boolean = false;
+  transferError: string = '';
 
-const PLACEHOLDER_PAYMENT_DETAILS_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 5, name: 'Harborline Equipment', status: 'Active' },
-  { id: 6, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 7, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 8, name: 'Copperfield Freight', status: 'Inactive' },
-];
+  constructor(private invoiceService: InvoiceService) {}
 
-function usePlaceholderPaymentDetails(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_PAYMENT_DETAILS_ROWS;
+  ngOnInit(): void {
+    this.loadPayments();
+  }
+
+  loadPayments(): void {
+    this.loading = true;
+    this.loadError = '';
+    this.invoiceService.getInvoices().subscribe({
+      next: (invoices) => {
+        this.loading = false;
+        if (invoices && invoices.length > 0) {
+          this.payments = invoices.map(i => ({
+            id: `TXN-${1000 + i.id}`,
+            invoiceId: i.id,
+            invoice: i.invoice_number,
+            vendor: i.vendor_name,
+            amount: i.total_amount || i.invoice_amount,
+            date: i.due_date ? new Date(i.due_date).toLocaleDateString() : 'N/A',
+            status: i.payment_status || 'Pending'
+          }));
+        } else {
+          this.payments = [];
+        }
+      },
+      error: () => {
+        this.loading = false;
+        this.payments = [];
+        this.loadError = 'Could not load payments. Please try again.';
+      }
+    });
+  }
+
+  get payablePayments(): any[] {
+    return this.payments.filter(p => p.status === 'Verified' || p.status === 'Approved');
+  }
+
+  openTransferModal(): void {
+    this.transferError = '';
+    this.transferRemarks = '';
+    this.selectedPaymentId = this.payablePayments.length
+      ? this.payablePayments[0].invoiceId
+      : null;
+    this.showTransferModal = true;
+  }
+
+  closeTransferModal(): void {
+    this.showTransferModal = false;
+    this.submitting = false;
+  }
+
+  confirmTransfer(): void {
+    if (!this.selectedPaymentId) {
+      this.transferError = 'Select an invoice to pay.';
+      return;
+    }
+    this.submitting = true;
+    this.transferError = '';
+    this.invoiceService.updatePaymentStatus(String(this.selectedPaymentId), 'Paid').subscribe({
+      next: () => {
+        this.submitting = false;
+        this.showTransferModal = false;
+        this.loadPayments();
+      },
+      error: (err) => {
+        this.submitting = false;
+        this.transferError = err?.error?.detail || 'Transfer failed. Please try again.';
+      }
+    });
+  }
+
+  receipt(): void {
+    window.print();
+  }
 }
