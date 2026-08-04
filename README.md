@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 29 Jul - Drop helpers.py from the integrated tree
 - 30 Jul - Retest the vendor orders screen after the latest backend changes
 - 31 Jul - Flesh out the payment details screen with tax split
 - 01 Aug - Match the delivery performance screen field names across the two branches
 - 02 Aug - Improve factor breakdown in the reliability score details screen
 - 03 Aug - Settle the delivery timing helpers behaviour between client and server
+- 04 Aug - Drop sample-metrics.ts from the integrated tree
