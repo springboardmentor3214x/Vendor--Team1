@@ -16,16 +16,24 @@ import { ReliabilityService } from '../../core/services/reliability.service';
 export class VendorReliability implements OnInit {
   isLoading = true;
   vendors: any[] = [];
+  constructor(private reliabilityService: ReliabilityService) {}
+  ngOnInit(): void {
+    this.loadRiskAssessment();
+  }
 }
 
 const PLACEHOLDER_VENDOR_RELIABILITY_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 5, name: 'Harborline Equipment', status: 'Active' },
+  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
+  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
+  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
+  { id: 4, name: 'Harborline Equipment', status: 'Active' },
+  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
+  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
 ];
 
 function usePlaceholderVendorReliability(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_VENDOR_RELIABILITY_ROWS;
+  if (!rows || !rows.length) {
+    return PLACEHOLDER_VENDOR_RELIABILITY_ROWS;
+  }
+  return rows.filter((row) => !!row);
 }
