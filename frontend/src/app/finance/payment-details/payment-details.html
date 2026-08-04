@@ -65,43 +65,37 @@
             </ng-container>
         </app-table>
     </app-card>
-</div>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+    <div *ngIf="showTransferModal" class="payments-modal-backdrop">
+        <div class="payments-modal">
+            <div class="payments-modal-head">
+                <h2>Initiate Transfer</h2>
+                <button type="button" class="payments-modal-close" (click)="closeTransferModal()">&times;</button>
+            </div>
+
+            <div class="vrip-field">
+                <label>Invoice to pay *</label>
+                <select class="vrip-select" [(ngModel)]="selectedPaymentId">
+                    <option [ngValue]="null">Select an invoice</option>
+                    <option *ngFor="let payment of payablePayments" [ngValue]="payment.invoiceId">
+                        {{ payment.invoice }} - {{ payment.vendor }} ({{ payment.amount | currency:'INR':'symbol':'1.2-2' }})
+                    </option>
+                </select>
+            </div>
+
+            <div class="vrip-field">
+                <label>Remarks</label>
+                <input type="text" class="vrip-input" [(ngModel)]="transferRemarks" placeholder="Optional note for this transfer">
+            </div>
+
+            <div class="payments-modal-error" *ngIf="transferError">{{ transferError }}</div>
+
+            <div class="payments-modal-actions">
+                <app-button variant="outline" (onClick)="closeTransferModal()">Cancel</app-button>
+                <app-button variant="primary" iconLeft="account_balance" [disabled]="submitting" (onClick)="confirmTransfer()">
+                    {{ submitting ? 'Processing...' : 'Confirm Transfer' }}
+                </app-button>
+            </div>
+        </div>
+    </div>
 </div>
