@@ -63,43 +63,74 @@
             </div>
         </div>
     </app-card>
-</div>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--vrip-space-6); margin-bottom: var(--vrip-space-6);">
+
+        <app-card [noPadding]="true">
+            <div style="padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0;">Top Vendors Overview</h3>
+                <a routerLink="/supply-chain/vendor-ranking" style="color: var(--vrip-primary); text-decoration: none; font-size: 0.875rem; font-weight: 500;">View Full Ranking &rarr;</a>
+            </div>
+            <app-table>
+                <ng-container table-header>
+                    <tr>
+                        <th>Vendor</th>
+                        <th>Category</th>
+                        <th>Score</th>
+                        <th>Risk</th>
+                        <th>Action</th>
+                    </tr>
+                </ng-container>
+                <ng-container table-body>
+                    <tr *ngFor="let vendor of vendors">
+                        <td><strong>{{ vendor.name }}</strong></td>
+                        <td>{{ vendor.category }}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-weight: 600;">{{ vendor.score }}%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="vrip-badge" [ngStyle]="getBadgeClass(vendor.risk)">
+                                {{ vendor.risk }} Risk
+                            </span>
+                        </td>
+                        <td>
+                            <app-button variant="secondary" [routerLink]="['/supply-chain/reliability-score-details', vendor.id]">Details</app-button>
+                        </td>
+                    </tr>
+                </ng-container>
+            </app-table>
+        </app-card>
+
+        <div style="display: flex; flex-direction: column; gap: var(--vrip-space-6);">
+            <app-card>
+                <h3 style="margin-top: 0; margin-bottom: 16px;">Quick Insights</h3>
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <span class="material-symbols-outlined" style="color: #34c759;">trending_up</span>
+                        <div>
+                            <strong style="display: block; font-size: 0.875rem;">Quality Improving</strong>
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">Overall product quality increased by 4% this month.</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <span class="material-symbols-outlined" style="color: #ff3b30;">warning</span>
+                        <div>
+                            <strong style="display: block; font-size: 0.875rem;">Delivery Delays</strong>
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">2 vendors in Raw Materials are showing increased delay patterns.</span>
+                        </div>
+                    </div>
+                </div>
+            </app-card>
+
+            <app-card>
+                <h3 style="margin-top: 0; margin-bottom: 16px;">Quick Actions</h3>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <app-button variant="secondary" routerLink="/supply-chain/procurement-recommendations" style="width: 100%; text-align: left; display: block;">View Recommendations</app-button>
+                    <app-button variant="secondary" routerLink="/supply-chain/procurement-risk-dashboard" style="width: 100%; text-align: left; display: block;">Assess Risks</app-button>
+                </div>
+            </app-card>
+        </div>
+    </div>
 </div>

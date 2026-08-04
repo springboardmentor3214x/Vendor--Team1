@@ -46,43 +46,96 @@
         </button>
     </div>
 
+    <div *ngIf="activeTab === 'notifications'">
+
+        <div style="display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px;">
+            <button
+                *ngFor="let f of filters"
+                (click)="setFilter(f)"
+                [ngStyle]="{
+                    'padding': '8px 16px',
+                    'border-radius': '20px',
+                    'font-size': '0.875rem',
+                    'font-weight': '500',
+                    'cursor': 'pointer',
+                    'border': activeFilter === f ? '1px solid #2563eb' : '1px solid var(--border-color)',
+                    'background': activeFilter === f ? '#2563eb' : 'var(--card-bg, #fff)',
+                    'color': activeFilter === f ? '#fff' : 'var(--text-secondary)'
+                }">
+                {{ f }}
+            </button>
+        </div>
+
+        <app-card [noPadding]="true">
+            <div *ngIf="isLoading" style="padding: 40px; text-align: center; color: var(--text-secondary);">
+                Loading notifications...
+            </div>
+
+            <div *ngIf="!isLoading && filteredNotifications.length === 0" style="padding: 60px 24px; text-align: center;">
+                <span class="material-symbols-outlined" style="font-size: 48px; color: var(--vrip-gray-400); margin-bottom: 12px;">notifications_off</span>
+                <h3 style="margin: 0 0 6px 0; font-size: 1.125rem; font-weight: 600;">No Notifications Found</h3>
+                <p style="margin: 0 0 16px 0; color: var(--text-secondary); font-size: 0.875rem;">There are no alerts matching your current filter.</p>
+                <app-button *ngIf="canRunBackgroundChecks" variant="outline" size="sm" iconLeft="autorenew" (onClick)="triggerChecks()">Run System Health Checks</app-button>
+            </div>
+
+            <div *ngIf="!isLoading && filteredNotifications.length > 0" style="display: flex; flex-direction: column;">
+                <div *ngFor="let notif of filteredNotifications"
+                     (click)="markRead(notif)"
+                     [ngStyle]="{'background': notif.unread ? 'rgba(37, 99, 235, 0.04)' : 'transparent'}"
+                     style="padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; gap: 16px; align-items: flex-start; transition: background 0.2s; cursor: pointer;">
+                    <div [ngStyle]="{'color': notif.type === 'alert' ? '#ef4444' : (notif.type === 'warning' ? '#f59e0b' : '#3b82f6')}"
+                         style="padding: 10px; border-radius: 50%; background: var(--vrip-gray-100, #f3f4f6); display: flex;">
+                        <span class="material-symbols-outlined">{{ notif.icon }}</span>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <h4 style="margin: 0; font-size: 1rem; font-weight: 600;" [ngStyle]="{'color': notif.unread ? 'var(--text-primary)' : 'var(--text-secondary)'}">
+                                    {{ notif.title }}
+                                </h4>
+                                <app-badge [variant]="getBadgeVariant(notif.priority)">{{ notif.priority }}</app-badge>
+                                <span style="font-size: 0.75rem; background: var(--vrip-gray-200, #e5e7eb); padding: 2px 8px; border-radius: 12px; color: var(--text-secondary);">
+                                    {{ notif.module }}
+                                </span>
+                            </div>
+                            <span style="font-size: 0.75rem; color: var(--vrip-gray-500);">{{ notif.time }}</span>
+                        </div>
+                        <p style="margin: 0; color: var(--text-secondary); font-size: 0.875rem; line-height: 1.4;">{{ notif.message }}</p>
+                    </div>
+                </div>
+            </div>
+        </app-card>
+    </div>
 </div>
 
 <div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+  <p>Sample rows shown until the API is ready.</p>
   <div class="placeholder-row">
     <span>Delta Logistics</span>
     <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ashcroft Maintenance</span>
     <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Harborline Equipment</span>
     <span>Active</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Vertex Services</span>
     <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Ironvale Supplies</span>
     <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
   </div>
   <div class="placeholder-row">
     <span>Copperfield Freight</span>
     <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
+  </div>
+  <div class="placeholder-row">
+    <span>Northwind Steel</span>
+    <span>Active</span>
   </div>
 </div>
