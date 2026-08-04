@@ -1,69 +1,94 @@
-<div class="procurement-list-container">
-    <div class="page-vrip-page-header">
+<div class="page-container">
+    <div class="vrip-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--v-6, 24px);">
         <div>
             <h1 class="vrip-page-title">Procurement Requests</h1>
             <p class="vrip-page-subtitle">Manage and track all departmental procurement requests.</p>
         </div>
-        <app-button variant="primary" iconLeft="add" routerLink="/procurement-request">
-            New Request
-        </app-button>
+        <div style="display: flex; gap: 10px;">
+            <app-button variant="outline" iconLeft="refresh" (onClick)="loadRequests()">Refresh</app-button>
+            <app-button variant="primary" iconLeft="add" routerLink="/procurement/requests/new">New Request</app-button>
+        </div>
     </div>
 
-    <div class="vrip-table-container">
-        <app-table 
-            [columns]="columns" 
-            [data]="requests"
-            [hasToolbar]="true"
-            [pagination]="true"
-            [searchable]="true">
-            
-            <ng-template let-row>
-                <td>
-                    <strong>{{ row.requestNumber }}</strong>
-                </td>
-                <td>
-                    {{ row.title }}
-                </td>
-                <td>
-                    {{ row.department }}
-                </td>
-                <td>
-                    {{ row.requestedBy }}
-                </td>
-                <td>
-                    {{ row.vendor || 'Unassigned' }}
-                </td>
-                <td>
-                    <app-badge [variant]="getBadgeVariant(row.priority)">
-                        {{ row.priority }}
-                    </app-badge>
-                </td>
-                <td>
-                    ₹{{ row.budget | number }}
-                </td>
-                <td>
-                    <app-badge [variant]="getBadgeVariant(row.status)">
-                        {{ row.status }}
-                    </app-badge>
-                </td>
-                <td>
-                    <div class="text-sm text-slate-500">{{ row.createdDate }}</div>
-                </td>
-                <td>
-                    <div class="action-buttons">
-                        <app-button variant="outline" size="sm" [routerLink]="['/procurement/approve', row.id]" title="View/Approve">
-                            <span class="material-symbols-outlined icon-sm">visibility</span>
-                        </app-button>
-                        <app-button variant="outline" size="sm" title="Edit Request" (onClick)="editRequest(row)">
-                            <span class="material-symbols-outlined icon-sm">edit</span>
-                        </app-button>
-                        <app-button variant="danger" size="sm" (onClick)="deleteRequest(row.id)" title="Delete Request">
-                            <span class="material-symbols-outlined icon-sm">delete</span>
-                        </app-button>
-                    </div>
-                </td>
-            </ng-template>
-            
-        </app-table>
-    </div>
+    <app-card [noPadding]="true">
+        <div class="vrip-table-wrapper" style="overflow-x: auto; width: 100%;">
+            <table class="vrip-table" style="min-width: 850px; width: 100%;">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Request No</th>
+                        <th style="min-width: 180px;">Item Description</th>
+                        <th style="width: 110px;">Quantity</th>
+                        <th style="width: 140px;">Estimated Budget</th>
+                        <th style="width: 120px;">Created Date</th>
+                        <th style="width: 130px;">Status</th>
+                        <th style="width: 160px; text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loading Skeleton -->
+                    <ng-container *ngIf="loading">
+                        <tr *ngFor="let _ of [1,2,3,4]" class="vrip-table-row">
+                            <td><div class="skeleton-cell" style="width: 90px; height: 16px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 140px; height: 16px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 60px; height: 16px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 90px; height: 16px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 80px; height: 16px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 80px; height: 20px; border-radius: 99px;"></div></td>
+                            <td style="text-align: right;"><div class="skeleton-cell" style="width: 100px; height: 28px; margin-left: auto;"></div></td>
+                        </tr>
+                    </ng-container>
+
+                    <!-- Error State -->
+                    <tr *ngIf="!loading && errorMsg">
+                        <td colspan="7" class="vrip-table-empty">
+                            <div class="empty-state">
+                                <span class="material-symbols-outlined empty-icon" style="color: var(--v-danger, #ef4444);">error</span>
+                                <p style="color: var(--v-danger, #ef4444); font-weight: 500;">{{ errorMsg }}</p>
+                                <app-button variant="outline" size="sm" (onClick)="loadRequests()">Retry</app-button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Data Rows -->
+                    <ng-container *ngIf="!loading && !errorMsg">
+                        <tr *ngFor="let row of requests" class="vrip-table-row">
+                            <td><strong>{{ row.requestNumber }}</strong></td>
+                            <td><span style="font-weight: 500;">{{ row.title }}</span></td>
+                            <td>{{ row.quantity }} units</td>
+                            <td><strong>${{ row.budget | number:'1.2-2' }}</strong></td>
+                            <td>{{ row.createdDate }}</td>
+                            <td>
+                                <app-badge [variant]="getBadgeVariant(row.status)">
+                                    {{ row.status }}
+                                </app-badge>
+                            </td>
+                            <td style="text-align: right; white-space: nowrap;">
+                                <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                                    <app-button
+                                        *ngIf="row.status === 'Pending'"
+                                        variant="success" size="sm" iconLeft="check"
+                                        (onClick)="approveRequest(row)">
+                                        Approve
+                                    </app-button>
+                                    <app-button
+                                        variant="danger" size="sm" iconLeft="delete"
+                                        (onClick)="deleteRequest(row.id)">
+                                    </app-button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr *ngIf="requests.length === 0">
+                            <td colspan="7" class="vrip-table-empty">
+                                <div class="empty-state">
+                                    <span class="material-symbols-outlined empty-icon">assignment</span>
+                                    <p>No procurement requests found.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </app-card>
 </div>
