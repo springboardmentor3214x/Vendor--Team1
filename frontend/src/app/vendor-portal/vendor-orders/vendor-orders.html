@@ -7,43 +7,80 @@
         <app-button variant="outline" iconLeft="refresh" (onClick)="loadOrders()">Refresh</app-button>
     </div>
 
-</div>
+    <app-card [noPadding]="true">
+        <div class="vrip-table-wrapper" style="overflow-x: auto; width: 100%;">
+            <table class="vrip-table" style="min-width: 800px; width: 100%;">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">PO Number</th>
+                        <th style="min-width: 160px;">Item Name</th>
+                        <th style="width: 110px;">Date</th>
+                        <th style="width: 130px;">Amount</th>
+                        <th style="width: 140px;">Deadline</th>
+                        <th style="width: 130px;">Status</th>
+                        <th style="width: 140px; text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+                    <ng-container *ngIf="loading">
+                        <tr *ngFor="let _ of [1,2,3,4]" class="vrip-table-row">
+                            <td><div class="skeleton-cell" style="width: 90px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 130px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 80px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 80px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 90px;"></div></td>
+                            <td><div class="skeleton-badge"></div></td>
+                            <td style="text-align: right;"><div class="skeleton-button" style="width: 80px; margin-left: auto;"></div></td>
+                        </tr>
+                    </ng-container>
+
+                    <tr *ngIf="!loading && errorMsg">
+                        <td colspan="7" class="vrip-table-empty">
+                            <div class="empty-state">
+                                <span class="material-symbols-outlined empty-icon" style="color: var(--v-danger, #ef4444);">error</span>
+                                <p style="color: var(--v-danger, #ef4444); font-weight: 500;">{{ errorMsg }}</p>
+                                <app-button variant="outline" size="sm" (onClick)="loadOrders()">Retry</app-button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <ng-container *ngIf="!loading && !errorMsg">
+                        <tr *ngFor="let order of orders" class="vrip-table-row">
+                            <td><strong>{{ order.poNumber }}</strong></td>
+                            <td><span style="font-weight: 500;">{{ order.itemName }}</span></td>
+                            <td>{{ order.date }}</td>
+                            <td><strong>₹{{ order.amount | number:'1.2-2' }}</strong></td>
+                            <td>{{ order.deadline }}</td>
+                            <td>
+                                <app-badge [variant]="getBadgeVariant(order.status)">
+                                    {{ order.status }}
+                                </app-badge>
+                            </td>
+                            <td style="text-align: right; white-space: nowrap;">
+                                <app-button
+                                    *ngIf="order.status === 'Order Placed' || order.status === 'Approved'"
+                                    variant="primary" size="sm" iconLeft="local_shipping"
+                                    (onClick)="dispatchOrder(order)">
+                                    Dispatch
+                                </app-button>
+                                <span *ngIf="order.status !== 'Order Placed' && order.status !== 'Approved'" class="v-muted" style="font-size: 0.75rem;">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr *ngIf="orders.length === 0">
+                            <td colspan="7" class="vrip-table-empty">
+                                <div class="empty-state">
+                                    <span class="material-symbols-outlined empty-icon">shopping_cart</span>
+                                    <p>No purchase orders assigned yet.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </app-card>
 </div>
