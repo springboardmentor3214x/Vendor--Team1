@@ -45,14 +45,14 @@ Finance Officer and Auditor, each with its own permission set.
 
 - [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
 - [x] Milestone 2 (24 Jul 2026) - Vendor and procurement management
-- [ ] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
+- [x] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
 - [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 30 Jul - Refine review comments in service rating
 - 31 Jul - Refine Excel export in report
 - 01 Aug - Refine issue resolution timing in delivery performance
 - 02 Aug - Round out the application setup with CORS configuration
 - 03 Aug - Broaden the application setup with CORS configuration
 - 04 Aug - Expand procurement with requisition line items
+- 05 Aug - Refine delay window calculation in the delivery timing helpers
