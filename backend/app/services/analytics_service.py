@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, extract
 from typing import Dict, Any, List
 from datetime import datetime, date, timedelta
+
 from app.models.user import User
 from app.models.vendor import Vendor
 from app.models.procurement import Procurement
@@ -14,9 +15,10 @@ from app.models.compliance_record import ComplianceRecord
 from app.models.certification import Certification
 from app.models.invoice import Invoice
 
-ACTIVE_PO_STATUSES = ["Issued", "In Transit"]
 
+ACTIVE_PO_STATUSES = ["Issued", "In Transit"]
 COMPLETED_PO_STATUSES = ["Delivered", "Completed"]
+
 
 def get_procurement_manager_dashboard_analytics(db: Session) -> Dict[str, Any]:
     total_requests = db.query(Procurement).count()
@@ -101,6 +103,7 @@ def get_procurement_manager_dashboard_analytics(db: Session) -> Dict[str, Any]:
         "active_purchase_orders_list": po_summary
     }
 
+
 def get_procurement_overview(db: Session) -> Dict[str, Any]:
     today = date.today()
     week_start = today - timedelta(days=today.weekday())
@@ -143,6 +146,7 @@ def get_procurement_overview(db: Session) -> Dict[str, Any]:
         "yearly_growth_percent": growth,
     }
 
+
 def get_delivery_status_summary(db: Session) -> Dict[str, Any]:
     from app.models.order_tracking import OrderTracking
 
@@ -182,6 +186,7 @@ def get_delivery_status_summary(db: Session) -> Dict[str, Any]:
         "overdue_active_orders": overdue,
         "on_time_rate": round(on_time / total_recorded * 100, 2) if total_recorded else 0.0,
     }
+
 
 def get_vendor_dashboard_analytics(db: Session, vendor_id: int) -> Dict[str, Any]:
     vendor = db.query(Vendor).filter(Vendor.id == vendor_id).first()
@@ -242,6 +247,7 @@ def get_vendor_dashboard_analytics(db: Session, vendor_id: int) -> Dict[str, Any
         "recent_communications": msg_summary
     }
 
+
 def _vendor_monthly_spend(db: Session, vendor_id: int, months: int = 12) -> List[Dict[str, Any]]:
     today = date.today()
     trends = []
@@ -265,111 +271,130 @@ def _vendor_monthly_spend(db: Session, vendor_id: int, months: int = 12) -> List
     return trends
 
 
-def _pending_analytics_service_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def _vendor_delivery_breakdown(db: Session, vendor_id: int) -> Dict[str, int]:
+    rows = db.query(
+        DeliveryPerformance.delivery_status, func.count(DeliveryPerformance.id)
+    ).filter(DeliveryPerformance.vendor_id == vendor_id).group_by(
+        DeliveryPerformance.delivery_status
+    ).all()
+    return {(status or "Unknown"): count for status, count in rows}
 
 
-def _pending_analytics_service_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+def get_vendor_analytics(db: Session, vendor_id: int) -> Dict[str, Any]:
+    vendor = db.query(Vendor).filter(Vendor.id == vendor_id).first()
+    if not vendor:
+        return None
+
+    from app.services import reliability_service
+
+    dashboard = get_vendor_dashboard_analytics(db, vendor_id)
+    reliability = reliability_service.get_vendor_reliability_details(db, vendor_id)
+    trends = reliability_service.get_performance_trends(db, vendor_id)
+
+    contract_rows = db.query(Contract.status, func.count(Contract.id)).filter(
+        Contract.vendor_id == vendor_id
+    ).group_by(Contract.status).all()
+    contract_breakdown = {(status or "Unknown"): count for status, count in contract_rows}
+
+    invoice_rows = db.query(Invoice.payment_status, func.count(Invoice.id)).filter(
+        Invoice.vendor_id == vendor_id
+    ).group_by(Invoice.payment_status).all()
+    invoice_breakdown = {(status or "Unknown"): count for status, count in invoice_rows}
+
+    return {
+        "vendor_id": vendor.id,
+        "vendor_name": vendor.vendor_name,
+        "company_name": vendor.company_name,
+        "category": vendor.category,
+        "status": vendor.status,
+        "approval_status": vendor.approval_status,
+        "dashboard": dashboard,
+        "reliability": reliability,
+        "performance_trends": trends,
+        "monthly_spend": _vendor_monthly_spend(db, vendor_id),
+        "delivery_breakdown": _vendor_delivery_breakdown(db, vendor_id),
+        "contract_breakdown": contract_breakdown,
+        "invoice_breakdown": invoice_breakdown,
+    }
 
 
-def _pending_analytics_service_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def get_admin_dashboard_analytics(db: Session) -> Dict[str, Any]:
+    total_users = db.query(User).count()
+    active_users = db.query(User).filter(User.account_status == "Active").count()
+    total_vendors = db.query(Vendor).count()
+    approved_vendors = db.query(Vendor).filter(Vendor.approval_status == "Approved").count()
+    pending_vendors = db.query(Vendor).filter(Vendor.approval_status == "Pending").count()
+    blocked_vendors = db.query(Vendor).filter(Vendor.status == "Blocked").count()
+
+    total_contracts = db.query(Contract).count()
+    active_contracts = db.query(Contract).filter(Contract.status == "Active").count()
+    expiring_contracts = db.query(Contract).filter(Contract.status == "Expiring Soon").count()
+    expired_contracts = db.query(Contract).filter(Contract.status == "Expired").count()
+
+    total_procurements = db.query(Procurement).count()
+    total_pos = db.query(PurchaseOrder).count()
+
+    comp_records = db.query(ComplianceRecord).count()
+    compliant_count = db.query(ComplianceRecord).filter(ComplianceRecord.status == "Compliant").count()
+
+    return {
+        "user_analytics": {
+            "total_users": total_users,
+            "active_users": active_users,
+            "pending_users": total_users - active_users
+        },
+        "vendor_analytics": {
+            "total_vendors": total_vendors,
+            "approved_vendors": approved_vendors,
+            "pending_vendors": pending_vendors,
+            "blocked_vendors": blocked_vendors
+        },
+        "contract_analytics": {
+            "total_contracts": total_contracts,
+            "active_contracts": active_contracts,
+            "expiring_contracts": expiring_contracts,
+            "expired_contracts": expired_contracts
+        },
+        "procurement_analytics": {
+            "total_procurement_requests": total_procurements,
+            "total_purchase_orders": total_pos
+        },
+        "compliance_analytics": {
+            "total_compliance_records": comp_records,
+            "compliant_count": compliant_count,
+            "compliance_percentage": round((compliant_count / comp_records * 100), 2) if comp_records > 0 else 100.0
+        },
+        "system_statistics": get_system_statistics(db),
+    }
 
 
-def _pending_analytics_service_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+def get_system_statistics(db: Session) -> Dict[str, Any]:
+    from app.models.activity_log import ActivityLog
+    from app.models.notification import Notification
 
+    now = datetime.utcnow()
+    last_24h = now - timedelta(hours=24)
+    last_7d = now - timedelta(days=7)
 
-def _pending_analytics_service_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+    users_by_role = dict(
+        db.query(User.role, func.count(User.id)).group_by(User.role).all()
+    )
 
-
-def _pending_analytics_service_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
-
-
-def _pending_analytics_service_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
-
-
-def _pending_analytics_service_totals_4(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
-
-
-def _pending_analytics_service_rows_5(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
-
-
-def _pending_analytics_service_totals_5(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+    return {
+        "users_by_role": {role: count for role, count in users_by_role.items()},
+        "activity_last_24h": db.query(func.count(ActivityLog.id)).filter(
+            ActivityLog.timestamp >= last_24h
+        ).scalar() or 0,
+        "activity_last_7d": db.query(func.count(ActivityLog.id)).filter(
+            ActivityLog.timestamp >= last_7d
+        ).scalar() or 0,
+        "total_messages": db.query(func.count(Communication.id)).scalar() or 0,
+        "unread_notifications": db.query(func.count(Notification.id)).filter(
+            Notification.is_read == False
+        ).scalar() or 0,
+        "total_invoices": db.query(func.count(Invoice.id)).scalar() or 0,
+        "total_certifications": db.query(func.count(Certification.id)).scalar() or 0,
+        "expired_certifications": db.query(func.count(Certification.id)).filter(
+            Certification.expiry_date < date.today()
+        ).scalar() or 0,
+    }
