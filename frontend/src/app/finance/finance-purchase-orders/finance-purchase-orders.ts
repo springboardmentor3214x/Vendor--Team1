@@ -16,19 +16,59 @@ export class FinancePurchaseOrders implements OnInit {
   orders: any[] = [];
   loading: boolean = true;
   errorMsg: string = '';
-}
 
-const PLACEHOLDER_FINANCE_PURCHASE_ORDERS_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 5, name: 'Harborline Equipment', status: 'Active' },
-  { id: 6, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 7, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 8, name: 'Copperfield Freight', status: 'Inactive' },
-];
+  constructor(private procurementService: ProcurementService) {}
 
-function usePlaceholderFinancePurchaseOrders(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_FINANCE_PURCHASE_ORDERS_ROWS;
+  ngOnInit(): void {
+    this.loadOrders();
+  }
+
+  loadOrders(): void {
+    this.loading = true;
+    this.errorMsg = '';
+    this.procurementService.getAllProcurementRequests().subscribe({
+      next: (data) => {
+        this.loading = false;
+        if (Array.isArray(data)) {
+          this.orders = data.map(p => {
+            const amount = p.total_price || (p.unit_price && p.quantity ? p.unit_price * p.quantity : 0);
+            return {
+              id: p.id,
+              poNumber: 'PO-2026-' + (1000 + p.id),
+              itemName: p.item_name,
+              quantity: p.quantity,
+              amount: amount,
+              status: p.status || 'Pending'
+            };
+          });
+        } else {
+          this.orders = [];
+        }
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error('Failed to load purchase orders', err);
+        this.errorMsg = 'Failed to load purchase orders from backend.';
+      }
+    });
+  }
+
+  completePO(order: any): void {
+    this.procurementService.completeRequest(order.id).subscribe({
+      next: () => this.loadOrders(),
+      error: (err: any) => alert('Failed to complete PO: ' + (err.error?.detail || err.message))
+    });
+  }
+
+  getBadgeVariant(status: string): 'primary' | 'danger' | 'success' | 'warning' | 'default' | 'info' {
+    switch (status) {
+      case 'Completed':
+      case 'Delivered': return 'success';
+      case 'Approved':
+      case 'Order Placed':
+      case 'Dispatched': return 'info';
+      case 'Pending': return 'warning';
+      default: return 'default';
+    }
+  }
 }
