@@ -63,43 +63,32 @@
         </app-card>
     </div>
 
-</div>
-
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+    <app-card [noPadding]="true">
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>Vendor Name</th>
+                    <th>Category</th>
+                    <th>Financial Health</th>
+                    <th>Operational Risk</th>
+                    <th>Overall Reliability</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let vendor of vendors">
+                    <td><strong>{{ vendor.name }}</strong></td>
+                    <td>{{ vendor.category }}</td>
+                    <td>{{ vendor.financial }}</td>
+                    <td>{{ vendor.operational }}</td>
+                    <td>
+                        <span class="vrip-badge"
+                              [ngStyle]="{'background': vendor.risk === 'Low' ? 'rgba(52, 199, 89, 0.1)' : (vendor.risk === 'High' ? 'rgba(255, 59, 48, 0.1)' : 'rgba(255, 204, 0, 0.1)'),
+                                          'color': vendor.risk === 'Low' ? '#34c759' : (vendor.risk === 'High' ? '#ff3b30' : '#d4a000')}">
+                            {{ vendor.risk }} Risk
+                        </span>
+                    </td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
 </div>
