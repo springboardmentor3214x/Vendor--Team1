@@ -6,41 +6,41 @@
 
 <!-- KPI Grid -->
 <div class="dash-kpi-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px;">
-  <div class="vrip-stat-card border-primary" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px;">
+  <a routerLink="/vendor-portal/orders" class="vrip-stat-card border-primary" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; cursor: pointer;">
     <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
       <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Reliability Rating</h3>
       <span class="material-symbols-outlined text-primary-600" style="font-size: 20px;">verified</span>
     </div>
     <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ reliabilityScore }}</h2>
     <span class="v-muted" style="font-size: 0.725rem;">Performance score</span>
-  </div>
+  </a>
 
-  <div class="vrip-stat-card border-success" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px;">
+  <a routerLink="/vendor-portal/orders" class="vrip-stat-card border-success" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; cursor: pointer;">
     <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
       <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Active Orders</h3>
       <span class="material-symbols-outlined text-success-600" style="font-size: 20px;">local_shipping</span>
     </div>
     <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ activeOrdersCount }}</h2>
     <span class="v-muted" style="font-size: 0.725rem;">Orders requiring action</span>
-  </div>
+  </a>
 
-  <div class="vrip-stat-card border-warning" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px;">
+  <a routerLink="/vendor-portal/communication" class="vrip-stat-card border-warning" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; cursor: pointer;">
     <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
       <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Messages</h3>
       <span class="material-symbols-outlined text-warning-600" style="font-size: 20px;">chat</span>
     </div>
     <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ unreadMessagesCount }}</h2>
     <span class="v-muted" style="font-size: 0.725rem;">Support communications</span>
-  </div>
+  </a>
 
-  <div class="vrip-stat-card border-danger" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px;">
+  <a routerLink="/vendor-portal/contracts" class="vrip-stat-card border-danger" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; cursor: pointer;">
     <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
       <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Pending Contracts</h3>
       <span class="material-symbols-outlined text-danger-600" style="font-size: 20px;">description</span>
     </div>
     <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ pendingContractsCount }}</h2>
     <span class="v-muted" style="font-size: 0.725rem;">Legal documents</span>
-  </div>
+  </a>
 </div>
 
 <!-- Quick Actions -->
