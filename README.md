@@ -43,14 +43,14 @@ src/app/
 
 - [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
 - [x] Milestone 2 (24 Jul 2026) - Vendor and procurement management
-- [ ] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
+- [x] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
 - [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 30 Jul - Add the new product evaluation screen with scoring criteria
 - 31 Jul - Extend the payment details screen with tax split
 - 01 Aug - Expand the core API services with HTTP service methods
 - 02 Aug - Refine scoring criteria in the new product evaluation screen
 - 03 Aug - Round out the vendor analytics screen with category breakdown chart
 - 04 Aug - Refine category breakdown chart in the vendor analytics screen
+- 05 Aug - Tighten typed responses in the core API services
