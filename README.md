@@ -39,14 +39,14 @@ the permission checks enforced on every endpoint.
 
 - [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
 - [x] Milestone 2 (24 Jul 2026) - Vendor and procurement management
-- [ ] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
+- [x] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
 - [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 30 Jul - Retest the vendor orders screen after the latest backend changes
 - 31 Jul - Flesh out the payment details screen with tax split
 - 01 Aug - Match the delivery performance screen field names across the two branches
 - 02 Aug - Improve factor breakdown in the reliability score details screen
 - 03 Aug - Settle the delivery timing helpers behaviour between client and server
 - 04 Aug - Drop sample-metrics.ts from the integrated tree
+- 05 Aug - Reconcile the core API services with the Angular services
