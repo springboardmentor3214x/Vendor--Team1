@@ -5,18 +5,22 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class AnalyticsService {
   private apiUrl = '/analytics';
+
   constructor(private http: HttpClient) {}
+
   getProcurementManagerDashboard(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/procurement-manager-dashboard`);
   }
-}
 
-const PLACEHOLDER_ANALYTICS_SERVICE_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-];
+  getVendorDashboard(vendorId: string | number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/vendor-dashboard/${vendorId}`);
+  }
 
-function usePlaceholderAnalyticsService(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_ANALYTICS_SERVICE_ROWS;
+  getAdminDashboard(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/admin-dashboard`);
+  }
+
+  getVendorAnalytics(vendorId: string | number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/vendor-analytics/${vendorId}`);
+  }
 }
