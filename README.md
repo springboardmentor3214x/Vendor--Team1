@@ -45,14 +45,14 @@ Finance Officer and Auditor, each with its own permission set.
 
 - [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
 - [x] Milestone 2 (24 Jul 2026) - Vendor and procurement management
-- [ ] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
+- [x] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
 - [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 30 Jul - Add reports endpoints with date range filters
 - 31 Jul - Expand performance with delivery accuracy calculation
 - 01 Aug - Refine score normalisation in reliability
 - 02 Aug - Refine priority levels in notification
 - 03 Aug - Refine Excel export in reports
 - 04 Aug - Expand notification with email dispatch
+- 05 Aug - Add vendor scoping with registration validation rules
