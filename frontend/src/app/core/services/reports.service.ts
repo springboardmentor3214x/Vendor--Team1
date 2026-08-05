@@ -16,7 +16,9 @@ export interface ReportFilters {
 @Injectable({ providedIn: 'root' })
 export class ReportsService {
   private apiUrl = '/reports';
+
   constructor(private http: HttpClient) {}
+
   private buildParams(filters: ReportFilters = {}): HttpParams {
     let params = new HttpParams();
     const set = (key: string, value: any) => {
@@ -35,34 +37,38 @@ export class ReportsService {
 
     return params;
   }
+
   getVendorPerformanceReport(filters: ReportFilters = {}): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/vendor-performance`, { params: this.buildParams(filters) });
   }
+
   getProcurementReport(filters: ReportFilters = {}): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/procurement-summary`, { params: this.buildParams(filters) });
   }
+
   getPOReport(filters: ReportFilters = {}): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/purchase-orders`, { params: this.buildParams(filters) });
   }
+
   getComplianceReport(filters: ReportFilters = {}): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/compliance`, { params: this.buildParams(filters) });
   }
-}
 
-const PLACEHOLDER_REPORTS_SERVICE_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderReportsService(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_REPORTS_SERVICE_ROWS;
+  getContractReport(filters: ReportFilters = {}): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/contracts`, { params: this.buildParams(filters) });
   }
-  return rows.filter((row) => !!row);
+
+  getExecutiveSummaryReport(filters: ReportFilters = {}): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/executive-summary`, { params: this.buildParams(filters) });
+  }
+
+  downloadPDF(reportType: string = 'vendor-performance', filters: ReportFilters = {}): Observable<Blob> {
+    const params = this.buildParams(filters).set('report_type', reportType);
+    return this.http.get(`${this.apiUrl}/export/pdf`, { params, responseType: 'blob' });
+  }
+
+  downloadExcel(reportType: string = 'vendor-performance', filters: ReportFilters = {}): Observable<Blob> {
+    const params = this.buildParams(filters).set('report_type', reportType);
+    return this.http.get(`${this.apiUrl}/export/excel`, { params, responseType: 'blob' });
+  }
 }
