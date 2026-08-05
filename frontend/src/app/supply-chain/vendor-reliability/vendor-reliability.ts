@@ -16,24 +16,35 @@ import { ReliabilityService } from '../../core/services/reliability.service';
 export class VendorReliability implements OnInit {
   isLoading = true;
   vendors: any[] = [];
+
   constructor(private reliabilityService: ReliabilityService) {}
+
   ngOnInit(): void {
     this.loadRiskAssessment();
   }
-}
 
-const PLACEHOLDER_VENDOR_RELIABILITY_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-];
-
-function usePlaceholderVendorReliability(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_VENDOR_RELIABILITY_ROWS;
+  loadRiskAssessment(): void {
+    this.isLoading = true;
+    this.reliabilityService.getRiskAssessment().subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        if (res) {
+          const list: any[] = [];
+          (res.low_risk_vendors || []).forEach((v: any) => {
+            list.push({ name: v.company_name || v.vendor_name, category: v.category || 'General', financial: 'Stable', operational: 'Low Risk', risk: 'Low' });
+          });
+          (res.medium_risk_vendors || []).forEach((v: any) => {
+            list.push({ name: v.company_name || v.vendor_name, category: v.category || 'General', financial: 'Fair', operational: 'Medium Risk', risk: 'Medium' });
+          });
+          (res.high_risk_vendors || []).forEach((v: any) => {
+            list.push({ name: v.company_name || v.vendor_name, category: v.category || 'General', financial: 'Attention Needed', operational: 'High Risk', risk: 'High' });
+          });
+          this.vendors = list;
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
   }
-  return rows.filter((row) => !!row);
 }
