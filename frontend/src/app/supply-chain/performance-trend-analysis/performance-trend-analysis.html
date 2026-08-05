@@ -23,43 +23,51 @@
 
     <div *ngIf="isLoading" style="padding: 24px; color: var(--text-secondary);">Loading trend data…</div>
 
-</div>
+    <div *ngIf="errorMsg"
+         style="margin-bottom: 16px; padding: 10px 14px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;">
+        {{ errorMsg }}
+    </div>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+    <div *ngIf="!isLoading" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--vrip-space-6); margin-bottom: var(--vrip-space-6);">
+        <app-card *ngFor="let trend of trends">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;">
+                <span class="material-symbols-outlined" [ngStyle]="{'color': trend.color}">{{ trend.icon }}</span>
+                <h3 style="margin: 0; font-size: 1.125rem;">
+                    {{ trend.label }} Trend ({{ months.length }} {{ months.length === 1 ? 'month' : 'months' }})
+                </h3>
+            </div>
+
+            <div *ngIf="hasData(trend.data)" style="height: 120px; width: 100%; border-bottom: 1px solid var(--vrip-gray-200); position: relative;">
+                <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 300 100">
+                    <polyline [attr.points]="getSparklinePoints(trend.data)"
+                              fill="none"
+                              [attr.stroke]="trend.color"
+                              stroke-width="3"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div *ngIf="!hasData(trend.data)"
+                 style="height: 120px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 0.875rem; border-bottom: 1px solid var(--vrip-gray-200);">
+                No records captured for this factor yet
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 12px; font-size: 0.75rem; color: var(--text-secondary);">
+                <span *ngFor="let month of months">{{ month }}</span>
+            </div>
+
+            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--vrip-gray-200); display: flex; justify-content: space-between;">
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">Latest Score</div>
+                    <div style="font-weight: 600; font-size: 1.125rem;" [ngStyle]="{'color': trend.color}">{{ latestScore(trend.data) }}</div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 0.75rem; color: var(--text-secondary);">Change</div>
+                    <div style="font-weight: 600; font-size: 1.125rem;" [ngStyle]="{'color': changeColor(trend.data)}">
+                        {{ changeLabel(trend.data) }}
+                    </div>
+                </div>
+            </div>
+        </app-card>
+    </div>
 </div>

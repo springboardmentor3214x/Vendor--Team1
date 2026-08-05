@@ -31,28 +31,93 @@ export class VendorDashboard implements OnInit {
   loading: boolean = true;
   recentActivities: any[] = [];
   vendorProfile: any = null;
+
   constructor(
     private vendorService: VendorService,
     private procurementService: ProcurementService,
     private contractService: ContractService,
     private commService: CommunicationService
   ) {}
-}
 
-const PLACEHOLDER_VENDOR_DASHBOARD_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderVendorDashboard(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_VENDOR_DASHBOARD_ROWS;
+  ngOnInit(): void {
+    this.loadDashboardData();
   }
-  return rows.filter((row) => !!row);
+
+  loadDashboardData(): void {
+    this.loading = true;
+
+    this.vendorService.getMyVendorProfile().subscribe({
+      next: (v: any) => {
+        if (v) {
+          this.vendorProfile = v;
+          const score = v.reliability_score ?? v.rating ?? 0.0;
+          this.reliabilityScore = score.toFixed(1) + ' ⭐';
+        } else {
+          this.reliabilityScore = '0.0 ⭐';
+        }
+      },
+      error: () => {
+        this.reliabilityScore = '0.0 ⭐';
+      }
+    });
+
+    this.procurementService.getAllProcurementRequests().subscribe({
+      next: (orders) => {
+        if (Array.isArray(orders)) {
+          this.activeOrdersCount = orders.filter(o => o.status !== 'Completed' && o.status !== 'Cancelled').length;
+          this.recentActivities = orders.slice(0, 5).map(o => ({
+            date: o.created_at ? o.created_at.slice(0, 10) : new Date().toISOString().slice(0, 10),
+            activity: 'Purchase Order #' + o.id + ' (' + o.item_name + ')',
+            status: o.status || 'Pending'
+          }));
+        } else {
+          this.activeOrdersCount = 0;
+          this.recentActivities = [];
+        }
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.activeOrdersCount = 0;
+        this.recentActivities = [];
+      }
+    });
+
+    this.contractService.getContracts().subscribe({
+      next: (contracts) => {
+        if (Array.isArray(contracts)) {
+          this.pendingContractsCount = contracts.filter(c => c.status === 'Pending' || c.status === 'Draft').length;
+        } else {
+          this.pendingContractsCount = 0;
+        }
+      },
+      error: () => {
+        this.pendingContractsCount = 0;
+      }
+    });
+
+    this.commService.getMessages().subscribe({
+      next: (comms) => {
+        if (Array.isArray(comms)) {
+          this.unreadMessagesCount = comms.filter(m => !m.is_read).length;
+        } else {
+          this.unreadMessagesCount = 0;
+        }
+      },
+      error: () => {
+        this.unreadMessagesCount = 0;
+      }
+    });
+  }
+
+  getBadgeVariant(status: string): 'success' | 'warning' | 'info' | 'default' | 'danger' {
+    if (status === 'Completed' || status === 'Delivered') return 'success';
+    if (status === 'Pending') return 'warning';
+    if (status === 'Dispatched' || status === 'Order Placed' || status === 'Approved') return 'info';
+    return 'default';
+  }
+
+  refresh(): void {
+    this.loadDashboardData();
+  }
 }
