@@ -32,6 +32,7 @@ from app.api.analytics import router as analytics_router
 from app.api.notification import router as notification_router
 from app.api.communication import router as communication_router
 from app.api.contract import router as contract_router
+from app.api.reports import router as reports_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -58,6 +59,7 @@ app.include_router(analytics_router)
 app.include_router(notification_router)
 app.include_router(contract_router)
 app.include_router(communication_router)
+app.include_router(reports_router)
 
 
 @app.on_event("startup")
