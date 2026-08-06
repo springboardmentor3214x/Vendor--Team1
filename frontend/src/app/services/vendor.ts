@@ -86,6 +86,21 @@ export class VendorService {
     this.deactivateVendor(id);
   }
 
+  uploadDocument(vendorId: number, documentType: string, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('document_type', documentType);
+    formData.append('file', file);
+    return this.http.post(`${this.apiUrl}${vendorId}/documents`, formData);
+  }
+
+  getVendorDocuments(vendorId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}${vendorId}/documents`);
+  }
+
+  deleteVendorDocument(vendorId: number, documentId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}${vendorId}/documents/${documentId}`);
+  }
+
   private refresh(): void {
     this.loadVendors().subscribe({ error: () => undefined });
   }
