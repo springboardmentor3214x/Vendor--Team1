@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 31 Jul - Rework invoice totals in the finance dashboard screen
 - 01 Aug - Extend the procurement risk dashboard screen with risk level tiles
 - 02 Aug - Extend the vendor performance screen with score breakdown
 - 03 Aug - Extend the admin dashboard screen with user counts
 - 04 Aug - Remove placeholder dashboard metrics now analytics endpoints are live
 - 05 Aug - Expand the vendor contracts screen with expiry notice
+- 06 Aug - Expand the forgot password screen with email lookup
