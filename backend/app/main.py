@@ -29,6 +29,7 @@ from app.api.invoice import router as invoice_router
 from app.api.performance import router as performance_router
 from app.api.reliability import router as reliability_router
 from app.api.analytics import router as analytics_router
+from app.api.notification import router as notification_router
 from app.api.communication import router as communication_router
 from app.api.contract import router as contract_router
 
@@ -54,6 +55,7 @@ app.include_router(invoice_router)
 app.include_router(performance_router)
 app.include_router(reliability_router)
 app.include_router(analytics_router)
+app.include_router(notification_router)
 app.include_router(contract_router)
 app.include_router(communication_router)
 
