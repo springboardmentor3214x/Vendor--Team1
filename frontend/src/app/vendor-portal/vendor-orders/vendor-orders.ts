@@ -30,16 +30,20 @@ export class VendorOrders implements OnInit {
       next: (data) => {
         this.loading = false;
         if (Array.isArray(data)) {
-          this.orders = data.map(p => ({
-            id: p.id,
-            poNumber: 'PO-2026-' + (1000 + p.id),
-            itemName: p.item_name,
-            quantity: p.quantity,
-            amount: p.estimated_cost || 0,
-            date: p.created_at ? p.created_at.slice(0, 10) : '2026-07-30',
-            deadline: p.deadline || 'Flexible',
-            status: p.status || 'Pending'
-          }));
+          this.orders = data.map(p => {
+            const amount = p.total_price || (p.unit_price && p.quantity ? p.unit_price * p.quantity : 0);
+            const deadline = p.expected_delivery_date ? p.expected_delivery_date.slice(0, 10) : 'N/A';
+            return {
+              id: p.id,
+              poNumber: 'PO-2026-' + (1000 + p.id),
+              itemName: p.item_name,
+              quantity: p.quantity,
+              amount: amount,
+              date: p.created_at ? p.created_at.slice(0, 10) : '2026-07-30',
+              deadline: deadline,
+              status: p.status || 'Pending'
+            };
+          });
         } else {
           this.orders = [];
         }

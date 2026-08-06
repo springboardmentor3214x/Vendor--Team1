@@ -38,16 +38,19 @@ export class ProcurementRequestList implements OnInit {
       next: (res) => {
         this.loading = false;
         if (Array.isArray(res)) {
-          this.requests = res.map(item => ({
-            id: item.id,
-            requestNumber: 'PR-2026-' + (1000 + item.id),
-            title: item.item_name || 'Procurement Item',
-            quantity: item.quantity || 1,
-            budget: item.estimated_cost || 0,
-            status: item.status || 'Pending',
-            vendorId: item.vendor_id,
-            createdDate: item.created_at ? item.created_at.slice(0, 10) : '2026-07-30'
-          }));
+          this.requests = res.map(item => {
+            const budget = item.total_price || (item.unit_price && item.quantity ? item.unit_price * item.quantity : 0);
+            return {
+              id: item.id,
+              requestNumber: 'PR-2026-' + (1000 + item.id),
+              title: item.item_name || 'Procurement Item',
+              quantity: item.quantity || 1,
+              budget: budget,
+              status: item.status || 'Pending',
+              vendorId: item.vendor_id,
+              createdDate: item.created_at ? item.created_at.slice(0, 10) : '2026-07-30'
+            };
+          });
         } else {
           this.requests = [];
         }

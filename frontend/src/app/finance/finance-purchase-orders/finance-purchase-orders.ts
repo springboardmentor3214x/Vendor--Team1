@@ -30,14 +30,17 @@ export class FinancePurchaseOrders implements OnInit {
       next: (data) => {
         this.loading = false;
         if (Array.isArray(data)) {
-          this.orders = data.map(p => ({
-            id: p.id,
-            poNumber: 'PO-2026-' + (1000 + p.id),
-            itemName: p.item_name,
-            quantity: p.quantity,
-            amount: p.estimated_cost || 0,
-            status: p.status || 'Pending'
-          }));
+          this.orders = data.map(p => {
+            const amount = p.total_price || (p.unit_price && p.quantity ? p.unit_price * p.quantity : 0);
+            return {
+              id: p.id,
+              poNumber: 'PO-2026-' + (1000 + p.id),
+              itemName: p.item_name,
+              quantity: p.quantity,
+              amount: amount,
+              status: p.status || 'Pending'
+            };
+          });
         } else {
           this.orders = [];
         }
