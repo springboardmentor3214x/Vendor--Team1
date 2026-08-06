@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 31 Jul - Expand performance with delivery accuracy calculation
 - 01 Aug - Refine score normalisation in reliability
 - 02 Aug - Refine priority levels in notification
 - 03 Aug - Refine Excel export in reports
 - 04 Aug - Expand notification with email dispatch
 - 05 Aug - Add vendor scoping with registration validation rules
+- 06 Aug - Extend vendor scoping with supplier ranking fields
