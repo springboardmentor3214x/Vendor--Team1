@@ -61,4 +61,47 @@ export class ProcurementService {
   getApprovedVendors(): Observable<any[]> {
     return this.http.get<any[]>('/vendors/?status=Active&limit=200');
   }
+
+  // Purchase Order APIs
+  createPurchaseOrder(data: any): Observable<any> {
+    return this.http.post('/purchase-orders/', data);
+  }
+
+  getAllPurchaseOrders(): Observable<any[]> {
+    return this.http.get<any[]>('/purchase-orders/');
+  }
+
+  getPurchaseOrderById(id: string | number): Observable<any> {
+    return this.http.get<any>(`/purchase-orders/${id}`);
+  }
+
+  updatePOStatus(id: string | number, status: string): Observable<any> {
+    return this.http.put(`/purchase-orders/${id}/status?status=${status}`, {});
+  }
+
+  // Order Tracking APIs
+  getAllOrderTracking(): Observable<any[]> {
+    return this.http.get<any[]>('/order-tracking/');
+  }
+
+  getOrderTrackingByPO(poId: string | number): Observable<any> {
+    return this.http.get<any>(`/order-tracking/${poId}`);
+  }
+
+  updateOrderTracking(poId: string | number, data: any): Observable<any> {
+    return this.http.put(`/order-tracking/${poId}`, data);
+  }
+
+  // Invoice APIs
+  uploadInvoice(formData: FormData): Observable<any> {
+    return this.http.post('/invoices/upload', formData);
+  }
+
+  getAllInvoices(): Observable<any[]> {
+    return this.http.get<any[]>('/invoices/');
+  }
+
+  verifyInvoice(invoiceId: string | number, action: string, remarks?: string): Observable<any> {
+    return this.http.post(`/invoices/${invoiceId}/verify`, { action, remarks });
+  }
 }

@@ -13,12 +13,27 @@ from app.utils.delivery_timing import delivery_status_from_times
 
 def create_procurement(db: Session, data: ProcurementCreate):
     total_price = data.quantity * data.unit_price
+    count = db.query(Procurement).count() + 1
+    req_num = f"PR-{datetime.utcnow().year}-{count:04d}"
+
     proc = Procurement(
-        item_name=data.item_name, vendor_id=data.vendor_id,
-        quantity=data.quantity, unit_price=data.unit_price,
+        request_number=req_num,
+        request_title=data.request_title or f"Request for {data.item_name}",
+        department=data.department or "General",
+        requested_by=data.requested_by or "Department User",
+        item_name=data.item_name,
+        category=data.category,
+        vendor_id=data.vendor_id,
+        quantity=data.quantity,
+        unit_of_measurement=data.unit_of_measurement or "Units",
+        unit_price=data.unit_price,
         total_price=total_price,
+        priority=data.priority or "Medium",
+        business_justification=data.business_justification,
+        remarks=data.remarks,
         expected_delivery_date=data.expected_delivery_date,
-        status="Pending"
+        status="Pending",
+        approval_status="Pending"
     )
     try:
         db.add(proc)
