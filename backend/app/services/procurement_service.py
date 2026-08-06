@@ -357,15 +357,60 @@ def place_order(db: Session, procurement_id: int, user_name: str = "Procurement 
 def filter_procurements(db: Session, status: str):
     return db.query(Procurement).filter(Procurement.status == status).all()
 
+def search_procurements(db: Session, keyword: str):
+    pattern = f"%{keyword}%"
+    return db.query(Procurement).filter(
+        or_(
+            Procurement.request_number.ilike(pattern),
+            Procurement.request_title.ilike(pattern),
+            Procurement.item_name.ilike(pattern)
+        )
+    ).all()
+
+def mark_delivered(db: Session, procurement_id: int, actual_time: Optional[datetime] = None, user_name: str = "Supply Chain Manager"):
+    proc = get_procurement(db, procurement_id)
+    if not proc:
+        return None
+    if proc.status not in ("In Transit", "Ordered"):
+        raise HTTPException(status_code=400, detail="Order must be ordered or in transit before delivery")
+    proc.status = "Delivered"
+    proc.actual_delivery_date = actual_time or datetime.utcnow()
+
+    expected = proc.expected_delivery_date or proc.actual_delivery_date
+    status, delay_hours, delay_days = delivery_status_from_times(expected, proc.actual_delivery_date)
+
+    delivery = DeliveryPerformance(
+        procurement_id=proc.id,
+        vendor_id=proc.vendor_id,
+        expected_date=expected,
+        actual_date=proc.actual_delivery_date,
+        delay_days=delay_days,
+        delay_hours=delay_hours,
+        delivery_status=status,
+        remarks="Recorded when marked delivered"
+    )
+    db.add(delivery)
+    db.commit()
+
+    if proc.vendor_id:
+        try:
+            update_vendor_scores(db, proc.vendor_id)
+        except Exception as e:
+            print(f"Failed to update vendor scores: {e}")
+
+    db.refresh(proc)
+    record_status_history(db, proc.id, "Delivered", user_name, "Order items delivered to warehouse")
+    return proc
+
 
 def _pending_procurement_service_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -375,6 +420,8 @@ def _pending_procurement_service_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -383,9 +430,9 @@ def _pending_procurement_service_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -395,6 +442,8 @@ def _pending_procurement_service_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -403,9 +452,9 @@ def _pending_procurement_service_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -415,6 +464,8 @@ def _pending_procurement_service_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -423,9 +474,9 @@ def _pending_procurement_service_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -435,6 +486,8 @@ def _pending_procurement_service_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
 
 
@@ -443,9 +496,9 @@ def _pending_procurement_service_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "title", "")),
+            "state": getattr(item, "status", "Draft"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -455,16 +508,6 @@ def _pending_procurement_service_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
     return totals
-
-
-def _pending_procurement_service_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
