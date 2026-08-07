@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import List
+
 from app.database.connection import get_db
 from app.schemas.performance import (
     DeliveryPerformanceCreate, DeliveryPerformanceResponse,
@@ -18,12 +19,14 @@ router = APIRouter(prefix="/performance", tags=["Vendor Performance"])
 
 EVALUATOR_ROLES = [Roles.ADMIN, Roles.SUPPLY_CHAIN_MANAGER, Roles.PROCUREMENT_MANAGER]
 
+
 @router.get("/dashboard")
 def dashboard(
     db: Session = Depends(get_db),
     current_user: User = Depends(role_required(INTERNAL_ROLES))
 ):
     return performance_service.performance_dashboard(db)
+
 
 @router.get("/metrics/{vendor_id}")
 def vendor_metrics(
@@ -34,12 +37,14 @@ def vendor_metrics(
     assert_owns(db, current_user, vendor_id, "performance data")
     return performance_service.calculate_vendor_metrics(db, vendor_id)
 
+
 @router.get("/rankings")
 def vendor_rankings(
     db: Session = Depends(get_db),
     current_user: User = Depends(role_required(INTERNAL_ROLES))
 ):
     return performance_service.generate_vendor_rankings(db)
+
 
 @router.get("/history/{vendor_id}")
 def vendor_history(
@@ -50,6 +55,7 @@ def vendor_history(
     assert_owns(db, current_user, vendor_id, "performance data")
     return performance_service.get_vendor_performance_history(db, vendor_id)
 
+
 @router.post("/delivery", response_model=DeliveryPerformanceResponse, status_code=201)
 def record_delivery(
     data: DeliveryPerformanceCreate,
@@ -58,11 +64,13 @@ def record_delivery(
 ):
     return performance_service.record_delivery(db, data)
 
+
 @router.get("/delivery/{vendor_id}", response_model=List[DeliveryPerformanceResponse])
 def get_delivery(vendor_id: int, db: Session = Depends(get_db),
                  current_user: User = Depends(get_current_user)):
     assert_owns(db, current_user, vendor_id, "delivery records")
     return performance_service.get_delivery_records(db, vendor_id)
+
 
 @router.post("/quality", response_model=QualityEvaluationResponse, status_code=201)
 def record_quality(
@@ -73,57 +81,40 @@ def record_quality(
     return performance_service.record_quality(db, data)
 
 
-def _pending_performance_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+@router.get("/quality/{vendor_id}", response_model=List[QualityEvaluationResponse])
+def get_quality(vendor_id: int, db: Session = Depends(get_db),
+                current_user: User = Depends(get_current_user)):
+    assert_owns(db, current_user, vendor_id, "quality evaluations")
+    return performance_service.get_quality_records(db, vendor_id)
 
 
-def _pending_performance_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+@router.post("/communication", response_model=CommunicationLogResponse, status_code=201)
+def record_communication(
+    data: CommunicationLogCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required(EVALUATOR_ROLES))
+):
+    return performance_service.record_communication(db, data)
 
 
-def _pending_performance_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+@router.get("/communication/{vendor_id}", response_model=List[CommunicationLogResponse])
+def get_communication(vendor_id: int, db: Session = Depends(get_db),
+                      current_user: User = Depends(get_current_user)):
+    assert_owns(db, current_user, vendor_id, "communication records")
+    return performance_service.get_communication_records(db, vendor_id)
 
 
-def _pending_performance_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    return totals
+@router.post("/service-rating", response_model=ServiceRatingResponse, status_code=201)
+def submit_rating(
+    data: ServiceRatingCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required(EVALUATOR_ROLES))
+):
+    return performance_service.submit_service_rating(db, data)
 
 
-def _pending_performance_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+@router.get("/service-rating/{vendor_id}", response_model=List[ServiceRatingResponse])
+def get_ratings(vendor_id: int, db: Session = Depends(get_db),
+                current_user: User = Depends(get_current_user)):
+    assert_owns(db, current_user, vendor_id, "service ratings")
+    return performance_service.get_service_ratings(db, vendor_id)
