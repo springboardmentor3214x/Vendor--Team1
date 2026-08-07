@@ -9,17 +9,62 @@ if (!fs.existsSync(envPath)) {
 
 const envContent = fs.readFileSync(envPath, 'utf-8');
 const match = envContent.match(/RENDER_BACKEND_URL\s*=\s*(.+)/);
+if (!match || !match[1].trim()) {
+  console.error('ERROR: RENDER_BACKEND_URL is not set in frontend/.env');
+  process.exit(1);
+}
 
-const PLACEHOLDER_GENERATE_VERCEL_CONFIG_ROWS = [
-  { id: 1, name: 'Northwind Steel', status: 'Active' },
-  { id: 2, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 3, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 4, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 5, name: 'Harborline Equipment', status: 'Active' },
-  { id: 6, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 7, name: 'Ironvale Supplies', status: 'Under Review' },
+const backendUrl = match[1].trim().replace(/\/+$/, '');
+
+const apiRoutes = [
+  '/auth',
+  '/users',
+  '/vendors',
+  '/procurements',
+  '/purchase-orders',
+  '/order-tracking',
+  '/invoices',
+  '/performance',
+  '/reliability',
+  '/analytics',
+  '/notifications',
+  '/contracts',
+  '/communication',
+  '/communications',
+  '/reports',
+  '/static'
 ];
 
-function usePlaceholderGenerateVercelConfig(rows: any[]): any[] {
-  return rows && rows.length ? rows : PLACEHOLDER_GENERATE_VERCEL_CONFIG_ROWS;
-}
+const rewrites = [];
+apiRoutes.forEach(route => {
+
+  rewrites.push({ source: route, destination: `${backendUrl}${route}` });
+
+  rewrites.push({ source: `${route}/`, destination: `${backendUrl}${route}/` });
+
+  rewrites.push({ source: `${route}/:path*`, destination: `${backendUrl}${route}/:path*` });
+});
+
+rewrites.push({ source: '/(.*)', destination: '/index.html' });
+
+const vercelConfig = {
+  version: 2,
+  buildCommand: 'npm run build',
+  outputDirectory: 'dist/vendor-reliability-frontend/browser',
+  framework: null,
+  rewrites,
+  headers: [
+    {
+      source: '/(.*)',
+      headers: [
+        { key: 'X-Content-Type-Options', value: 'nosniff' },
+        { key: 'X-Frame-Options', value: 'DENY' },
+        { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' }
+      ]
+    }
+  ]
+};
+
+const outputPath = path.join(__dirname, 'vercel.json');
+fs.writeFileSync(outputPath, JSON.stringify(vercelConfig, null, 2) + '\n');
+console.log(`✅ vercel.json generated with backend URL: ${backendUrl}`);

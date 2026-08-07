@@ -28,43 +28,108 @@
     </div>
 
     <div *ngIf="loading" style="text-align: center; padding: 48px; color: var(--text-secondary);">Loading vendor analytics…</div>
-</div>
 
-<div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+    <ng-container *ngIf="data && !loading">
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--vrip-space-6); margin: var(--vrip-space-6) 0;">
+            <app-card>
+                <h3 class="kpi-label">Reliability Score</h3>
+                <div class="kpi-value" style="color: #4f46e5;">{{ reliabilityScore | number:'1.0-1' }}</div>
+                <div class="kpi-sub">Trend: {{ overallTrend }}</div>
+            </app-card>
+            <app-card>
+                <h3 class="kpi-label">Recommendation</h3>
+                <div class="kpi-value" style="font-size: 1.35rem;">{{ recommendation }}</div>
+                <div class="kpi-sub">{{ data.category }}</div>
+            </app-card>
+            <app-card>
+                <h3 class="kpi-label">Active / Completed Orders</h3>
+                <div class="kpi-value">{{ summary.active_pos || 0 }} / {{ summary.completed_orders || 0 }}</div>
+                <div class="kpi-sub">{{ summary.total_orders || 0 }} total purchase orders</div>
+            </app-card>
+            <app-card>
+                <h3 class="kpi-label">Active Contracts</h3>
+                <div class="kpi-value">{{ summary.active_contracts || 0 }}</div>
+                <div class="kpi-sub">{{ summary.expiring_contracts || 0 }} expiring soon</div>
+            </app-card>
+            <app-card>
+                <h3 class="kpi-label">Total Invoiced</h3>
+                <div class="kpi-value" style="color: #10b981;">{{ formatCurrency(summary.total_invoiced) }}</div>
+                <div class="kpi-sub">{{ formatCurrency(summary.total_paid) }} paid</div>
+            </app-card>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px; margin-bottom: 24px;">
+            <app-card>
+                <div class="chart-head">
+                    <h3>Reliability & Performance Trend</h3>
+                    <span class="material-symbols-outlined">show_chart</span>
+                </div>
+                <apx-chart *ngIf="hasTrend"
+                    [series]="reliabilityTrendChart.series"
+                    [chart]="reliabilityTrendChart.chart"
+                    [xaxis]="reliabilityTrendChart.xaxis"
+                    [yaxis]="reliabilityTrendChart.yaxis"
+                    [colors]="reliabilityTrendChart.colors"
+                    [stroke]="reliabilityTrendChart.stroke"
+                    [markers]="reliabilityTrendChart.markers"
+                    [legend]="reliabilityTrendChart.legend"
+                    [dataLabels]="reliabilityTrendChart.dataLabels">
+                </apx-chart>
+                <p *ngIf="!hasTrend" class="empty-note">No dated performance history yet for this vendor.</p>
+            </app-card>
+
+            <app-card>
+                <div class="chart-head">
+                    <h3>Current Sub-Scores</h3>
+                    <span class="material-symbols-outlined">bar_chart</span>
+                </div>
+                <apx-chart *ngIf="subScoreChart?.series"
+                    [series]="subScoreChart.series"
+                    [chart]="subScoreChart.chart"
+                    [xaxis]="subScoreChart.xaxis"
+                    [yaxis]="subScoreChart.yaxis"
+                    [colors]="subScoreChart.colors"
+                    [plotOptions]="subScoreChart.plotOptions"
+                    [dataLabels]="subScoreChart.dataLabels"
+                    [legend]="subScoreChart.legend">
+                </apx-chart>
+            </app-card>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px;">
+            <app-card>
+                <div class="chart-head">
+                    <h3>Delivery Outcomes</h3>
+                    <span class="material-symbols-outlined">local_shipping</span>
+                </div>
+                <apx-chart *ngIf="hasDelivery"
+                    [series]="deliveryChart.series"
+                    [chart]="deliveryChart.chart"
+                    [labels]="deliveryChart.labels"
+                    [colors]="deliveryChart.colors"
+                    [legend]="deliveryChart.legend">
+                </apx-chart>
+                <p *ngIf="!hasDelivery" class="empty-note">No delivery records recorded yet.</p>
+            </app-card>
+
+            <app-card>
+                <div class="chart-head">
+                    <h3>Monthly Procurement Spend</h3>
+                    <span class="material-symbols-outlined">payments</span>
+                </div>
+                <apx-chart *ngIf="hasSpend"
+                    [series]="monthlySpendChart.series"
+                    [chart]="monthlySpendChart.chart"
+                    [xaxis]="monthlySpendChart.xaxis"
+                    [yaxis]="monthlySpendChart.yaxis"
+                    [colors]="monthlySpendChart.colors"
+                    [stroke]="monthlySpendChart.stroke"
+                    [fill]="monthlySpendChart.fill"
+                    [dataLabels]="monthlySpendChart.dataLabels">
+                </apx-chart>
+                <p *ngIf="!hasSpend" class="empty-note">No procurement spend recorded for this vendor.</p>
+            </app-card>
+        </div>
+    </ng-container>
 </div>
