@@ -3,11 +3,13 @@ from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException
 from datetime import datetime, timedelta
 from typing import Optional
+
 from app.models.invoice import Invoice
 from app.models.purchase_order import PurchaseOrder
 from app.models.procurement import Procurement
 from app.schemas.invoice import InvoiceCreate, InvoiceVerifyRequest
 from app.services.procurement_service import record_status_history
+
 
 def generate_invoice_number(db: Session) -> str:
     from sqlalchemy import func
@@ -30,6 +32,7 @@ def generate_invoice_number(db: Session) -> str:
         next_seq += 1
     return f"{prefix}{next_seq:04d}"
 
+
 def get_vendor_for_user(db: Session, user):
     from app.models.vendor import Vendor
     from sqlalchemy import func
@@ -37,8 +40,10 @@ def get_vendor_for_user(db: Session, user):
         return None
     return db.query(Vendor).filter(func.lower(Vendor.email) == user.email.lower()).first()
 
+
 def get_invoices_by_vendor(db: Session, vendor_id: int):
     return db.query(Invoice).filter(Invoice.vendor_id == vendor_id).order_by(Invoice.invoice_date.desc()).all()
+
 
 def create_invoice(db: Session, data: InvoiceCreate, file_name: str = None, file_path: str = None):
     invoice_number = data.invoice_number or generate_invoice_number(db)
@@ -88,11 +93,14 @@ def create_invoice(db: Session, data: InvoiceCreate, file_name: str = None, file
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
+
 def get_all_invoices(db: Session):
     return db.query(Invoice).order_by(Invoice.invoice_date.desc()).all()
 
+
 def get_invoice(db: Session, invoice_id: int):
     return db.query(Invoice).filter(Invoice.id == invoice_id).first()
+
 
 INVOICE_TRANSITIONS = {
     "Pending": ["Verified", "Rejected"],
@@ -109,94 +117,65 @@ ACTION_TO_STATUS = {
     "reject": "Rejected",
 }
 
-
-def _pending_invoice_service_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
+STATUS_TO_ACTION = {status: action for action, status in ACTION_TO_STATUS.items()}
 
 
-def _pending_invoice_service_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+def update_payment_status(db: Session, invoice_id: int, request, user_name: str):
+    requested = (request.status or "").strip().capitalize()
+    action = STATUS_TO_ACTION.get(requested)
+    if not action:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid payment status '{request.status}'. Expected one of: {sorted(STATUS_TO_ACTION)}"
+        )
+    return verify_invoice(
+        db,
+        invoice_id,
+        InvoiceVerifyRequest(action=action, remarks=request.remarks),
+        user_name,
+    )
 
 
-def _pending_invoice_service_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
+def verify_invoice(db: Session, invoice_id: int, request: InvoiceVerifyRequest, user_name: str):
+    inv = get_invoice(db, invoice_id)
+    if not inv:
+        return None
 
+    target_status = ACTION_TO_STATUS.get(request.action.lower())
+    if not target_status:
+        raise HTTPException(status_code=400, detail=f"Invalid action '{request.action}'")
 
-def _pending_invoice_service_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+    allowed = INVOICE_TRANSITIONS.get(inv.payment_status, [])
+    if target_status not in allowed:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot {request.action} invoice in '{inv.payment_status}' status. Allowed next states: {allowed or 'none (terminal state)'}"
+        )
 
+    inv.payment_status = target_status
 
-def _pending_invoice_service_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
+    if target_status == "Verified":
+        inv.verified_by = user_name
+    elif target_status in ("Approved", "Paid"):
+        inv.approved_by = user_name
+        if target_status == "Paid":
+            proc = db.query(Procurement).filter(Procurement.id == inv.procurement_id).first()
+            if proc:
+                proc.status = "Completed"
+                record_status_history(db, proc.id, "Completed", user_name, f"Invoice {inv.invoice_number} paid. Procurement completed.", po_id=inv.po_id)
+            po = db.query(PurchaseOrder).filter(PurchaseOrder.id == inv.po_id).first()
+            if po:
+                po.status = "Completed"
 
+    if request.remarks:
+        inv.remarks = request.remarks
 
-def _pending_invoice_service_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+    db.commit()
+    db.refresh(inv)
 
+    from app.models.vendor import Vendor
+    from app.services import notification_service
+    vendor = db.query(Vendor).filter(Vendor.id == inv.vendor_id).first()
+    notification_service.notify_invoice_status(db, inv, target_status, vendor=vendor)
 
-def _pending_invoice_service_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_invoice_service_totals_4(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_invoice_service_rows_5(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
+    return inv
