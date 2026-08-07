@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 01 Aug - Expand the core API services with HTTP service methods
 - 02 Aug - Refine scoring criteria in the new product evaluation screen
 - 03 Aug - Round out the vendor analytics screen with category breakdown chart
 - 04 Aug - Refine category breakdown chart in the vendor analytics screen
 - 05 Aug - Tighten typed responses in the core API services
 - 06 Aug - Create the Angular project with proxy configuration
+- 07 Aug - Improve TypeScript config in the Angular project
