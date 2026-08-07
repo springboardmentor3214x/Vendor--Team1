@@ -38,20 +38,26 @@
   color: var(--v-text-tertiary);
 }
 
-.placeholder-panel {
-  padding: 12px;
-  border: 1px dashed #d2d2d2;
-  border-radius: 5px;
-  color: #7a7a7a;
-}
-
-.placeholder-row {
+.clear-btn {
+  position: absolute;
+  right: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--v-text-tertiary);
   display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border-radius: var(--v-radius-xs);
+  transition: all var(--v-duration) var(--v-ease);
 }
 
-.placeholder-row span {
-  font-size: 13px;
-  letter-spacing: 0.2px;
+.clear-btn:hover {
+  background: var(--v-border);
+  color: var(--v-text-secondary);
+}
+
+.clear-btn .material-symbols-outlined {
+  font-size: 16px;
 }
