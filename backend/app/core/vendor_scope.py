@@ -22,15 +22,21 @@ def assert_owns(db: Session, user: User, record_vendor_id: Optional[int], noun: 
             detail=f"You can only access your own {noun}"
         )
 
+def restrict_to_vendor(db: Session, user: User, records: list, noun: str = "records") -> list:
+    scope = get_vendor_id_for_user(db, user)
+    if scope is None:
+        return records
+    return [r for r in records if getattr(r, "vendor_id", None) == scope]
+
 
 def _pending_vendor_scope_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "title", "")),
-            "state": getattr(item, "status", "Draft"),
-            "owner": getattr(item, "created_by", None),
+            "label": str(getattr(item, "label", "")),
+            "state": getattr(item, "status", "Unverified"),
+            "updated": getattr(item, "updated_at", None),
         })
     return rows
 
@@ -40,6 +46,4 @@ def _pending_vendor_scope_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
     return totals
