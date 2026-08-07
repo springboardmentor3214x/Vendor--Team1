@@ -54,26 +54,9 @@
   </div>
 </div>
 
-<div class="placeholder-panel">
-  <p>Sample rows shown until the API is ready.</p>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
+<div class="dash-section">
+  <div class="dash-section-header">
+    <h2 class="dash-section-title">Recent Audit Activity</h2>
   </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-  </div>
+  <app-table [columns]="columns" [data]="recentActivities"></app-table>
 </div>
