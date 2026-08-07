@@ -153,8 +153,41 @@
             </div>
         </app-card>
 
+        <!-- Status & Approval -->
+        <app-card class="form-section">
+            <div class="section-header">
+                <h2><span class="material-symbols-outlined text-primary">verified</span> Status & Approval</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Vendor Status</label>
+                    <select class="vrip-select" [(ngModel)]="vendor.status">
+                        <option value="Active">Active</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Suspended">Suspended</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Approval Status</label>
+                    <select class="vrip-select" [(ngModel)]="vendor.approvalStatus">
+                        <option value="Approved">Approved</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+            </div>
+        </app-card>
+
         <div class="form-actions">
             <app-button variant="outline" (click)="cancel()">Cancel</app-button>
+            <app-button
+                *ngIf="vendor.status === 'Rejected' || vendor.approvalStatus === 'Rejected'"
+                variant="success"
+                iconLeft="check_circle"
+                (click)="approveVendor()">
+                Approve Vendor
+            </app-button>
             <app-button variant="primary" iconLeft="save" (click)="updateVendor()">Update Vendor</app-button>
         </div>
     </div>

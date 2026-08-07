@@ -13,6 +13,11 @@ Full-stack web application for vendor management, procurement, and performance t
 | **Finance Manager** | `finance@vendor.com` | `Finance@123` |
 | **Auditor** | `auditor@vendor.com` | `Auditor@123` |
 
+The five vendors in Vendor Management also receive matching Vendor portal
+accounts (`rajesh@techsupply.in`, `priya@officemart.co.in`,
+`amit@cloudinfra.io`, `suresh@buildright.in`, and `kavitha@greenpack.in`), all
+with the password `Vendor@123`.
+
 > Credentials are auto-created on first backend startup via `app/seed.py`.
 
 ## Quick Start (Local)

@@ -33,11 +33,14 @@
 
 .user-id-badge {
   font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--v-text-tertiary, #6b7280);
-  background: var(--v-bg-inset, #f3f4f6);
-  padding: 2px 8px;
-  border-radius: 999px;
+  font-weight: 700;
+  font-family: monospace;
+  color: var(--v-brand, #635bff);
+  background: var(--v-brand-light, #ebe9fe);
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .user-email-cell {
@@ -65,15 +68,3 @@
   flex-wrap: nowrap;
 }
 
-/* Skeleton Loading Animation */
-@keyframes v-shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
-}
-
-.skeleton-cell {
-  border-radius: 4px;
-  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
-  background-size: 200% 100%;
-  animation: v-shimmer 1.5s infinite;
-}

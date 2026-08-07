@@ -6,41 +6,53 @@
 
 <!-- KPI Grid -->
 <div class="dash-kpi-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px;">
-  <a routerLink="/vendor-portal/orders" class="vrip-stat-card border-primary" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; cursor: pointer;">
-    <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
-      <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Reliability Rating</h3>
-      <span class="material-symbols-outlined text-primary-600" style="font-size: 20px;">verified</span>
+  <ng-container *ngIf="loading">
+    <div *ngFor="let _ of [1,2,3,4]" class="vrip-stat-card border-primary" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px;">
+      <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="skeleton-text" style="width: 60%;"></div>
+      </div>
+      <div class="skeleton-number" style="margin-top: 4px;"></div>
+      <div class="skeleton-text" style="width: 40%; height: 12px;"></div>
     </div>
-    <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ reliabilityScore }}</h2>
-    <span class="v-muted" style="font-size: 0.725rem;">Performance score</span>
-  </a>
+  </ng-container>
 
-  <a routerLink="/vendor-portal/orders" class="vrip-stat-card border-success" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; cursor: pointer;">
-    <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
-      <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Active Orders</h3>
-      <span class="material-symbols-outlined text-success-600" style="font-size: 20px;">local_shipping</span>
-    </div>
-    <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ activeOrdersCount }}</h2>
-    <span class="v-muted" style="font-size: 0.725rem;">Orders requiring action</span>
-  </a>
+  <ng-container *ngIf="!loading">
+    <a routerLink="/vendor-portal/orders" class="vrip-stat-card border-primary" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; cursor: pointer;">
+      <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Reliability Rating</h3>
+        <span class="material-symbols-outlined text-primary-600" style="font-size: 20px;">verified</span>
+      </div>
+      <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ reliabilityScore }}</h2>
+      <span class="v-muted" style="font-size: 0.725rem;">Performance score</span>
+    </a>
 
-  <a routerLink="/vendor-portal/communication" class="vrip-stat-card border-warning" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; cursor: pointer;">
-    <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
-      <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Messages</h3>
-      <span class="material-symbols-outlined text-warning-600" style="font-size: 20px;">chat</span>
-    </div>
-    <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ unreadMessagesCount }}</h2>
-    <span class="v-muted" style="font-size: 0.725rem;">Support communications</span>
-  </a>
+    <a routerLink="/vendor-portal/orders" class="vrip-stat-card border-success" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; cursor: pointer;">
+      <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Active Orders</h3>
+        <span class="material-symbols-outlined text-success-600" style="font-size: 20px;">local_shipping</span>
+      </div>
+      <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ activeOrdersCount }}</h2>
+      <span class="v-muted" style="font-size: 0.725rem;">Orders requiring action</span>
+    </a>
 
-  <a routerLink="/vendor-portal/contracts" class="vrip-stat-card border-danger" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; cursor: pointer;">
-    <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
-      <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Pending Contracts</h3>
-      <span class="material-symbols-outlined text-danger-600" style="font-size: 20px;">description</span>
-    </div>
-    <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ pendingContractsCount }}</h2>
-    <span class="v-muted" style="font-size: 0.725rem;">Legal documents</span>
-  </a>
+    <a routerLink="/vendor-portal/communication" class="vrip-stat-card border-warning" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; cursor: pointer;">
+      <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Messages</h3>
+        <span class="material-symbols-outlined text-warning-600" style="font-size: 20px;">chat</span>
+      </div>
+      <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ unreadMessagesCount }}</h2>
+      <span class="v-muted" style="font-size: 0.725rem;">Support communications</span>
+    </a>
+
+    <a routerLink="/vendor-portal/contracts" class="vrip-stat-card border-danger" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; cursor: pointer;">
+      <div class="stat-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--v-text-secondary); letter-spacing: 0.05em; margin: 0;">Pending Contracts</h3>
+        <span class="material-symbols-outlined text-danger-600" style="font-size: 20px;">description</span>
+      </div>
+      <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--v-text-primary);">{{ pendingContractsCount }}</h2>
+      <span class="v-muted" style="font-size: 0.725rem;">Legal documents</span>
+    </a>
+  </ng-container>
 </div>
 
 <!-- Quick Actions -->
@@ -80,24 +92,34 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of recentActivities" class="vrip-table-row">
-            <td>{{ item.date }}</td>
-            <td><strong style="font-size: 0.8125rem;">{{ item.activity }}</strong></td>
-            <td>
-              <app-badge [variant]="getBadgeVariant(item.status)">
-                {{ item.status }}
-              </app-badge>
-            </td>
-          </tr>
+          <ng-container *ngIf="loading">
+            <tr *ngFor="let _ of [1,2,3]" class="vrip-table-row">
+              <td><div class="skeleton-cell" style="width: 90px;"></div></td>
+              <td><div class="skeleton-cell" style="width: 80%;"></div></td>
+              <td><div class="skeleton-badge"></div></td>
+            </tr>
+          </ng-container>
 
-          <tr *ngIf="recentActivities.length === 0">
-            <td colspan="3" class="vrip-table-empty">
-              <div class="empty-state">
-                <span class="material-symbols-outlined empty-icon">history</span>
-                <p>No recent activity found.</p>
-              </div>
-            </td>
-          </tr>
+          <ng-container *ngIf="!loading">
+            <tr *ngFor="let item of recentActivities" class="vrip-table-row">
+              <td>{{ item.date }}</td>
+              <td><strong style="font-size: 0.8125rem;">{{ item.activity }}</strong></td>
+              <td>
+                <app-badge [variant]="getBadgeVariant(item.status)">
+                  {{ item.status }}
+                </app-badge>
+              </td>
+            </tr>
+
+            <tr *ngIf="recentActivities.length === 0">
+              <td colspan="3" class="vrip-table-empty">
+                <div class="empty-state">
+                  <span class="material-symbols-outlined empty-icon">history</span>
+                  <p>No recent activity found.</p>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
         </tbody>
       </table>
     </div>

@@ -4,60 +4,68 @@
             <h1 class="vrip-page-title">Vendor Management</h1>
             <p class="vrip-page-subtitle">Manage all registered vendors</p>
         </div>
-        <app-button
-            variant="primary"
-            iconLeft="add"
-            routerLink="/vendors/add">
-            Add Vendor
-        </app-button>
+        <div class="vendor-header-actions">
+            <app-button variant="outline" iconLeft="refresh" (onClick)="loadVendors()">Refresh</app-button>
+            <app-button variant="primary" iconLeft="add" routerLink="/vendors/add">Add Vendor</app-button>
+        </div>
     </div>
 
     <!-- Dashboard Statistics -->
     <div class="stats-container">
-        <div class="vrip-stat-card border-primary">
-            <div class="stat-header">
-                <h3>Total Vendors</h3>
-                <span class="material-symbols-outlined text-primary-600">groups</span>
+        <ng-container *ngIf="loading">
+            <div *ngFor="let _ of [1,2,3,4,5]" class="vrip-stat-card border-primary">
+                <div class="stat-header">
+                    <div class="skeleton-text" style="width: 70%;"></div>
+                </div>
+                <div class="skeleton-number" style="margin-top: 8px;"></div>
             </div>
-            <h2>{{ totalVendors }}</h2>
-        </div>
+        </ng-container>
+        <ng-container *ngIf="!loading">
+            <div class="vrip-stat-card border-primary">
+                <div class="stat-header">
+                    <h3>Total Vendors</h3>
+                    <span class="material-symbols-outlined text-primary-600">groups</span>
+                </div>
+                <h2>{{ totalVendors }}</h2>
+            </div>
 
-        <div class="vrip-stat-card border-success">
-            <div class="stat-header">
-                <h3>Active</h3>
-                <span class="material-symbols-outlined text-success-600">check_circle</span>
+            <div class="vrip-stat-card border-success">
+                <div class="stat-header">
+                    <h3>Active</h3>
+                    <span class="material-symbols-outlined text-success-600">check_circle</span>
+                </div>
+                <h2>{{ activeVendors }}</h2>
             </div>
-            <h2>{{ activeVendors }}</h2>
-        </div>
 
-        <div class="vrip-stat-card border-warning">
-            <div class="stat-header">
-                <h3>Pending</h3>
-                <span class="material-symbols-outlined text-warning-600">pending</span>
+            <div class="vrip-stat-card border-warning">
+                <div class="stat-header">
+                    <h3>Pending</h3>
+                    <span class="material-symbols-outlined text-warning-600">pending</span>
+                </div>
+                <h2>{{ pendingVendors }}</h2>
             </div>
-            <h2>{{ pendingVendors }}</h2>
-        </div>
 
-        <div class="vrip-stat-card border-orange">
-            <div class="stat-header">
-                <h3>Suspended</h3>
-                <span class="material-symbols-outlined text-orange-600">pause_circle</span>
+            <div class="vrip-stat-card border-orange">
+                <div class="stat-header">
+                    <h3>Suspended</h3>
+                    <span class="material-symbols-outlined text-orange-600">pause_circle</span>
+                </div>
+                <h2>{{ suspendedVendors }}</h2>
             </div>
-            <h2>{{ suspendedVendors }}</h2>
-        </div>
 
-        <div class="vrip-stat-card border-danger">
-            <div class="stat-header">
-                <h3>Rejected</h3>
-                <span class="material-symbols-outlined text-danger-600">cancel</span>
+            <div class="vrip-stat-card border-danger">
+                <div class="stat-header">
+                    <h3>Rejected</h3>
+                    <span class="material-symbols-outlined text-danger-600">cancel</span>
+                </div>
+                <h2>{{ rejectedVendors }}</h2>
             </div>
-            <h2>{{ rejectedVendors }}</h2>
-        </div>
+        </ng-container>
     </div>
 
     <app-card>
         <div class="search-bar">
-            <div style="flex: 1; max-width: 400px;">
+            <div class="search-input-wrapper">
                 <app-input
                     placeholder="Search by company, contact person or category..."
                     iconLeft="search"
@@ -67,7 +75,7 @@
             </div>
 
             <select
-                class="vrip-select"
+                class="vrip-select filter-select"
                 [(ngModel)]="selectedCategory"
                 (change)="filterVendors()">
                 <option value="All">All Categories</option>
@@ -82,7 +90,7 @@
             </select>
 
             <select
-                class="vrip-select"
+                class="vrip-select filter-select"
                 [(ngModel)]="selectedStatus"
                 (change)="filterVendors()">
                 <option value="All">All Status</option>
@@ -97,20 +105,28 @@
             <table class="vrip-table" style="min-width: 1100px; width: 100%;">
                 <thead>
                     <tr>
-                        <th style="width: 60px;">ID</th>
-                        <th style="cursor:pointer; min-width: 170px;" (click)="sortData()">
-                            Company Name <span class="material-symbols-outlined sort-icon">{{ sortAscending ? 'arrow_upward' : 'arrow_downward' }}</span>
+                        <th style="width: 90px; cursor: pointer;" (click)="sortBy('id')">
+                            <div style="display: inline-flex; align-items: center; gap: 4px;">
+                                <span>ID</span>
+                                <span *ngIf="sortColumn === 'id'" class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">{{ sortAscending ? 'arrow_upward' : 'arrow_downward' }}</span>
+                            </div>
                         </th>
-                        <th style="min-width: 150px;">Category</th>
-                        <th style="min-width: 130px;">Contact</th>
+                        <th style="cursor: pointer; min-width: 180px;" (click)="sortBy('companyName')">
+                            <div style="display: inline-flex; align-items: center; gap: 4px;">
+                                <span>Company Name</span>
+                                <span *ngIf="sortColumn === 'companyName'" class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">{{ sortAscending ? 'arrow_upward' : 'arrow_downward' }}</span>
+                            </div>
+                        </th>
+                        <th style="min-width: 160px;">Category</th>
+                        <th style="min-width: 140px;">Contact</th>
                         <th style="min-width: 180px;">Email</th>
-                        <th style="min-width: 110px;">Phone</th>
-                        <th style="width: 90px;">Status</th>
-                        <th style="width: 100px;">Approval</th>
-                        <th style="width: 220px; text-align: right;">Actions</th>
+                        <th style="min-width: 120px;">Phone</th>
+                        <th style="width: 100px;">Status</th>
+                        <th style="width: 110px;">Approval</th>
+                        <th style="width: 240px; text-align: right;">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody *ngIf="!loading && !errorMsg">
                     <tr *ngFor="let vendor of paginatedVendors" class="vrip-table-row">
                         <td><span class="vendor-id-chip">#{{ vendor.id }}</span></td>
                         <td><div class="vendor-company-title">{{ vendor.companyName }}</div></td>
@@ -132,12 +148,12 @@
                         </td>
                         <td style="text-align: right; white-space: nowrap;">
                             <div class="vendor-action-buttons">
-                                <ng-container *ngIf="vendor.approvalStatus === 'Pending'">
+                                <ng-container *ngIf="vendor.approvalStatus === 'Pending' || vendor.approvalStatus === 'Rejected' || vendor.status === 'Rejected'">
                                     <app-button variant="success" size="sm" (click)="approveVendor(vendor.id)">Approve</app-button>
-                                    <app-button variant="danger" size="sm" (click)="rejectVendor(vendor.id)">Reject</app-button>
+                                    <app-button *ngIf="vendor.approvalStatus === 'Pending'" variant="danger" size="sm" (click)="rejectVendor(vendor.id)">Reject</app-button>
                                 </ng-container>
                                 <app-button
-                                    *ngIf="vendor.approvalStatus === 'Approved' && vendor.status === 'Active'"
+                                    *ngIf="(vendor.approvalStatus === 'Approved' || vendor.status === 'Active') && vendor.status !== 'Rejected'"
                                     variant="warning" size="sm"
                                     (click)="suspendVendor(vendor.id)">
                                     Suspend
@@ -178,10 +194,26 @@
                         </td>
                     </tr>
                 </tbody>
+                <tbody *ngIf="loading">
+                    <tr *ngFor="let _ of [1,2,3,4,5]" class="vrip-table-row">
+                        <td><div class="skeleton-cell" style="width: 36px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 130px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 100px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 110px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 140px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 90px;"></div></td>
+                        <td><div class="skeleton-badge"></div></td>
+                        <td><div class="skeleton-badge"></div></td>
+                        <td style="text-align: right;"><div class="skeleton-cell" style="width: 120px; margin-left: auto;"></div></td>
+                    </tr>
+                </tbody>
+                <tbody *ngIf="!loading && errorMsg">
+                    <tr><td colspan="9" class="vrip-table-empty"><div class="empty-state"><span class="material-symbols-outlined empty-icon">error</span><p>{{ errorMsg }}</p><app-button variant="outline" size="sm" (onClick)="loadVendors()">Retry</app-button></div></td></tr>
+                </tbody>
             </table>
         </div>
 
-        <div class="vrip-table-pagination" style="margin-top: 16px;">
+        <div class="vrip-table-pagination" *ngIf="!loading && !errorMsg">
             <span class="pagination-info">
                 Showing {{ paginatedVendors.length > 0 ? ((currentPage - 1) * itemsPerPage) + 1 : 0 }}
                 to {{ ((currentPage - 1) * itemsPerPage) + paginatedVendors.length }}

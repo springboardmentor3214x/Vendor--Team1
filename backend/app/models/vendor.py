@@ -13,7 +13,6 @@ class Vendor(Base):
     address = Column(String(255), nullable=False)
     category = Column(String(100), nullable=False)
 
-    # Performance scores (updated when procurements are completed)
     delivery_score = Column(Float, default=0.0)
     quality_score = Column(Float, default=0.0)
     communication_score = Column(Float, default=0.0)

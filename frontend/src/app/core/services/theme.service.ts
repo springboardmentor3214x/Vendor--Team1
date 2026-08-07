@@ -12,12 +12,10 @@ export class ThemeService {
   }
 
   private initTheme() {
-    // 1. Check localStorage
     const savedTheme = localStorage.getItem(this.THEME_KEY);
     if (savedTheme) {
       this.isDarkMode = savedTheme === 'dark';
     } else {
-      // 2. Check OS preference
       this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
     this.applyTheme();

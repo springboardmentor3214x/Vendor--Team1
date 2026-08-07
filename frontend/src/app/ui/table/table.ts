@@ -24,8 +24,14 @@ export class Table {
   @Input() totalItems: number = 0;
   @Input() hasToolbar: boolean = false;
   @Input() hasActionsCol: boolean = false;
+  @Input() loading: boolean = false;
+  @Input() skeletonRows: number = 4;
 
   @Output() search = new EventEmitter<string>();
+
+  get dummyRows(): number[] {
+    return Array.from({ length: this.skeletonRows });
+  }
 
   onSearch(event: Event) {
     const input = event.target as HTMLInputElement;

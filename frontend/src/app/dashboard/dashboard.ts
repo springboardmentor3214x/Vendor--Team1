@@ -26,6 +26,7 @@ export class Dashboard implements OnInit {
 
   recentVendors: any[] = [];
   loadingRecent: boolean = true;
+  recentError = '';
 
   constructor(private http: HttpClient) {}
 
@@ -35,6 +36,7 @@ export class Dashboard implements OnInit {
 
   loadRecentVendors(): void {
     this.loadingRecent = true;
+    this.recentError = '';
     this.http.get<any[]>('/vendors/recent?limit=5').subscribe({
       next: (vendors) => {
         this.loadingRecent = false;
@@ -57,6 +59,7 @@ export class Dashboard implements OnInit {
       error: (err) => {
         this.loadingRecent = false;
         console.error('Failed to load recent vendors', err);
+        this.recentError = err.error?.detail || 'Could not load recent vendors.';
       }
     });
   }

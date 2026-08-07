@@ -10,8 +10,6 @@ from app.schemas.performance import (
     DeliveryPerformanceCreate, QualityEvaluationCreate,
     CommunicationLogCreate, ServiceRatingCreate
 )
-
-
 from app.utils.delivery_timing import delivery_status_from_times
 
 
@@ -123,7 +121,6 @@ def get_service_ratings(db: Session, vendor_id: int):
 
 
 def calculate_vendor_metrics(db: Session, vendor_id: int):
-    # ── DELIVERY (30%) ────────────────────────────────────────────
     deliveries = db.query(DeliveryPerformance).filter(
         DeliveryPerformance.vendor_id == vendor_id
     ).all()
@@ -150,7 +147,6 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
         avg_delay = avg_delay_hours / 24
         delay_penalty = min(avg_delay_hours * 0.8, 30)
 
-        # Consistency: lower std-dev of delay_days = more consistent
         all_delays = [d.delay_days or 0 for d in deliveries]
         mean_delay = sum(all_delays) / len(all_delays)
         variance = sum((x - mean_delay) ** 2 for x in all_delays) / len(all_delays)
@@ -169,7 +165,6 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
         consistency_score = 0
         delivery_score = 0
 
-    # ── QUALITY (25%) ─────────────────────────────────────────────
     quality_evals = db.query(QualityEvaluation).filter(
         QualityEvaluation.vendor_id == vendor_id
     ).all()
@@ -183,7 +178,7 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
         total_defects = sum(q.defect_count or 0 for q in quality_evals)
         total_items_evaluated = len(quality_evals)
         defect_rate = total_defects / total_items_evaluated if total_items_evaluated > 0 else 0
-        defect_penalty = min(defect_rate * 5, 20)  # up to -20
+        defect_penalty = min(defect_rate * 5, 20)
 
         quality_score = min(100, max(0, round(
             (avg_material / 5 * 100) * 0.25 +
@@ -199,7 +194,6 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
         defect_rate = 0
         quality_score = 0
 
-    # ── COMMUNICATION (20%) ───────────────────────────────────────
     comm_logs = db.query(CommunicationLog).filter(
         CommunicationLog.vendor_id == vendor_id
     ).all()
@@ -209,7 +203,6 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
         responded = [c for c in comm_logs if c.communication_status == "Responded"]
         response_rate = round(len(responded) / total_messages * 100, 2)
 
-        # Tiered response time scoring
         response_scores = []
         for c in responded:
             hours = c.response_duration_hours or 0
@@ -232,7 +225,7 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
         communication_score = min(100, max(0, round(
             avg_response_time_score * 0.50 +
             response_rate * 0.35 +
-            min(len(responded), 10) * 1.5  # volume bonus: up to +15 for 10+ responses
+            min(len(responded), 10) * 1.5
         , 2)))
     else:
         total_messages = 0
@@ -241,7 +234,6 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
         avg_response_hours = 0
         communication_score = 0
 
-    # ── SERVICE (15%) ─────────────────────────────────────────────
     service_ratings = db.query(ServiceRating).filter(
         ServiceRating.vendor_id == vendor_id
     ).all()
@@ -269,7 +261,6 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
         avg_service_overall = 0
         service_score = 0
 
-    # ── RELIABILITY (10%) ─────────────────────────────────────────
     from app.models.procurement import Procurement
     total_orders = db.query(Procurement).filter(Procurement.vendor_id == vendor_id).count()
     completed_orders = db.query(Procurement).filter(
@@ -283,8 +274,8 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
 
     if total_orders > 0:
         fulfillment_rate = round(completed_orders / total_orders * 100, 2)
-        rejection_penalty = round(rejected_orders / total_orders * 20, 2)  # up to -20
-        volume_bonus = min(total_orders * 2, 10)  # up to +10 for repeat orders
+        rejection_penalty = round(rejected_orders / total_orders * 20, 2)
+        volume_bonus = min(total_orders * 2, 10)
 
         reliability_index = min(100, max(0, round(
             fulfillment_rate * 0.70 +
@@ -298,7 +289,6 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
         volume_bonus = 0
         reliability_index = 0
 
-    # ── OVERALL WEIGHTED SCORE ────────────────────────────────────
     overall = round(
         delivery_score * 0.30 +
         quality_score * 0.25 +
@@ -309,8 +299,6 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
 
     return {
         "vendor_id": vendor_id,
-
-        # Delivery metrics
         "total_deliveries": total_del,
         "on_time_deliveries": on_time if total_del > 0 else 0,
         "early_deliveries": early if total_del > 0 else 0,
@@ -319,8 +307,6 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
         "avg_delay_days": avg_delay if total_del > 0 else 0,
         "delivery_consistency": consistency_score if total_del > 0 else 0,
         "delivery_score": delivery_score,
-
-        # Quality metrics
         "avg_material_quality": round(float(avg_material), 2) if quality_evals else 0,
         "avg_packaging_quality": round(float(avg_packaging), 2) if quality_evals else 0,
         "avg_spec_compliance": round(float(avg_spec_compliance), 2) if quality_evals else 0,
@@ -328,15 +314,11 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
         "avg_quality_rating": round(float(avg_quality_overall), 2) if quality_evals else 0,
         "defect_rate": round(float(defect_rate), 2) if quality_evals else 0,
         "quality_score": quality_score,
-
-        # Communication metrics
         "total_messages": total_messages if comm_logs else 0,
         "response_rate": response_rate if comm_logs else 0,
         "avg_response_time_score": avg_response_time_score if comm_logs else 0,
         "avg_response_hours": avg_response_hours if comm_logs else 0,
         "communication_score": communication_score,
-
-        # Service metrics
         "avg_professionalism": round(float(avg_professionalism), 2) if service_ratings else 0,
         "avg_customer_support": round(float(avg_customer_support), 2) if service_ratings else 0,
         "avg_documentation_quality": round(float(avg_documentation), 2) if service_ratings else 0,
@@ -345,14 +327,10 @@ def calculate_vendor_metrics(db: Session, vendor_id: int):
         "avg_issue_resolution": round(float(avg_issue_resolution), 2) if service_ratings else 0,
         "avg_service_rating": round(float(avg_service_overall), 2) if service_ratings else 0,
         "service_score": service_score,
-
-        # Reliability metrics
         "total_orders": total_orders,
         "completed_orders": completed_orders,
         "fulfillment_rate": fulfillment_rate,
         "reliability_index": reliability_index,
-
-        # Overall
         "overall_performance_score": overall
     }
 

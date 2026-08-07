@@ -26,7 +26,7 @@ export class Navbar implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.role = localStorage.getItem('vrip_role') || '';
+    this.role = this.authService.getUserRole() || '';
     this.loadUser();
   }
 
@@ -49,15 +49,10 @@ export class Navbar implements OnInit {
   }
 
   private loadUser(): void {
-    const stored = localStorage.getItem('vrip_user');
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        this.fullName = parsed.fullName || parsed.name || '';
-        this.role = parsed.role || this.role;
-      } catch {
-        this.fullName = '';
-      }
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.fullName = user.fullName || user.email || '';
+      this.role = user.role || this.role;
     }
     if (!this.fullName) {
       this.fullName = this.role || 'User';

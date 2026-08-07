@@ -2,6 +2,12 @@
   /* Using global container width and margins */
 }
 
+.vendor-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--v-2);
+}
+
 /* Page Header */
 .vrip-page-header {
   display: flex;
@@ -71,69 +77,104 @@
 /* Search bar inside Card */
 .search-bar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: var(--v-4);
-  margin-bottom: var(--v-6);
+  gap: 12px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
-.vrip-select {
-  height: var(--v-input-h);
-  padding: 0 var(--v-4);
-  font-size: 0.875rem;
-  font-family: inherit;
-  color: var(--v-text-primary);
-  background: var(--v-bg-card);
-  border: 1px solid var(--v-border);
-  border-radius: var(--v-radius-md);
-  outline: none;
-  transition: all var(--v-duration) var(--v-ease);
+.search-input-wrapper {
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  align-items: center;
+  height: 40px;
 }
 
-.vrip-select:focus {
-  border-color: var(--v-brand);
-  box-shadow: var(--v-shadow-focus);
+.search-input-wrapper app-input {
+  width: 100%;
+  display: block;
+  height: 40px;
+}
+
+.search-bar .vrip-input-group {
+  margin-bottom: 0 !important;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.search-bar .vrip-input-wrapper {
+  width: 100%;
+  height: 40px;
+}
+
+.search-bar .vrip-input-field,
+.filter-select {
+  height: 40px !important;
+  box-sizing: border-box;
+  margin: 0 !important;
+  display: inline-flex;
+  align-items: center;
+}
+
+.filter-select {
+  width: auto !important;
+  min-width: 170px;
+  flex-shrink: 0;
 }
 
 .vendor-id-chip {
   font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--v-text-tertiary, #6b7280);
-  background: var(--v-bg-inset, #f3f4f6);
-  padding: 2px 8px;
-  border-radius: 999px;
+  font-weight: 700;
+  font-family: monospace;
+  color: var(--v-brand, #635bff);
+  background: var(--v-brand-light, #ebe9fe);
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .vendor-company-title {
   font-weight: 600;
-  font-size: 0.8125rem;
+  font-size: 0.85rem;
   color: var(--v-text-primary, #111827);
+  white-space: nowrap;
 }
 
 .category-chip {
   display: inline-block;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  background: var(--v-bg-inset, #f3f4f6);
-  border: 1px solid var(--v-border, #e5e7eb);
-  color: var(--v-text-secondary, #374151);
-  padding: 2px 10px;
+  background: var(--v-bg-inset, #f8fafc);
+  border: 1px solid var(--v-border, #e2e8f0);
+  color: var(--v-text-secondary, #475569);
+  padding: 3px 10px;
   border-radius: 999px;
   white-space: nowrap;
 }
 
 .vendor-email-text {
-  font-size: 0.775rem;
+  font-size: 0.8rem;
   color: var(--v-text-secondary, #4b5563);
 }
 
 .vendor-action-buttons {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   align-items: center;
   justify-content: flex-end;
   flex-wrap: nowrap;
+}
+
+@media (max-width: 640px) {
+  .vrip-page-header,
+  .vendor-header-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
 }
 
 .font-semibold { font-weight: 600; }

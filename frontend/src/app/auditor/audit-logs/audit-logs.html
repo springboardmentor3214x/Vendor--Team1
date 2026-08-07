@@ -22,16 +22,30 @@
                 </tr>
             </ng-container>
             <ng-container table-body>
-                <tr *ngFor="let log of logs">
-                    <td style="font-size: 0.875rem; color: var(--text-secondary);">{{ log.timestamp }}</td>
-                    <td>
-                        <div style="font-weight: 500;">{{ log.user }}</div>
-                        <div style="font-size: 0.75rem; color: var(--text-secondary);">{{ log.role }}</div>
-                    </td>
-                    <td><span class="vrip-badge" style="background: var(--vrip-gray-100); color: var(--text-primary);">{{ log.action }}</span></td>
-                    <td>{{ log.entity }}</td>
-                    <td style="font-family: monospace; font-size: 0.875rem; color: var(--text-secondary);">{{ log.ip }}</td>
-                </tr>
+                <ng-container *ngIf="loading">
+                    <tr *ngFor="let _ of [1,2,3,4]">
+                        <td><div class="skeleton-cell" style="width: 140px;"></div></td>
+                        <td>
+                            <div class="skeleton-text" style="width: 110px; margin-bottom: 4px;"></div>
+                            <div class="skeleton-text" style="width: 70px; height: 12px;"></div>
+                        </td>
+                        <td><div class="skeleton-badge"></div></td>
+                        <td><div class="skeleton-cell" style="width: 130px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 100px;"></div></td>
+                    </tr>
+                </ng-container>
+                <ng-container *ngIf="!loading">
+                    <tr *ngFor="let log of logs">
+                        <td style="font-size: 0.875rem; color: var(--text-secondary);">{{ log.timestamp }}</td>
+                        <td>
+                            <div style="font-weight: 500;">{{ log.user }}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">{{ log.role }}</div>
+                        </td>
+                        <td><span class="vrip-badge" style="background: var(--vrip-gray-100); color: var(--text-primary);">{{ log.action }}</span></td>
+                        <td>{{ log.entity }}</td>
+                        <td style="font-family: monospace; font-size: 0.875rem; color: var(--text-secondary);">{{ log.ip }}</td>
+                    </tr>
+                </ng-container>
             </ng-container>
         </app-table>
     </app-card>

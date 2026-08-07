@@ -1,4 +1,3 @@
-# pyrefly: ignore [missing-import]
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from typing import Optional
@@ -108,7 +107,11 @@ def activate_vendor(db: Session, vendor_id: int):
     db.refresh(vendor)
     return vendor
 
-# called after performance data is recorded to recalculate vendor scores
+
+def suspend_vendor(db: Session, vendor_id: int):
+    return deactivate_vendor(db, vendor_id)
+
+
 def update_vendor_scores(db: Session, vendor_id: int):
     from app.services.performance_service import calculate_vendor_metrics
 
@@ -129,13 +132,10 @@ def update_vendor_scores(db: Session, vendor_id: int):
     return vendor
 
 
-# High-risk threshold: approved vendors whose reliability_score is below this
 HIGH_RISK_THRESHOLD = 60.0
 
 
-
 def get_vendor_stats(db: Session) -> dict:
-    """Return dashboard KPI counts derived from the database."""
     all_vendors = db.query(Vendor).all()
     total = len(all_vendors)
     approved = sum(1 for v in all_vendors if v.approval_status == "Approved")
@@ -157,5 +157,4 @@ def get_vendor_stats(db: Session) -> dict:
 
 
 def get_recent_vendors(db: Session, limit: int = 5):
-    """Return the most recently added vendors (highest id first)."""
     return db.query(Vendor).order_by(Vendor.id.desc()).limit(limit).all()

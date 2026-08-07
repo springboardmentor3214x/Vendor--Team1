@@ -4,7 +4,6 @@ from app.core.config import CORS_ORIGINS
 from app.database.connection import engine
 from app.database.base import Base
 
-# Models
 from app.models.user import User
 from app.models.vendor import Vendor
 from app.models.procurement import Procurement
@@ -15,7 +14,6 @@ from app.models.service_rating import ServiceRating
 from app.models.contract import Contract
 from app.models.communication import Communication
 
-# Routers
 from app.api.auth import router as auth_router
 from app.api.user import router as user_router
 from app.api.vendor import router as vendor_router
@@ -47,14 +45,12 @@ app.include_router(communication_router)
 
 @app.on_event("startup")
 def on_startup():
-    """Seed the database with default data on first run."""
     from app.seed import seed_database
     try:
         seed_database()
     except Exception as e:
-        print(f"Seed warning (non-fatal): {e}")
+        print(f"Seed warning: {e}")
 
 @app.get("/")
-
 def health_check():
     return {"status": "ok", "message": "Vendor Reliability Platform API is running"}

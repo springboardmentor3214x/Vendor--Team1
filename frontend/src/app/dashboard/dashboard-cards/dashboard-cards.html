@@ -4,14 +4,26 @@
     <ng-container *ngIf="loading">
         <div class="vrip-stat-card border-primary" *ngFor="let _ of [1,2,3,4]">
             <div class="stat-header">
-                <div class="skeleton-text"></div>
+                <div class="skeleton-text" style="width: 65%;"></div>
+                <div class="skeleton-avatar" style="width: 20px; height: 20px; border-radius: 4px;"></div>
             </div>
             <div class="skeleton-number"></div>
+            <div class="skeleton-text" style="width: 45%; height: 10px; margin-top: 4px;"></div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="!loading && errorMsg">
+        <div class="vrip-stat-card border-danger cards-error" style="grid-column: 1 / -1;">
+            <div>
+                <h3>Vendor totals unavailable</h3>
+                <p class="text-danger">{{ errorMsg }}</p>
+            </div>
+            <button type="button" class="cards-retry" (click)="loadStats()">Retry</button>
         </div>
     </ng-container>
 
     <!-- Real data from backend -->
-    <ng-container *ngIf="!loading">
+    <ng-container *ngIf="!loading && !errorMsg">
         <div class="vrip-stat-card border-primary">
             <div class="stat-header">
                 <h3>Total Vendors</h3>

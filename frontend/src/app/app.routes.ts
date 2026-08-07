@@ -3,298 +3,243 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
 import { roleGuard } from './core/guards/role-guard';
 
-import { Login } from './auth/login/login';
-import { Register } from './auth/register/register';
-import { ForgotPassword } from './auth/forgot-password/forgot-password';
-import { Profile } from './auth/profile/profile';
-
-import { Dashboard } from './dashboard/dashboard';
-
-import { AdminDashboard } from './dashboard/admin-dashboard/admin-dashboard';
-import { ProcurementDashboard } from './procurement/procurement-dashboard/procurement-dashboard';
-import { ProcurementRequest } from './procurement/procurement-request/procurement-request';
-import { ProcurementRequestList } from './procurement/procurement-request-list/procurement-request-list';
-import { ProcurementApproval } from './procurement/procurement-approval/procurement-approval';
-import { VendorAssignment } from './procurement/vendor-assignment/vendor-assignment';
-import { PurchaseOrder } from './procurement/purchase-order/purchase-order';
-import { PurchaseOrderDetails } from './procurement/purchase-order-details/purchase-order-details';
-import { ProcurementStatus } from './procurement/procurement-status/procurement-status';
-import { OrderTracking } from './procurement/order-tracking/order-tracking';
-import { InvoiceManagement } from './procurement/invoice-management/invoice-management';
-import { SupplyChainDashboard } from './dashboard/supply-chain-dashboard/supply-chain-dashboard';
-import { VendorDashboard } from './dashboard/vendor-dashboard/vendor-dashboard';
-import { FinanceDashboard } from './dashboard/finance-dashboard/finance-dashboard';
-import { AuditorDashboard } from './dashboard/auditor-dashboard/auditor-dashboard';
-
-import { VendorList } from './vendor/vendor-list/vendor-list';
-import { AddVendor } from './vendor/add-vendor/add-vendor';
-import { EditVendor } from './vendor/edit-vendor/edit-vendor';
-import { VendorDetails } from './vendor/vendor-details/vendor-details';
-
-import { UserManagement } from './admin/user-management/user-management';
-import { Analytics } from './admin/analytics/analytics';
-import { Reports } from './admin/reports/reports';
-import { Notifications } from './admin/notifications/notifications';
-import { VendorOrders } from './vendor-portal/vendor-orders/vendor-orders';
-import { VendorContracts } from './vendor-portal/vendor-contracts/vendor-contracts';
-import { VendorCommunication } from './vendor-portal/vendor-communication/vendor-communication';
-import { VendorPerformance } from './supply-chain/vendor-performance/vendor-performance';
-import { VendorPerformanceDetails } from './supply-chain/vendor-performance-details/vendor-performance-details';
-import { VendorReliability } from './supply-chain/vendor-reliability/vendor-reliability';
-import { VendorReliabilityDashboard } from './supply-chain/vendor-reliability-dashboard/vendor-reliability-dashboard';
-import { ReliabilityScoreDetails } from './supply-chain/reliability-score-details/reliability-score-details';
-import { ProcurementRiskDashboard } from './supply-chain/procurement-risk-dashboard/procurement-risk-dashboard';
-import { PerformanceTrendAnalysis } from './supply-chain/performance-trend-analysis/performance-trend-analysis';
-import { ProcurementRecommendations } from './supply-chain/procurement-recommendations/procurement-recommendations';
-import { DeliveryPerformance } from './supply-chain/delivery-performance/delivery-performance';
-import { ProductQuality } from './supply-chain/product-quality/product-quality';
-import { CommunicationTracking } from './supply-chain/communication-tracking/communication-tracking';
-import { ServiceRating } from './supply-chain/service-rating/service-rating';
-import { PerformanceHistory } from './supply-chain/performance-history/performance-history';
-import { VendorRanking } from './supply-chain/vendor-ranking/vendor-ranking';
-import { PaymentDetails } from './finance/payment-details/payment-details';
-import { FinancePurchaseOrders } from './finance/finance-purchase-orders/finance-purchase-orders';
-import { AuditorReports } from './auditor/auditor-reports/auditor-reports';
-import { Compliance } from './auditor/compliance/compliance';
-import { AuditLogs } from './auditor/audit-logs/audit-logs';
-import { Settings } from './auth/settings/settings';
-
-// New Supply Chain Actions
-import { NewProductEvaluation } from './supply-chain/new-product-evaluation/new-product-evaluation';
-import { LogCommunicationMessage } from './supply-chain/log-communication-message/log-communication-message';
-import { SubmitServiceRating } from './supply-chain/submit-service-rating/submit-service-rating';
+const page = {
+  Login: () => import('./auth/login/login').then(m => m.Login),
+  Register: () => import('./auth/register/register').then(m => m.Register),
+  ForgotPassword: () => import('./auth/forgot-password/forgot-password').then(m => m.ForgotPassword),
+  Profile: () => import('./auth/profile/profile').then(m => m.Profile),
+  Dashboard: () => import('./dashboard/dashboard').then(m => m.Dashboard),
+  AdminDashboard: () => import('./dashboard/admin-dashboard/admin-dashboard').then(m => m.AdminDashboard),
+  ProcurementDashboard: () => import('./procurement/procurement-dashboard/procurement-dashboard').then(m => m.ProcurementDashboard),
+  ProcurementRequest: () => import('./procurement/procurement-request/procurement-request').then(m => m.ProcurementRequest),
+  ProcurementRequestList: () => import('./procurement/procurement-request-list/procurement-request-list').then(m => m.ProcurementRequestList),
+  ProcurementApproval: () => import('./procurement/procurement-approval/procurement-approval').then(m => m.ProcurementApproval),
+  VendorAssignment: () => import('./procurement/vendor-assignment/vendor-assignment').then(m => m.VendorAssignment),
+  PurchaseOrder: () => import('./procurement/purchase-order/purchase-order').then(m => m.PurchaseOrder),
+  PurchaseOrderDetails: () => import('./procurement/purchase-order-details/purchase-order-details').then(m => m.PurchaseOrderDetails),
+  ProcurementStatus: () => import('./procurement/procurement-status/procurement-status').then(m => m.ProcurementStatus),
+  OrderTracking: () => import('./procurement/order-tracking/order-tracking').then(m => m.OrderTracking),
+  InvoiceManagement: () => import('./procurement/invoice-management/invoice-management').then(m => m.InvoiceManagement),
+  SupplyChainDashboard: () => import('./dashboard/supply-chain-dashboard/supply-chain-dashboard').then(m => m.SupplyChainDashboard),
+  VendorDashboard: () => import('./dashboard/vendor-dashboard/vendor-dashboard').then(m => m.VendorDashboard),
+  FinanceDashboard: () => import('./dashboard/finance-dashboard/finance-dashboard').then(m => m.FinanceDashboard),
+  AuditorDashboard: () => import('./dashboard/auditor-dashboard/auditor-dashboard').then(m => m.AuditorDashboard),
+  VendorList: () => import('./vendor/vendor-list/vendor-list').then(m => m.VendorList),
+  AddVendor: () => import('./vendor/add-vendor/add-vendor').then(m => m.AddVendor),
+  EditVendor: () => import('./vendor/edit-vendor/edit-vendor').then(m => m.EditVendor),
+  VendorDetails: () => import('./vendor/vendor-details/vendor-details').then(m => m.VendorDetails),
+  UserManagement: () => import('./admin/user-management/user-management').then(m => m.UserManagement),
+  Analytics: () => import('./admin/analytics/analytics').then(m => m.Analytics),
+  Reports: () => import('./admin/reports/reports').then(m => m.Reports),
+  Notifications: () => import('./admin/notifications/notifications').then(m => m.Notifications),
+  VendorOrders: () => import('./vendor-portal/vendor-orders/vendor-orders').then(m => m.VendorOrders),
+  VendorContracts: () => import('./vendor-portal/vendor-contracts/vendor-contracts').then(m => m.VendorContracts),
+  VendorCommunication: () => import('./vendor-portal/vendor-communication/vendor-communication').then(m => m.VendorCommunication),
+  VendorPerformance: () => import('./supply-chain/vendor-performance/vendor-performance').then(m => m.VendorPerformance),
+  VendorPerformanceDetails: () => import('./supply-chain/vendor-performance-details/vendor-performance-details').then(m => m.VendorPerformanceDetails),
+  VendorReliability: () => import('./supply-chain/vendor-reliability/vendor-reliability').then(m => m.VendorReliability),
+  VendorReliabilityDashboard: () => import('./supply-chain/vendor-reliability-dashboard/vendor-reliability-dashboard').then(m => m.VendorReliabilityDashboard),
+  ReliabilityScoreDetails: () => import('./supply-chain/reliability-score-details/reliability-score-details').then(m => m.ReliabilityScoreDetails),
+  ProcurementRiskDashboard: () => import('./supply-chain/procurement-risk-dashboard/procurement-risk-dashboard').then(m => m.ProcurementRiskDashboard),
+  PerformanceTrendAnalysis: () => import('./supply-chain/performance-trend-analysis/performance-trend-analysis').then(m => m.PerformanceTrendAnalysis),
+  ProcurementRecommendations: () => import('./supply-chain/procurement-recommendations/procurement-recommendations').then(m => m.ProcurementRecommendations),
+  DeliveryPerformance: () => import('./supply-chain/delivery-performance/delivery-performance').then(m => m.DeliveryPerformance),
+  ProductQuality: () => import('./supply-chain/product-quality/product-quality').then(m => m.ProductQuality),
+  CommunicationTracking: () => import('./supply-chain/communication-tracking/communication-tracking').then(m => m.CommunicationTracking),
+  ServiceRating: () => import('./supply-chain/service-rating/service-rating').then(m => m.ServiceRating),
+  PerformanceHistory: () => import('./supply-chain/performance-history/performance-history').then(m => m.PerformanceHistory),
+  VendorRanking: () => import('./supply-chain/vendor-ranking/vendor-ranking').then(m => m.VendorRanking),
+  PaymentDetails: () => import('./finance/payment-details/payment-details').then(m => m.PaymentDetails),
+  FinancePurchaseOrders: () => import('./finance/finance-purchase-orders/finance-purchase-orders').then(m => m.FinancePurchaseOrders),
+  AuditorReports: () => import('./auditor/auditor-reports/auditor-reports').then(m => m.AuditorReports),
+  Compliance: () => import('./auditor/compliance/compliance').then(m => m.Compliance),
+  AuditLogs: () => import('./auditor/audit-logs/audit-logs').then(m => m.AuditLogs),
+  Settings: () => import('./auth/settings/settings').then(m => m.Settings),
+  NewProductEvaluation: () => import('./supply-chain/new-product-evaluation/new-product-evaluation').then(m => m.NewProductEvaluation),
+  LogCommunicationMessage: () => import('./supply-chain/log-communication-message/log-communication-message').then(m => m.LogCommunicationMessage),
+  SubmitServiceRating: () => import('./supply-chain/submit-service-rating/submit-service-rating').then(m => m.SubmitServiceRating),
+};
 
 export const routes: Routes = [
-
   {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
   },
-
   {
     path: 'login',
-    component: Login
+    loadComponent: page.Login
   },
-
   {
     path: 'register',
-    component: Register
+    loadComponent: page.Register
   },
-
   {
     path: 'forgot-password',
-    component: ForgotPassword
+    loadComponent: page.ForgotPassword
   },
-
-  // -------------------- Role Dashboards --------------------
-
   {
     path: 'admin-dashboard',
-    component: AdminDashboard,
+    loadComponent: page.AdminDashboard,
     canActivate: [authGuard, roleGuard],
     data: {
       roles: ['Administrator']
     }
   },
-
   {
     path: 'procurement-dashboard',
-    component: ProcurementDashboard,
+    loadComponent: page.ProcurementDashboard,
     canActivate: [authGuard, roleGuard],
     data: {
       roles: ['Procurement Manager']
     }
   },
-
-  // -------------------- Procurement Module --------------------
-
   {
     path: 'procurement/requests',
-    component: ProcurementRequestList,
+    loadComponent: page.ProcurementRequestList,
     canActivate: [authGuard]
   },
-
   {
     path: 'procurement-request',
-    component: ProcurementRequest,
+    loadComponent: page.ProcurementRequest,
     canActivate: [authGuard, roleGuard],
     data: {
       roles: ['Procurement Manager', 'Supply Chain Manager']
     }
   },
-
   {
     path: 'procurement/approve/:id',
-    component: ProcurementApproval,
+    loadComponent: page.ProcurementApproval,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Procurement Manager', 'Administrator'] }
   },
-
   {
     path: 'procurement/assign-vendor/:id',
-    component: VendorAssignment,
+    loadComponent: page.VendorAssignment,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Procurement Manager'] }
   },
-
   {
     path: 'procurement/purchase-order/create',
-    component: PurchaseOrder,
+    loadComponent: page.PurchaseOrder,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Procurement Manager'] }
   },
-
   {
     path: 'procurement/purchase-order/:id',
-    component: PurchaseOrderDetails,
+    loadComponent: page.PurchaseOrderDetails,
     canActivate: [authGuard]
   },
-
   {
     path: 'procurement/status/:id',
-    component: ProcurementStatus,
+    loadComponent: page.ProcurementStatus,
     canActivate: [authGuard]
   },
-
   {
     path: 'procurement/order-tracking/:id',
-    component: OrderTracking,
+    loadComponent: page.OrderTracking,
     canActivate: [authGuard]
   },
-
   {
     path: 'procurement/invoice-management',
-    component: InvoiceManagement,
+    loadComponent: page.InvoiceManagement,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Finance Officer', 'Procurement Manager'] }
   },
-
   {
     path: 'supply-chain-dashboard',
-    component: SupplyChainDashboard,
+    loadComponent: page.SupplyChainDashboard,
     canActivate: [authGuard, roleGuard],
     data: {
       roles: ['Supply Chain Manager']
     }
   },
-
   {
     path: 'vendor-dashboard',
-    component: VendorDashboard,
+    loadComponent: page.VendorDashboard,
     canActivate: [authGuard, roleGuard],
     data: {
       roles: ['Vendor']
     }
   },
-
   {
     path: 'finance-dashboard',
-    component: FinanceDashboard,
+    loadComponent: page.FinanceDashboard,
     canActivate: [authGuard, roleGuard],
     data: {
       roles: ['Finance Officer']
     }
   },
-
   {
     path: 'auditor-dashboard',
-    component: AuditorDashboard,
+    loadComponent: page.AuditorDashboard,
     canActivate: [authGuard, roleGuard],
     data: {
       roles: ['Auditor']
     }
   },
-
-  // -------------------- Shared Dashboard --------------------
-
   {
     path: 'dashboard',
-    component: Dashboard,
+    loadComponent: page.Dashboard,
     canActivate: [authGuard]
   },
-
-  // -------------------- Vendor Module --------------------
-
   {
     path: 'vendors',
-    component: VendorList,
+    loadComponent: page.VendorList,
     canActivate: [authGuard]
   },
-
   {
     path: 'vendors/add',
-    component: AddVendor,
+    loadComponent: page.AddVendor,
     canActivate: [authGuard]
   },
-
   {
     path: 'vendors/edit/:id',
-    component: EditVendor,
+    loadComponent: page.EditVendor,
     canActivate: [authGuard]
   },
-
   {
     path: 'vendors/:id',
-    component: VendorDetails,
+    loadComponent: page.VendorDetails,
     canActivate: [authGuard]
   },
-
-  // -------------------- User Profile --------------------
-
   {
     path: 'profile',
-    component: Profile,
+    loadComponent: page.Profile,
     canActivate: [authGuard]
   },
-
-  // -------------------- Admin Module (New) --------------------
-  { path: 'admin/user-management', component: UserManagement, canActivate: [authGuard, roleGuard], data: { roles: ['Administrator'] } },
-  { path: 'admin/analytics', component: Analytics, canActivate: [authGuard, roleGuard], data: { roles: ['Administrator'] } },
-  { path: 'admin/reports', component: Reports, canActivate: [authGuard, roleGuard], data: { roles: ['Administrator'] } },
-  { path: 'admin/notifications', component: Notifications, canActivate: [authGuard, roleGuard], data: { roles: ['Administrator'] } },
-
-  // -------------------- Vendor Portal (New) --------------------
-  { path: 'vendor-portal/orders', component: VendorOrders, canActivate: [authGuard, roleGuard], data: { roles: ['Vendor'] } },
-  { path: 'vendor-portal/contracts', component: VendorContracts, canActivate: [authGuard, roleGuard], data: { roles: ['Vendor'] } },
-  { path: 'vendor-portal/communication', component: VendorCommunication, canActivate: [authGuard, roleGuard], data: { roles: ['Vendor'] } },
-
-  // -------------------- Supply Chain (New) --------------------
-  { path: 'supply-chain/vendor-performance', component: VendorPerformance, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/delivery-performance', component: DeliveryPerformance, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/product-quality', component: ProductQuality, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/product-quality/new', component: NewProductEvaluation, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/communication-tracking', component: CommunicationTracking, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/communication-tracking/new', component: LogCommunicationMessage, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/service-rating', component: ServiceRating, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/service-rating/new', component: SubmitServiceRating, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/performance-history', component: PerformanceHistory, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/vendor-ranking', component: VendorRanking, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/vendor-performance/:id', component: VendorPerformanceDetails, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/vendor-reliability', component: VendorReliability, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/vendor-reliability-dashboard', component: VendorReliabilityDashboard, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/reliability-score-details/:id', component: ReliabilityScoreDetails, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/procurement-risk-dashboard', component: ProcurementRiskDashboard, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/performance-trend-analysis/:id', component: PerformanceTrendAnalysis, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-  { path: 'supply-chain/procurement-recommendations', component: ProcurementRecommendations, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
-
-  // -------------------- Finance (New) --------------------
-  { path: 'finance/payment-details', component: PaymentDetails, canActivate: [authGuard, roleGuard], data: { roles: ['Finance Officer'] } },
-  { path: 'finance/purchase-orders', component: FinancePurchaseOrders, canActivate: [authGuard, roleGuard], data: { roles: ['Finance Officer'] } },
-
-  // -------------------- Auditor (New) --------------------
-  { path: 'auditor/reports', component: AuditorReports, canActivate: [authGuard, roleGuard], data: { roles: ['Auditor'] } },
-  { path: 'auditor/compliance', component: Compliance, canActivate: [authGuard, roleGuard], data: { roles: ['Auditor'] } },
-  { path: 'auditor/audit-logs', component: AuditLogs, canActivate: [authGuard, roleGuard], data: { roles: ['Auditor'] } },
-
-  // -------------------- Settings --------------------
-  { path: 'settings', component: Settings, canActivate: [authGuard] },
-
-  // -------------------- Fallback --------------------
-
+  { path: 'admin/user-management', loadComponent: page.UserManagement, canActivate: [authGuard, roleGuard], data: { roles: ['Administrator'] } },
+  { path: 'admin/analytics', loadComponent: page.Analytics, canActivate: [authGuard, roleGuard], data: { roles: ['Administrator'] } },
+  { path: 'admin/reports', loadComponent: page.Reports, canActivate: [authGuard, roleGuard], data: { roles: ['Administrator'] } },
+  { path: 'admin/notifications', loadComponent: page.Notifications, canActivate: [authGuard, roleGuard], data: { roles: ['Administrator'] } },
+  { path: 'vendor-portal/orders', loadComponent: page.VendorOrders, canActivate: [authGuard, roleGuard], data: { roles: ['Vendor'] } },
+  { path: 'vendor-portal/contracts', loadComponent: page.VendorContracts, canActivate: [authGuard, roleGuard], data: { roles: ['Vendor'] } },
+  { path: 'vendor-portal/communication', loadComponent: page.VendorCommunication, canActivate: [authGuard, roleGuard], data: { roles: ['Vendor'] } },
+  { path: 'supply-chain/vendor-performance', loadComponent: page.VendorPerformance, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/delivery-performance', loadComponent: page.DeliveryPerformance, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/product-quality', loadComponent: page.ProductQuality, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/product-quality/new', loadComponent: page.NewProductEvaluation, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/communication-tracking', loadComponent: page.CommunicationTracking, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/communication-tracking/new', loadComponent: page.LogCommunicationMessage, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/service-rating', loadComponent: page.ServiceRating, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/service-rating/new', loadComponent: page.SubmitServiceRating, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/performance-history', loadComponent: page.PerformanceHistory, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/vendor-ranking', loadComponent: page.VendorRanking, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/vendor-performance/:id', loadComponent: page.VendorPerformanceDetails, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/vendor-reliability', loadComponent: page.VendorReliability, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/vendor-reliability-dashboard', loadComponent: page.VendorReliabilityDashboard, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/reliability-score-details/:id', loadComponent: page.ReliabilityScoreDetails, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/procurement-risk-dashboard', loadComponent: page.ProcurementRiskDashboard, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/performance-trend-analysis/:id', loadComponent: page.PerformanceTrendAnalysis, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'supply-chain/procurement-recommendations', loadComponent: page.ProcurementRecommendations, canActivate: [authGuard, roleGuard], data: { roles: ['Supply Chain Manager'] } },
+  { path: 'finance/payment-details', loadComponent: page.PaymentDetails, canActivate: [authGuard, roleGuard], data: { roles: ['Finance Officer'] } },
+  { path: 'finance/purchase-orders', loadComponent: page.FinancePurchaseOrders, canActivate: [authGuard, roleGuard], data: { roles: ['Finance Officer'] } },
+  { path: 'auditor/reports', loadComponent: page.AuditorReports, canActivate: [authGuard, roleGuard], data: { roles: ['Auditor'] } },
+  { path: 'auditor/compliance', loadComponent: page.Compliance, canActivate: [authGuard, roleGuard], data: { roles: ['Auditor'] } },
+  { path: 'auditor/audit-logs', loadComponent: page.AuditLogs, canActivate: [authGuard, roleGuard], data: { roles: ['Auditor'] } },
+  { path: 'settings', loadComponent: page.Settings, canActivate: [authGuard] },
   {
     path: '**',
     redirectTo: 'login'
   }
-
 ];

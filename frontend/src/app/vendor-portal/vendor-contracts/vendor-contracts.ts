@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Card } from '../../ui/card/card';
 import { Button } from '../../ui/button/button';
@@ -17,7 +17,10 @@ export class VendorContracts implements OnInit {
   loading: boolean = true;
   errorMsg: string = '';
 
-  constructor(private contractService: ContractService) {}
+  constructor(
+    private contractService: ContractService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadContracts();
@@ -42,11 +45,13 @@ export class VendorContracts implements OnInit {
         } else {
           this.contracts = [];
         }
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.loading = false;
         console.error('Failed to load contracts', err);
         this.errorMsg = 'Failed to load contracts from server.';
+        this.cdr.markForCheck();
       }
     });
   }

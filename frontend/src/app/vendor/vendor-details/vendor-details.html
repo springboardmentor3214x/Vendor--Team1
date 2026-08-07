@@ -9,7 +9,56 @@
         </app-button>
     </div>
 
-    @if(vendor){
+    @if(loading){
+        <div class="details-grid-layout">
+            <div class="main-details">
+                <app-card *ngFor="let _ of [1,2,3,4]">
+                    <div class="vrip-card-header">
+                        <div class="skeleton-title"></div>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item" *ngFor="let _ of [1,2,3]">
+                            <div class="skeleton-text" style="width: 40%; margin-bottom: 6px;"></div>
+                            <div class="skeleton-text" style="width: 80%;"></div>
+                        </div>
+                    </div>
+                </app-card>
+            </div>
+            <div class="side-details">
+                <app-card>
+                    <div class="vrip-card-header">
+                        <div class="skeleton-title"></div>
+                    </div>
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <div class="skeleton-text" style="width: 50%; margin-bottom: 6px;"></div>
+                            <div class="skeleton-badge"></div>
+                        </div>
+                        <div class="status-item">
+                            <div class="skeleton-text" style="width: 50%; margin-bottom: 6px;"></div>
+                            <div class="skeleton-badge"></div>
+                        </div>
+                    </div>
+                </app-card>
+                <app-card>
+                    <div class="vrip-card-header">
+                        <div class="skeleton-title"></div>
+                    </div>
+                    <div class="docs-list">
+                        <div class="doc-item" *ngFor="let _ of [1,2,3]">
+                            <div class="doc-info" style="display: flex; gap: 10px; align-items: center; width: 100%;">
+                                <div class="skeleton-avatar" style="width: 32px; height: 32px;"></div>
+                                <div style="flex: 1;">
+                                    <div class="skeleton-text" style="width: 60%; margin-bottom: 4px;"></div>
+                                    <div class="skeleton-text" style="width: 40%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </app-card>
+            </div>
+        </div>
+    } @else if(vendor){
         <div class="details-grid-layout">
             <div class="main-details">
                 <!-- Company Information -->

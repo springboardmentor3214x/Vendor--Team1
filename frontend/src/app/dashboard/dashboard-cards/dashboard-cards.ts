@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 
@@ -30,10 +30,17 @@ export class DashboardCards implements OnInit {
   };
 
   loading = true;
+  errorMsg = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
+    this.loadStats();
+  }
+
+  loadStats(): void {
+    this.loading = true;
+    this.errorMsg = '';
     this.http.get<VendorStats>('/vendors/stats').subscribe({
       next: (data) => {
         if (data) {
@@ -47,9 +54,12 @@ export class DashboardCards implements OnInit {
           };
         }
         this.loading = false;
+        this.cdr.markForCheck();
       },
-      error: () => {
+      error: (error) => {
         this.loading = false;
+        this.cdr.markForCheck();
+        this.errorMsg = error.error?.detail || 'Could not load vendor totals.';
       }
     });
   }

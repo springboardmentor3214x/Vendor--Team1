@@ -23,17 +23,17 @@
                     <!-- Loading Skeleton Rows -->
                     <ng-container *ngIf="loading">
                         <tr *ngFor="let _ of [1,2,3,4,5]" class="vrip-table-row">
-                            <td><div class="skeleton-cell" style="width: 30px; height: 16px;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 30px;"></div></td>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 10px;">
-                                    <div class="skeleton-cell" style="width: 32px; height: 32px; border-radius: 50%;"></div>
-                                    <div class="skeleton-cell" style="width: 110px; height: 16px;"></div>
+                                    <div class="skeleton-avatar" style="width: 32px; height: 32px;"></div>
+                                    <div class="skeleton-text" style="width: 110px;"></div>
                                 </div>
                             </td>
-                            <td><div class="skeleton-cell" style="width: 160px; height: 16px;"></div></td>
-                            <td><div class="skeleton-cell" style="width: 120px; height: 20px; border-radius: 99px;"></div></td>
-                            <td><div class="skeleton-cell" style="width: 70px; height: 20px; border-radius: 99px;"></div></td>
-                            <td style="text-align: right;"><div class="skeleton-cell" style="width: 100px; height: 28px; margin-left: auto;"></div></td>
+                            <td><div class="skeleton-cell" style="width: 160px;"></div></td>
+                            <td><div class="skeleton-badge" style="width: 100px;"></div></td>
+                            <td><div class="skeleton-badge" style="width: 70px;"></div></td>
+                            <td style="text-align: right;"><div class="skeleton-button" style="width: 100px; margin-left: auto;"></div></td>
                         </tr>
                     </ng-container>
 

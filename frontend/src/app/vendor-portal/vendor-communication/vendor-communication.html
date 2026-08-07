@@ -20,8 +20,19 @@
         
         <div style="flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; background: var(--v-bg-body, #f8fafc);">
             
-            <div *ngIf="loading" style="text-align: center; padding: 20px; color: var(--v-text-secondary);">
-                Loading messages...
+            <div *ngIf="loading" style="display: flex; flex-direction: column; gap: 16px;">
+                <div style="align-self: flex-start; width: 50%;">
+                    <div class="skeleton-cell" style="height: 48px; border-radius: 12px;"></div>
+                    <div class="skeleton-text" style="width: 30%; margin-top: 4px;"></div>
+                </div>
+                <div style="align-self: flex-end; width: 50%;">
+                    <div class="skeleton-cell" style="height: 48px; border-radius: 12px;"></div>
+                    <div class="skeleton-text" style="width: 30%; margin-top: 4px; margin-left: auto; display: block;"></div>
+                </div>
+                <div style="align-self: flex-start; width: 40%;">
+                    <div class="skeleton-cell" style="height: 40px; border-radius: 12px;"></div>
+                    <div class="skeleton-text" style="width: 30%; margin-top: 4px;"></div>
+                </div>
             </div>
 
             <ng-container *ngIf="!loading">

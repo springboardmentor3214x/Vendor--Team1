@@ -85,7 +85,7 @@
             <th style="text-align: right;">Status</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody *ngIf="!loadingRecent && !recentError">
           <tr *ngFor="let vendor of recentVendors" class="vrip-table-row">
             <td><strong style="color: var(--v-text-primary, #111827);">{{ vendor.companyName }}</strong></td>
             <td><span class="category-chip">{{ vendor.category }}</span></td>
@@ -104,6 +104,12 @@
               </div>
             </td>
           </tr>
+        </tbody>
+        <tbody *ngIf="loadingRecent">
+          <tr><td colspan="4" class="vrip-table-empty"><div class="empty-state"><span class="material-symbols-outlined empty-icon">progress_activity</span><p>Loading recent vendors…</p></div></td></tr>
+        </tbody>
+        <tbody *ngIf="!loadingRecent && recentError">
+          <tr><td colspan="4" class="vrip-table-empty"><div class="empty-state"><span class="material-symbols-outlined empty-icon">error</span><p>{{ recentError }}</p><app-button variant="outline" size="sm" (onClick)="loadRecentVendors()">Retry</app-button></div></td></tr>
         </tbody>
       </table>
     </div>

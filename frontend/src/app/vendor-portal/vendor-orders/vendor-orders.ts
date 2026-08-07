@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Card } from '../../ui/card/card';
 import { Button } from '../../ui/button/button';
@@ -17,7 +17,10 @@ export class VendorOrders implements OnInit {
   loading: boolean = true;
   errorMsg: string = '';
 
-  constructor(private procurementService: ProcurementService) {}
+  constructor(
+    private procurementService: ProcurementService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadOrders();
@@ -47,11 +50,13 @@ export class VendorOrders implements OnInit {
         } else {
           this.orders = [];
         }
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.loading = false;
         console.error('Failed to load orders', err);
         this.errorMsg = 'Failed to load purchase orders from backend.';
+        this.cdr.markForCheck();
       }
     });
   }

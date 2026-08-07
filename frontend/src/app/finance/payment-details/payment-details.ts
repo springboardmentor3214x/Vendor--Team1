@@ -13,6 +13,8 @@ import { Table } from '../../ui/table/table';
   styleUrls: ['./payment-details.css']
 })
 export class PaymentDetails {
+  loading: boolean = false;
+
   transfer() { alert("Transfer initiated"); }
   receipt() { alert("Receipt downloaded"); }
 

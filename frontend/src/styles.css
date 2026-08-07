@@ -86,6 +86,75 @@
   --v-sidebar-w: 264px;
   --v-navbar-h: 64px;
   --v-content-max: 1320px;
+
+  /* Compatibility aliases for older screens while they are brought onto the
+     shared VRIP design system. */
+  --vrip-space-2: var(--v-2);
+  --vrip-space-1: var(--v-1);
+  --vrip-space-3: var(--v-3);
+  --vrip-space-4: var(--v-4);
+  --vrip-space-5: var(--v-5);
+  --vrip-space-6: var(--v-6);
+  --vrip-space-8: var(--v-8);
+  --vrip-space-12: var(--v-12);
+  --vrip-radius-md: var(--v-radius-md);
+  --vrip-radius-lg: var(--v-radius-lg);
+  --vrip-radius-xl: var(--v-radius-xl);
+  --vrip-radius-full: var(--v-radius-full);
+  --vrip-font-family: var(--v-font);
+  --vrip-primary: var(--v-brand);
+  --vrip-primary-50: #F5F3FF;
+  --vrip-primary-100: #EDE9FE;
+  --vrip-primary-200: #DDD6FE;
+  --vrip-primary-300: #C4B5FD;
+  --vrip-primary-400: #A78BFA;
+  --vrip-primary-500: #7C73F5;
+  --vrip-primary-600: var(--v-brand);
+  --vrip-primary-700: var(--v-brand-hover);
+  --vrip-primary-800: #3730A3;
+  --vrip-primary-900: #312E81;
+  --vrip-neutral-50: #FAFAFA;
+  --vrip-neutral-100: #F5F5F5;
+  --vrip-neutral-200: #E5E7EB;
+  --vrip-neutral-300: #D1D5DB;
+  --vrip-neutral-400: #9CA3AF;
+  --vrip-neutral-500: #6B7280;
+  --vrip-neutral-600: #4B5563;
+  --vrip-neutral-700: #374151;
+  --vrip-neutral-900: #111827;
+  --vrip-slate-50: #F8FAFC;
+  --vrip-slate-100: #F1F5F9;
+  --vrip-slate-200: #E2E8F0;
+  --vrip-slate-300: #CBD5E1;
+  --vrip-slate-400: #94A3B8;
+  --vrip-slate-500: #64748B;
+  --vrip-slate-600: #475569;
+  --vrip-slate-700: #334155;
+  --vrip-slate-800: #1E293B;
+  --vrip-slate-900: #0F172A;
+  --vrip-gray-50: var(--vrip-slate-50);
+  --vrip-gray-100: var(--vrip-slate-100);
+  --vrip-gray-200: var(--vrip-slate-200);
+  --vrip-gray-300: var(--vrip-slate-300);
+  --vrip-gray-500: var(--vrip-slate-500);
+  --vrip-gray-700: var(--vrip-slate-700);
+  --vrip-success-100: #DCFCE7;
+  --vrip-success-400: #4ADE80;
+  --vrip-success-500: #22C55E;
+  --vrip-success-600: var(--v-success);
+  --vrip-success-bg: var(--v-success-light);
+  --vrip-success-text: var(--v-success);
+  --vrip-shadow-sm: var(--v-shadow-sm);
+  --vrip-shadow-md: var(--v-shadow-md);
+  --vrip-shadow-lg: var(--v-shadow-lg);
+  --vrip-shadow-floating: var(--v-shadow-xl);
+  --vrip-glass-bg: rgba(255, 255, 255, 0.82);
+  --vrip-glass-border: rgba(255, 255, 255, 0.72);
+  --vrip-glass-border-highlight: rgba(255, 255, 255, 0.92);
+  --vrip-glass-blur: blur(12px);
+  --vrip-glass-blur-heavy: blur(20px);
+  --text-primary: var(--v-text-primary);
+  --text-secondary: var(--v-text-secondary);
 }
 
 /* ─── GLOBAL RESET ──────────────────────────────────────────────────────── */
@@ -128,6 +197,33 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--v-text-primary);
   letter-spacing: var(--v-tracking-tight);
   line-height: 1.25;
+}
+
+/* ─── FORMS ─────────────────────────────────────────────────────────────── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--v-text-secondary);
+}
+
+.vrip-select {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: var(--v-text-primary);
+  background: var(--v-bg-card);
+  border: 1px solid var(--v-border);
+  border-radius: 6px;
+  outline: none;
 }
 
 /* ─── SCROLLBAR ─────────────────────────────────────────────────────────── */
@@ -282,6 +378,95 @@ h1, h2, h3, h4, h5, h6 {
   overflow-x: auto;
 }
 
+/* Shared data-table contract. Several feature screens render their own table
+   markup, so component-scoped table CSS cannot style them. */
+.vrip-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.vrip-table th {
+  padding: 12px 14px;
+  color: var(--v-text-secondary);
+  background: var(--v-bg-inset);
+  border-bottom: 1px solid var(--v-border);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.vrip-table td {
+  padding: 12px 14px;
+  color: var(--v-text-primary);
+  border-bottom: 1px solid var(--v-border);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  vertical-align: middle;
+}
+
+.vrip-table-row { transition: background-color var(--v-duration) var(--v-ease); }
+.vrip-table-row:hover { background: var(--v-bg-card-hover); }
+.vrip-table-row:last-child td { border-bottom: 0; }
+
+.vrip-table-empty {
+  padding: var(--v-12) var(--v-6) !important;
+  text-align: center;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--v-2);
+  color: var(--v-text-secondary);
+}
+
+.empty-state p { margin: 0; }
+.empty-icon { color: var(--v-text-tertiary); font-size: 2rem; }
+
+.vrip-table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--v-3);
+  padding: var(--v-3) var(--v-4);
+  border-top: 1px solid var(--v-border);
+  background: var(--v-bg-card);
+}
+
+.pagination-info { color: var(--v-text-secondary); font-size: 0.75rem; }
+.pagination-controls { display: flex; align-items: center; gap: var(--v-2); }
+
+.pagination-btn {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--v-border);
+  border-radius: var(--v-radius-sm);
+  background: var(--v-bg-card);
+  color: var(--v-text-secondary);
+  cursor: pointer;
+  font: inherit;
+}
+
+.pagination-btn:hover:not(:disabled), .pagination-btn.active {
+  border-color: var(--v-brand);
+  background: var(--v-brand);
+  color: var(--v-text-inverse);
+}
+
+.pagination-btn:disabled { cursor: not-allowed; opacity: 0.45; }
+.pagination-btn .material-symbols-outlined { font-size: 1.125rem; }
+
+@media (max-width: 640px) {
+  .vrip-table-pagination { align-items: flex-start; flex-direction: column; }
+}
+
 .v-truncate {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -291,3 +476,47 @@ h1, h2, h3, h4, h5, h6 {
 /* ─── LOADING SPINNER ───────────────────────────────────────────────────── */
 @keyframes v-spin { to { transform: rotate(360deg); } }
 .v-spinner { animation: v-spin 0.7s linear infinite; }
+
+/* ─── SKELETON LOADING ─────────────────────────────────────────────────── */
+@keyframes v-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-cell,
+.skeleton-text,
+.skeleton-title,
+.skeleton-number,
+.skeleton-avatar,
+.skeleton-badge,
+.skeleton-button {
+  border-radius: var(--v-radius-sm, 4px);
+  background: linear-gradient(
+    90deg,
+    var(--v-border, #e5e7eb) 25%,
+    var(--v-bg-hover, #f3f4f6) 50%,
+    var(--v-border, #e5e7eb) 75%
+  );
+  background-size: 200% 100%;
+  animation: v-shimmer 1.5s ease-in-out infinite;
+  display: inline-block;
+}
+
+.skeleton-cell   { width: 100%; height: 16px; }
+.skeleton-text   { width: 60%; height: 14px; }
+.skeleton-title  { width: 40%; height: 20px; }
+.skeleton-number { width: 45%; height: 28px; }
+.skeleton-avatar { width: 36px; height: 36px; border-radius: 50%; }
+.skeleton-badge  { width: 70px; height: 20px; border-radius: 99px; }
+.skeleton-button { width: 80px; height: 32px; border-radius: var(--v-radius-sm, 4px); }
+
+.skeleton-card {
+  background: var(--v-bg-card, #ffffff);
+  border: 1px solid var(--v-border, #e5e7eb);
+  border-radius: var(--v-radius-lg, 12px);
+  padding: var(--v-5, 20px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--v-3, 12px);
+}
+

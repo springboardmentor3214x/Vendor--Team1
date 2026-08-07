@@ -126,10 +126,17 @@ export class EditVendor implements OnInit {
 
   }
 
-  cancel(): void {
-
-    this.router.navigate(['/vendors']);
-
+  approveVendor(): void {
+    if (this.vendor && this.vendor.id) {
+      this.vendor.status = 'Active';
+      this.vendor.approvalStatus = 'Approved';
+      this.vendorService.approveVendor(this.vendor.id);
+      alert('Vendor approved successfully!');
+      this.router.navigate(['/vendors']);
+    }
   }
 
+  cancel(): void {
+    this.router.navigate(['/vendors']);
+  }
 }

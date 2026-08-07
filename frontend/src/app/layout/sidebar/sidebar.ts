@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
@@ -9,15 +9,17 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css'
 })
-export class Sidebar {
+export class Sidebar implements OnInit {
 
   role: string = '';
 
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {
-    this.role = localStorage.getItem('vrip_role') || '';
+  ) {}
+
+  ngOnInit(): void {
+    this.role = this.authService.getUserRole() || '';
   }
 
   logout(): void {

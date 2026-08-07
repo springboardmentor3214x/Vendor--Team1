@@ -23,27 +23,40 @@
       </thead>
       <tbody>
         <ng-content select="[table-body]"></ng-content>
-        <tr *ngFor="let item of data" class="vrip-table-row">
-          <td *ngFor="let col of columns">
-            <ng-container *ngIf="!col.template">
-              {{ item[col.key] }}
-            </ng-container>
-            <ng-container *ngIf="col.template">
-              <ng-container *ngTemplateOutlet="col.template; context: { $implicit: item }"></ng-container>
-            </ng-container>
-          </td>
-          <td *ngIf="hasActionsCol" class="vrip-table-actions-td">
-            <ng-content select="[row-actions]"></ng-content>
-          </td>
-        </tr>
-        <tr *ngIf="data && data.length === 0 && (!columns || columns.length > 0)">
-          <td [attr.colspan]="columns.length + (hasActionsCol ? 1 : 0)" class="vrip-table-empty">
-            <div class="empty-state">
-              <span class="material-symbols-outlined empty-icon">inbox</span>
-              <p>No data available</p>
-            </div>
-          </td>
-        </tr>
+        <ng-container *ngIf="loading && columns && columns.length > 0">
+          <tr *ngFor="let _ of dummyRows" class="vrip-table-row">
+            <td *ngFor="let col of columns">
+              <div class="skeleton-cell"></div>
+            </td>
+            <td *ngIf="hasActionsCol" class="vrip-table-actions-td">
+              <div class="skeleton-cell" style="width: 80px; margin-left: auto;"></div>
+            </td>
+          </tr>
+        </ng-container>
+
+        <ng-container *ngIf="!loading">
+          <tr *ngFor="let item of data" class="vrip-table-row">
+            <td *ngFor="let col of columns">
+              <ng-container *ngIf="!col.template">
+                {{ item[col.key] }}
+              </ng-container>
+              <ng-container *ngIf="col.template">
+                <ng-container *ngTemplateOutlet="col.template; context: { $implicit: item }"></ng-container>
+              </ng-container>
+            </td>
+            <td *ngIf="hasActionsCol" class="vrip-table-actions-td">
+              <ng-content select="[row-actions]"></ng-content>
+            </td>
+          </tr>
+          <tr *ngIf="data && data.length === 0 && (!columns || columns.length > 0)">
+            <td [attr.colspan]="columns.length + (hasActionsCol ? 1 : 0)" class="vrip-table-empty">
+              <div class="empty-state">
+                <span class="material-symbols-outlined empty-icon">inbox</span>
+                <p>No data available</p>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
       </tbody>
     </table>
   </div>

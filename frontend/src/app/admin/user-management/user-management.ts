@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Card } from '../../ui/card/card';
 import { Button } from '../../ui/button/button';
@@ -17,7 +17,7 @@ export class UserManagement implements OnInit {
   loading: boolean = true;
   errorMsg: string = '';
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -37,11 +37,13 @@ export class UserManagement implements OnInit {
         } else {
           this.users = [];
         }
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.loading = false;
         console.error('Failed to load users', err);
         this.errorMsg = err.error?.detail || err.message || 'Failed to load users from server.';
+        this.cdr.markForCheck();
       }
     });
   }

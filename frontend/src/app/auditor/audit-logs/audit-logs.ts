@@ -13,6 +13,8 @@ import { Table } from '../../ui/table/table';
   styleUrls: ['./audit-logs.css']
 })
 export class AuditLogs {
+  loading: boolean = false;
+
   filter() { alert("Filter applied"); }
 
   logs = [

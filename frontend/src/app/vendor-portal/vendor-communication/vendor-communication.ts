@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -17,7 +17,10 @@ export class VendorCommunication implements OnInit {
   newMessage: string = '';
   loading: boolean = true;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadMessages();
@@ -39,10 +42,12 @@ export class VendorCommunication implements OnInit {
         } else {
           this.messages = [];
         }
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.loading = false;
         console.error('Failed to load messages', err);
+        this.cdr.markForCheck();
       }
     });
   }

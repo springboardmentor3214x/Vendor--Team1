@@ -21,23 +21,36 @@
                 </tr>
             </ng-container>
             <ng-container table-body>
-                <tr *ngFor="let payment of payments">
-                    <td><strong>{{ payment.id }}</strong></td>
-                    <td>{{ payment.invoice }}</td>
-                    <td>{{ payment.vendor }}</td>
-                    <td><strong>{{ payment.amount | currency:'USD':'symbol':'1.2-2' }}</strong></td>
-                    <td>{{ payment.date }}</td>
-                    <td>
-                        <span class="vrip-badge" 
-                              [ngStyle]="{'background': payment.status === 'Completed' ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 149, 0, 0.1)', 
-                                          'color': payment.status === 'Completed' ? '#34c759' : '#ff9500'}">
-                            {{ payment.status }}
-                        </span>
-                    </td>
-                    <td style="text-align: right;">
-                        <app-button variant="ghost" [disabled]="payment.status !== 'Completed'" (onClick)="receipt()"><span class="material-symbols-outlined">receipt</span></app-button>
-                    </td>
-                </tr>
+                <ng-container *ngIf="loading">
+                    <tr *ngFor="let _ of [1,2,3,4]">
+                        <td><div class="skeleton-cell" style="width: 90px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 100px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 140px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 80px;"></div></td>
+                        <td><div class="skeleton-cell" style="width: 90px;"></div></td>
+                        <td><div class="skeleton-badge"></div></td>
+                        <td style="text-align: right;"><div class="skeleton-button" style="width: 32px; height: 32px; margin-left: auto;"></div></td>
+                    </tr>
+                </ng-container>
+                <ng-container *ngIf="!loading">
+                    <tr *ngFor="let payment of payments">
+                        <td><strong>{{ payment.id }}</strong></td>
+                        <td>{{ payment.invoice }}</td>
+                        <td>{{ payment.vendor }}</td>
+                        <td><strong>{{ payment.amount | currency:'USD':'symbol':'1.2-2' }}</strong></td>
+                        <td>{{ payment.date }}</td>
+                        <td>
+                            <span class="vrip-badge" 
+                                  [ngStyle]="{'background': payment.status === 'Completed' ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 149, 0, 0.1)', 
+                                              'color': payment.status === 'Completed' ? '#34c759' : '#ff9500'}">
+                                {{ payment.status }}
+                            </span>
+                        </td>
+                        <td style="text-align: right;">
+                            <app-button variant="ghost" [disabled]="payment.status !== 'Completed'" (onClick)="receipt()"><span class="material-symbols-outlined">receipt</span></app-button>
+                        </td>
+                    </tr>
+                </ng-container>
             </ng-container>
         </app-table>
     </app-card>

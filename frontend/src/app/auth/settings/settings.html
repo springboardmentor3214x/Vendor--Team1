@@ -1,45 +1,43 @@
 <div class="page-container">
-    <div class="page-vrip-page-header" style="margin-bottom: var(--vrip-space-6);">
+    <div class="vrip-page-header" style="margin-bottom: var(--v-6, 24px);">
         <h1 class="vrip-page-title">Account Settings</h1>
         <p class="vrip-page-subtitle">Manage your preferences, security, and notifications.</p>
     </div>
 
-    <div style="display: grid; grid-template-columns: 250px 1fr; gap: var(--vrip-space-6);">
-        
-        <!-- Sidebar Navigation for Settings -->
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-            <div style="padding: 12px 16px; background: var(--vrip-primary-50); color: var(--vrip-primary-700); border-radius: var(--vrip-radius-md); font-weight: 500; cursor: pointer;">General Preferences</div>
-            <div style="padding: 12px 16px; color: var(--text-secondary); border-radius: var(--vrip-radius-md); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='var(--vrip-gray-50)'" onmouseout="this.style.background='transparent'">Security & Password</div>
-            <div style="padding: 12px 16px; color: var(--text-secondary); border-radius: var(--vrip-radius-md); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='var(--vrip-gray-50)'" onmouseout="this.style.background='transparent'">Notifications</div>
-            <div style="padding: 12px 16px; color: var(--text-secondary); border-radius: var(--vrip-radius-md); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='var(--vrip-gray-50)'" onmouseout="this.style.background='transparent'">Appearance</div>
+    <div class="settings-layout">
+        <!-- Sidebar Navigation -->
+        <div class="settings-nav">
+            <div class="settings-nav-item active">General Preferences</div>
+            <div class="settings-nav-item">Security & Password</div>
+            <div class="settings-nav-item">Notifications</div>
+            <div class="settings-nav-item">Appearance</div>
         </div>
 
         <!-- Settings Content -->
-        <div style="display: flex; flex-direction: column; gap: var(--vrip-space-6);">
-            
+        <div style="display: flex; flex-direction: column; gap: var(--v-6, 24px);">
             <app-card>
-                <h2 style="margin: 0 0 24px 0; font-size: 1.25rem;">General Preferences</h2>
+                <h2 style="margin: 0 0 20px 0; font-size: 1.125rem; font-weight: 600;">General Preferences</h2>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--vrip-space-4);">
+                <div class="settings-form-grid">
                     <div class="form-group">
-                        <label>Language</label>
-                        <select class="vrip-select">
+                        <label for="setting-lang">Language</label>
+                        <select id="setting-lang" class="vrip-select">
                             <option>English (US)</option>
                             <option>Spanish</option>
                             <option>French</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Timezone</label>
-                        <select class="vrip-select">
+                        <label for="setting-tz">Timezone</label>
+                        <select id="setting-tz" class="vrip-select">
                             <option>(GMT-05:00) Eastern Time</option>
                             <option>(GMT-08:00) Pacific Time</option>
                             <option>(GMT+00:00) UTC</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Date Format</label>
-                        <select class="vrip-select">
+                        <label for="setting-date">Date Format</label>
+                        <select id="setting-date" class="vrip-select">
                             <option>MM/DD/YYYY</option>
                             <option>DD/MM/YYYY</option>
                             <option>YYYY-MM-DD</option>
@@ -47,11 +45,10 @@
                     </div>
                 </div>
                 
-                <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
+                <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--v-border); display: flex; justify-content: flex-end;">
                     <app-button variant="primary" (onClick)="saveChanges()">Save Changes</app-button>
                 </div>
             </app-card>
-
         </div>
     </div>
 </div>
