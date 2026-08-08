@@ -103,15 +103,56 @@ def reject_user(
     db.commit()
     return {"message": "User rejected"}
 
+def _check_vendor_user_activities(db: Session, user: User):
+    if user.role == Roles.VENDOR:
+        from app.models.vendor import Vendor
+        vendor = db.query(Vendor).filter(Vendor.email == user.email).first()
+        if vendor:
+            from app.services.vendor_service import check_vendor_active_activities
+            check_vendor_active_activities(db, vendor.id)
+
+@router.post("/{user_id}/block")
+def block_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN]))
+):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.id == current_user.id:
+        raise HTTPException(status_code=400, detail="Cannot block your own account")
+    _check_vendor_user_activities(db, user)
+    user.account_status = "Blocked"
+    sync_vendor_status_by_email(db, user.email, "Blocked", "Rejected")
+    db.commit()
+    return {"message": "User blocked"}
+
+@router.post("/{user_id}/deactivate")
+def deactivate_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(role_required([Roles.ADMIN]))
+):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.id == current_user.id:
+        raise HTTPException(status_code=400, detail="Cannot deactivate your own account")
+    _check_vendor_user_activities(db, user)
+    user.account_status = "Deactivated"
+    sync_vendor_status_by_email(db, user.email, "Inactive")
+    db.commit()
+    return {"message": "User deactivated"}
+
 
 def _pending_user_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -121,6 +162,10 @@ def _pending_user_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -129,9 +174,8 @@ def _pending_user_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -141,6 +185,10 @@ def _pending_user_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -149,9 +197,8 @@ def _pending_user_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -161,6 +208,10 @@ def _pending_user_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -169,9 +220,8 @@ def _pending_user_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
 
@@ -181,6 +231,10 @@ def _pending_user_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
+        else:
+            totals["other"] = totals.get("other", 0) + 1
+    totals["ratio"] = round(
+        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -189,28 +243,7 @@ def _pending_user_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_user_totals_5(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_user_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+            "label": str(getattr(item, "reference", "")),
+            "state": getattr(item, "status", "New"),
         })
     return rows
