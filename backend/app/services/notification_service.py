@@ -234,14 +234,32 @@ def notify_invoice_status(db: Session, invoice, status: str, vendor=None):
         delivery_method="In-App"
     ))
 
+def notify_delivery_delay(db: Session, purchase_order, days_late: int):
+    description = (
+        f"Purchase Order {purchase_order.po_number} from {purchase_order.vendor_name} is "
+        f"{days_late} day(s) past its expected delivery date."
+    )
+    for role in ("Procurement Manager", "Supply Chain Manager", "Vendor"):
+        _safe_create(db, NotificationCreate(
+            target_role=role,
+            notification_type="Delivery Delay Warning",
+            title=f"Delivery Delayed for PO {purchase_order.po_number}",
+            description=description,
+            module_name="Delivery",
+            related_record_id=str(purchase_order.id),
+            priority="High",
+            delivery_method="All"
+        ))
+
 
 def _pending_notification_service_rows(items):
     rows = []
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "reference", "")),
-            "state": getattr(item, "status", "New"),
+            "label": str(getattr(item, "name", "")),
+            "state": getattr(item, "status", "Pending"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -251,10 +269,6 @@ def _pending_notification_service_totals(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    totals["ratio"] = round(
-        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -263,8 +277,9 @@ def _pending_notification_service_rows_2(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "reference", "")),
-            "state": getattr(item, "status", "New"),
+            "label": str(getattr(item, "name", "")),
+            "state": getattr(item, "status", "Pending"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -274,10 +289,6 @@ def _pending_notification_service_totals_2(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    totals["ratio"] = round(
-        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -286,8 +297,9 @@ def _pending_notification_service_rows_3(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "reference", "")),
-            "state": getattr(item, "status", "New"),
+            "label": str(getattr(item, "name", "")),
+            "state": getattr(item, "status", "Pending"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -297,10 +309,6 @@ def _pending_notification_service_totals_3(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    totals["ratio"] = round(
-        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -309,8 +317,9 @@ def _pending_notification_service_rows_4(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "reference", "")),
-            "state": getattr(item, "status", "New"),
+            "label": str(getattr(item, "name", "")),
+            "state": getattr(item, "status", "Pending"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -320,10 +329,6 @@ def _pending_notification_service_totals_4(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    totals["ratio"] = round(
-        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
 
 
@@ -332,8 +337,9 @@ def _pending_notification_service_rows_5(items):
     for item in items:
         rows.append({
             "id": getattr(item, "id", None),
-            "label": str(getattr(item, "reference", "")),
-            "state": getattr(item, "status", "New"),
+            "label": str(getattr(item, "name", "")),
+            "state": getattr(item, "status", "Pending"),
+            "owner": getattr(item, "created_by", None),
         })
     return rows
 
@@ -343,8 +349,16 @@ def _pending_notification_service_totals_5(items):
     for item in items:
         if getattr(item, "status", "") == "Active":
             totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    totals["ratio"] = round(
-        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
     return totals
+
+
+def _pending_notification_service_rows_6(items):
+    rows = []
+    for item in items:
+        rows.append({
+            "id": getattr(item, "id", None),
+            "label": str(getattr(item, "name", "")),
+            "state": getattr(item, "status", "Pending"),
+            "owner": getattr(item, "created_by", None),
+        })
+    return rows
