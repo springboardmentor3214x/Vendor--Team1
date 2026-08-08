@@ -21,21 +21,27 @@ export class VendorCommunication implements OnInit {
   newMessage = '';
   loading = true;
   vendorId: number | null = null;
+
   currentUserName = '';
+
   pendingFile: File | null = null;
   fileError = '';
   sending = false;
   uploading = false;
+
   showFilesPanel = false;
+
   readonly allowedExtensions = FILE_SHARING.allowedExtensions;
   readonly maxFileSizeBytes = FILE_SHARING.maxSizeBytes;
   readonly acceptAttr = FILE_SHARING.acceptAttr;
+
   constructor(
     private commService: CommunicationService,
     private vendorService: VendorService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef
   ) {}
+
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
     this.currentUserName = user?.fullName || user?.email || 'Vendor';
@@ -49,6 +55,7 @@ export class VendorCommunication implements OnInit {
       error: () => this.loadMessages()
     });
   }
+
   loadMessages(): void {
     this.loading = true;
     this.commService.getMessages(this.vendorId || undefined).subscribe({
@@ -79,23 +86,125 @@ export class VendorCommunication implements OnInit {
       }
     });
   }
-}
 
-const PLACEHOLDER_VENDOR_COMMUNICATION_ROWS = [
-  { id: 1, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 2, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 3, name: 'Harborline Equipment', status: 'Active' },
-  { id: 4, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 5, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 6, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 7, name: 'Northwind Steel', status: 'Active' },
-  { id: 8, name: 'Orbit IT Systems', status: 'Pending Approval' },
-];
+  loadFiles(): void {
+    this.commService.getFiles({ vendorId: this.vendorId || undefined }).subscribe({
+      next: (files) => {
+        this.sharedFiles = (files || []).map(f => ({
+          ...f,
+          sizeLabel: FILE_SHARING.formatSize(f.file_size),
+          icon: FILE_SHARING.iconFor(f.file_name),
+          uploadedOn: f.created_at ? new Date(f.created_at).toLocaleDateString() : '-'
+        }));
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.sharedFiles = [];
+        this.cdr.markForCheck();
+      }
+    });
+  }
 
-function usePlaceholderVendorCommunication(rows: any[]): any[] {
-  const source = rows && rows.length ? rows : PLACEHOLDER_VENDOR_COMMUNICATION_ROWS;
-  return source.map((row) => ({
-    ...row,
-    status: row.status || 'Pending',
-  }));
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.fileError = '';
+    this.pendingFile = null;
+
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    const problem = FILE_SHARING.validate(file);
+    if (problem) {
+      this.fileError = problem;
+      input.value = '';
+      return;
+    }
+    this.pendingFile = file;
+  }
+
+  clearAttachment(): void {
+    this.pendingFile = null;
+    this.fileError = '';
+  }
+
+  sendMessage(): void {
+    const content = this.newMessage.trim();
+    if (!content && !this.pendingFile) return;
+
+    this.sending = true;
+    this.fileError = '';
+
+    const done = () => {
+      this.sending = false;
+      this.newMessage = '';
+      this.pendingFile = null;
+      this.loadMessages();
+      this.loadFiles();
+    };
+    const fail = (err: any) => {
+      this.sending = false;
+      this.fileError = err.error?.detail || 'Could not send the message.';
+      this.cdr.markForCheck();
+    };
+
+    if (this.pendingFile) {
+
+      const form = new FormData();
+      form.append('message', content || `Shared a file: ${this.pendingFile.name}`);
+      if (this.vendorId) form.append('vendor_id', String(this.vendorId));
+      form.append('file', this.pendingFile);
+      this.commService.sendMessageWithFile(form).subscribe({ next: done, error: fail });
+    } else {
+      const payload: any = { message: content };
+      if (this.vendorId) payload.vendor_id = this.vendorId;
+      this.commService.sendMessage(payload).subscribe({ next: done, error: fail });
+    }
+  }
+
+  downloadAttachment(msg: any): void {
+    this.commService.downloadMessageAttachment(msg.id).subscribe({
+      next: (blob) => FILE_SHARING.saveBlob(blob, msg.fileName),
+      error: () => this.fileError = 'Could not download the attachment.'
+    });
+  }
+
+  downloadSharedFile(file: any): void {
+    this.commService.downloadSharedFile(file.id).subscribe({
+      next: (blob) => FILE_SHARING.saveBlob(blob, file.file_name),
+      error: () => this.fileError = 'Could not download the file.'
+    });
+  }
+
+  uploadStandaloneFile(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.fileError = '';
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+    const problem = FILE_SHARING.validate(file);
+    if (problem) {
+      this.fileError = problem;
+      input.value = '';
+      return;
+    }
+
+    this.uploading = true;
+    const form = new FormData();
+    form.append('file', file);
+    if (this.vendorId) form.append('vendor_id', String(this.vendorId));
+
+    this.commService.uploadFile(form).subscribe({
+      next: () => {
+        this.uploading = false;
+        input.value = '';
+        this.loadFiles();
+      },
+      error: (err) => {
+        this.uploading = false;
+        input.value = '';
+        this.fileError = err.error?.detail || 'Could not upload the file.';
+        this.cdr.markForCheck();
+      }
+    });
+  }
 }
