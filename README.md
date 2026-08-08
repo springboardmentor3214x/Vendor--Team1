@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 02 Aug - Refine priority levels in notification
 - 03 Aug - Refine Excel export in reports
 - 04 Aug - Expand notification with email dispatch
 - 05 Aug - Add vendor scoping with registration validation rules
 - 06 Aug - Extend vendor scoping with supplier ranking fields
 - 07 Aug - Improve router registration in password security
+- 08 Aug - Flesh out notification with email dispatch
