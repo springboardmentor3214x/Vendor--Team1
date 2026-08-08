@@ -125,20 +125,56 @@
   border-color: var(--vrip-glass-border-highlight);
 }
 
-.placeholder-panel {
-  padding: 14px;
-  border: 1px dashed #bdbdbd;
-  border-radius: 6px;
-  color: #7a7a7a;
+.vrip-textarea:focus:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-color: var(--vrip-primary-400);
+  box-shadow: 0 0 0 4px rgba(59, 108, 255, 0.15), inset 0 1px 2px rgba(0,0,0,0.01);
 }
 
-.placeholder-row {
+.vrip-textarea:disabled {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: var(--vrip-neutral-400);
+  cursor: not-allowed;
+  border-style: dashed;
+}
+
+.file-upload-container {
   display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
+  flex-direction: column;
+  gap: var(--vrip-space-2);
 }
 
-.placeholder-tag {
-  text-transform: uppercase;
-  font-size: 11px;
+.file-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vrip-space-2);
+  padding: 8px 16px;
+  background-color: var(--vrip-neutral-50);
+  border: 1px dashed var(--vrip-neutral-400);
+  border-radius: var(--vrip-radius-md);
+  color: var(--vrip-neutral-700);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.file-btn:hover {
+  background-color: var(--vrip-neutral-100);
+  border-color: var(--vrip-primary-400);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--vrip-space-3);
+  margin-top: var(--vrip-space-6);
+  padding-top: var(--vrip-space-4);
+  border-top: 1px solid var(--vrip-neutral-200);
+}
+
+@media(max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 }
