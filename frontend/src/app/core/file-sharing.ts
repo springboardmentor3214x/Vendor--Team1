@@ -44,21 +44,3 @@ export const FILE_SHARING = {
     window.URL.revokeObjectURL(url);
   }
 };
-
-const PLACEHOLDER_FILE_SHARING_ROWS = [
-  { id: 1, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 2, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 3, name: 'Harborline Equipment', status: 'Active' },
-  { id: 4, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 5, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 6, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 7, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderFileSharing(rows: any[]): any[] {
-  const source = rows && rows.length ? rows : PLACEHOLDER_FILE_SHARING_ROWS;
-  return source.map((row) => ({
-    ...row,
-    status: row.status || 'Pending',
-  }));
-}
