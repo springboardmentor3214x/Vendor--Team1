@@ -7,20 +7,34 @@
         <app-button variant="primary" size="sm" iconLeft="mail" routerLink="/supply-chain/communication-tracking/new">Log New Message</app-button>
     </div>
 
-</div>
-
-<div class="placeholder-panel">
-  <p>Sample rows shown until the API is ready.</p>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-  </div>
+    <app-card [noPadding]="true">
+        <app-table>
+            <ng-container table-header>
+                <tr>
+                    <th>PO Number</th>
+                    <th>Vendor Name</th>
+                    <th>Sent Time</th>
+                    <th>Response Time</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                </tr>
+            </ng-container>
+            <ng-container table-body>
+                <tr *ngFor="let record of records">
+                    <td><strong>{{ record.poNumber }}</strong></td>
+                    <td>{{ record.vendorName }}</td>
+                    <td>{{ record.sentTime | date:'short' }}</td>
+                    <td>{{ record.responseTime | date:'short' }}</td>
+                    <td><strong>{{ record.responseDuration }}</strong></td>
+                    <td>
+                        <span class="vrip-badge" [ngStyle]="{'background': getStatusColor(record.status) + '20', 'color': getStatusColor(record.status)}">
+                            {{ record.status }}
+                        </span>
+                    </td>
+                    <td style="color: var(--text-secondary);">{{ record.remarks }}</td>
+                </tr>
+            </ng-container>
+        </app-table>
+    </app-card>
 </div>
