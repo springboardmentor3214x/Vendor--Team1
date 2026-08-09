@@ -2,6 +2,7 @@ from app.database.connection import engine, SessionLocal
 from app.database.base import Base
 from app.core.security import hash_password
 from app.core.roles import Roles
+
 from app.models.user import User
 from app.models.vendor import Vendor
 from app.models.procurement import Procurement
@@ -22,12 +23,14 @@ from app.models.discussion import Discussion
 from app.models.notification import Notification
 from app.models.activity_log import ActivityLog
 from app.models.shared_file import SharedFile
+
 from datetime import datetime, timedelta, date
 from app.utils.delivery_timing import delivery_status_from_times
 
-SHIPPING_ADDRESS = "Corporate Office, Cyber City, Gurgaon, Haryana 122002"
 
+SHIPPING_ADDRESS = "Corporate Office, Cyber City, Gurgaon, Haryana 122002"
 GST_RATE = 0.18
+
 
 def _delivery_row(vendor_id, procurement_id, expected, actual, remarks):
     status, delay_hours, delay_days = delivery_status_from_times(expected, actual)
@@ -41,6 +44,7 @@ def _delivery_row(vendor_id, procurement_id, expected, actual, remarks):
         delivery_status=status,
         remarks=remarks,
     )
+
 
 DEFAULT_USERS = [
     {
@@ -341,6 +345,7 @@ DEFAULT_VENDORS = [
     },
 ]
 
+
 PROCUREMENT_PLAN = [
     ("IT Laptop Fleet Refresh", "IT Department", "Rajesh Kumar", "Dell Laptops (Latitude 5540)",
      "IT Equipment", "TechSupply India Pvt Ltd", 25, 72000.0, "High", "Completed", "Approved", 380, 355, -2),
@@ -393,6 +398,7 @@ EXTRA_PROCUREMENTS = [
      "Marketing", "OfficeMart Solutions", 2000, 45.0, "Low", "Modification Required", "Modification Required", 11, 40),
 ]
 
+
 VENDOR_PROFILE = {
     "CloudInfra Services": {
         "quality": (5, 5, 5, 5), "defects": 0, "rating": 5.0, "response_hours": 1.5,
@@ -427,116 +433,939 @@ VENDOR_PROFILE = {
 }
 
 
-def _pending_seed_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "reference", "")),
-            "state": getattr(item, "status", "New"),
-        })
-    return rows
+def seed_database(reset: bool = False):
+    if reset:
+        from sqlalchemy import text
+        with engine.connect() as conn:
+            try:
+                conn.execute(text("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid();"))
+                conn.commit()
+            except Exception:
+                pass
+            try:
+                conn.execute(text("DROP SCHEMA public CASCADE; CREATE SCHEMA public;"))
+                conn.commit()
+            except Exception as e:
+                print(f"Schema drop warning: {e}")
+                Base.metadata.drop_all(bind=engine)
+
+    Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    now = datetime.utcnow()
+    today = date.today()
+
+    try:
+        print("Seeding users...")
+        user_ids = {}
+        for u in DEFAULT_USERS:
+            existing = db.query(User).filter(User.email == u["email"]).first()
+            if existing:
+                user_ids[u["email"]] = existing.id
+                continue
+            db_user = User(
+                name=u["name"],
+                email=u["email"],
+                mobile_number=u["mobile_number"],
+                password=hash_password(u["password"]),
+                role=u["role"],
+                account_status="Active",
+            )
+            db.add(db_user)
+            db.flush()
+            user_ids[u["email"]] = db_user.id
+
+        print("Seeding vendors...")
+        vendor_ids = {}
+        vendors_by_name = {}
+        for v in DEFAULT_VENDORS:
+            existing_v = db.query(Vendor).filter(Vendor.company_name == v["company_name"]).first()
+            if existing_v:
+                vendor_ids[v["company_name"]] = existing_v.id
+                vendors_by_name[v["company_name"]] = existing_v
+                continue
+
+            approved = v["approval_status"] == "Approved"
+            vendor = Vendor(
+                **v,
+                created_by="Admin User",
+                created_at=now - timedelta(days=400),
+                updated_by="Admin User",
+                updated_at=now - timedelta(days=30),
+                approved_at=(now - timedelta(days=395)) if approved else None,
+            )
+            db.add(vendor)
+            db.flush()
+            vendor_ids[v["company_name"]] = vendor.id
+            vendors_by_name[v["company_name"]] = vendor
+
+        if db.query(Procurement).count() > 0:
+            print("Transactional data already present — skipping procurement/PO/invoice seed.")
+            db.commit()
+            return
+
+        print("Seeding procurements...")
+        procurements = []
+        fulfilment_plan = []
+
+        seq = 0
+        for (title, dept, requester, item, category, vendor_company, qty, unit_price,
+             priority, status, approval_status, days_ago, days_to_expected, offset) in PROCUREMENT_PLAN:
+            seq += 1
+            created = now - timedelta(days=days_ago)
+            expected = now - timedelta(days=days_to_expected)
+            actual = None
+            if offset is not None and status in ("Delivered", "Completed"):
+                actual = expected + timedelta(days=offset)
+
+            proc = Procurement(
+                request_number=f"PR-2026-{seq:04d}",
+                request_title=title,
+                department=dept,
+                requested_by=requester,
+                item_name=item,
+                category=category,
+                vendor_id=vendor_ids[vendor_company],
+                quantity=qty,
+                unit_of_measurement="Units",
+                unit_price=unit_price,
+                total_price=qty * unit_price,
+                priority=priority,
+                business_justification=f"Required to support planned {dept} operations for the current financial year.",
+                remarks="Approved within standard procurement policy limits." if approval_status == "Approved" else None,
+                status=status,
+                approval_status=approval_status,
+                approved_by="Procurement Manager" if approval_status == "Approved" else None,
+                expected_delivery_date=expected,
+                actual_delivery_date=actual,
+                created_at=created,
+            )
+            procurements.append(proc)
+            fulfilment_plan.append((proc, vendor_company, status, offset, expected, created))
+
+        for (title, dept, requester, item, category, vendor_company, qty, unit_price,
+             priority, status, approval_status, days_ago, days_to_expected) in EXTRA_PROCUREMENTS:
+            seq += 1
+            proc = Procurement(
+                request_number=f"PR-2026-{seq:04d}",
+                request_title=title,
+                department=dept,
+                requested_by=requester,
+                item_name=item,
+                category=category,
+                vendor_id=vendor_ids[vendor_company],
+                quantity=qty,
+                unit_of_measurement="Units",
+                unit_price=unit_price,
+                total_price=qty * unit_price,
+                priority=priority,
+                business_justification=f"Requested by {dept} to cover planned activity.",
+                remarks=("Rejected — budget reallocated to higher-priority projects."
+                         if approval_status == "Rejected"
+                         else "Sent back: attach three comparative quotations before resubmitting."),
+                status=status,
+                approval_status=approval_status,
+                approved_by="Admin User" if approval_status == "Rejected" else None,
+                expected_delivery_date=now + timedelta(days=days_to_expected),
+                created_at=now - timedelta(days=days_ago),
+            )
+            procurements.append(proc)
+
+        db.add_all(procurements)
+        db.flush()
+
+        history_rows = []
+        for proc in procurements:
+            history_rows.append(ProcurementStatusHistory(
+                procurement_id=proc.id, status="Pending", updated_by=proc.requested_by,
+                remarks="Procurement Request Created", created_at=proc.created_at
+            ))
+            if proc.approval_status == "Approved":
+                history_rows.append(ProcurementStatusHistory(
+                    procurement_id=proc.id, status="Approved", updated_by="Procurement Manager",
+                    remarks="Approved within budget", created_at=proc.created_at + timedelta(days=1)
+                ))
+            if proc.status in ("Ordered", "Delivered", "Completed"):
+                history_rows.append(ProcurementStatusHistory(
+                    procurement_id=proc.id, status="Ordered", updated_by="Procurement Manager",
+                    remarks="Purchase Order issued", created_at=proc.created_at + timedelta(days=3)
+                ))
+            if proc.status in ("Delivered", "Completed") and proc.actual_delivery_date:
+                history_rows.append(ProcurementStatusHistory(
+                    procurement_id=proc.id, status="Delivered", updated_by="Supply Chain Manager",
+                    remarks="Goods received at warehouse", created_at=proc.actual_delivery_date
+                ))
+            if proc.status == "Completed" and proc.actual_delivery_date:
+                history_rows.append(ProcurementStatusHistory(
+                    procurement_id=proc.id, status="Completed", updated_by="Finance Manager",
+                    remarks="Invoice verified and payment released",
+                    created_at=proc.actual_delivery_date + timedelta(days=5)
+                ))
+        db.add_all(history_rows)
+
+        print("Seeding purchase orders, tracking and invoices...")
+        purchase_orders = []
+        tracking_rows = []
+        invoices = []
+        payment_cycle = ["Paid", "Paid", "Approved", "Paid", "Approved", "Verified",
+                         "Approved", "Verified", "Pending", "Pending"]
+
+        po_seq = 0
+        inv_seq = 0
+        for proc, vendor_company, status, offset, expected, created in fulfilment_plan:
+            if status not in ("Ordered", "Delivered", "Completed"):
+                continue
+
+            vendor = vendors_by_name[vendor_company]
+            po_seq += 1
+            po_date = created + timedelta(days=2)
+            base_cost = proc.total_price
+            tax_amount = round(base_cost * GST_RATE, 2)
+
+            po_status = {
+                "Ordered": "In Transit",
+                "Delivered": "Delivered",
+                "Completed": "Completed",
+            }[status]
+
+            po = PurchaseOrder(
+                po_number=f"PO-2026-{po_seq:04d}",
+                procurement_id=proc.id,
+                vendor_id=vendor.id,
+                vendor_name=vendor.company_name,
+                vendor_address=vendor.address_line_1,
+                contact_person=vendor.contact_person,
+                item_name=proc.item_name,
+                quantity=proc.quantity,
+                unit_price=proc.unit_price,
+                total_cost=base_cost,
+                tax_amount=tax_amount,
+                shipping_address=SHIPPING_ADDRESS,
+                expected_delivery_date=expected,
+                payment_terms=vendor.payment_terms or "Net 30",
+                status=po_status,
+                approved_by="Procurement Manager",
+                po_date=po_date,
+            )
+            purchase_orders.append(po)
+            db.add(po)
+            db.flush()
+
+            dispatch_date = po_date + timedelta(days=4)
+            actual_delivery = proc.actual_delivery_date
+
+            if status == "Ordered":
+                delivery_status = "In Transit"
+                delay_status = "Delayed" if expected < now else "On Time"
+                delay_days = max((now - expected).days, 0) if expected < now else 0
+                delay_hours = delay_days * 24
+            else:
+                _, delay_hours, delay_days = delivery_status_from_times(expected, actual_delivery)
+                delivery_status = "Completed" if status == "Completed" else "Delivered"
+                delay_status = "Delayed" if delay_hours > 0 else "On Time"
+
+            tracking_rows.append(OrderTracking(
+                po_id=po.id,
+                procurement_id=proc.id,
+                vendor_id=vendor.id,
+                dispatch_date=dispatch_date,
+                expected_delivery_date=expected,
+                actual_delivery_date=actual_delivery,
+                delivery_status=delivery_status,
+                delay_status=delay_status,
+                delay_hours=int(delay_hours),
+                delay_days=int(delay_days),
+                updated_at=actual_delivery or now,
+            ))
+
+            if status in ("Delivered", "Completed") and actual_delivery:
+                inv_seq += 1
+                invoice_date = actual_delivery + timedelta(days=2)
+                payment_status = "Paid" if status == "Completed" else payment_cycle[inv_seq % len(payment_cycle)]
+                invoices.append(Invoice(
+                    invoice_number=f"INV-2026-{inv_seq:04d}",
+                    po_id=po.id,
+                    procurement_id=proc.id,
+                    vendor_id=vendor.id,
+                    vendor_name=vendor.company_name,
+                    invoice_date=invoice_date,
+                    due_date=invoice_date + timedelta(days=30),
+                    invoice_amount=base_cost,
+                    tax_amount=tax_amount,
+                    total_amount=base_cost + tax_amount,
+                    payment_status=payment_status,
+                    verified_by="Finance Manager" if payment_status != "Pending" else None,
+                    approved_by="Finance Manager" if payment_status in ("Approved", "Paid") else None,
+                    remarks=f"Invoice for {proc.item_name} against {po.po_number}",
+                ))
+
+        db.add_all(tracking_rows)
+        db.add_all(invoices)
+
+        print("Seeding performance records...")
+        delivery_records = []
+        quality_records = []
+        comm_logs = []
+        service_records = []
+
+        for proc, vendor_company, status, offset, expected, created in fulfilment_plan:
+            vendor = vendors_by_name[vendor_company]
+            profile = VENDOR_PROFILE[vendor_company]
+
+            sent_time = created + timedelta(days=1)
+            responded = status != "Ordered" or vendor_company != "BuildRight Materials"
+            comm_logs.append(CommunicationLog(
+                vendor_id=vendor.id,
+                procurement_id=proc.id,
+                message_sent_time=sent_time,
+                vendor_response_time=(sent_time + timedelta(hours=profile["response_hours"])) if responded else None,
+                response_duration_hours=profile["response_hours"] if responded else None,
+                communication_status="Responded" if responded else "Pending",
+                remarks=(f"Schedule confirmation for {proc.item_name}" if responded
+                         else "Awaiting vendor confirmation on revised schedule"),
+            ))
+
+            if status not in ("Delivered", "Completed") or not proc.actual_delivery_date:
+                continue
+
+            actual = proc.actual_delivery_date
+            delivery_records.append(_delivery_row(
+                vendor.id, proc.id, expected, actual,
+                ("Delivered ahead of schedule" if offset < 0 else
+                 "Delivered on the agreed date" if offset == 0 else
+                 f"Delivered {offset} day(s) behind schedule"),
+            ))
+
+            mq, pq, qa, sc = profile["quality"]
+            quality_records.append(QualityEvaluation(
+                vendor_id=vendor.id,
+                procurement_id=proc.id,
+                inspection_date=actual + timedelta(days=1),
+                material_quality=mq,
+                packaging_quality=pq,
+                quantity_accuracy=qa,
+                specification_compliance=sc,
+                defect_count=profile["defects"],
+                overall_rating=profile["rating"],
+                remarks=f"{proc.item_name}: {profile['quality_note']}",
+            ))
+
+            if status == "Completed":
+                prof, support, docs, flex, comm_eff, issue = profile["service"]
+                service_records.append(ServiceRating(
+                    vendor_id=vendor.id,
+                    procurement_id=proc.id,
+                    professionalism=prof,
+                    customer_support=support,
+                    documentation_quality=docs,
+                    flexibility=flex,
+                    communication_effectiveness=comm_eff,
+                    issue_resolution=issue,
+                    overall_rating=profile["service_rating"],
+                    comments=profile["service_note"],
+                    rated_at=actual + timedelta(days=6),
+                ))
+
+        db.add_all(delivery_records)
+        db.add_all(quality_records)
+        db.add_all(comm_logs)
+        db.add_all(service_records)
+
+        print("Seeding contracts...")
+        contracts = [
+            Contract(
+                contract_number="CTR-2026-0001",
+                contract_title="Annual IT Hardware Maintenance & Licensing Agreement",
+                vendor_id=vendor_ids["TechSupply India Pvt Ltd"],
+                vendor_name="TechSupply India Pvt Ltd",
+                contract_type="Master Agreement",
+                procurement_category="IT Equipment",
+                start_date=today - timedelta(days=120),
+                end_date=today + timedelta(days=245),
+                contract_value=1200000.0,
+                payment_terms="Net 45",
+                sla_details="Next-business-day on-site replacement; 99.5% hardware availability; monthly service review.",
+                warranty_details="36 months comprehensive warranty on all supplied hardware including parts and labour.",
+                responsible_manager="Procurement Manager",
+                status="Active",
+                created_at=now - timedelta(days=120),
+            ),
+            Contract(
+                contract_number="CTR-2026-0002",
+                contract_title="Office Supplies Master Agreement - v2",
+                vendor_id=vendor_ids["OfficeMart Solutions"],
+                vendor_name="OfficeMart Solutions",
+                contract_type="Rate Contract",
+                procurement_category="Office Supplies",
+                start_date=today - timedelta(days=340),
+                end_date=today + timedelta(days=22),
+                contract_value=450000.0,
+                payment_terms="Net 30",
+                sla_details="Delivery within 5 working days of purchase order; replacement of damaged goods within 48 hours.",
+                warranty_details="12 months warranty on furniture; consumables covered by manufacturer warranty.",
+                responsible_manager="Procurement Manager",
+                status="Expiring Soon",
+                created_at=now - timedelta(days=340),
+            ),
+            Contract(
+                contract_number="CTR-2026-0003",
+                contract_title="AWS Multi-Account Support & Optimisation SLA",
+                vendor_id=vendor_ids["CloudInfra Services"],
+                vendor_name="CloudInfra Services",
+                contract_type="Service Level Agreement",
+                procurement_category="Cloud Services",
+                start_date=today - timedelta(days=90),
+                end_date=today + timedelta(days=275),
+                contract_value=2400000.0,
+                payment_terms="Net 30",
+                sla_details="24x7 support, 15-minute response for Severity-1 incidents, 99.95% uptime commitment.",
+                warranty_details="Service credits payable for any month falling below the committed uptime.",
+                responsible_manager="Supply Chain Manager",
+                status="Active",
+                created_at=now - timedelta(days=90),
+            ),
+            Contract(
+                contract_number="CTR-2026-0004",
+                contract_title="Bulk Steel & Cement Supply Agreement",
+                vendor_id=vendor_ids["BuildRight Materials"],
+                vendor_name="BuildRight Materials",
+                contract_type="Supply Agreement",
+                procurement_category="Raw Materials",
+                start_date=today - timedelta(days=430),
+                end_date=today - timedelta(days=65),
+                contract_value=1850000.0,
+                payment_terms="Net 60",
+                sla_details="Site delivery within 7 days of release order; mill test certificates with every consignment.",
+                warranty_details="Material conformance to IS 1786 guaranteed; rejected lots replaced at vendor cost.",
+                responsible_manager="Procurement Manager",
+                status="Expired",
+                created_at=now - timedelta(days=430),
+            ),
+            Contract(
+                contract_number="CTR-2026-0005",
+                contract_title="Enterprise IT Managed Services Agreement",
+                vendor_id=vendor_ids["Global Vendor Solutions"],
+                vendor_name="Global Vendor Solutions",
+                contract_type="Master Agreement",
+                procurement_category="IT Equipment",
+                start_date=today - timedelta(days=200),
+                end_date=today + timedelta(days=530),
+                contract_value=980000.0,
+                payment_terms="Net 30",
+                sla_details="Quarterly asset audit, 4-hour remote response, dedicated account manager.",
+                warranty_details="24 months warranty on all supplied equipment.",
+                responsible_manager="Procurement Manager",
+                status="Active",
+                created_at=now - timedelta(days=200),
+            ),
+            Contract(
+                contract_number="CTR-2026-0006",
+                contract_title="Sustainable Packaging & Last-Mile Logistics (Draft)",
+                vendor_id=vendor_ids["GreenPack Logistics"],
+                vendor_name="GreenPack Logistics",
+                contract_type="Service Agreement",
+                procurement_category="Packaging",
+                start_date=today + timedelta(days=15),
+                end_date=today + timedelta(days=380),
+                contract_value=620000.0,
+                payment_terms="Net 30",
+                sla_details="Pending finalisation — proposed 48-hour dispatch commitment for all metro destinations.",
+                warranty_details="To be agreed during contract negotiation.",
+                responsible_manager="Supply Chain Manager",
+                status="Draft",
+                created_at=now - timedelta(days=10),
+            ),
+        ]
+        db.add_all(contracts)
+        db.flush()
+
+        print("Seeding certifications...")
+        certifications = [
+            ("TechSupply India Pvt Ltd", "ISO 9001:2015", "ISO-9001-TSI-4471", "Bureau Veritas India", 700, 400, "Active"),
+            ("TechSupply India Pvt Ltd", "GST Registration", "09AABCT1234F1Z5", "GST Council of India", 900, 1200, "Active"),
+            ("OfficeMart Solutions", "ISO 9001:2015", "ISO-9001-OMS-2210", "TUV SUD South Asia", 720, 18, "Expiring Soon"),
+            ("OfficeMart Solutions", "Business License", "BL-KA-2019-88213", "BBMP Bangalore", 600, 300, "Active"),
+            ("CloudInfra Services", "ISO 27001:2022", "ISO-27001-CIS-9087", "BSI Group India", 400, 720, "Active"),
+            ("CloudInfra Services", "GST Registration", "36AADCC9012M1Z3", "GST Council of India", 850, 1100, "Active"),
+            ("CloudInfra Services", "Cyber Security Audit Clearance", "CERT-IN-2025-4409", "CERT-In Empanelled Auditor", 300, 430, "Active"),
+            ("BuildRight Materials", "Manufacturing License", "ML-TG-2018-33119", "Telangana Industries Dept", 1100, -45, "Expired"),
+            ("BuildRight Materials", "Environmental Clearance", "EC-TG-2021-7742", "Telangana Pollution Control Board", 800, 260, "Active"),
+            ("Global Vendor Solutions", "ISO 9001:2015", "ISO-9001-GVS-1180", "Bureau Veritas India", 640, 500, "Active"),
+            ("Global Vendor Solutions", "GST Registration", "06AABCG1234H1Z2", "GST Council of India", 940, 1300, "Active"),
+        ]
+        db.add_all([
+            Certification(
+                vendor_id=vendor_ids[company],
+                certification_name=name,
+                certificate_number=number,
+                issuing_authority=authority,
+                issue_date=today - timedelta(days=issued_days_ago),
+                expiry_date=today + timedelta(days=expires_in_days),
+                status=status,
+                created_at=now - timedelta(days=issued_days_ago),
+            )
+            for company, name, number, authority, issued_days_ago, expires_in_days, status in certifications
+        ])
+
+        print("Seeding compliance records...")
+        compliance_rows = [
+            ("TechSupply India Pvt Ltd", "GST Compliance", "Compliant", "Auditor User", 40, 320,
+             "GSTR filings current through the last quarter."),
+            ("TechSupply India Pvt Ltd", "ISO Compliance", "Compliant", "Auditor User", 60, 400,
+             "Surveillance audit passed with no major non-conformities."),
+            ("OfficeMart Solutions", "Tax Compliance", "Compliant", "Auditor User", 55, 300,
+             "TDS and advance tax obligations verified."),
+            ("OfficeMart Solutions", "ISO Compliance", "Pending Verification", None, None, 18,
+             "Renewed ISO certificate requested from vendor; awaiting upload."),
+            ("CloudInfra Services", "Cybersecurity Standards", "Compliant", "Auditor User", 30, 430,
+             "CERT-In audit report reviewed and accepted."),
+            ("CloudInfra Services", "GST Compliance", "Compliant", "Auditor User", 45, 350,
+             "All returns filed on time."),
+            ("BuildRight Materials", "Environmental Compliance", "Non-Compliant", "Auditor User", 25, -45,
+             "Manufacturing licence lapsed; consent-to-operate renewal not submitted."),
+            ("BuildRight Materials", "Labor Law Compliance", "Pending Verification", None, None, 90,
+             "Contract labour register pending inspection."),
+            ("Global Vendor Solutions", "GST Compliance", "Compliant", "Auditor User", 35, 380,
+             "No outstanding demands or notices."),
+        ]
+        db.add_all([
+            ComplianceRecord(
+                vendor_id=vendor_ids[company],
+                compliance_type=ctype,
+                status=status,
+                verified_by=verified_by,
+                verification_date=(today - timedelta(days=verified_days_ago)) if verified_days_ago else None,
+                expiry_date=today + timedelta(days=expires_in_days),
+                remarks=remarks,
+                created_at=now - timedelta(days=verified_days_ago or 20),
+            )
+            for company, ctype, status, verified_by, verified_days_ago, expires_in_days, remarks in compliance_rows
+        ])
+
+        print("Seeding vendor documents...")
+        document_types = ["GST Certificate", "PAN Card", "Company Registration Certificate"]
+        db.add_all([
+            VendorDocument(
+                vendor_id=vendor_ids[company],
+                document_type=doc_type,
+                file_name=f"{company.split()[0].lower()}_{doc_type.split()[0].lower()}.pdf",
+                file_path=f"static/vendor_documents/{vendor_ids[company]}/{company.split()[0].lower()}_{doc_type.split()[0].lower()}.pdf",
+                uploaded_at=now - timedelta(days=390),
+            )
+            for company in vendor_ids
+            for doc_type in document_types
+        ])
+
+        print("Seeding discussions and communications...")
+        discussions = [
+            Discussion(
+                topic="Delivery Schedule Change - PO-2026-0011",
+                vendor_id=vendor_ids["BuildRight Materials"],
+                procurement_id=procurements[10].id,
+                po_id=purchase_orders[10].id if len(purchase_orders) > 10 else None,
+                created_by="Procurement Manager",
+                status="Resolved",
+                created_at=now - timedelta(days=64),
+            ),
+            Discussion(
+                topic="Invoice Discrepancy - INV-2026-0002",
+                vendor_id=vendor_ids["OfficeMart Solutions"],
+                procurement_id=procurements[1].id,
+                created_by="Finance Manager",
+                status="Resolved",
+                created_at=now - timedelta(days=305),
+            ),
+            Discussion(
+                topic="Contract Renewal Terms Discussion - CTR-2026-0002",
+                vendor_id=vendor_ids["OfficeMart Solutions"],
+                contract_id=contracts[1].id,
+                created_by="Procurement Manager",
+                status="Active",
+                created_at=now - timedelta(days=12),
+            ),
+            Discussion(
+                topic="Quality Escalation - Steel Consignment Shortfall",
+                vendor_id=vendor_ids["BuildRight Materials"],
+                procurement_id=procurements[3].id,
+                created_by="Supply Chain Manager",
+                status="Active",
+                created_at=now - timedelta(days=240),
+            ),
+        ]
+        db.add_all(discussions)
+        db.flush()
+
+        comms = [
+            Communication(
+                procurement_id=procurements[0].id,
+                vendor_id=vendor_ids["TechSupply India Pvt Ltd"],
+                sender_name="Procurement Manager",
+                message="Hi Rajesh, could you share a tracking update for the Dell Latitude consignment?",
+                is_read=True,
+                sent_at=now - timedelta(days=360),
+            ),
+            Communication(
+                procurement_id=procurements[0].id,
+                vendor_id=vendor_ids["TechSupply India Pvt Ltd"],
+                sender_name="Rajesh Kumar",
+                message="Dispatched this morning via Blue Dart. Expected at your Gurgaon dock in 48 hours.",
+                is_read=True,
+                sent_at=now - timedelta(days=359),
+            ),
+            Communication(
+                procurement_id=procurements[1].id,
+                vendor_id=vendor_ids["OfficeMart Solutions"],
+                sender_name="Procurement Manager",
+                message="Priya, we received the chairs but two units have unstable armrests.",
+                is_read=True,
+                sent_at=now - timedelta(days=310),
+            ),
+            Communication(
+                procurement_id=procurements[1].id,
+                vendor_id=vendor_ids["OfficeMart Solutions"],
+                sender_name="Priya Sharma",
+                message="Apologies for that. A service technician will visit tomorrow to replace both units.",
+                is_read=True,
+                sent_at=now - timedelta(days=309),
+            ),
+            Communication(
+                procurement_id=procurements[3].id,
+                vendor_id=vendor_ids["BuildRight Materials"],
+                discussion_id=discussions[3].id,
+                sender_name="Supply Chain Manager",
+                message="Suresh, the TMT consignment is 12 tonnes short against the release order. Please confirm the top-up schedule.",
+                is_read=True,
+                sent_at=now - timedelta(days=240),
+            ),
+            Communication(
+                procurement_id=procurements[3].id,
+                vendor_id=vendor_ids["BuildRight Materials"],
+                discussion_id=discussions[3].id,
+                sender_name="Suresh Reddy",
+                message="Acknowledged. The balance quantity will be dispatched from our Medak yard within four days.",
+                is_read=True,
+                sent_at=now - timedelta(days=238),
+            ),
+            Communication(
+                procurement_id=procurements[2].id,
+                vendor_id=vendor_ids["CloudInfra Services"],
+                sender_name="Amit Patel",
+                message="All AWS credits have been applied to your linked accounts. Billing console reflects the update.",
+                is_read=True,
+                sent_at=now - timedelta(days=284),
+            ),
+            Communication(
+                contract_id=contracts[1].id,
+                vendor_id=vendor_ids["OfficeMart Solutions"],
+                discussion_id=discussions[2].id,
+                sender_name="Procurement Manager",
+                message="Priya, CTR-2026-0002 expires in three weeks. Please share revised rate cards for renewal.",
+                is_read=False,
+                sent_at=now - timedelta(days=12),
+            ),
+            Communication(
+                contract_id=contracts[1].id,
+                vendor_id=vendor_ids["OfficeMart Solutions"],
+                discussion_id=discussions[2].id,
+                sender_name="Priya Sharma",
+                message="Revised rate card is being finalised and will be uploaded by the end of this week.",
+                is_read=False,
+                sent_at=now - timedelta(days=10),
+            ),
+            Communication(
+                procurement_id=procurements[15].id,
+                vendor_id=vendor_ids["BuildRight Materials"],
+                sender_name="Procurement Manager",
+                message="Suresh, the safety equipment order is approaching its delivery date. Please confirm dispatch.",
+                is_read=False,
+                sent_at=now - timedelta(days=3),
+            ),
+        ]
+        db.add_all(comms)
+
+        db.add_all([
+            SharedFile(
+                file_name="techsupply_delivery_challan.pdf",
+                file_path=f"static/shared_files/{vendor_ids['TechSupply India Pvt Ltd']}/techsupply_delivery_challan.pdf",
+                file_type="application/pdf",
+                file_size=248_320,
+                uploaded_by="Rajesh Kumar",
+                vendor_id=vendor_ids["TechSupply India Pvt Ltd"],
+                procurement_id=procurements[0].id,
+                created_at=now - timedelta(days=358),
+            ),
+            SharedFile(
+                file_name="officemart_revised_rate_card.xlsx",
+                file_path=f"static/shared_files/{vendor_ids['OfficeMart Solutions']}/officemart_revised_rate_card.xlsx",
+                file_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                file_size=61_440,
+                uploaded_by="Priya Sharma",
+                vendor_id=vendor_ids["OfficeMart Solutions"],
+                contract_id=contracts[1].id,
+                discussion_id=discussions[2].id,
+                created_at=now - timedelta(days=10),
+            ),
+            SharedFile(
+                file_name="buildright_mill_test_certificate.pdf",
+                file_path=f"static/shared_files/{vendor_ids['BuildRight Materials']}/buildright_mill_test_certificate.pdf",
+                file_type="application/pdf",
+                file_size=512_000,
+                uploaded_by="Suresh Reddy",
+                vendor_id=vendor_ids["BuildRight Materials"],
+                procurement_id=procurements[3].id,
+                discussion_id=discussions[3].id,
+                created_at=now - timedelta(days=239),
+            ),
+        ])
+
+        print("Seeding notifications...")
+        db.add_all([
+            Notification(
+                user_id=None,
+                target_role="All",
+                notification_type="System Update",
+                title="Platform Maintenance Complete",
+                description="Performance analytics and report generation modules upgraded successfully.",
+                module_name="System",
+                priority="Low",
+                delivery_method="In-App",
+                is_read=False,
+                timestamp=now - timedelta(hours=2),
+            ),
+            Notification(
+                user_id=None,
+                target_role=Roles.PROCUREMENT_MANAGER,
+                notification_type="Delivery Delay Warning",
+                title="Delivery Delayed for PO-2026-0011",
+                description="Cement consignment from BuildRight Materials passed its expected delivery date by 10 days.",
+                module_name="Delivery",
+                related_record_id="11",
+                priority="High",
+                delivery_method="All",
+                is_read=False,
+                timestamp=now - timedelta(hours=5),
+            ),
+            Notification(
+                user_id=None,
+                target_role=Roles.SUPPLY_CHAIN_MANAGER,
+                notification_type="Delivery Delay Warning",
+                title="Delayed Deliveries Require Review",
+                description="Three purchase orders are currently tracking behind their committed delivery dates.",
+                module_name="Delivery",
+                priority="High",
+                delivery_method="In-App",
+                is_read=False,
+                timestamp=now - timedelta(hours=6),
+            ),
+            Notification(
+                user_id=None,
+                target_role=Roles.PROCUREMENT_MANAGER,
+                notification_type="Contract Expiry Reminder",
+                title="Contract CTR-2026-0002 Expires in 22 Days",
+                description="Office Supplies Master Agreement with OfficeMart Solutions expires soon. Initiate renewal.",
+                module_name="Contracts",
+                related_record_id="2:30",
+                priority="Medium",
+                delivery_method="Email",
+                is_read=False,
+                timestamp=now - timedelta(days=1),
+            ),
+            Notification(
+                user_id=None,
+                target_role=Roles.PROCUREMENT_MANAGER,
+                notification_type="Contract Expiry Reminder",
+                title="Contract CTR-2026-0004 Has Expired",
+                description="Bulk Steel & Cement Supply Agreement with BuildRight Materials expired 65 days ago.",
+                module_name="Contracts",
+                related_record_id="4:0",
+                priority="High",
+                delivery_method="All",
+                is_read=False,
+                timestamp=now - timedelta(days=2),
+            ),
+            Notification(
+                user_id=None,
+                target_role=Roles.ADMIN,
+                notification_type="Vendor Onboarding",
+                title="New Vendor Registration Pending Review",
+                description="GreenPack Logistics has submitted onboarding documents and requires approval.",
+                module_name="Vendor",
+                related_record_id="6",
+                priority="Medium",
+                delivery_method="In-App",
+                is_read=False,
+                timestamp=now - timedelta(days=2),
+            ),
+            Notification(
+                user_id=None,
+                target_role=Roles.PROCUREMENT_MANAGER,
+                notification_type="Certification Expiry Reminder",
+                title="Certification Expiring: ISO 9001:2015",
+                description="OfficeMart Solutions' ISO 9001 certificate expires in 18 days. Request a renewed copy.",
+                module_name="Compliance",
+                related_record_id="3:30",
+                priority="Medium",
+                delivery_method="All",
+                is_read=False,
+                timestamp=now - timedelta(days=3),
+            ),
+            Notification(
+                user_id=None,
+                target_role=Roles.PROCUREMENT_MANAGER,
+                notification_type="Compliance Alert",
+                title="Compliance Issue: Environmental Compliance",
+                description="BuildRight Materials is 'Non-Compliant' for Environmental Compliance. Verification required.",
+                module_name="Compliance",
+                related_record_id="7:0",
+                priority="High",
+                delivery_method="All",
+                is_read=False,
+                timestamp=now - timedelta(days=4),
+            ),
+            Notification(
+                user_id=user_ids.get("rajesh@techsupply.in"),
+                target_role=None,
+                notification_type="Procurement Award",
+                title="New Purchase Order PO-2026-0010",
+                description="Purchase Order PO-2026-0010 for Server Hardware has been issued to you.",
+                module_name="Procurement",
+                related_record_id="10",
+                priority="High",
+                delivery_method="All",
+                is_read=True,
+                timestamp=now - timedelta(days=103),
+            ),
+            Notification(
+                user_id=user_ids.get("kavitha@greenpack.in"),
+                target_role=None,
+                notification_type="Vendor Approval",
+                title="Vendor Registration Under Review",
+                description="Your vendor profile 'GreenPack Logistics' is awaiting approval from the procurement team.",
+                module_name="Vendor",
+                related_record_id="6",
+                priority="Medium",
+                delivery_method="In-App",
+                is_read=False,
+                timestamp=now - timedelta(days=2),
+            ),
+            Notification(
+                user_id=None,
+                target_role=Roles.FINANCE_OFFICER,
+                notification_type="Invoice Update",
+                title="Invoices Awaiting Verification",
+                description="Two vendor invoices are pending finance verification before payment can be released.",
+                module_name="Invoice",
+                priority="Medium",
+                delivery_method="In-App",
+                is_read=False,
+                timestamp=now - timedelta(days=1, hours=6),
+            ),
+            Notification(
+                user_id=None,
+                target_role=Roles.AUDITOR,
+                notification_type="Compliance Alert",
+                title="Quarterly Compliance Review Due",
+                description="Compliance records for nine vendor obligations are ready for audit review.",
+                module_name="Compliance",
+                priority="Low",
+                delivery_method="In-App",
+                is_read=False,
+                timestamp=now - timedelta(days=5),
+            ),
+            Notification(
+                user_id=None,
+                target_role=Roles.PROCUREMENT_MANAGER,
+                notification_type="Procurement Alert",
+                title="New Procurement Request PR-2026-0021",
+                description="Amit Patel submitted 'Cloud Backup & DR Subscription' (IT Department) awaiting approval.",
+                module_name="Procurement",
+                related_record_id="21",
+                priority="High",
+                delivery_method="All",
+                is_read=False,
+                timestamp=now - timedelta(days=4),
+            ),
+            Notification(
+                user_id=user_ids.get("vendor@vendor.com"),
+                target_role=None,
+                notification_type="Invoice Update",
+                title="Invoice Payment Released",
+                description="Payment against your most recent invoice has been approved by the finance team.",
+                module_name="Invoice",
+                priority="Low",
+                delivery_method="In-App",
+                is_read=True,
+                timestamp=now - timedelta(days=20),
+            ),
+            Notification(
+                user_id=None,
+                target_role="All",
+                notification_type="System Update",
+                title="New Reporting Filters Available",
+                description="Reports now support date range filtering and Rupee-formatted PDF exports.",
+                module_name="Reports",
+                priority="Low",
+                delivery_method="In-App",
+                is_read=False,
+                timestamp=now - timedelta(days=7),
+            ),
+        ])
+
+        print("Seeding activity logs...")
+        activity_rows = [
+            ("Admin User", "Vendor Created", "Vendor", "Vendor #2", 400, "TechSupply India Pvt Ltd onboarded"),
+            ("Admin User", "Vendor Approved", "Vendor", "Vendor #2", 395, "Approval granted after document review"),
+            ("Rajesh Kumar", "Document Uploaded", "Vendor", "Vendor #2", 390, "GST certificate uploaded"),
+            ("Admin User", "Vendor Approved", "Vendor", "Vendor #4", 393, "CloudInfra Services approved"),
+            ("Rajesh Kumar", "Procurement Request Created", "Procurement", "PR-2026-0001", 380, "IT Laptop Fleet Refresh"),
+            ("Procurement Manager", "Purchase Order Generated", "Procurement", "PO-2026-0001", 378, "PO issued to TechSupply India Pvt Ltd"),
+            ("Rajesh Kumar", "Invoice Uploaded", "Invoice", "INV-2026-0001", 353, "Invoice raised against PO-2026-0001"),
+            ("Finance Manager", "Payment Approved", "Invoice", "INV-2026-0001", 348, "Payment released via NEFT"),
+            ("Procurement Manager", "Contract Created", "Contract", "CTR-2026-0001", 120, "Annual IT hardware agreement executed"),
+            ("Amit Patel", "Certification Uploaded", "Compliance", "Certification #5", 400, "ISO 27001:2022 certificate uploaded"),
+            ("Supply Chain Manager", "Message Sent", "Communication", "Discussion #4", 240, "Steel consignment shortfall raised"),
+            ("Suresh Reddy", "File Shared", "Communication", "File #3", 239, "Mill test certificate shared"),
+            ("Procurement Manager", "Procurement Request Approved", "Procurement", "PR-2026-0009", 129, "Perimeter security upgrade approved"),
+            ("Supply Chain Manager", "Delivery Status Updated", "Delivery", "PO-2026-0010", 83, "Marked as delivered"),
+            ("Finance Manager", "Invoice Verified", "Invoice", "INV-2026-0008", 45, "Amounts reconciled against PO"),
+            ("Auditor User", "Compliance Reviewed", "Compliance", "Compliance #7", 25, "BuildRight environmental compliance flagged"),
+            ("Procurement Manager", "Vendor Assigned", "Procurement", "PR-2026-0018", 24, "Assigned to OfficeMart Solutions"),
+            ("Admin User", "User Created", "User", "User #11", 400, "Vendor login provisioned for GreenPack Logistics"),
+            ("Neha Kapoor", "Procurement Request Created", "Procurement", "PR-2026-0020", 9, "HR onboarding kits requested"),
+            ("Amit Patel", "Procurement Request Created", "Procurement", "PR-2026-0021", 4, "Cloud backup & DR subscription requested"),
+        ]
+        db.add_all([
+            ActivityLog(
+                user_id=None,
+                user_name=user_name,
+                action=action,
+                module_name=module,
+                related_record=related,
+                ip_address=f"192.168.1.{20 + index}",
+                details=details,
+                timestamp=now - timedelta(days=days_ago),
+            )
+            for index, (user_name, action, module, related, days_ago, details) in enumerate(activity_rows)
+        ])
+
+        db.commit()
+
+        print("Recalculating vendor scores...")
+        from app.services.vendor_service import update_vendor_scores
+        for vid in set(vendor_ids.values()):
+            try:
+                update_vendor_scores(db, vid)
+            except Exception as e:
+                print(f"Error updating vendor {vid} scores: {e}")
+
+        db.commit()
+        print("Seed completed successfully!")
+    except Exception as e:
+        db.rollback()
+        print(f"Seed failed: {e}")
+        raise
+    finally:
+        db.close()
 
 
-def _pending_seed_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    totals["ratio"] = round(
-        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
-    return totals
-
-
-def _pending_seed_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "reference", "")),
-            "state": getattr(item, "status", "New"),
-        })
-    return rows
-
-
-def _pending_seed_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    totals["ratio"] = round(
-        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
-    return totals
-
-
-def _pending_seed_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "reference", "")),
-            "state": getattr(item, "status", "New"),
-        })
-    return rows
-
-
-def _pending_seed_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    totals["ratio"] = round(
-        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
-    return totals
-
-
-def _pending_seed_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "reference", "")),
-            "state": getattr(item, "status", "New"),
-        })
-    return rows
-
-
-def _pending_seed_totals_4(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    totals["ratio"] = round(
-        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
-    return totals
-
-
-def _pending_seed_rows_5(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "reference", "")),
-            "state": getattr(item, "status", "New"),
-        })
-    return rows
-
-
-def _pending_seed_totals_5(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-        else:
-            totals["other"] = totals.get("other", 0) + 1
-    totals["ratio"] = round(
-        totals["active"] / totals["count"], 2) if totals["count"] else 0.0
-    return totals
+if __name__ == "__main__":
+    seed_database()
