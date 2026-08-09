@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 03 Aug - Settle the delivery timing helpers behaviour between client and server
 - 04 Aug - Drop sample-metrics.ts from the integrated tree
 - 05 Aug - Reconcile the core API services with the Angular services
 - 06 Aug - Extend the forgot password screen with rate limit messaging
 - 07 Aug - Extend vendor scoping with document upload handling
 - 08 Aug - Wire user into the integrated build
+- 09 Aug - Rework amendment tracking in purchase order
