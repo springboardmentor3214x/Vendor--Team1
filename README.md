@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 03 Aug - Extend the admin dashboard screen with user counts
 - 04 Aug - Remove placeholder dashboard metrics now analytics endpoints are live
 - 05 Aug - Expand the vendor contracts screen with expiry notice
 - 06 Aug - Expand the forgot password screen with email lookup
 - 07 Aug - Refine payment status in the invoice management screen
 - 08 Aug - Refine department field in the procurement request screen
+- 09 Aug - Improve 401 handling in the auth interceptor
