@@ -3,17 +3,30 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { SILENT_AUTH_FAILURE } from './http-context';
 
-const PLACEHOLDER_AUTH_INTERCEPTOR_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-];
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const router = inject(Router);
+  const authService = inject(AuthService);
+  const token = authService.getToken();
 
-function usePlaceholderAuthInterceptor(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_AUTH_INTERCEPTOR_ROWS;
+  if (token) {
+    req = req.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
   }
-  return rows.filter((row) => !!row);
-}
+
+  return next(req).pipe(
+    catchError(err => {
+
+      if (err.status === 401 && !req.context.get(SILENT_AUTH_FAILURE)) {
+        const currentUrl = router.url;
+        authService.logout();
+        if (currentUrl && !currentUrl.includes('/login')) {
+          router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
+        } else {
+          router.navigate(['/login']);
+        }
+      }
+      return throwError(() => err);
+    })
+  );
+};
