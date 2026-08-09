@@ -73,41 +73,51 @@
   </div>
 </div>
 
-<div class="placeholder-panel">
-  <p>Live data is not connected yet.</p>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
+<div class="dash-section">
+  <div class="dash-section-header" style="margin-bottom: 16px;">
+    <h2 class="dash-section-title">Recent Activity</h2>
   </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+  <app-card [noPadding]="true">
+    <div class="vrip-table-wrapper">
+      <table class="vrip-table" style="width: 100%;">
+        <thead>
+          <tr>
+            <th style="width: 140px;">Date</th>
+            <th>Activity</th>
+            <th style="width: 140px;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="loading">
+            <tr *ngFor="let _ of [1,2,3]" class="vrip-table-row">
+              <td><div class="skeleton-cell" style="width: 90px;"></div></td>
+              <td><div class="skeleton-cell" style="width: 80%;"></div></td>
+              <td><div class="skeleton-badge"></div></td>
+            </tr>
+          </ng-container>
+
+          <ng-container *ngIf="!loading">
+            <tr *ngFor="let item of recentActivities" class="vrip-table-row">
+              <td>{{ item.date }}</td>
+              <td><strong style="font-size: 0.8125rem;">{{ item.activity }}</strong></td>
+              <td>
+                <app-badge [variant]="getBadgeVariant(item.status)">
+                  {{ item.status }}
+                </app-badge>
+              </td>
+            </tr>
+
+            <tr *ngIf="recentActivities.length === 0">
+              <td colspan="3" class="vrip-table-empty">
+                <div class="empty-state">
+                  <span class="material-symbols-outlined empty-icon">history</span>
+                  <p>No recent activity found.</p>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </app-card>
 </div>

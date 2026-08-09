@@ -102,20 +102,56 @@
     background: rgba(255, 255, 255, 0.9);
 }
 
-.placeholder-panel {
-  padding: 12px;
-  border: 1px dashed #d2d2d2;
-  border-radius: 5px;
-  color: #7a7a7a;
+.quick-icon {
+    font-size: 2rem;
+    margin-bottom: var(--vrip-space-3);
 }
 
-.placeholder-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
+.quick-card h3 {
+    margin: 0 0 var(--vrip-space-2);
+    font-size: 1.1rem;
+    font-weight: 600;
 }
 
-.placeholder-row span {
-  font-size: 13px;
-  letter-spacing: 0.2px;
+.quick-card p {
+    color: var(--vrip-slate-500);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.activity-card {
+    background: var(--vrip-glass-bg);
+    backdrop-filter: var(--vrip-glass-blur);
+    -webkit-backdrop-filter: var(--vrip-glass-blur);
+    border: var(--vrip-glass-border);
+    border-radius: var(--vrip-radius-lg);
+    padding: var(--vrip-space-5);
+    box-shadow: var(--vrip-shadow-md);
+}
+
+.activity-item {
+    padding: var(--vrip-space-3) 0;
+    border-bottom: 1px solid var(--vrip-slate-200);
+    display: flex;
+    align-items: center;
+    gap: var(--vrip-space-3);
+    color: var(--vrip-slate-700);
+    font-size: 0.95rem;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-item .material-symbols-outlined {
+    color: var(--vrip-primary-500);
+    font-size: 1.25rem;
+}
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--vrip-space-4);
+    }
 }
