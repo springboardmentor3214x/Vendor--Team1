@@ -70,36 +70,38 @@
         </app-card>
     </div>
 
-</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px;">
 
-<div class="placeholder-panel">
-  <p>Sample rows shown until the API is ready.</p>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Harborline Equipment</span>
-    <span>Active</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Vertex Services</span>
-    <span>Pending Approval</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ironvale Supplies</span>
-    <span>Under Review</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Copperfield Freight</span>
-    <span>Inactive</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Northwind Steel</span>
-    <span>Active</span>
-  </div>
+        <app-card>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 1.125rem; font-weight: 600;">Supplier Risk Level Distribution</h3>
+                <span class="material-symbols-outlined" style="color: var(--vrip-gray-500);">donut_large</span>
+            </div>
+            <apx-chart
+                *ngIf="riskDistributionChart?.series"
+                [series]="riskDistributionChart.series"
+                [chart]="riskDistributionChart.chart"
+                [labels]="riskDistributionChart.labels"
+                [colors]="riskDistributionChart.colors"
+                [legend]="riskDistributionChart.legend">
+            </apx-chart>
+        </app-card>
+
+        <app-card>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="margin: 0; font-size: 1.125rem; font-weight: 600;">Monthly Procurement Expenditure Trend</h3>
+                <span class="material-symbols-outlined" style="color: var(--vrip-gray-500);">show_chart</span>
+            </div>
+            <apx-chart
+                *ngIf="monthlyTrendChart?.series"
+                [series]="monthlyTrendChart.series"
+                [chart]="monthlyTrendChart.chart"
+                [xaxis]="monthlyTrendChart.xaxis"
+                [yaxis]="monthlyTrendChart.yaxis"
+                [colors]="monthlyTrendChart.colors"
+                [stroke]="monthlyTrendChart.stroke"
+                [fill]="monthlyTrendChart.fill">
+            </apx-chart>
+        </app-card>
+    </div>
 </div>
