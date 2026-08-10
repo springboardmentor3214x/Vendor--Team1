@@ -1,0 +1,18 @@
+{
+  "_comment": "Superseded by proxy.conf.js, which angular.json now uses. A JSON config cannot express the bypass() function needed to stop the dev server swallowing Angular routes that share a prefix with an API route (for example /vendors). Kept only so any tooling still pointed here has a valid target.",
+  "/auth": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true },
+  "/users": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true },
+  "/vendors": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true },
+  "/procurements": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true },
+  "/purchase-orders": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true },
+  "/order-tracking": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true },
+  "/invoices": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true },
+  "/performance": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true },
+  "/reliability": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true },
+  "/analytics": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true },
+  "/notifications": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true },
+  "/contracts": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true },
+  "/communications": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true },
+  "/reports": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true },
+  "/static": { "target": "http://localhost:8000", "secure": false, "changeOrigin": true }
+}
