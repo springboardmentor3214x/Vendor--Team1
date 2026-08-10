@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 04 Aug - Expand procurement with requisition line items
 - 05 Aug - Refine delay window calculation in the delivery timing helpers
 - 06 Aug - Expand procurement with rejection remarks
 - 07 Aug - Refine request lifecycle statuses in procurement
 - 08 Aug - Extend user with profile fields
 - 09 Aug - Tighten CORS configuration in the application setup
+- 10 Aug - Refine vendor assignment in procurement
