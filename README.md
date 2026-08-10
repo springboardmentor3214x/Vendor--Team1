@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 04 Aug - Refine category breakdown chart in the vendor analytics screen
 - 05 Aug - Tighten typed responses in the core API services
 - 06 Aug - Create the Angular project with proxy configuration
 - 07 Aug - Improve TypeScript config in the Angular project
 - 08 Aug - Refine success feedback in the register screen
 - 09 Aug - Improve date range filter in the audit logs screen
+- 10 Aug - Improve build config in the Angular project
