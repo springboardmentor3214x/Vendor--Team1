@@ -19,6 +19,7 @@ interface VendorStats {
   styleUrl: './dashboard-cards.css'
 })
 export class DashboardCards implements OnInit {
+
   stats: VendorStats = {
     total: 0,
     approved: 0,
@@ -27,25 +28,39 @@ export class DashboardCards implements OnInit {
     rejected: 0,
     high_risk: 0
   };
+
   loading = true;
   errorMsg = '';
+
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
-}
 
-const PLACEHOLDER_DASHBOARD_CARDS_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderDashboardCards(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_DASHBOARD_CARDS_ROWS;
+  ngOnInit(): void {
+    this.loadStats();
   }
-  return rows.filter((row) => !!row);
+
+  loadStats(): void {
+    this.loading = true;
+    this.errorMsg = '';
+    this.http.get<VendorStats>('/vendors/stats').subscribe({
+      next: (data) => {
+        if (data) {
+          this.stats = {
+            total: data.total ?? 0,
+            approved: data.approved ?? 0,
+            pending_review: data.pending_review ?? 0,
+            suspended: data.suspended ?? 0,
+            rejected: data.rejected ?? 0,
+            high_risk: data.high_risk ?? 0
+          };
+        }
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.loading = false;
+        this.cdr.markForCheck();
+        this.errorMsg = error.error?.detail || 'Could not load vendor totals.';
+      }
+    });
+  }
 }
