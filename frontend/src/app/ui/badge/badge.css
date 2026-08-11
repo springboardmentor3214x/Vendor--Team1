@@ -16,33 +16,18 @@
 }
 
 .vrip-badge-success { background: var(--v-success-light); color: var(--v-success); }
-
 .vrip-badge-warning { background: var(--v-warning-light); color: var(--v-warning); }
-
 .vrip-badge-danger  { background: var(--v-danger-light);  color: var(--v-danger); }
-
 .vrip-badge-info    { background: var(--v-info-light);    color: var(--v-info); }
-
 .vrip-badge-neutral, .vrip-badge-default { background: var(--v-bg-inset);      color: var(--v-text-secondary); }
-
 .vrip-badge-primary { background: var(--v-brand-light);   color: var(--v-brand); }
 
 .vrip-badge-sm { padding: 1px 7px; font-size: 0.625rem; }
+.vrip-badge-md { padding: 2px 10px; font-size: 0.6875rem; }
+.vrip-badge-lg { padding: 4px 14px; font-size: 0.75rem; }
 
-.placeholder-panel {
-  padding: 12px;
-  border: 1px dashed #d2d2d2;
-  border-radius: 5px;
-  color: #7a7a7a;
-}
-
-.placeholder-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
-}
-
-.placeholder-row span {
-  font-size: 13px;
-  letter-spacing: 0.2px;
-}
+.vrip-badge-outline-success { background: transparent; border: 1px solid var(--v-success); color: var(--v-success); }
+.vrip-badge-outline-warning { background: transparent; border: 1px solid var(--v-warning); color: var(--v-warning); }
+.vrip-badge-outline-danger  { background: transparent; border: 1px solid var(--v-danger);  color: var(--v-danger); }
+.vrip-badge-outline-info    { background: transparent; border: 1px solid var(--v-info);    color: var(--v-info); }
+.vrip-badge-outline-neutral { background: transparent; border: 1px solid var(--v-border);  color: var(--v-text-secondary); }
