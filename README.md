@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 05 Aug - Add vendor scoping with registration validation rules
 - 06 Aug - Extend vendor scoping with supplier ranking fields
 - 07 Aug - Improve router registration in password security
 - 08 Aug - Flesh out notification with email dispatch
 - 09 Aug - Refine status monitoring actions in vendor scoping
 - 10 Aug - Tighten threaded replies in discussion
+- 11 Aug - Refine issue resolution timing in performance
