@@ -10,23 +10,19 @@
   [type]="type"
   (click)="handleClick($event)">
 
-</button>
+  <span class="vrip-button-icon" *ngIf="(icon || iconLeft) && !loading">
+    <span class="material-symbols-outlined">{{ icon || iconLeft }}</span>
+  </span>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-</div>
+  <span class="vrip-button-spinner material-symbols-outlined" *ngIf="loading">
+    progress_activity
+  </span>
+
+  <span class="vrip-button-content" *ngIf="!iconOnly">
+    <ng-content></ng-content>
+  </span>
+
+  <span class="vrip-button-icon" *ngIf="iconRight && !loading">
+    <span class="material-symbols-outlined">{{ iconRight }}</span>
+  </span>
+</button>

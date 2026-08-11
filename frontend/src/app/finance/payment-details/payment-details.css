@@ -76,20 +76,22 @@
   color: var(--v-text-primary);
 }
 
-.placeholder-panel {
-  padding: 14px;
-  border: 1px dashed #bdbdbd;
-  border-radius: 6px;
-  color: #7a7a7a;
+.payments-modal .vrip-field {
+  margin-bottom: 14px;
 }
 
-.placeholder-row {
+.payments-modal-error {
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  font-size: 0.8125rem;
+  color: var(--v-danger);
+  background: var(--v-danger-light);
+  border-radius: var(--v-radius-sm);
+}
+
+.payments-modal-actions {
   display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-}
-
-.placeholder-tag {
-  text-transform: uppercase;
-  font-size: 11px;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
 }
