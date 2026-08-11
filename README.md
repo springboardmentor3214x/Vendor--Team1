@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 05 Aug - Reconcile the core API services with the Angular services
 - 06 Aug - Extend the forgot password screen with rate limit messaging
 - 07 Aug - Extend vendor scoping with document upload handling
 - 08 Aug - Wire user into the integrated build
 - 09 Aug - Rework amendment tracking in purchase order
 - 10 Aug - Correct the login screen field names surfaced during integration testing
+- 11 Aug - Reconcile the notifications screen with the Angular services
