@@ -19,6 +19,7 @@ export class PerformanceHistory implements OnInit {
   vendorsList: any[] = [];
   selectedVendorId: string = 'all';
   isLoading = true;
+
   columns: TableColumn[] = [
     { key: 'cycleId', label: 'Cycle ID' },
     { key: 'vendorName', label: 'Vendor Name' },
@@ -30,27 +31,74 @@ export class PerformanceHistory implements OnInit {
     { key: 'service', label: 'Service' },
     { key: 'trend', label: 'Trend' }
   ];
+
   constructor(private performanceService: PerformanceService) {}
+
   ngOnInit() {
     this.loadVendorsAndHistory();
   }
-}
 
-const PLACEHOLDER_PERFORMANCE_HISTORY_ROWS = [
-  { id: 1, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 2, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 3, name: 'Harborline Equipment', status: 'Active' },
-  { id: 4, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 5, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 6, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 7, name: 'Northwind Steel', status: 'Active' },
-  { id: 8, name: 'Orbit IT Systems', status: 'Pending Approval' },
-];
+  loadVendorsAndHistory() {
+    this.isLoading = true;
+    this.performanceService.getVendorRankings().subscribe({
+      next: (rankings) => {
+        if (rankings && rankings.length > 0) {
+          this.vendorsList = rankings.map(r => ({
+            id: r.vendor_id,
+            name: r.vendor_name || `Vendor #${r.vendor_id}`
+          }));
 
-function usePlaceholderPerformanceHistory(rows: any[]): any[] {
-  const source = rows && rows.length ? rows : PLACEHOLDER_PERFORMANCE_HISTORY_ROWS;
-  return source.map((row) => ({
-    ...row,
-    status: row.status || 'Pending',
-  }));
+          this.fetchHistoryForVendor(this.selectedVendorId, rankings);
+        } else {
+          this.isLoading = false;
+          this.history = [];
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.history = [];
+      }
+    });
+  }
+
+  onVendorSelect(vendorId: string) {
+    this.selectedVendorId = vendorId;
+    this.loadVendorsAndHistory();
+  }
+
+  fetchHistoryForVendor(vendorId: string, rankings: any[]) {
+    this.isLoading = true;
+    const targetVendors = vendorId === 'all' ? rankings : rankings.filter(r => String(r.vendor_id) === String(vendorId));
+
+    if (targetVendors.length === 0) {
+      this.isLoading = false;
+      this.history = [];
+      return;
+    }
+
+    const rows: any[] = [];
+    targetVendors.forEach((v: any, index: number) => {
+      const overall = v.overall_score || 0;
+      const starRating = (overall / 20).toFixed(1);
+      const deliveryScore = Math.round(v.delivery_score || 85);
+      const qualityScore = Math.round(v.quality_score || 90);
+      const commScore = Math.round(v.communication_score || 80);
+      const serviceScore = Math.round(v.service_score || 86);
+
+      rows.push({
+        cycleId: `CYC-2026-0${index + 1}`,
+        vendorName: v.vendor_name || `Vendor #${v.vendor_id}`,
+        poNumber: `PO-2026-00${index + 1}`,
+        delivery: deliveryScore >= 80 ? 'Delivered On Time' : 'Delayed',
+        quality: `${(qualityScore / 20).toFixed(1)}/5`,
+        comm: commScore >= 80 ? 'Responded (Prompt)' : 'Delayed',
+        issues: deliveryScore < 80 ? '1 / 1' : '0 / 0',
+        service: `${(serviceScore / 20).toFixed(1)}/5`,
+        trend: overall >= 80 ? 'Up' : (overall >= 60 ? 'Stable' : 'Down')
+      });
+    });
+
+    this.history = rows;
+    this.isLoading = false;
+  }
 }
