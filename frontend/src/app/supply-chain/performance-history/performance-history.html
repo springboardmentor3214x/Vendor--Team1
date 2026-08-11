@@ -9,23 +9,23 @@
         </div>
     </div>
 
-</div>
+    <app-card [noPadding]="true">
+        <div style="padding: 16px 24px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 16px;">
+            <label style="font-weight: 500; font-size: 0.875rem;">Filter by Vendor:</label>
+            <select [(ngModel)]="selectedVendorId" (change)="onVendorSelect(selectedVendorId)" class="vrip-select" style="width: 260px; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color);">
+                <option value="all">All Vendors</option>
+                <option *ngFor="let v of vendorsList" [value]="v.id">{{ v.name }}</option>
+            </select>
+        </div>
 
-<div class="placeholder-panel">
-  <p>Awaiting the backend endpoint.</p>
-  <div class="placeholder-row">
-    <span>Orbit IT Systems</span>
-    <span>Pending Approval</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Delta Logistics</span>
-    <span>Under Review</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
-  <div class="placeholder-row">
-    <span>Ashcroft Maintenance</span>
-    <span>Inactive</span>
-    <span class="placeholder-tag">pending</span>
-  </div>
+        <div *ngIf="isLoading" style="padding: 40px; text-align: center; color: var(--text-secondary);">
+            Loading vendor performance cycles...
+        </div>
+
+        <app-table
+            *ngIf="!isLoading"
+            [columns]="columns"
+            [data]="history">
+        </app-table>
+    </app-card>
 </div>
