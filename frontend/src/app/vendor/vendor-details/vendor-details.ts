@@ -24,16 +24,20 @@ import { Badge } from '../../ui/badge/badge';
   styleUrls: ['./vendor-details.css']
 })
 export class VendorDetails implements OnInit {
+
   vendor?: Vendor;
   loading: boolean = true;
+
   documents: VendorDocument[] = [];
   documentsLoading = false;
   documentError = '';
+
   constructor(
     private route: ActivatedRoute,
     private vendorService: VendorService,
     private cdr: ChangeDetectorRef
   ) {}
+
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.loading = true;
@@ -53,23 +57,41 @@ export class VendorDetails implements OnInit {
       }
     });
   }
-}
 
-const PLACEHOLDER_VENDOR_DETAILS_ROWS = [
-  { id: 1, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 2, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 3, name: 'Harborline Equipment', status: 'Active' },
-  { id: 4, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 5, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 6, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 7, name: 'Northwind Steel', status: 'Active' },
-  { id: 8, name: 'Orbit IT Systems', status: 'Pending Approval' },
-];
+  private loadDocuments(vendorId: number): void {
+    this.documentsLoading = true;
+    this.vendorService.getVendorDocuments(vendorId).subscribe({
+      next: (docs) => {
+        this.documents = docs || [];
+        this.documentsLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.documents = [];
+        this.documentsLoading = false;
+        this.documentError = 'Could not load the uploaded documents.';
+        this.cdr.markForCheck();
+      }
+    });
+  }
 
-function usePlaceholderVendorDetails(rows: any[]): any[] {
-  const source = rows && rows.length ? rows : PLACEHOLDER_VENDOR_DETAILS_ROWS;
-  return source.map((row) => ({
-    ...row,
-    status: row.status || 'Pending',
-  }));
+  viewDocument(doc: VendorDocument): void {
+    if (!this.vendor) {
+      return;
+    }
+    this.documentError = '';
+    this.vendorService.downloadDocument(this.vendor.id, doc.id).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+      },
+      error: (err) => {
+        this.documentError = err.error?.detail || 'The document could not be opened.';
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
 }

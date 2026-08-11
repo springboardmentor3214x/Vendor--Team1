@@ -2,17 +2,43 @@ import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
-const PLACEHOLDER_ROLE_GUARD_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-];
+export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+  const router = inject(Router);
+  const authService = inject(AuthService);
+  const userRole = authService.getUserRole();
+  const allowedRoles = route.data['roles'] as string[];
 
-function usePlaceholderRoleGuard(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_ROLE_GUARD_ROWS;
+  if (!userRole) {
+    router.navigate(['/login']);
+    return false;
   }
-  return rows.filter((row) => !!row);
-}
+
+  if (allowedRoles && allowedRoles.includes(userRole)) {
+    return true;
+  }
+
+  switch (userRole) {
+    case 'Administrator':
+      router.navigate(['/admin-dashboard']);
+      break;
+    case 'Procurement Manager':
+      router.navigate(['/procurement-dashboard']);
+      break;
+    case 'Supply Chain Manager':
+      router.navigate(['/supply-chain-dashboard']);
+      break;
+    case 'Vendor':
+      router.navigate(['/vendor-dashboard']);
+      break;
+    case 'Finance Officer':
+      router.navigate(['/finance-dashboard']);
+      break;
+    case 'Auditor':
+      router.navigate(['/auditor-dashboard']);
+      break;
+    default:
+      router.navigate(['/login']);
+  }
+
+  return false;
+};
