@@ -3,9 +3,11 @@ from sqlalchemy import or_
 from fastapi import HTTPException
 from datetime import datetime, date, timedelta
 import os
+
 from app.models.notification import Notification
 from app.models.user import User
 from app.schemas.notification import NotificationCreate
+
 
 def send_email_notification(to_email: str, subject: str, body: str) -> bool:
     from app.core.config import (
@@ -37,6 +39,7 @@ def send_email_notification(to_email: str, subject: str, body: str) -> bool:
     print(f"[SIMULATED EMAIL] To: {to_email} | Subject: {subject} | Body: {body[:100]}...")
     return True
 
+
 def send_sms_notification(mobile_number: str, message_body: str) -> bool:
     account_sid = os.getenv("TWILIO_ACCOUNT_SID")
     auth_token = os.getenv("TWILIO_AUTH_TOKEN")
@@ -60,6 +63,7 @@ def send_sms_notification(mobile_number: str, message_body: str) -> bool:
 
     print(f"[SIMULATED SMS] To: {mobile_number or 'Target User'} | Message: {message_body[:80]}...")
     return True
+
 
 def create_notification(db: Session, data: NotificationCreate) -> Notification:
     notif = Notification(
@@ -97,6 +101,7 @@ def create_notification(db: Session, data: NotificationCreate) -> Notification:
     db.refresh(notif)
     return notif
 
+
 def get_user_notifications(db: Session, user_id: int, user_role: str = None, module_name: str = None, priority: str = None, unread_only: bool = False, limit: int = 100):
     query = db.query(Notification).filter(
         or_(
@@ -114,6 +119,7 @@ def get_user_notifications(db: Session, user_id: int, user_role: str = None, mod
         query = query.filter(Notification.is_read == False)
 
     return query.order_by(Notification.timestamp.desc()).limit(limit).all()
+
 
 def mark_notification_read(db: Session, notification_id: int, user_id: int = None, user_role: str = None):
     notif = db.query(Notification).filter(Notification.id == notification_id).first()
@@ -133,6 +139,7 @@ def mark_notification_read(db: Session, notification_id: int, user_id: int = Non
     db.refresh(notif)
     return notif
 
+
 def _visible_to_user(query, user_id: int, user_role: str = None):
     return query.filter(
         or_(
@@ -141,6 +148,7 @@ def _visible_to_user(query, user_id: int, user_role: str = None):
             Notification.target_role == "All"
         )
     )
+
 
 def mark_all_read(db: Session, user_id: int, user_role: str = None):
     notifications = _visible_to_user(db.query(Notification), user_id, user_role).filter(
@@ -153,10 +161,12 @@ def mark_all_read(db: Session, user_id: int, user_role: str = None):
     db.commit()
     return {"message": f"Marked {len(notifications)} notifications as read"}
 
+
 def get_unread_count(db: Session, user_id: int, user_role: str = None) -> int:
     return _visible_to_user(db.query(Notification), user_id, user_role).filter(
         Notification.is_read == False
     ).count()
+
 
 def _safe_create(db: Session, data: NotificationCreate):
     try:
@@ -166,12 +176,14 @@ def _safe_create(db: Session, data: NotificationCreate):
         print(f"[NOTIFICATION ERROR] {data.notification_type}: {e}")
         return None
 
+
 def _find_vendor_user_id(db: Session, vendor) -> int:
     if not vendor or not vendor.email:
         return None
     from sqlalchemy import func as sa_func
     user = db.query(User).filter(sa_func.lower(User.email) == vendor.email.lower()).first()
     return user.id if user else None
+
 
 def notify_vendor_approval_decision(db: Session, vendor, approved: bool):
     decision = "Approved" if approved else "Rejected"
@@ -190,6 +202,7 @@ def notify_vendor_approval_decision(db: Session, vendor, approved: bool):
         delivery_method="All"
     ))
 
+
 def notify_procurement_submitted(db: Session, procurement):
     _safe_create(db, NotificationCreate(
         target_role="Procurement Manager",
@@ -204,6 +217,7 @@ def notify_procurement_submitted(db: Session, procurement):
         priority="High" if procurement.priority in ("High", "Critical") else "Medium",
         delivery_method="All" if procurement.priority == "Critical" else "In-App"
     ))
+
 
 def notify_purchase_order_created(db: Session, purchase_order, vendor=None):
     _safe_create(db, NotificationCreate(
@@ -221,6 +235,7 @@ def notify_purchase_order_created(db: Session, purchase_order, vendor=None):
         delivery_method="All"
     ))
 
+
 def notify_invoice_status(db: Session, invoice, status: str, vendor=None):
     _safe_create(db, NotificationCreate(
         user_id=_find_vendor_user_id(db, vendor),
@@ -233,6 +248,7 @@ def notify_invoice_status(db: Session, invoice, status: str, vendor=None):
         priority="Low" if status in ("Verified",) else "Medium",
         delivery_method="In-App"
     ))
+
 
 def notify_delivery_delay(db: Session, purchase_order, days_late: int):
     description = (
@@ -252,113 +268,161 @@ def notify_delivery_delay(db: Session, purchase_order, days_late: int):
         ))
 
 
-def _pending_notification_service_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+EXPIRY_MILESTONES = (90, 30, 7, 1)
 
 
-def _pending_notification_service_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+def _milestone_for(days_left: int):
+    for milestone in EXPIRY_MILESTONES:
+        if days_left == milestone:
+            return milestone
+    if days_left <= 0:
+        return 0
+    return None
 
 
-def _pending_notification_service_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+def _milestone_already_sent(db: Session, notification_type: str, record_id: str, milestone: int) -> bool:
+    marker = f"{record_id}:{milestone}"
+    return db.query(Notification).filter(
+        Notification.notification_type == notification_type,
+        Notification.related_record_id == marker
+    ).first() is not None
 
 
-def _pending_notification_service_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+def trigger_background_expiry_and_delay_checks(db: Session):
+    from app.models.purchase_order import PurchaseOrder
+    from app.models.contract import Contract
+    from app.models.certification import Certification
+    from app.models.compliance_record import ComplianceRecord
+    from app.models.vendor import Vendor
 
+    generated_count = 0
+    today = date.today()
+    now = datetime.utcnow()
 
-def _pending_notification_service_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+    delayed_pos = db.query(PurchaseOrder).filter(
+        PurchaseOrder.status.in_(["Issued", "In Transit"]),
+        PurchaseOrder.expected_delivery_date < now
+    ).all()
 
+    for po in delayed_pos:
+        existing = db.query(Notification).filter(
+            Notification.notification_type == "Delivery Delay Warning",
+            Notification.related_record_id == str(po.id)
+        ).first()
 
-def _pending_notification_service_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+        if not existing:
+            days_late = (now - po.expected_delivery_date).days if po.expected_delivery_date else 0
+            notify_delivery_delay(db, po, days_late)
+            generated_count += 1
 
+    horizon = today + timedelta(days=max(EXPIRY_MILESTONES))
+    expiring_contracts = db.query(Contract).filter(
+        Contract.end_date <= horizon,
+        Contract.status.in_(["Active", "Expiring Soon", "Expired"])
+    ).all()
 
-def _pending_notification_service_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+    for c in expiring_contracts:
+        days_left = (c.end_date - today).days
+        milestone = _milestone_for(days_left)
+        if milestone is None or _milestone_already_sent(db, "Contract Expiry Reminder", str(c.id), milestone):
+            continue
 
+        expired = days_left <= 0
+        _safe_create(db, NotificationCreate(
+            target_role="Procurement Manager",
+            notification_type="Contract Expiry Reminder",
+            title=(
+                f"Contract {c.contract_number or c.id} Has Expired" if expired
+                else f"Contract {c.contract_number or c.id} Expires in {days_left} Days"
+            ),
+            description=(
+                f"Contract '{c.contract_title}' with vendor {c.vendor_name} "
+                + (f"expired on {c.end_date}." if expired else f"expires on {c.end_date} ({days_left} days remaining).")
+            ),
+            module_name="Contracts",
+            related_record_id=f"{c.id}:{milestone}",
+            priority="High" if days_left <= 7 else "Medium",
+            delivery_method="All"
+        ))
+        generated_count += 1
 
-def _pending_notification_service_totals_4(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+        new_status = "Expired" if expired else ("Expiring Soon" if days_left <= 30 else c.status)
+        if c.status != new_status:
+            c.status = new_status
 
+    expiring_certs = db.query(Certification).filter(Certification.expiry_date <= horizon).all()
+    for cert in expiring_certs:
+        days_left = (cert.expiry_date - today).days
+        milestone = _milestone_for(days_left)
+        if milestone is None or _milestone_already_sent(db, "Certification Expiry Reminder", str(cert.id), milestone):
+            continue
 
-def _pending_notification_service_rows_5(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+        vendor = db.query(Vendor).filter(Vendor.id == cert.vendor_id).first()
+        expired = days_left <= 0
+        vendor_label = vendor.company_name if vendor else f"Vendor #{cert.vendor_id}"
+        description = (
+            f"Certification '{cert.certification_name}' ({cert.certificate_number}) for {vendor_label} "
+            + (f"expired on {cert.expiry_date}. Upload a renewed certificate." if expired
+               else f"expires on {cert.expiry_date} ({days_left} days remaining).")
+        )
 
+        _safe_create(db, NotificationCreate(
+            target_role="Procurement Manager",
+            notification_type="Certification Expiry Reminder",
+            title=f"Certification {'Expired' if expired else 'Expiring'}: {cert.certification_name}",
+            description=description,
+            module_name="Compliance",
+            related_record_id=f"{cert.id}:{milestone}",
+            priority="High" if days_left <= 7 else "Medium",
+            delivery_method="All"
+        ))
+        generated_count += 1
 
-def _pending_notification_service_totals_5(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+        vendor_user_id = _find_vendor_user_id(db, vendor)
+        if vendor_user_id:
+            _safe_create(db, NotificationCreate(
+                user_id=vendor_user_id,
+                notification_type="Certification Expiry Reminder",
+                title=f"Action Required: {cert.certification_name}",
+                description=description,
+                module_name="Compliance",
+                related_record_id=f"vendor-{cert.id}:{milestone}",
+                priority="High" if days_left <= 7 else "Medium",
+                delivery_method="All"
+            ))
+            generated_count += 1
 
+        new_cert_status = "Expired" if expired else ("Expiring Soon" if days_left <= 30 else cert.status)
+        if cert.status != new_cert_status:
+            cert.status = new_cert_status
 
-def _pending_notification_service_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-            "owner": getattr(item, "created_by", None),
-        })
-    return rows
+    invalid_records = db.query(ComplianceRecord).filter(
+        or_(
+            ComplianceRecord.status == "Non-Compliant",
+            ComplianceRecord.status == "Expired",
+            ComplianceRecord.expiry_date <= today
+        )
+    ).all()
+
+    for record in invalid_records:
+        if _milestone_already_sent(db, "Compliance Alert", str(record.id), 0):
+            continue
+        vendor = db.query(Vendor).filter(Vendor.id == record.vendor_id).first()
+        vendor_label = vendor.company_name if vendor else f"Vendor #{record.vendor_id}"
+        if record.expiry_date and record.expiry_date <= today and record.status not in ("Non-Compliant",):
+            record.status = "Expired"
+
+        _safe_create(db, NotificationCreate(
+            target_role="Procurement Manager",
+            notification_type="Compliance Alert",
+            title=f"Compliance Issue: {record.compliance_type}",
+            description=f"{vendor_label} is '{record.status}' for {record.compliance_type}. Verification required.",
+            module_name="Compliance",
+            related_record_id=f"{record.id}:0",
+            priority="High",
+            delivery_method="All"
+        ))
+        generated_count += 1
+
+    db.commit()
+    return {"message": "Background checks executed", "notifications_generated": generated_count}
