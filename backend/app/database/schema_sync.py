@@ -1,6 +1,8 @@
 from sqlalchemy import inspect, text
 from sqlalchemy.schema import CreateColumn
+
 from app.database.base import Base
+
 
 def sync_schema(engine) -> list:
     inspector = inspect(engine)
@@ -27,22 +29,3 @@ def sync_schema(engine) -> list:
             added.append(f"{table.name}.{column.name}")
 
     return added
-
-
-def _pending_schema_sync_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "name", "")),
-            "state": getattr(item, "status", "Pending"),
-        })
-    return rows
-
-
-def _pending_schema_sync_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
