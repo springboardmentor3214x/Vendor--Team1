@@ -1,0 +1,223 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/vendor-reliability-frontend/browser",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/auth",
+      "destination": "https://vrip.onrender.com/auth"
+    },
+    {
+      "source": "/auth/",
+      "destination": "https://vrip.onrender.com/auth/"
+    },
+    {
+      "source": "/auth/:path*",
+      "destination": "https://vrip.onrender.com/auth/:path*"
+    },
+    {
+      "source": "/users",
+      "destination": "https://vrip.onrender.com/users"
+    },
+    {
+      "source": "/users/",
+      "destination": "https://vrip.onrender.com/users/"
+    },
+    {
+      "source": "/users/:path*",
+      "destination": "https://vrip.onrender.com/users/:path*"
+    },
+    {
+      "source": "/vendors",
+      "destination": "https://vrip.onrender.com/vendors"
+    },
+    {
+      "source": "/vendors/",
+      "destination": "https://vrip.onrender.com/vendors/"
+    },
+    {
+      "source": "/vendors/:path*",
+      "destination": "https://vrip.onrender.com/vendors/:path*"
+    },
+    {
+      "source": "/procurements",
+      "destination": "https://vrip.onrender.com/procurements"
+    },
+    {
+      "source": "/procurements/",
+      "destination": "https://vrip.onrender.com/procurements/"
+    },
+    {
+      "source": "/procurements/:path*",
+      "destination": "https://vrip.onrender.com/procurements/:path*"
+    },
+    {
+      "source": "/purchase-orders",
+      "destination": "https://vrip.onrender.com/purchase-orders"
+    },
+    {
+      "source": "/purchase-orders/",
+      "destination": "https://vrip.onrender.com/purchase-orders/"
+    },
+    {
+      "source": "/purchase-orders/:path*",
+      "destination": "https://vrip.onrender.com/purchase-orders/:path*"
+    },
+    {
+      "source": "/order-tracking",
+      "destination": "https://vrip.onrender.com/order-tracking"
+    },
+    {
+      "source": "/order-tracking/",
+      "destination": "https://vrip.onrender.com/order-tracking/"
+    },
+    {
+      "source": "/order-tracking/:path*",
+      "destination": "https://vrip.onrender.com/order-tracking/:path*"
+    },
+    {
+      "source": "/invoices",
+      "destination": "https://vrip.onrender.com/invoices"
+    },
+    {
+      "source": "/invoices/",
+      "destination": "https://vrip.onrender.com/invoices/"
+    },
+    {
+      "source": "/invoices/:path*",
+      "destination": "https://vrip.onrender.com/invoices/:path*"
+    },
+    {
+      "source": "/performance",
+      "destination": "https://vrip.onrender.com/performance"
+    },
+    {
+      "source": "/performance/",
+      "destination": "https://vrip.onrender.com/performance/"
+    },
+    {
+      "source": "/performance/:path*",
+      "destination": "https://vrip.onrender.com/performance/:path*"
+    },
+    {
+      "source": "/reliability",
+      "destination": "https://vrip.onrender.com/reliability"
+    },
+    {
+      "source": "/reliability/",
+      "destination": "https://vrip.onrender.com/reliability/"
+    },
+    {
+      "source": "/reliability/:path*",
+      "destination": "https://vrip.onrender.com/reliability/:path*"
+    },
+    {
+      "source": "/analytics",
+      "destination": "https://vrip.onrender.com/analytics"
+    },
+    {
+      "source": "/analytics/",
+      "destination": "https://vrip.onrender.com/analytics/"
+    },
+    {
+      "source": "/analytics/:path*",
+      "destination": "https://vrip.onrender.com/analytics/:path*"
+    },
+    {
+      "source": "/notifications",
+      "destination": "https://vrip.onrender.com/notifications"
+    },
+    {
+      "source": "/notifications/",
+      "destination": "https://vrip.onrender.com/notifications/"
+    },
+    {
+      "source": "/notifications/:path*",
+      "destination": "https://vrip.onrender.com/notifications/:path*"
+    },
+    {
+      "source": "/contracts",
+      "destination": "https://vrip.onrender.com/contracts"
+    },
+    {
+      "source": "/contracts/",
+      "destination": "https://vrip.onrender.com/contracts/"
+    },
+    {
+      "source": "/contracts/:path*",
+      "destination": "https://vrip.onrender.com/contracts/:path*"
+    },
+    {
+      "source": "/communication",
+      "destination": "https://vrip.onrender.com/communication"
+    },
+    {
+      "source": "/communication/",
+      "destination": "https://vrip.onrender.com/communication/"
+    },
+    {
+      "source": "/communication/:path*",
+      "destination": "https://vrip.onrender.com/communication/:path*"
+    },
+    {
+      "source": "/communications",
+      "destination": "https://vrip.onrender.com/communications"
+    },
+    {
+      "source": "/communications/",
+      "destination": "https://vrip.onrender.com/communications/"
+    },
+    {
+      "source": "/communications/:path*",
+      "destination": "https://vrip.onrender.com/communications/:path*"
+    },
+    {
+      "source": "/reports",
+      "destination": "https://vrip.onrender.com/reports"
+    },
+    {
+      "source": "/reports/",
+      "destination": "https://vrip.onrender.com/reports/"
+    },
+    {
+      "source": "/reports/:path*",
+      "destination": "https://vrip.onrender.com/reports/:path*"
+    },
+    {
+      "source": "/static",
+      "destination": "https://vrip.onrender.com/static"
+    },
+    {
+      "source": "/static/",
+      "destination": "https://vrip.onrender.com/static/"
+    },
+    {
+      "source": "/static/:path*",
+      "destination": "https://vrip.onrender.com/static/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ]
+}

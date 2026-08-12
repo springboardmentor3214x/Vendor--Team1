@@ -23,29 +23,48 @@ import { Button } from '../ui/button/button';
   styleUrls: ['./dashboard.css']
 })
 export class Dashboard implements OnInit {
+
   recentVendors: any[] = [];
   loadingRecent: boolean = true;
   recentError = '';
+
   constructor(private http: HttpClient) {}
+
   ngOnInit(): void {
     this.loadRecentVendors();
   }
-}
 
-const PLACEHOLDER_DASHBOARD_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderDashboard(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_DASHBOARD_ROWS;
+  loadRecentVendors(): void {
+    this.loadingRecent = true;
+    this.recentError = '';
+    this.http.get<any[]>('/vendors/recent?limit=5').subscribe({
+      next: (vendors) => {
+        this.loadingRecent = false;
+        if (Array.isArray(vendors)) {
+          this.recentVendors = vendors.map(v => {
+            const score = v.reliability_score || 0;
+            const starScore = score > 5.0 ? (score / 20).toFixed(1) : score.toFixed(1);
+            return {
+              id: v.id,
+              companyName: v.company_name,
+              category: v.category,
+              reliabilityScore: starScore + ' ⭐',
+              status: v.status || 'Active'
+            };
+          });
+        } else {
+          this.recentVendors = [];
+        }
+      },
+      error: (err) => {
+        this.loadingRecent = false;
+        console.error('Failed to load recent vendors', err);
+        this.recentError = err.error?.detail || 'Could not load recent vendors.';
+      }
+    });
   }
-  return rows.filter((row) => !!row);
+
+  refresh() {
+    this.loadRecentVendors();
+  }
 }
