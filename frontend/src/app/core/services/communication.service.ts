@@ -5,16 +5,21 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class CommunicationService {
   private apiUrl = '/communications';
+
   constructor(private http: HttpClient) {}
+
   getRegisteredRecipients(): Observable<any[]> {
     return this.http.get<any[]>('/users/recipients');
   }
+
   sendMessage(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/messages`, data);
   }
+
   sendMessageWithFile(formData: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/messages/upload`, formData);
   }
+
   getMessages(vendorId?: number, poId?: number, contractId?: number, discussionId?: number, receiverId?: number): Observable<any[]> {
     let params = new HttpParams();
     if (vendorId) params = params.set('vendor_id', vendorId.toString());
@@ -25,34 +30,56 @@ export class CommunicationService {
 
     return this.http.get<any[]>(`${this.apiUrl}/messages`, { params });
   }
+
   createDiscussion(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/discussions`, data);
   }
+
   getDiscussions(vendorId?: number, poId?: number): Observable<any[]> {
     let params = new HttpParams();
     if (vendorId) params = params.set('vendor_id', vendorId.toString());
     if (poId) params = params.set('po_id', poId.toString());
     return this.http.get<any[]>(`${this.apiUrl}/discussions`, { params });
   }
+
   uploadFile(formData: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/files/upload`, formData);
   }
-}
 
-const PLACEHOLDER_COMMUNICATION_SERVICE_ROWS = [
-  { id: 1, name: 'Orbit IT Systems', status: 'Pending Approval' },
-  { id: 2, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 3, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 4, name: 'Harborline Equipment', status: 'Active' },
-  { id: 5, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 6, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 7, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 8, name: 'Northwind Steel', status: 'Active' },
-];
-
-function usePlaceholderCommunicationService(rows: any[]): any[] {
-  if (!rows || !rows.length) {
-    return PLACEHOLDER_COMMUNICATION_SERVICE_ROWS;
+  getFiles(filters: {
+    vendorId?: number; poId?: number; contractId?: number;
+    procurementId?: number; discussionId?: number;
+  } = {}): Observable<any[]> {
+    let params = new HttpParams();
+    if (filters.vendorId) params = params.set('vendor_id', String(filters.vendorId));
+    if (filters.poId) params = params.set('po_id', String(filters.poId));
+    if (filters.contractId) params = params.set('contract_id', String(filters.contractId));
+    if (filters.procurementId) params = params.set('procurement_id', String(filters.procurementId));
+    if (filters.discussionId) params = params.set('discussion_id', String(filters.discussionId));
+    return this.http.get<any[]>(`${this.apiUrl}/files`, { params });
   }
-  return rows.filter((row) => !!row);
+
+  downloadSharedFile(fileId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/files/${fileId}/download`, { responseType: 'blob' });
+  }
+
+  downloadMessageAttachment(messageId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/messages/${messageId}/attachment`, { responseType: 'blob' });
+  }
+
+  markMessagesRead(body: { message_ids?: number[]; vendor_id?: number; discussion_id?: number } = {}): Observable<any> {
+    return this.http.post(`${this.apiUrl}/messages/mark-read`, body);
+  }
+
+  getUnreadMessageCount(): Observable<{ unread_count: number }> {
+    return this.http.get<{ unread_count: number }>(`${this.apiUrl}/messages/unread-count`);
+  }
+
+  getActivityLogs(moduleName?: string, limit: number = 100): Observable<any[]> {
+    let url = `${this.apiUrl}/activity-logs?limit=${limit}`;
+    if (moduleName && moduleName !== 'All') {
+      url += `&module=${moduleName}`;
+    }
+    return this.http.get<any[]>(url);
+  }
 }
