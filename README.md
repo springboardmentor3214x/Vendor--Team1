@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 07 Aug - Refine payment status in the invoice management screen
 - 08 Aug - Refine department field in the procurement request screen
 - 09 Aug - Improve 401 handling in the auth interceptor
 - 10 Aug - Refine form validation in the login screen
 - 11 Aug - Improve date filters in the performance history screen
 - 12 Aug - Improve column layout in the procurement request list screen
+- 13 Aug - Improve due date highlighting in the invoice management screen
