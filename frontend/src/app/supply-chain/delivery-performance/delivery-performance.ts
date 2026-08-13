@@ -23,15 +23,19 @@ export class DeliveryPerformance implements OnInit {
   allRecords: any[] = [];
   records: any[] = [];
   dashboard: any = {};
+
   isLoading = true;
   errorMsg = '';
+
   vendorFilter = 'All';
   statusFilter = 'All';
   vendorNames: string[] = [];
+
   constructor(
     private performanceService: PerformanceService,
     private vendorService: VendorService
   ) {}
+
   ngOnInit(): void {
     this.performanceService.getDashboardStats().subscribe({
       next: (data) => this.dashboard = data || {},
@@ -39,6 +43,7 @@ export class DeliveryPerformance implements OnInit {
     });
     this.loadDeliveryRecords();
   }
+
   loadDeliveryRecords(): void {
     this.isLoading = true;
     this.errorMsg = '';
@@ -82,23 +87,42 @@ export class DeliveryPerformance implements OnInit {
       }
     });
   }
-}
 
-const PLACEHOLDER_DELIVERY_PERFORMANCE_ROWS = [
-  { id: 1, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 2, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 3, name: 'Harborline Equipment', status: 'Active' },
-  { id: 4, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 5, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 6, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 7, name: 'Northwind Steel', status: 'Active' },
-  { id: 8, name: 'Orbit IT Systems', status: 'Pending Approval' },
-];
+  private toRow(r: any, vendorName: string): any {
+    const delay = r.delay_days ?? 0;
+    return {
+      recordId: r.id,
+      procurementId: r.procurement_id,
+      vendorName,
+      expectedDate: this.fmt(r.expected_date),
+      actualDate: this.fmt(r.actual_date),
+      actualDateRaw: r.actual_date || '',
+      delayDays: delay,
+      status: r.delivery_status || '-',
+      remarks: r.remarks || '-'
+    };
+  }
 
-function usePlaceholderDeliveryPerformance(rows: any[]): any[] {
-  const source = rows && rows.length ? rows : PLACEHOLDER_DELIVERY_PERFORMANCE_ROWS;
-  return source.map((row) => ({
-    ...row,
-    status: row.status || 'Pending',
-  }));
+  private fmt(value: string): string {
+    if (!value) return '-';
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? '-' : d.toLocaleDateString();
+  }
+
+  applyFilters(): void {
+    this.records = this.allRecords.filter(r => {
+      const vendorOk = this.vendorFilter === 'All' || r.vendorName === this.vendorFilter;
+      let statusOk = true;
+      if (this.statusFilter === 'On Time') statusOk = r.status.includes('On Time');
+      else if (this.statusFilter === 'Early') statusOk = r.status.includes('Early');
+      else if (this.statusFilter === 'Delayed') statusOk = r.status.includes('Delayed');
+      return vendorOk && statusOk;
+    });
+  }
+
+  getStatusColor(status: string): string {
+    if (status.includes('On Time') || status.includes('Early')) return '#34c759';
+    if (status.includes('Delayed')) return '#ff3b30';
+    return '#8e8e93';
+  }
 }
