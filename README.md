@@ -50,9 +50,9 @@ Finance Officer and Auditor, each with its own permission set.
 
 ## Recent updates
 
-- 08 Aug - Extend user with profile fields
 - 09 Aug - Tighten CORS configuration in the application setup
 - 10 Aug - Refine vendor assignment in procurement
 - 11 Aug - Tighten amendment tracking in purchase order
 - 12 Aug - Refine profile fields in user
 - 13 Aug - Refine document upload handling in vendor
+- 14 Aug - Flesh out procurement with requisition line items
