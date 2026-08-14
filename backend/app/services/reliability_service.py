@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import Optional, List, Dict, Any
+
 from app.models.vendor import Vendor
 from app.models.procurement import Procurement
 from app.models.purchase_order import PurchaseOrder
@@ -22,6 +23,7 @@ MONTH_NAMES = [
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ]
 
+
 def calculate_recommendation_status(reliability_score: float, risk_level: str) -> str:
     if risk_level == "Low Risk":
         return "Highly Recommended"
@@ -31,6 +33,7 @@ def calculate_recommendation_status(reliability_score: float, risk_level: str) -
         return "Not Yet Evaluated"
     else:
         return "Not Recommended"
+
 
 def get_contract_compliance_factor(db: Session, vendor_id: int) -> Dict[str, Any]:
     from app.models.compliance_record import ComplianceRecord
@@ -62,6 +65,7 @@ def get_contract_compliance_factor(db: Session, vendor_id: int) -> Dict[str, Any
         "total_contracts": total_contracts,
         "active_contracts": active_contracts,
     }
+
 
 def get_vendor_reliability_details(db: Session, vendor_id: int) -> Dict[str, Any]:
     vendor = db.query(Vendor).filter(Vendor.id == vendor_id).first()
@@ -127,6 +131,7 @@ def get_vendor_reliability_details(db: Session, vendor_id: int) -> Dict[str, Any
         "full_metrics": metrics
     }
 
+
 def get_reliability_dashboard(db: Session) -> Dict[str, Any]:
     all_vendors = db.query(Vendor).filter(Vendor.approval_status == "Approved").all()
     total_evaluated = len(all_vendors)
@@ -186,6 +191,7 @@ def get_reliability_dashboard(db: Session) -> Dict[str, Any]:
         }
     }
 
+
 def get_supplier_rankings(db: Session, category: Optional[str] = None) -> List[Dict[str, Any]]:
     query = db.query(Vendor).filter(Vendor.approval_status == "Approved")
     if category and category != "All":
@@ -215,6 +221,7 @@ def get_supplier_rankings(db: Session, category: Optional[str] = None) -> List[D
         item["vendor_rank"] = index + 1
 
     return rankings
+
 
 def get_procurement_risk_assessment(db: Session) -> Dict[str, Any]:
     vendors = db.query(Vendor).filter(Vendor.approval_status == "Approved").all()
@@ -254,117 +261,143 @@ def get_procurement_risk_assessment(db: Session) -> Dict[str, Any]:
         "high_risk_approval_required": True
     }
 
+
 def _month_key(value) -> Optional[str]:
     return value.strftime("%Y-%m") if value else None
 
 
-def _pending_reliability_service_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+def _response_score(hours: Optional[float]) -> float:
+    if hours is None:
+        return 0.0
+    if hours <= 2:
+        return 100.0
+    if hours <= 6:
+        return 80.0
+    if hours <= 12:
+        return 60.0
+    if hours <= 24:
+        return 40.0
+    return 20.0
+
+
+def get_performance_trends(db: Session, vendor_id: int, months: int = 12) -> Dict[str, Any]:
+    details = get_vendor_reliability_details(db, vendor_id)
+    if not details:
+        return None
+
+    deliveries = get_delivery_records(db, vendor_id)
+    quality = get_quality_records(db, vendor_id)
+    communications = get_communication_records(db, vendor_id)
+    ratings = get_service_ratings(db, vendor_id)
+
+    buckets: Dict[str, Dict[str, list]] = {}
+
+    def bucket(key: str) -> Dict[str, list]:
+        if key not in buckets:
+            buckets[key] = {"delivery": [], "quality": [], "communication": [], "service": []}
+        return buckets[key]
+
+    for d in deliveries:
+        key = _month_key(d.actual_date or d.recorded_at)
+        if key:
+            bucket(key)["delivery"].append(
+                100.0 if d.delivery_status in ("Delivered On Time", "Delivered Early") else 0.0
+            )
+
+    for q in quality:
+        key = _month_key(q.inspection_date)
+        if key:
+            bucket(key)["quality"].append((q.overall_rating or 0) / 5 * 100)
+
+    for c in communications:
+        key = _month_key(c.message_sent_time)
+        if key:
+            bucket(key)["communication"].append(
+                _response_score(c.response_duration_hours)
+                if c.communication_status == "Responded" else 0.0
+            )
+
+    for s in ratings:
+        key = _month_key(s.rated_at)
+        if key:
+            bucket(key)["service"].append((s.overall_rating or 0) / 5 * 100)
+
+    def mean(values: list) -> Optional[float]:
+        return round(sum(values) / len(values), 2) if values else None
+
+    trend_points = []
+    for key in sorted(buckets)[-months:]:
+        data = buckets[key]
+        delivery = mean(data["delivery"])
+        quality_avg = mean(data["quality"])
+        communication = mean(data["communication"])
+        service = mean(data["service"])
+
+        measured = [v for v in (delivery, quality_avg, communication, service) if v is not None]
+        reliability = round(sum(measured) / len(measured), 2) if measured else None
+
+        year, month = key.split("-")
+        label = f"{MONTH_NAMES[int(month) - 1]} {year}"
+        trend_points.append({
+            "period": label,
+            "month_key": key,
+            "reliability_score": reliability,
+            "delivery_score": delivery,
+            "quality_score": quality_avg,
+            "communication_score": communication,
+            "service_score": service,
+            "record_count": sum(len(v) for v in data.values()),
         })
-    return rows
+
+    scored = [p["reliability_score"] for p in trend_points if p["reliability_score"] is not None]
+    if len(scored) < 2:
+        overall_trend = "Insufficient Data"
+    else:
+        midpoint = len(scored) // 2
+        earlier = sum(scored[:midpoint]) / midpoint
+        later = sum(scored[midpoint:]) / (len(scored) - midpoint)
+        difference = later - earlier
+        if difference > 5:
+            overall_trend = "Improving"
+        elif difference < -5:
+            overall_trend = "Declining"
+        else:
+            overall_trend = "Stable"
+
+    return {
+        "vendor_id": vendor_id,
+        "vendor_name": details["vendor_name"],
+        "company_name": details["company_name"],
+        "current_reliability_score": details["reliability_score"],
+        "overall_trend": overall_trend,
+        "monthly_trends": trend_points,
+    }
 
 
-def _pending_reliability_service_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+def get_procurement_recommendations(db: Session, category: Optional[str] = None) -> List[Dict[str, Any]]:
+    rankings = get_supplier_rankings(db, category=category)
+    recommendations = []
 
+    for r in rankings:
+        rec_reason = ""
+        if r["procurement_risk_level"] == "Low Risk":
+            rec_reason = "Consistently high delivery accuracy, top-tier quality compliance, and rapid response times."
+        elif r["procurement_risk_level"] == "Medium Risk":
+            rec_reason = "Satisfactory performance. Minor delays or quality variances observed in past procurements."
+        else:
+            rec_reason = "NOT RECOMMENDED FOR HIGH-PRIORITY PROCUREMENT. History of delays, defect reports, or slow communication."
 
-def _pending_reliability_service_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
+        recommendations.append({
+            "vendor_id": r["vendor_id"],
+            "vendor_name": r["vendor_name"],
+            "company_name": r["company_name"],
+            "category": r["category"],
+            "reliability_score": r["reliability_score"],
+            "procurement_risk_level": r["procurement_risk_level"],
+            "recommendation_status": r["recommendation_status"],
+            "vendor_rank": r["vendor_rank"],
+            "recommendation_reason": rec_reason,
+            "suitable_for_high_priority": r["procurement_risk_level"] != "High Risk"
         })
-    return rows
 
-
-def _pending_reliability_service_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_reliability_service_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_reliability_service_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_reliability_service_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_reliability_service_totals_4(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_reliability_service_rows_5(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
-
-
-def _pending_reliability_service_totals_5(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_reliability_service_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-            "updated": getattr(item, "updated_at", None),
-        })
-    return rows
+    return recommendations
