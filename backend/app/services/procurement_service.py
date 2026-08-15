@@ -4,6 +4,7 @@ from sqlalchemy import func, or_
 from fastapi import HTTPException
 from datetime import datetime
 from typing import Optional, List
+
 from app.models.procurement import Procurement
 from app.models.procurement_approval import ProcurementApproval
 from app.models.procurement_status_history import ProcurementStatusHistory
@@ -18,6 +19,7 @@ from app.core.risk import (
     calculate_risk_level, vendor_has_performance_data,
     HIGH_RISK, MEDIUM_RISK, NOT_RATED,
 )
+
 
 def record_status_history(db: Session, procurement_id: int, status: str, updated_by: str, remarks: Optional[str] = None, po_id: Optional[int] = None):
     try:
@@ -34,6 +36,7 @@ def record_status_history(db: Session, procurement_id: int, status: str, updated
         db.rollback()
         print(f"Failed to record status history: {e}")
 
+
 def record_approval(db: Session, procurement_id: int, action: str, action_by: str, remarks: Optional[str] = None):
     try:
         appr = ProcurementApproval(
@@ -47,6 +50,7 @@ def record_approval(db: Session, procurement_id: int, action: str, action_by: st
     except Exception as e:
         db.rollback()
         print(f"Failed to record approval: {e}")
+
 
 def generate_request_number(db: Session) -> str:
     year = datetime.utcnow().year
@@ -67,6 +71,7 @@ def generate_request_number(db: Session) -> str:
     while db.query(Procurement).filter(Procurement.request_number == f"{prefix}{next_seq:04d}").first():
         next_seq += 1
     return f"{prefix}{next_seq:04d}"
+
 
 def create_procurement(db: Session, data: ProcurementCreate):
     if data.expected_delivery_date and (data.status or "Pending") != "Draft":
@@ -119,6 +124,7 @@ def create_procurement(db: Session, data: ProcurementCreate):
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
+
 def get_all_procurements(
     db: Session,
     department: Optional[str] = None,
@@ -146,8 +152,10 @@ def get_all_procurements(
         )
     return query.order_by(Procurement.created_at.desc()).all()
 
+
 def get_procurement(db: Session, procurement_id: int):
     return db.query(Procurement).filter(Procurement.id == procurement_id).first()
+
 
 def update_procurement(db: Session, procurement_id: int, data: ProcurementCreate):
     proc = get_procurement(db, procurement_id)
@@ -199,6 +207,7 @@ def update_procurement(db: Session, procurement_id: int, data: ProcurementCreate
     record_status_history(db, proc.id, proc.status, proc.requested_by or "User", "Procurement Request Updated")
     return proc
 
+
 def delete_procurement(db: Session, procurement_id: int):
     proc = get_procurement(db, procurement_id)
     if not proc:
@@ -230,6 +239,7 @@ def delete_procurement(db: Session, procurement_id: int):
     db.commit()
     return proc
 
+
 def approve_procurement(db: Session, procurement_id: int, approved_by: str, remarks: Optional[str] = "Approved"):
     proc = get_procurement(db, procurement_id)
     if not proc:
@@ -247,6 +257,7 @@ def approve_procurement(db: Session, procurement_id: int, approved_by: str, rema
     record_approval(db, proc.id, "Approved", approved_by, remarks)
     record_status_history(db, proc.id, "Approved", approved_by, remarks)
     return proc
+
 
 def reject_procurement(db: Session, procurement_id: int, approved_by: str, remarks: Optional[str] = "Rejected"):
     proc = get_procurement(db, procurement_id)
@@ -266,6 +277,7 @@ def reject_procurement(db: Session, procurement_id: int, approved_by: str, remar
     record_status_history(db, proc.id, "Cancelled", approved_by, remarks)
     return proc
 
+
 def send_back_procurement(db: Session, procurement_id: int, user_name: str, remarks: Optional[str] = "Needs modification"):
     proc = get_procurement(db, procurement_id)
     if not proc:
@@ -282,6 +294,7 @@ def send_back_procurement(db: Session, procurement_id: int, user_name: str, rema
     record_approval(db, proc.id, "Modification Required", user_name, remarks)
     record_status_history(db, proc.id, "Modification Required", user_name, remarks)
     return proc
+
 
 def assign_vendor(db: Session, procurement_id: int, vendor_id: int, user_name: str = "Procurement Manager",
                   acknowledge_risk: bool = False):
@@ -341,6 +354,7 @@ def assign_vendor(db: Session, procurement_id: int, vendor_id: int, user_name: s
 
     return proc, risk_level, warning
 
+
 def place_order(db: Session, procurement_id: int, user_name: str = "Procurement Manager"):
     proc = get_procurement(db, procurement_id)
     if not proc:
@@ -354,8 +368,10 @@ def place_order(db: Session, procurement_id: int, user_name: str = "Procurement 
     record_status_history(db, proc.id, "Ordered", user_name, "Purchase Order Issued")
     return proc
 
+
 def filter_procurements(db: Session, status: str):
     return db.query(Procurement).filter(Procurement.status == status).all()
+
 
 def search_procurements(db: Session, keyword: str):
     pattern = f"%{keyword}%"
@@ -366,6 +382,7 @@ def search_procurements(db: Session, keyword: str):
             Procurement.item_name.ilike(pattern)
         )
     ).all()
+
 
 def mark_delivered(db: Session, procurement_id: int, actual_time: Optional[datetime] = None, user_name: str = "Supply Chain Manager"):
     proc = get_procurement(db, procurement_id)
@@ -402,6 +419,7 @@ def mark_delivered(db: Session, procurement_id: int, actual_time: Optional[datet
     record_status_history(db, proc.id, "Delivered", user_name, "Order items delivered to warehouse")
     return proc
 
+
 def dispatch_procurement(db: Session, procurement_id: int, user_name: str = "Vendor"):
     proc = get_procurement(db, procurement_id)
     if not proc:
@@ -416,115 +434,60 @@ def dispatch_procurement(db: Session, procurement_id: int, user_name: str = "Ven
     return proc
 
 
-def _pending_procurement_service_rows(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
+def mark_completed(db: Session, procurement_id: int, user_name: str = "Finance Officer"):
+    proc = get_procurement(db, procurement_id)
+    if not proc:
+        return None
+    if proc.status != "Delivered":
+        raise HTTPException(status_code=400, detail="Only delivered orders can be marked completed")
+    proc.status = "Completed"
+    db.commit()
+    db.refresh(proc)
+
+    record_status_history(db, proc.id, "Completed", user_name, "Invoice verified and payment processed")
+    return proc
+
+
+def get_procurements_by_vendor(db: Session, vendor_id: int):
+    return db.query(Procurement).filter(Procurement.vendor_id == vendor_id).all()
+
+
+def get_status_history(db: Session, procurement_id: int):
+    return db.query(ProcurementStatusHistory).filter(ProcurementStatusHistory.procurement_id == procurement_id).order_by(ProcurementStatusHistory.created_at.desc()).all()
+
+
+def procurement_dashboard(db: Session):
+    total = db.query(Procurement).count()
+    pending = db.query(Procurement).filter(Procurement.status == "Pending").count()
+    approved = db.query(Procurement).filter(Procurement.status.in_(["Approved", "Vendor Assigned"])).count()
+    po_created = db.query(PurchaseOrder).count()
+    delivered = db.query(Procurement).filter(Procurement.status == "Delivered").count()
+    completed = db.query(Procurement).filter(Procurement.status == "Completed").count()
+    cancelled = db.query(Procurement).filter(Procurement.status == "Cancelled").count()
+
+    recent_history = db.query(ProcurementStatusHistory).order_by(ProcurementStatusHistory.created_at.desc()).limit(8).all()
+    recent_activities = []
+    for h in recent_history:
+        proc = db.query(Procurement).filter(Procurement.id == h.procurement_id).first()
+        pr_title = proc.request_title if proc else f"Request #{h.procurement_id}"
+        recent_activities.append({
+            "message": f"{pr_title}: status updated to '{h.status}' by {h.updated_by}",
+            "status": h.status,
+            "timestamp": h.created_at.strftime("%b %d, %H:%M") if h.created_at else ""
         })
-    return rows
 
+    if not recent_activities:
+        recent_activities = [
+            {"message": "System ready for procurement request processing", "status": "Info", "timestamp": "Now"}
+        ]
 
-def _pending_procurement_service_totals(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_procurement_service_rows_2(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-        })
-    return rows
-
-
-def _pending_procurement_service_totals_2(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_procurement_service_rows_3(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-        })
-    return rows
-
-
-def _pending_procurement_service_totals_3(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_procurement_service_rows_4(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-        })
-    return rows
-
-
-def _pending_procurement_service_totals_4(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_procurement_service_rows_5(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-        })
-    return rows
-
-
-def _pending_procurement_service_totals_5(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
-
-
-def _pending_procurement_service_rows_6(items):
-    rows = []
-    for item in items:
-        rows.append({
-            "id": getattr(item, "id", None),
-            "label": str(getattr(item, "label", "")),
-            "state": getattr(item, "status", "Unverified"),
-        })
-    return rows
-
-
-def _pending_procurement_service_totals_6(items):
-    totals = {"count": len(items), "active": 0}
-    for item in items:
-        if getattr(item, "status", "") == "Active":
-            totals["active"] += 1
-    return totals
+    return {
+        "total": total,
+        "pending": pending,
+        "approved": approved,
+        "po_created": po_created,
+        "delivered": delivered,
+        "completed": completed,
+        "cancelled": cancelled,
+        "recent_activities": recent_activities
+    }
