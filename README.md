@@ -48,9 +48,9 @@ src/app/
 
 ## Recent updates
 
-- 09 Aug - Improve date range filter in the audit logs screen
 - 10 Aug - Improve build config in the Angular project
 - 11 Aug - Improve tax split in the payment details screen
 - 12 Aug - Improve aggregate tiles in the analytics screen
 - 13 Aug - Tighten TypeScript config in the Angular project
 - 14 Aug - Refine search box in the vendor list screen
+- 15 Aug - Tighten global styles in the Angular project
