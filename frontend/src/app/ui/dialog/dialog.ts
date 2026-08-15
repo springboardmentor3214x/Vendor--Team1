@@ -14,21 +14,13 @@ export class Dialog {
   @Input() maxWidth: string = '500px';
   @Input() showFooter: boolean = true;
   @Input() closeOnBackdrop: boolean = true;
+
   @Output() isOpenChange = new EventEmitter<boolean>();
-}
+  @Output() onClose = new EventEmitter<void>();
 
-const PLACEHOLDER_DIALOG_ROWS = [
-  { id: 1, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 2, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 3, name: 'Harborline Equipment', status: 'Active' },
-  { id: 4, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 5, name: 'Ironvale Supplies', status: 'Under Review' },
-];
-
-function usePlaceholderDialog(rows: any[]): any[] {
-  const source = rows && rows.length ? rows : PLACEHOLDER_DIALOG_ROWS;
-  return source.map((row) => ({
-    ...row,
-    status: row.status || 'Pending',
-  }));
+  close() {
+    this.isOpen = false;
+    this.isOpenChange.emit(this.isOpen);
+    this.onClose.emit();
+  }
 }
