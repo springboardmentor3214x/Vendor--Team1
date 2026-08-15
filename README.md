@@ -44,9 +44,9 @@ the permission checks enforced on every endpoint.
 
 ## Recent updates
 
-- 09 Aug - Rework amendment tracking in purchase order
 - 10 Aug - Correct the login screen field names surfaced during integration testing
 - 11 Aug - Reconcile the notifications screen with the Angular services
 - 12 Aug - Fix notification after merging the frontend and backend branches
 - 13 Aug - Handle empty responses from activity log in the integrated flow
 - 14 Aug - Refine risk level banding in reliability
+- 15 Aug - Correct procurement field names surfaced during integration testing

@@ -10,3 +10,5 @@ class ComplianceRecord(Base):
     status = Column(String(50), default="Pending Verification")
     verified_by = Column(String(100), nullable=True)
     verification_date = Column(Date, nullable=True)
+    expiry_date = Column(Date, nullable=True)
+    remarks = Column(String(500), nullable=True)
