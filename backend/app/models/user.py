@@ -2,8 +2,10 @@ from sqlalchemy import Column, Integer, String, DateTime
 from datetime import datetime
 from app.database.base import Base
 
+
 class User(Base):
     __tablename__ = "users"
+
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), nullable=False)
     email = Column(String(100), unique=True, nullable=False)
@@ -11,3 +13,5 @@ class User(Base):
     employee_id = Column(String(50), nullable=True)
     password = Column(String(255), nullable=False)
     role = Column(String(50), nullable=False)
+    account_status = Column(String(30), default="Pending Approval")
+    created_at = Column(DateTime, default=datetime.utcnow)
