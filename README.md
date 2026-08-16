@@ -46,13 +46,13 @@ Finance Officer and Auditor, each with its own permission set.
 - [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
 - [x] Milestone 2 (24 Jul 2026) - Vendor and procurement management
 - [x] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
-- [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
+- [x] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 10 Aug - Tighten threaded replies in discussion
 - 11 Aug - Refine issue resolution timing in performance
 - 12 Aug - Improve unread counts in notification
 - 13 Aug - Flesh out activity log with actor and action capture
 - 14 Aug - Refine supplier recommendations in reliability
 - 15 Aug - Broaden compliance record with audit findings
+- 16 Aug - Refine review dates in compliance record
