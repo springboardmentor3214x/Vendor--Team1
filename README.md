@@ -46,13 +46,13 @@ Finance Officer and Auditor, each with its own permission set.
 - [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
 - [x] Milestone 2 (24 Jul 2026) - Vendor and procurement management
 - [x] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
-- [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
+- [x] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 10 Aug - Refine vendor assignment in procurement
 - 11 Aug - Tighten amendment tracking in purchase order
 - 12 Aug - Refine profile fields in user
 - 13 Aug - Refine document upload handling in vendor
 - 14 Aug - Flesh out procurement with requisition line items
 - 15 Aug - Refine requisition line items in procurement
+- 16 Aug - Improve role assignment in user
