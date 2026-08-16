@@ -29,27 +29,39 @@ interface ServiceRecord {
 export class ServiceRating implements OnInit {
   ratings: ServiceRecord[] = [];
   isLoading = true;
+
   constructor(private performanceService: PerformanceService) {}
+
   ngOnInit() {
     this.loadRatings();
   }
-}
 
-const PLACEHOLDER_SERVICE_RATING_ROWS = [
-  { id: 1, name: 'Delta Logistics', status: 'Under Review' },
-  { id: 2, name: 'Ashcroft Maintenance', status: 'Inactive' },
-  { id: 3, name: 'Harborline Equipment', status: 'Active' },
-  { id: 4, name: 'Vertex Services', status: 'Pending Approval' },
-  { id: 5, name: 'Ironvale Supplies', status: 'Under Review' },
-  { id: 6, name: 'Copperfield Freight', status: 'Inactive' },
-  { id: 7, name: 'Northwind Steel', status: 'Active' },
-  { id: 8, name: 'Orbit IT Systems', status: 'Pending Approval' },
-];
-
-function usePlaceholderServiceRating(rows: any[]): any[] {
-  const source = rows && rows.length ? rows : PLACEHOLDER_SERVICE_RATING_ROWS;
-  return source.map((row) => ({
-    ...row,
-    status: row.status || 'Pending',
-  }));
+  loadRatings() {
+    this.isLoading = true;
+    this.performanceService.getServiceRatings(1).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        if (res && res.length > 0) {
+          this.ratings = res.map((r: any) => ({
+            poNumber: `PO-${1000 + (r.procurement_id || r.id)}`,
+            vendorName: `Vendor #${r.vendor_id}`,
+            professionalism: r.professionalism || 5,
+            customerSupport: r.customer_support || 5,
+            documentationQuality: r.documentation_quality || 5,
+            flexibility: r.flexibility || 5,
+            communicationEffectiveness: r.communication_effectiveness || 5,
+            issueResolution: r.issue_resolution || 5,
+            overallRating: r.overall_rating || 5.0,
+            comments: r.comments || 'Evaluated'
+          }));
+        } else {
+          this.ratings = [];
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.ratings = [];
+      }
+    });
+  }
 }
