@@ -44,13 +44,13 @@ src/app/
 - [x] Milestone 1 (13 Jul 2026) - Requirements, UI design, database design, backend setup
 - [x] Milestone 2 (24 Jul 2026) - Vendor and procurement management
 - [x] Milestone 3 (07 Aug 2026) - Vendor performance and analytics
-- [ ] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
+- [x] Milestone 4 (17 Aug 2026) - Testing, deployment and documentation
 
 ## Recent updates
 
-- 10 Aug - Refine form validation in the login screen
 - 11 Aug - Improve date filters in the performance history screen
 - 12 Aug - Improve column layout in the procurement request list screen
 - 13 Aug - Improve due date highlighting in the invoice management screen
 - 14 Aug - Round out the navbar with logout handling
 - 15 Aug - Flesh out the procurement approval screen with approve and reject actions
+- 16 Aug - Improve logout handling in the navbar
